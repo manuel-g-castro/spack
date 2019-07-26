@@ -139,6 +139,11 @@ class Xsdk(Package):
     depends_on('phist@develop kernel_lib=tpetra ~fortran ~scamac ~openmp ~host', when='@0.5.0 +phist')
     depends_on('phist@1.7.5 kernel_lib=tpetra ~fortran ~scamac ~openmp ~host', when='@0.4.0 +phist')
 
+    depends_on('ginkgo@develop ~openmp', when='@develop')
+    depends_on('ginkgo@develop ~openmp+cuda', when='@develop +cuda')
+    depends_on('ginkgo@develop ~openmp', when='@0.5.0')
+    depends_on('ginkgo@develop ~openmp+cuda', when='@0.5.0 +cuda')
+
     # xSDKTrilinos depends on the version of Trilinos built with
     # +tpetra which is turned off for faster xSDK
     # depends_on('xsdktrilinos@xsdk-0.2.0', when='@xsdk-0.2.0')
