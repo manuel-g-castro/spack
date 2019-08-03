@@ -95,8 +95,8 @@ class Xsdk(Package):
     depends_on('plasma@18.11.1:', when='@0.5.0 %gcc@6.0:')
     depends_on('plasma@18.11.1:', when='@0.4.0 %gcc@6.0:')
 
-    depends_on('magma@2.4.0', when='@develop +cuda')
-    depends_on('magma@2.4.0', when='@0.5.0 +cuda')
+    depends_on('magma@2.5.1', when='@develop +cuda')
+    depends_on('magma@2.5.1', when='@0.5.0 +cuda')
     depends_on('magma@2.4.0', when='@0.4.0 +cuda')
     depends_on('magma@2.2.0', when='@0.3.0 +cuda')
 
