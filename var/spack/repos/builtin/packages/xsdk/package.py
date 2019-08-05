@@ -102,8 +102,8 @@ class Xsdk(Package):
 
     depends_on('amrex@develop+sundials', when='@develop %intel')
     depends_on('amrex@develop+sundials', when='@develop %gcc')
-    depends_on('amrex@develop+sundials', when='@0.5.0 %intel')
-    depends_on('amrex@develop+sundials', when='@0.5.0 %gcc')
+    depends_on('amrex@19.08+sundials', when='@0.5.0 %intel')
+    depends_on('amrex@19.08+sundials', when='@0.5.0 %gcc')
     depends_on('amrex@18.10.1', when='@0.4.0 %intel')
     depends_on('amrex@18.10.1', when='@0.4.0 %gcc')
 
