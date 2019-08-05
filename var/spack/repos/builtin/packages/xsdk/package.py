@@ -120,7 +120,7 @@ class Xsdk(Package):
     depends_on('strumpack@3.1.1', when='@0.4.0')
 
     depends_on('pumi@develop', when='@develop')
-    depends_on('pumi@develop', when='@0.5.0')
+    depends_on('pumi@2.2.1', when='@0.5.0')
     depends_on('pumi@2.2.0', when='@0.4.0')
 
     depends_on('tasmanian@develop+xsdkflags+blas~openmp', when='@develop')
