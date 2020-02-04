@@ -1,4 +1,4 @@
-# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2020 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -13,6 +13,7 @@ from __future__ import print_function
 import sys
 import re
 import os
+import os.path
 import inspect
 import pstats
 import argparse
@@ -20,6 +21,7 @@ import traceback
 import warnings
 from six import StringIO
 
+import llnl.util.cpu
 import llnl.util.tty as tty
 import llnl.util.tty.color as color
 from llnl.util.tty.log import log_output
@@ -29,12 +31,12 @@ import spack.architecture
 import spack.config
 import spack.cmd
 import spack.environment as ev
-import spack.hooks
 import spack.paths
 import spack.repo
 import spack.store
 import spack.util.debug
 import spack.util.path
+import spack.util.executable as exe
 from spack.error import SpackError
 
 
@@ -105,6 +107,34 @@ def add_all_commands(parser):
     """Add all spack subcommands to the parser."""
     for cmd in spack.cmd.all_commands():
         parser.add_command(cmd)
+
+
+def get_version():
+    """Get a descriptive version of this instance of Spack.
+
+    If this is a git repository, and if it is not on a release tag,
+    return a string like:
+
+        release_version-commits_since_release-commit
+
+    If we *are* at a release tag, or if this is not a git repo, return
+    the real spack release number (e.g., 0.13.3).
+
+    """
+    git_path = os.path.join(spack.paths.prefix, ".git")
+    if os.path.exists(git_path):
+        git = exe.which("git")
+        if git:
+            desc = git("-C", spack.paths.prefix, "describe", "--tags",
+                       output=str, fail_on_error=False)
+
+            if git.returncode == 0:
+                match = re.match(r"v([^-]+)-([^-]+)-g([a-f\d]+)", desc)
+                if match:
+                    v, n, commit = match.groups()
+                    return "%s-%s-%s" % (v, n, commit)
+
+    return spack.spack_version
 
 
 def index_commands():
@@ -621,8 +651,9 @@ def print_setup_info(*info):
     # print environment module system if available. This can be expensive
     # on clusters, so skip it if not needed.
     if 'modules' in info:
-        specs = spack.store.db.query(
-            'environment-modules arch=%s' % spack.architecture.sys_type())
+        generic_arch = llnl.util.cpu.host().family
+        module_spec = 'environment-modules target={0}'.format(generic_arch)
+        specs = spack.store.db.query(module_spec)
         if specs:
             shell_set('_sp_module_prefix', specs[-1].prefix)
         else:
@@ -643,6 +674,17 @@ def main(argv=None):
     parser = make_argument_parser()
     parser.add_argument('command', nargs=argparse.REMAINDER)
     args, unknown = parser.parse_known_args(argv)
+
+    # Recover stored LD_LIBRARY_PATH variables from spack shell function
+    # This is necessary because MacOS System Integrity Protection clears
+    # (DY?)LD_LIBRARY_PATH variables on process start.
+    # Spack clears these variables before building and installing packages,
+    # but needs to know the prior state for commands like `spack load` and
+    # `spack env activate that modify the user environment.
+    for var in ('LD_LIBRARY_PATH', 'DYLD_LIBRARY_PATH'):
+        stored_var_name = 'SPACK_%s' % var
+        if stored_var_name in os.environ:
+            os.environ[var] = os.environ[stored_var_name]
 
     # activate an environment if one was specified on the command line
     if not args.no_env:
@@ -667,7 +709,7 @@ def main(argv=None):
     # -h, -H, and -V are special as they do not require a command, but
     # all the other options do nothing without a command.
     if args.version:
-        print(spack.spack_version)
+        print(get_version())
         return 0
     elif args.help:
         sys.stdout.write(parser.format_help(level=args.help))
@@ -697,9 +739,6 @@ def main(argv=None):
 
         # many operations will fail without a working directory.
         set_working_dir()
-
-        # pre-run hooks happen after we know we have a valid working dir
-        spack.hooks.pre_run()
 
         # now we can actually execute the command.
         if args.spack_profile or args.sorted_profile:

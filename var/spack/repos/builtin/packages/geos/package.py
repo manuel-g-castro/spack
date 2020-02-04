@@ -1,4 +1,4 @@
-# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2020 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -14,7 +14,7 @@ class Geos(AutotoolsPackage):
        operators, as well as specific JTS enhanced topology functions."""
 
     homepage = "http://trac.osgeo.org/geos/"
-    url      = "http://download.osgeo.org/geos/geos-3.7.2.tar.bz2"
+    url      = "https://download.osgeo.org/geos/geos-3.7.2.tar.bz2"
 
     maintainers = ['adamjstewart']
 

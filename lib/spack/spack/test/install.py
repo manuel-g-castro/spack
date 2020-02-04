@@ -1,4 +1,4 @@
-# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2020 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -9,8 +9,8 @@ import shutil
 
 from llnl.util.filesystem import mkdirp, touch, working_dir
 
-from spack.package import \
-    InstallError, InvalidPackageOpError, PackageBase, PackageStillNeededError
+from spack.package import InstallError, PackageBase, PackageStillNeededError
+import spack.error
 import spack.patch
 import spack.repo
 import spack.store
@@ -129,7 +129,7 @@ def test_dont_add_patches_to_installed_package(install_mockery, mock_fetch):
 
 
 def test_installed_dependency_request_conflicts(
-        install_mockery, mock_fetch, mutable_mock_packages):
+        install_mockery, mock_fetch, mutable_mock_repo):
     dependency = Spec('dependency-install')
     dependency.concretize()
     dependency.package.do_install()
@@ -137,12 +137,12 @@ def test_installed_dependency_request_conflicts(
     dependency_hash = dependency.dag_hash()
     dependent = Spec(
         'conflicting-dependent ^/' + dependency_hash)
-    with pytest.raises(spack.spec.UnsatisfiableSpecError):
+    with pytest.raises(spack.error.UnsatisfiableSpecError):
         dependent.concretize()
 
 
 def test_install_dependency_symlinks_pkg(
-        install_mockery, mock_fetch, mutable_mock_packages):
+        install_mockery, mock_fetch, mutable_mock_repo):
     """Test dependency flattening/symlinks mock package."""
     spec = Spec('flatten-deps')
     spec.concretize()
@@ -155,7 +155,7 @@ def test_install_dependency_symlinks_pkg(
 
 
 def test_flatten_deps(
-        install_mockery, mock_fetch, mutable_mock_packages):
+        install_mockery, mock_fetch, mutable_mock_repo):
     """Explicitly test the flattening code for coverage purposes."""
     # Unfortunately, executing the 'flatten-deps' spec's installation does
     # not affect code coverage results, so be explicit here.
@@ -316,18 +316,20 @@ def test_uninstall_by_spec_errors(mutable_database):
     """Test exceptional cases with the uninstall command."""
 
     # Try to uninstall a spec that has not been installed
-    rec = mutable_database.get_record('zmpi')
-    with pytest.raises(InstallError, matches="not installed"):
-        PackageBase.uninstall_by_spec(rec.spec)
+    spec = Spec('dependent-install')
+    spec.concretize()
+    with pytest.raises(InstallError, match="is not installed"):
+        PackageBase.uninstall_by_spec(spec)
 
     # Try an unforced uninstall of a spec with dependencies
     rec = mutable_database.get_record('mpich')
-
-    with pytest.raises(PackageStillNeededError, matches="cannot uninstall"):
+    with pytest.raises(PackageStillNeededError, match="Cannot uninstall"):
         PackageBase.uninstall_by_spec(rec.spec)
 
 
-def test_nosource_pkg_install(install_mockery, mock_fetch, mock_packages):
+@pytest.mark.disable_clean_stage_check
+def test_nosource_pkg_install(
+        install_mockery, mock_fetch, mock_packages, capfd):
     """Test install phases with the nosource package."""
     spec = Spec('nosource').concretized()
     pkg = spec.package
@@ -336,9 +338,8 @@ def test_nosource_pkg_install(install_mockery, mock_fetch, mock_packages):
     pkg.do_install()
 
     # Also make sure an error is raised if `do_fetch` is called.
-    with pytest.raises(InvalidPackageOpError,
-                       match="fetch a package with a URL"):
-        pkg.do_fetch()
+    pkg.do_fetch()
+    assert "No fetch required for nosource" in capfd.readouterr()[0]
 
 
 def test_nosource_pkg_install_post_install(
@@ -460,11 +461,11 @@ def test_unconcretized_install(install_mockery, mock_fetch, mock_packages):
     with pytest.raises(ValueError, match="only install concrete packages"):
         spec.package.do_install()
 
-    with pytest.raises(ValueError, match="fetch concrete packages"):
+    with pytest.raises(ValueError, match="only fetch concrete packages"):
         spec.package.do_fetch()
 
-    with pytest.raises(ValueError, match="stage concrete packages"):
+    with pytest.raises(ValueError, match="only stage concrete packages"):
         spec.package.do_stage()
 
-    with pytest.raises(ValueError, match="patch concrete packages"):
+    with pytest.raises(ValueError, match="only patch concrete packages"):
         spec.package.do_patch()

@@ -1,4 +1,4 @@
-.. Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+.. Copyright 2013-2020 Lawrence Livermore National Security, LLC and other
    Spack Project Developers. See the top-level COPYRIGHT file for details.
 
    SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -232,6 +232,50 @@ remove dependent packages *before* removing their dependencies or use the
 
 .. _nondownloadable:
 
+^^^^^^^^^^^^^^^^^^
+Garbage collection
+^^^^^^^^^^^^^^^^^^
+
+When Spack builds software from sources, if often installs tools that are needed
+just to build or test other software. These are not necessary at runtime.
+To support cases where removing these tools can be a benefit Spack provides
+the ``spack gc`` ("garbage collector") command, which will uninstall all unneeded packages:
+
+.. code-block:: console
+
+   $ spack find
+   ==> 24 installed packages
+   -- linux-ubuntu18.04-broadwell / gcc@9.0.1 ----------------------
+   autoconf@2.69    findutils@4.6.0  libiconv@1.16        libszip@2.1.1  m4@1.4.18    openjpeg@2.3.1  pkgconf@1.6.3  util-macros@1.19.1
+   automake@1.16.1  gdbm@1.18.1      libpciaccess@0.13.5  libtool@2.4.6  mpich@3.3.2  openssl@1.1.1d  readline@8.0   xz@5.2.4
+   cmake@3.16.1     hdf5@1.10.5      libsigsegv@2.12      libxml2@2.9.9  ncurses@6.1  perl@5.30.0     texinfo@6.5    zlib@1.2.11
+
+   $ spack gc
+   ==> The following packages will be uninstalled:
+
+       -- linux-ubuntu18.04-broadwell / gcc@9.0.1 ----------------------
+       vn47edz autoconf@2.69    6m3f2qn findutils@4.6.0  ubl6bgk libtool@2.4.6  pksawhz openssl@1.1.1d  urdw22a readline@8.0
+       ki6nfw5 automake@1.16.1  fklde6b gdbm@1.18.1      b6pswuo m4@1.4.18      k3s2csy perl@5.30.0     lp5ya3t texinfo@6.5
+       ylvgsov cmake@3.16.1     5omotir libsigsegv@2.12  leuzbbh ncurses@6.1    5vmfbrq pkgconf@1.6.3   5bmv4tg util-macros@1.19.1
+
+   ==> Do you want to proceed? [y/N] y
+
+   [ ... ]
+
+   $ spack find
+   ==> 9 installed packages
+   -- linux-ubuntu18.04-broadwell / gcc@9.0.1 ----------------------
+   hdf5@1.10.5  libiconv@1.16  libpciaccess@0.13.5  libszip@2.1.1  libxml2@2.9.9  mpich@3.3.2  openjpeg@2.3.1  xz@5.2.4  zlib@1.2.11
+
+In the example above Spack went through all the packages in the DB
+and removed everything that is not either:
+
+1. A package installed upon explicit request of the user
+2. A ``link`` or ``run`` dependency, even transitive, of one of the packages at point 1.
+
+You can check :ref:`cmd-spack-find-metadata` to see how to query for explicitly installed packages
+or :ref:`dependency-types` for a more thorough treatment of dependency types.
+
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 Non-Downloadable Tarballs
 ^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -276,6 +320,52 @@ the tarballs in question to it (see :ref:`mirrors`):
    .. code-block:: console
 
        $ spack install galahad
+
+-----------------------------
+Deprecating insecure packages
+-----------------------------
+
+``spack deprecate`` allows for the removal of insecure packages with
+minimal impact to their dependents.
+
+.. warning::
+
+  The ``spack deprecate`` command is designed for use only in
+  extraordinary circumstances. This is a VERY big hammer to be used
+  with care.
+
+The ``spack deprecate`` command will remove one package and replace it
+with another by replacing the deprecated package's prefix with a link
+to the deprecator package's prefix.
+
+.. warning::
+
+  The ``spack deprecate`` command makes no promises about binary
+  compatibility. It is up to the user to ensure the deprecator is
+  suitable for the deprecated package.
+
+Spack tracks concrete deprecated specs and ensures that no future packages
+concretize to a deprecated spec.
+
+The first spec given to the ``spack deprecate`` command is the package
+to deprecate. It is an abstract spec that must describe a single
+installed package. The second spec argument is the deprecator
+spec. By default it must be an abstract spec that describes a single
+installed package, but with the ``-i/--install-deprecator`` it can be
+any abstract spec that Spack will install and then use as the
+deprecator. The ``-I/--no-install-deprecator`` option will ensure
+the default behavior.
+
+By default, ``spack deprecate`` will deprecate all dependencies of the
+deprecated spec, replacing each by the dependency of the same name in
+the deprecator spec. The ``-d/--dependencies`` option will ensure the
+default, while the ``-D/--no-dependencies`` option will deprecate only
+the root of the deprecate spec in favor of the root of the deprecator
+spec.
+
+``spack deprecate`` can use symbolic links or hard links. The default
+behavior is symbolic links, but the ``-l/--link-type`` flag can take
+options ``hard`` or ``soft``.
 
 -----------------------
 Verifying installations
@@ -368,15 +458,19 @@ Packages are divided into groups according to their architecture and
 compiler.  Within each group, Spack tries to keep the view simple, and
 only shows the version of installed packages.
 
+.. _cmd-spack-find-metadata:
+
 """"""""""""""""""""""""""""""""
 Viewing more metadata
 """"""""""""""""""""""""""""""""
 
-``spack find`` can filter the package list based on the package name, spec, or
-a number of properties of their installation status.  For example, missing
-dependencies of a spec can be shown with ``--missing``, packages which were
-explicitly installed with ``spack install <package>`` can be singled out with
-``--explicit`` and those which have been pulled in only as dependencies with
+``spack find`` can filter the package list based on the package name,
+spec, or a number of properties of their installation status.  For
+example, missing dependencies of a spec can be shown with
+``--missing``, deprecated packages can be included with
+``--deprecated``, packages which were explicitly installed with
+``spack install <package>`` can be singled out with ``--explicit`` and
+those which have been pulled in only as dependencies with
 ``--implicit``.
 
 In some cases, there may be different configurations of the *same*
@@ -835,11 +929,13 @@ in GNU Autotools. If all flags are set, the order is
 Compiler environment variables and additional RPATHs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-In the exceptional case a compiler requires setting special environment
-variables, like an explicit library load path. These can bet set in an
-extra section in the compiler configuration (the supported environment
-modification commands are: ``set``, ``unset``, ``append-path``, and
-``prepend-path``). The user can also specify additional ``RPATHs`` that the
+Sometimes compilers require setting special environment variables to
+operate correctly. Spack handles these cases by allowing custom environment
+modifications in the ``environment`` attribute of the compiler configuration
+section. See also the :ref:`configuration_environment_variables` section
+of the configuration files docs for more information.
+
+It is also possible to specify additional ``RPATHs`` that the
 compiler will add to all executables generated by that compiler.  This is
 useful for forcing certain compilers to RPATH their own runtime libraries, so
 that executables will run without the need to set ``LD_LIBRARY_PATH``.
@@ -856,27 +952,18 @@ that executables will run without the need to set ``LD_LIBRARY_PATH``.
           fc: /opt/gcc/bin/gfortran
         environment:
           unset:
-            BAD_VARIABLE: # The colon is required but the value must be empty
+            - BAD_VARIABLE
           set:
             GOOD_VARIABLE_NUM: 1
             GOOD_VARIABLE_STR: good
-          prepend-path:
+          prepend_path:
             PATH: /path/to/binutils
-          append-path:
+          append_path:
             LD_LIBRARY_PATH: /opt/gcc/lib
         extra_rpaths:
         - /path/to/some/compiler/runtime/directory
         - /path/to/some/other/compiler/runtime/directory
 
-
-.. note::
-
-   The section `environment` is interpreted as an ordered dictionary, which
-   means two things. First, environment modification are applied in the order
-   they are specified in the configuration file. Second, you cannot express
-   environment modifications that require mixing different commands, i.e. you
-   cannot `set` one variable, than `prepend-path` to another one, and than
-   again `set` a third one.
 
 ^^^^^^^^^^^^^^^^^^^^^^^
 Architecture specifiers
@@ -1223,10 +1310,9 @@ directly when you run ``python``:
 Using Extensions
 ^^^^^^^^^^^^^^^^
 
-There are three ways to get ``numpy`` working in Python.  The first is
-to use :ref:`shell-support`.  You can simply ``load`` the
-module for the extension, and it will be added to the ``PYTHONPATH``
-in your current shell:
+There are four ways to get ``numpy`` working in Python.  The first is
+to use :ref:`shell-support`.  You can simply ``load`` the extension,
+and it will be added to the ``PYTHONPATH`` in your current shell:
 
 .. code-block:: console
 
@@ -1236,11 +1322,29 @@ in your current shell:
 Now ``import numpy`` will succeed for as long as you keep your current
 session open.
 
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Loading Extensions via Modules
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Instead of using Spack's environment modification capabilities through
+the ``spack load`` command, you can load numpy through your
+environment modules (using ``environment-modules`` or ``lmod``). This
+will also add the extension to the ``PYTHONPATH`` in your current
+shell.
+
+.. code-block:: console
+
+   $ module load <name of numpy module>
+
+If you do not know the name of the specific numpy module you wish to
+load, you can use the ``spack module tcl|lmod loads`` command to get
+the name of the module from the Spack spec.
+
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Activating Extensions in a View
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The second way to use extensions is to create a view, which merges the
+Another way to use extensions is to create a view, which merges the
 python installation along with the extensions into a single prefix.
 See :ref:`filesystem-views` for a more in-depth description of views and
 :ref:`cmd-spack-view` for usage of the ``spack view`` command.

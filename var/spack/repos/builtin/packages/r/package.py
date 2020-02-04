@@ -1,4 +1,4 @@
-# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2020 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -21,6 +21,7 @@ class R(AutotoolsPackage):
 
     extendable = True
 
+    version('3.6.2', sha256='bd65a45cddfb88f37370fbcee4ac8dd3f1aebeebe47c2f968fd9770ba2bbc954')
     version('3.6.1', sha256='5baa9ebd3e71acecdcc3da31d9042fb174d55a42829f8315f2457080978b1389')
     version('3.6.0', sha256='36fcac3e452666158e62459c6fc810adc247c7109ed71c5b6c3ad5fc2bf57509')
     version('3.5.3', sha256='2bfa37b7bd709f003d6b8a172ddfb6d03ddd2d672d6096439523039f7a8e678c')
@@ -109,18 +110,25 @@ class R(AutotoolsPackage):
         prefix = self.prefix
 
         tcl_config_path = join_path(spec['tcl'].prefix.lib, 'tclConfig.sh')
+        if not os.path.exists(tcl_config_path):
+            tcl_config_path = join_path(spec['tcl'].prefix,
+                                        'lib64', 'tclConfig.sh')
 
         config_args = [
             '--libdir={0}'.format(join_path(prefix, 'rlib')),
             '--enable-R-shlib',
             '--enable-BLAS-shlib',
             '--enable-R-framework=no',
+            '--without-recommended-packages',
             '--with-tcl-config={0}'.format(tcl_config_path),
             'LDFLAGS=-L{0} -Wl,-rpath,{0}'.format(join_path(prefix, 'rlib',
                                                             'R', 'lib')),
         ]
         if '^tk' in spec:
             tk_config_path = join_path(spec['tk'].prefix.lib, 'tkConfig.sh')
+            if not os.path.exists(tk_config_path):
+                tk_config_path = join_path(spec['tk'].prefix,
+                                           'lib64', 'tkConfig.sh')
             config_args.append('--with-tk-config={0}'.format(tk_config_path))
 
         if '+external-lapack' in spec:
@@ -168,7 +176,7 @@ class R(AutotoolsPackage):
     def r_lib_dir(self):
         return join_path('rlib', 'R', 'library')
 
-    def setup_dependent_environment(self, spack_env, run_env, dependent_spec):
+    def setup_dependent_build_environment(self, env, dependent_spec):
         # Set R_LIBS to include the library dir for the
         # extension and any other R extensions it depends on.
         r_libs_path = []
@@ -178,27 +186,28 @@ class R(AutotoolsPackage):
                 r_libs_path.append(join_path(d.prefix, self.r_lib_dir))
 
         r_libs_path = ':'.join(r_libs_path)
-        spack_env.set('R_LIBS', r_libs_path)
-        spack_env.set('R_MAKEVARS_SITE',
-                      join_path(self.etcdir, 'Makeconf.spack'))
+        env.set('R_LIBS', r_libs_path)
+        env.set('R_MAKEVARS_SITE',
+                join_path(self.etcdir, 'Makeconf.spack'))
 
         # Use the number of make_jobs set in spack. The make program will
         # determine how many jobs can actually be started.
-        spack_env.set('MAKEFLAGS', '-j{0}'.format(make_jobs))
+        env.set('MAKEFLAGS', '-j{0}'.format(make_jobs))
 
+    def setup_dependent_run_environment(self, env, dependent_spec):
         # For run time environment set only the path for dependent_spec and
         # prepend it to R_LIBS
         if dependent_spec.package.extends(self.spec):
-            run_env.prepend_path('R_LIBS', join_path(
+            env.prepend_path('R_LIBS', join_path(
                 dependent_spec.prefix, self.r_lib_dir))
 
-    def setup_environment(self, spack_env, run_env):
-        run_env.prepend_path('LIBRARY_PATH',
-                             join_path(self.prefix, 'rlib', 'R', 'lib'))
-        run_env.prepend_path('LD_LIBRARY_PATH',
-                             join_path(self.prefix, 'rlib', 'R', 'lib'))
-        run_env.prepend_path('CPATH',
-                             join_path(self.prefix, 'rlib', 'R', 'include'))
+    def setup_run_environment(self, env):
+        env.prepend_path('LIBRARY_PATH',
+                         join_path(self.prefix, 'rlib', 'R', 'lib'))
+        env.prepend_path('LD_LIBRARY_PATH',
+                         join_path(self.prefix, 'rlib', 'R', 'lib'))
+        env.prepend_path('CPATH',
+                         join_path(self.prefix, 'rlib', 'R', 'include'))
 
     def setup_dependent_package(self, module, dependent_spec):
         """Called before R modules' install() methods. In most cases,

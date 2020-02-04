@@ -1,4 +1,4 @@
-# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2020 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -17,6 +17,10 @@ class BppPhyl(CMakePackage):
     depends_on('cmake@2.6:', type='build')
     depends_on('bpp-core')
     depends_on('bpp-seq')
+
+    # Clarify isnan's namespace, because Fujitsu compiler can't
+    # resolve ambiguous of 'isnan' function.
+    patch('clarify_isnan.patch', when='%fj')
 
     def cmake_args(self):
         return ['-DBUILD_TESTING=FALSE']

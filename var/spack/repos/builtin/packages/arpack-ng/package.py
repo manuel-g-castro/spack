@@ -1,4 +1,4 @@
-# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2020 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -58,6 +58,10 @@ class ArpackNg(Package):
 
     patch('make_install.patch', when='@3.4.0')
     patch('parpack_cmake.patch', when='@3.4.0')
+
+    # Fujitsu compiler does not support 'isnan' function.
+    # isnan: function that determines whether it is NaN.
+    patch('incompatible_isnan_fix.patch', when='%fj')
 
     depends_on('blas')
     depends_on('lapack')

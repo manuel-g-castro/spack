@@ -1,4 +1,4 @@
-# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2020 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -348,6 +348,14 @@ def test_fj_flags():
     ('clang version 8.0.0-3~ubuntu18.04.1 (tags/RELEASE_800/final)\n'
      'Target: x86_64-pc-linux-gnu\n'
      'Thread model: posix\n'
+     'InstalledDir: /usr/bin\n', '8.0.0'),
+    ('clang version 9.0.1-+201911131414230800840845a1eea-1~exp1~20191113231141.78\n' # noqa
+     'Target: x86_64-pc-linux-gnu\n'
+     'Thread model: posix\n'
+     'InstalledDir: /usr/bin\n', '9.0.1'),
+    ('clang version 8.0.0-3 (tags/RELEASE_800/final)\n'
+     'Target: aarch64-unknown-linux-gnu\n'
+     'Thread model: posix\n'
      'InstalledDir: /usr/bin\n', '8.0.0')
 ])
 def test_clang_version_detection(version_str, expected_version):
@@ -469,3 +477,11 @@ def test_cce_version_detection(version_str, expected_version):
 def test_fj_version_detection(version_str, expected_version):
     version = spack.compilers.fj.Fj.extract_version_from_output(version_str)
     assert version == expected_version
+
+
+@pytest.mark.parametrize('compiler_spec,expected_result', [
+    ('gcc@4.7.2', False), ('clang@3.3', False), ('clang@8.0.0', True)
+])
+def test_detecting_mixed_toolchains(compiler_spec, expected_result, config):
+    compiler = spack.compilers.compilers_for_spec(compiler_spec).pop()
+    assert spack.compilers.is_mixed_toolchain(compiler) is expected_result

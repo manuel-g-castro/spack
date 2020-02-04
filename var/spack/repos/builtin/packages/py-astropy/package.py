@@ -1,4 +1,4 @@
-# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2020 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -60,11 +60,15 @@ class PyAstropy(PythonPackage):
     depends_on('expat')
 
     def build_args(self, spec, prefix):
-        return [
-            '-j', str(make_jobs),
+        args = [
             '--use-system-libraries',
             '--use-system-erfa',
             '--use-system-wcslib',
             '--use-system-cfitsio',
             '--use-system-expat'
         ]
+
+        if spec.satisfies('^python@3:'):
+            args.extend(['-j', str(make_jobs)])
+
+        return args

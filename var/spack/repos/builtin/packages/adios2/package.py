@@ -1,4 +1,4 @@
-# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2020 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -32,7 +32,8 @@ class Adios2(CMakePackage):
             description='Enable position independent code '
                         '(for usage of static in shared downstream deps)')
     variant('endian_reverse', default=False,
-            description='Enable Endian Interoperability')
+            description='Enable endian conversion if a different '
+                        'endianness is detected between write and read.')
 
     # compression libraries
     variant('blosc', default=True,
@@ -51,6 +52,8 @@ class Adios2(CMakePackage):
             description='Enable the SST staging engine')
     variant('dataman', default=True,
             description='Enable the DataMan engine for WAN transports')
+    variant('dataspaces', default=False,
+            description='Enable support for DATASPACES')
     variant('ssc', default=True,
             description='Enable the SSC staging engine')
     variant('hdf5', default=False,
@@ -76,9 +79,15 @@ class Adios2(CMakePackage):
     depends_on('cmake@3.6.0:', type='build')
     depends_on('pkgconfig', type='build')
 
+    depends_on('libffi', when='+sst')            # optional in DILL
+    depends_on('libfabric@1.6.0:', when='+sst')  # optional in EVPath and SST
+    # depends_on('bison', when='+sst')     # optional in FFS, broken package
+    # depends_on('flex', when='+sst')      # optional in FFS, depends on BISON
+
     depends_on('mpi', when='+mpi')
-    depends_on('zeromq', when='+dataman')
-    depends_on('zeromq', when='@2.4: +ssc')
+    depends_on('libzmq', when='+dataman')
+    depends_on('libzmq', when='@2.4: +ssc')
+    depends_on('dataspaces@1.8.0:', when='+dataspaces')
 
     depends_on('hdf5', when='+hdf5')
     depends_on('hdf5+mpi', when='+hdf5+mpi')
@@ -99,6 +108,11 @@ class Adios2(CMakePackage):
     # Fix findmpi when called by dependees
     # See https://github.com/ornladios/ADIOS2/pull/1632
     patch('cmake-update-findmpi.patch', when='@2.4.0')
+
+    # Fix the signature of the builtin clear_cache function in the
+    # third-party dill library.
+    # See https://github.com/ornladios/ADIOS2/pull/1899
+    patch('2.5-fix-clear_cache.patch', when='@2.5.0')
 
     def cmake_args(self):
         spec = self.spec
@@ -138,6 +152,22 @@ class Adios2(CMakePackage):
                 'ON' if '+png' in spec else 'OFF'))
             args.append('-DADIOS2_USE_SSC={0}'.format(
                 'ON' if '+ssc' in spec else 'OFF'))
+
+        if self.spec.version >= Version('2.5.0'):
+            args.append('-DADIOS2_USE_DataSpaces={0}'.format(
+                'ON' if '+dataspaces' in spec else 'OFF'))
+
+        if '+sst' in spec:
+            args.extend([
+                # Broken dependency package
+                '-DCMAKE_DISABLE_FIND_PACKAGE_BISON=TRUE',
+                # Depends on ^
+                '-DCMAKE_DISABLE_FIND_PACKAGE_FLEX=TRUE',
+
+                # Not yet packaged
+                '-DCMAKE_DISABLE_FIND_PACKAGE_CrayDRC=TRUE',
+                '-DCMAKE_DISABLE_FIND_PACKAGE_NVSTREAM=TRUE'
+            ])
 
         if spec.satisfies('~shared'):
             args.append('-DCMAKE_POSITION_INDEPENDENT_CODE:BOOL={0}'.format(

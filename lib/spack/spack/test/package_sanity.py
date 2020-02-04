@@ -1,16 +1,22 @@
-# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2020 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 """This test does sanity checks on Spack's builtin package database."""
+import os.path
 import re
 
 import pytest
 
 import spack.fetch_strategy
+import spack.package
 import spack.paths
 import spack.repo
+import spack.util.executable as executable
+# A few functions from this module are used to
+# do sanity checks only on packagess modified by a PR
+import spack.cmd.flake8 as flake8
 import spack.util.crypto as crypto
 
 
@@ -134,3 +140,66 @@ def test_all_packages_use_sha256_checksums():
                     )
 
     assert [] == errors
+
+
+def test_api_for_build_and_run_environment():
+    """Ensure that every package uses the correct API to set build and
+    run environment, and not the old one.
+    """
+    failing = []
+    for pkg in spack.repo.path.all_packages():
+        add_to_list = (hasattr(pkg, 'setup_environment') or
+                       hasattr(pkg, 'setup_dependent_environment'))
+        if add_to_list:
+            failing.append(pkg)
+
+    msg = ('there are {0} packages using the old API to set build '
+           'and run environment [{1}], for further information see '
+           'https://github.com/spack/spack/pull/11115')
+    assert not failing, msg.format(
+        len(failing), ','.join(x.name for x in failing)
+    )
+
+
+@pytest.mark.skipif(
+    not executable.which('git'), reason='requires git to be installed'
+)
+def test_prs_update_old_api():
+    """Ensures that every package modified in a PR doesn't contain
+    deprecated calls to any method.
+    """
+    changed_package_files = [
+        x for x in flake8.changed_files() if flake8.is_package(x)
+    ]
+    failing = []
+    for file in changed_package_files:
+        if 'builtin.mock' not in file:  # don't restrict packages for tests
+            name = os.path.basename(os.path.dirname(file))
+            pkg = spack.repo.get(name)
+
+            failed = (hasattr(pkg, 'setup_environment') or
+                      hasattr(pkg, 'setup_dependent_environment'))
+            if failed:
+                failing.append(name)
+
+    msg = ('there are {0} packages using the old API to set build '
+           'and run environment [{1}], for further information see '
+           'https://github.com/spack/spack/pull/11115')
+    assert not failing, msg.format(
+        len(failing), ','.join(failing)
+    )
+
+
+def test_all_dependencies_exist():
+    """Make sure no packages have nonexisting dependencies."""
+    missing = {}
+    pkgs = [pkg for pkg in spack.repo.path.all_package_names()]
+    spack.package.possible_dependencies(
+        *pkgs, transitive=True, missing=missing)
+
+    lines = [
+        "%s: [%s]" % (name, ", ".join(deps)) for name, deps in missing.items()
+    ]
+    assert not missing, "These packages have missing dependencies:\n" + (
+        "\n".join(lines)
+    )

@@ -1,4 +1,4 @@
-# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2020 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -24,6 +24,9 @@ class Petsc(Package):
     version('develop', branch='master')
     version('xsdk-0.2.0', tag='xsdk-0.2.0')
 
+    version('3.12.3', sha256='91f77d7b0f54056f085b9e27938922db3d9bb1734a2e2a6d26f43d3e6c0cf631')
+    version('3.12.2', sha256='d874b2e198c4cb73551c2eca1d2c5d27da710be4d00517adb8f9eb3d6d0375e8')
+    version('3.12.1', sha256='b72d895d0f4a79acb13ebc782b47b26d10d4e5706d399f533afcd5b3dba13737')
     version('3.12.0', sha256='ba9ecf69783c7ebf05bd1c91dd1d4b38bf09b7a2d5f9a774aa6bb46deff7cb14')
     version('3.11.4', sha256='319cb5a875a692a67fe5b1b90009ba8f182e21921ae645d38106544aff20c3c1')
     version('3.11.3', sha256='199ad9650a9f58603b49e7fff7cd003ceb03aa231e5d37d0bf0496c6348eca81')
@@ -94,6 +97,8 @@ class Petsc(Package):
             description='Build for KNL')
     variant('X', default=False,
             description='Activate X support')
+    variant('batch', default=False,
+            description='Enable when mpiexec is not available to run binaries')
 
     # 3.8.0 has a build issue with MKL - so list this conflict explicitly
     conflicts('^intel-mkl', when='@3.8.0')
@@ -240,6 +245,8 @@ class Petsc(Package):
             '--with-blas-lapack-lib=%s' % lapack_blas.joined()
         ])
 
+        if '+batch' in spec:
+            options.append('--with-batch=1')
         if '+knl' in spec:
             options.append('--with-avx-512-kernels')
             options.append('--with-memalign=64')
@@ -372,19 +379,20 @@ class Petsc(Package):
                         '-pc_type', 'hypre',
                         '-pc_hypre_type', 'boomeramg')
 
-    def setup_environment(self, spack_env, run_env):
+    def setup_build_environment(self, env):
         # configure fails if these env vars are set outside of Spack
-        spack_env.unset('PETSC_DIR')
-        spack_env.unset('PETSC_ARCH')
+        env.unset('PETSC_DIR')
+        env.unset('PETSC_ARCH')
 
+    def setup_run_environment(self, env):
         # Set PETSC_DIR in the module file
-        run_env.set('PETSC_DIR', self.prefix)
-        run_env.unset('PETSC_ARCH')
+        env.set('PETSC_DIR', self.prefix)
+        env.unset('PETSC_ARCH')
 
-    def setup_dependent_environment(self, spack_env, run_env, dependent_spec):
+    def setup_dependent_build_environment(self, env, dependent_spec):
         # Set up PETSC_DIR for everyone using PETSc package
-        spack_env.set('PETSC_DIR', self.prefix)
-        spack_env.unset('PETSC_ARCH')
+        env.set('PETSC_DIR', self.prefix)
+        env.unset('PETSC_ARCH')
 
     @property
     def headers(self):
