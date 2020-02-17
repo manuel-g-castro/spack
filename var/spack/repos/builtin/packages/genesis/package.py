@@ -1,4 +1,4 @@
-# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2020 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -28,14 +28,12 @@ class Genesis(AutotoolsPackage):
     variant('openmp', default=True, description='Enable OpenMP.')
     variant('gpu', default=False, description='Enable GPU.')
     variant('single', default=False, description='Enable single precision.')
-    #variant('lapack', default=True, description='Use LAPACK.')
     variant('hmdisk', default=False, description='Enable huge molecule on hard disk.')
 
     conflicts('%clang', when='+openmp')
-    
+
     depends_on('mpi', type=('build', 'run'))
     depends_on('cuda', when='+gpu')
-    #depends_on('lapack', when='+lapack')
     depends_on('lapack')
 
     parallel = False
@@ -49,8 +47,6 @@ class Genesis(AutotoolsPackage):
             options.append('--enable-single')
         if '+hmdisk' in spec:
             options.append('--enable-hmdisk')
-        #if '~lapack' in spec:
-        #    options.append('--without-lapack')
         if '+gpu' in spec:
             options.append('--enable-gpu')
             options.append('--with-cuda=%s' % spec['cuda'].prefix)
@@ -70,4 +66,3 @@ class Genesis(AutotoolsPackage):
     def install(self, spec, prefix):
         make('install')
         install_tree('doc', prefix.share.doc)
-

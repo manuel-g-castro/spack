@@ -1,4 +1,4 @@
-# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2020 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -13,7 +13,7 @@ class Scale(MakefilePackage):
     a basic library for weather and climate model of the earth and planets
     aimed to be widely used in various models.
     The SCALE library is developed with co-design by researchers of
-    computational science and computer science.""" 
+    computational science and computer science."""
     homepage = "http://r-ccs-climate.riken.jp/scale/"
     url      = "http://r-ccs-climate.riken.jp/scale/download/archives/scale-5.3.4.tar.gz"
 
@@ -64,22 +64,22 @@ class Scale(MakefilePackage):
             raise InstallError('unsupported arch and compiler combination.')
         env['SCALE_SYS'] = scale_sys_str
 
+        # set SCALE_NETCDF_INCLUDE
+        nc_str = subprocess.Popen(('nc-config', '--cflags', '--fflags'),
+                                  stdout=subprocess.PIPE).communicate()[0]
         try:
-            env['SCALE_NETCDF_INCLUDE'] \
-                = subprocess.Popen(('nc-config', '--cflags', '--fflags'),
-                                   stdout=subprocess.PIPE).communicate()[0].replace('\n', ' ')
-        except: # for python3
-            env['SCALE_NETCDF_INCLUDE'] \
-                = subprocess.Popen(('nc-config', '--cflags', '--fflags'),
-                                   stdout=subprocess.PIPE).communicate()[0].decode().replace('\n', ' ')
+            env['SCALE_NETCDF_INCLUDE'] = nc_str.replace('\n', ' ')
+        except TypeError:  # for python3
+            env['SCALE_NETCDF_INCLUDE'] = nc_str.decode().replace('\n', ' ')
+
+        # set SCALE_NETCDF_LIBS
+        nc_str = subprocess.Popen(('nc-config', '--libs', '--flibs'),
+                                  stdout=subprocess.PIPE).communicate()[0]
         try:
-            env['SCALE_NETCDF_LIBS'] = \
-                subprocess.Popen(('nc-config', '--libs', '--flibs'),
-                                 stdout=subprocess.PIPE).communicate()[0].replace('\n', ' ')
-        except: # for python3
-            env['SCALE_NETCDF_LIBS'] \
-                = subprocess.Popen(('nc-config', '--libs', '--flibs'),
-                                   stdout=subprocess.PIPE).communicate()[0].decode().replace('\n', ' ')
+            env['SCALE_NETCDF_LIBS'] = nc_str.replace('\n', ' ')
+        except TypeError:  # for python3
+            env['SCALE_NETCDF_LIBS'] = nc_str.decode().replace('\n', ' ')
+
         make()
 
     def install(self, spec, prefix):

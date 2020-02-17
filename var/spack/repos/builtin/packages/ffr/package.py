@@ -1,4 +1,4 @@
-# Copyright 2013-2019 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2020 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
@@ -36,4 +36,5 @@ class Ffr(MakefilePackage):
         make('install')
 
         mkdirp(prefix.share.docs)
-        install(os.path.join('OPEN_FFR', 'Procedure_Linux_6_30.pdf'), prefix.share.docs)
+        install(os.path.join('OPEN_FFR', 'Procedure_Linux_6_30.pdf'),
+                prefix.share.docs)
