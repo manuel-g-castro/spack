@@ -15,7 +15,7 @@ class Eigenexa(AutotoolsPackage):
     homepage = "https://www.r-ccs.riken.jp/labs/lpnctrt/projects/eigenexa/"
     url      = "https://www.r-ccs.riken.jp/labs/lpnctrt/assets/img/EigenExa-2.4b.tgz"
 
-    version('2.6', url='file://{0}/EigenExa-2.6_20190903.tar.gz'.format(os.getcwd()),
+    version('2.6_20190903', url='file://{0}/EigenExa-2.6_20190903.tar.gz'.format(os.getcwd()),
              sha256='a72a2c8c5e5432378efcd0639d1dbbf4bd2bb2fcc142e3091e0660503bf2a398')
     version('2.4b', sha256='7c0fa47594af3f86a2ab583f2aaddcf6867212458b079a3436a819f05c39939c')
 
@@ -26,7 +26,10 @@ class Eigenexa(AutotoolsPackage):
 
     depends_on('mpi', type=('build', 'run'))
     depends_on('scalapack')
-    depends_on('netlib-lapack', when='^netlib-scalapack')
+
+    # In EigenExa, the combination of netlib-scalapack and openblas may give
+    # incorrect calculation results.
+    conflicts('^netlib-scalapack ^openblas')
 
     parallel = False
 
