@@ -1,0 +1,250 @@
+diff -urN Makefile.ORG Makefile
+--- Makefile.ORG	2020-02-26 11:10:32.000000000 +0900
++++ Makefile	2020-02-26 12:04:11.000000000 +0900
+@@ -19,12 +19,12 @@
+ TARGET  = FrontFlow_red_$(VERSION)
+ 
+ all:
+-	(cd src_metis_4.1_fflow_L; ./build ; cd .. ) 
+-	(cd src_pre/src        ; ./build ; cd ../.. ) 
+-	(cd src_main/src       ; ./build ; cd ../.. ) 
++	(cd src_metis_4.1_fflow_L; make ; cd .. ) 
++	(cd src_pre/src        ; make ; cd ../.. ) 
++	(cd src_main/src       ; make ; cd ../.. ) 
+ #	(cd sound_analyzer     ; ./build ; cd .. ) 
+ #	(cd gfconv             ; ./build ; cd .. ) 
+-	(cd FFR2VIZ/src        ; ./build ; cd ../.. )
++	(cd FFR2VIZ/src        ; make ; cd ../.. )
+ 
+ release:
+ 	(rm -fr $(TARGET) ; mkdir $(TARGET))
+@@ -129,12 +129,12 @@
+ 
+ clean:
+ 	(rm -fr $(TARGET))
+-	(cd src_metis_4.1_fflow_L; ./build clean ; cd .. ) 
+-	(cd src_pre/src        ; ./build clean ; cd ../.. ) 
+-	(cd src_main/src       ; ./build clean ; cd ../.. ) 
++	(cd src_metis_4.1_fflow_L; make clean ; cd .. ) 
++	(cd src_pre/src        ; make clean ; cd ../.. ) 
++	(cd src_main/src       ; make clean ; cd ../.. ) 
+ #	(cd sound_analyzer     ; ./build clean ; cd .. ) 
+ #	(cd gfconv             ; ./build clean ; cd .. ) 
+-	(cd FFR2VIZ/src        ; ./build clean ; cd ../.. ) 
++	(cd FFR2VIZ/src        ; make clean ; cd ../.. ) 
+ 
+ clean_all: clean
+ 	(cd src_pre        ; rm -fr ./mods_* ./prefflow_* ./libprefflow_* ; cd .. ) 
+@@ -158,3 +158,11 @@
+ 	(cd FFR2VIZ/src    ; rm -fr *~ *.f_* _*.f ; cd ../../ )
+ 	(cd src_user       ; rm -f  *.o *~ ; cd .. )
+ #	(cd src_user       ; rm -f  *.o *~ *.f_* _*.f ; cd .. )
++
++install: bin_FFR/fflowS bin_FFR/fflowHPC bin_FFR/prefflow bin_FFR/ffr2viz bin_FFR/ffrmovie
++	install -d $(PREFIX)/bin
++	install bin_FFR/fflowS $(PREFIX)/bin
++	install bin_FFR/fflowHPC $(PREFIX)/bin
++	install bin_FFR/prefflow $(PREFIX)/bin
++	install bin_FFR/ffr2viz $(PREFIX)/bin
++	install bin_FFR/ffrmovie $(PREFIX)/bin
+diff -urN Makefile.in.ORG Makefile.in
+--- Makefile.in.ORG	2020-02-26 10:57:49.000000000 +0900
++++ Makefile.in	2020-02-26 11:01:48.000000000 +0900
+@@ -4,7 +4,7 @@
+ ###
+ 
+ ### compile for OS
+-OS = CYGWIN_NT
++OS = $(shell uname -s)
+ 
+ ### Fortran compiler related macros
+ F90 = gfortran
+@@ -25,8 +25,7 @@
+ 
+ 
+ ### MPI related macros
+-MPI_HOME = /home/onishi/mpich2-install
+-MPI_F90 = $(MPI_HOME)/bin/mpif90 $(FOPTIONS)
+-MPI_INC = -I$(MPI_HOME)/include
++MPI_F90 = mpif90 $(FOPTIONS)
++MPI_INC = 
+ MPI_LIBS = 
+ # eof
+diff -urN src_pre/src/Makefile.in.ORG src_pre/src/Makefile.in
+--- src_pre/src/Makefile.in.ORG	2020-02-26 11:07:40.000000000 +0900
++++ src_pre/src/Makefile.in	2020-02-26 11:08:29.000000000 +0900
+@@ -4,7 +4,7 @@
+ ###
+ 
+ ### compile for OS
+-OS = CYGWIN_NT
++OS = $(shell uname -s)
+ 
+ ### Fortran compiler related macros
+ F90 = gfortran
+@@ -14,7 +14,7 @@
+ 
+ ### C compiler related macros
+ CC = gcc
+-COPTIONS = -w -O2 -D__VC__
++COPTIONS = -w -O2
+ 
+ 
+ ### C linker related macros
+@@ -24,8 +24,8 @@
+ 
+ 
+ ### MPI related macros
+-MPI_HOME = C:\\Program\ Files\\MPICH2
++MPI_HOME = 
+ MPI_F90 = $(F90) $(FOPTIONS)
+-MPI_INC = -I$(MPI_HOME)/include
+-MPI_LIBS = -L$(MPI_HOME)/lib -lfmpich2g
++MPI_INC = 
++MPI_LIBS = 
+ # eof
+diff -urN FFR2VIZ/src/Makefile.in.ORG FFR2VIZ/src/Makefile.in
+--- FFR2VIZ/src/Makefile.in.ORG	2020-02-26 11:09:39.000000000 +0900
++++ FFR2VIZ/src/Makefile.in	2020-02-26 11:10:12.000000000 +0900
+@@ -4,7 +4,7 @@
+ ###
+ 
+ ### compile for OS
+-OS = CYGWIN_NT
++OS = $(shell uname -s)
+ 
+ ### Fortran compiler related macros
+ F90 = gfortran
+@@ -25,8 +25,8 @@
+ 
+ 
+ ### MPI related macros
+-MPI_HOME = /home/onishi/mpich2-install
++MPI_HOME = 
+ MPI_F90 = $(MPI_HOME)/bin/mpif90 $(FOPTIONS)
+-MPI_INC = -I$(MPI_HOME)/include
++MPI_INC = 
+ MPI_LIBS = 
+ # eof
+diff -urN src_metis_4.1_fflow_L/Makefile.in.ORG src_metis_4.1_fflow_L/Makefile.in
+--- src_metis_4.1_fflow_L/Makefile.in.ORG	2020-02-26 11:06:29.000000000 +0900
++++ src_metis_4.1_fflow_L/Makefile.in	2020-02-26 11:07:19.000000000 +0900
+@@ -4,7 +4,7 @@
+ ###
+ 
+ ### compile for OS
+-OS = CYGWIN_NT
++OS = $(shell uname -s)
+ 
+ ### Fortran compiler related macros
+ F90 = gfortran
+@@ -14,7 +14,7 @@
+ 
+ ### C compiler related macros
+ CC = gcc
+-COPTIONS = -w -O2 -D__VC__
++COPTIONS = -w -O2
+ 
+ 
+ ### C linker related macros
+@@ -24,8 +24,8 @@
+ 
+ 
+ ### MPI related macros
+-MPI_HOME = C:\\Program\ Files\\MPICH2
++MPI_HOME = 
+ MPI_F90 = $(F90) $(FOPTIONS)
+-MPI_INC = -I$(MPI_HOME)/include
+-MPI_LIBS = -L$(MPI_HOME)/lib -lfmpich2g
++MPI_INC = 
++MPI_LIBS = 
+ # eof
+diff -urN src_main/src/Makefile.in.ORG src_main/src/Makefile.in
+--- src_main/src/Makefile.in.ORG	2020-02-26 11:08:50.000000000 +0900
++++ src_main/src/Makefile.in	2020-02-26 11:34:57.000000000 +0900
+@@ -4,19 +4,19 @@
+ ###
+ 
+ ### compile for OS
+-OS = CYGWIN_NT
++OS = $(shell uname -s)
+ 
+ ### Fortran compiler related macros
+ F90 = mpif90
+ F90LINKER = mpif90
+ #FOPTIONS = -g -ffixed-line-length-132 -fconvert=big-endian -finit-real=nan -ffpe-trap=invalid,zero,overflow -fbounds-check -fbacktrace
+ #FOPTIONS = -ffixed-line-length-132 -O3 -fconvert=big-endian 
+-FOPTIONS = -pg -ffixed-line-length-132 -O3 -fconvert=big-endian 
++FOPTIONS = -ffixed-line-length-132 -O3 -fconvert=big-endian 
+ 
+ 
+ ### C compiler related macros
+ CC = gcc
+-COPTIONS = -w -O2 -D__VC__
++COPTIONS = -w -O2
+ 
+ 
+ ### C linker related macros
+diff -urN src_main/src/Makefile.ORG src_main/src/Makefile
+--- src_main/src/Makefile.ORG	2020-02-26 13:48:19.000000000 +0900
++++ src_main/src/Makefile	2020-02-26 13:48:49.000000000 +0900
+@@ -114,7 +114,7 @@
+ #	echo '//     link $< ...'
+ #	echo $(F90LINKER) $(FOBJS) $(COBJS) $(UOBJS) -o $(FFR_SINGLE) $(FLIBS)
+ 	$(F90LINKER) $(FFLAGS) $(OBJSINGLE) -o $(FFR_SINGLE) $(FLIBS)
+-	cp -f $(FFR_SINGLE) $(INSTALL_DIR)/fflowS
++#	cp -f $(FFR_SINGLE) $(INSTALL_DIR)/fflowS
+ 	cp -f $(FFR_SINGLE) ../../bin_FFR/fflowS
+ 
+ single_lib: $(OBJSINGLE) install
+@@ -126,7 +126,7 @@
+ #	echo '//     link $< ...'
+ 	$(MPI_F90) $(OBJPARALLEL) -o $(FFR_PARALLEL) $(FLIBS) $(MPI_LIBS)
+ #	$(MPI_F90) $(FFLAGS) $(MPI_INC) $(OBJPARALLEL) -o $(FFR_PARALLEL) $(FLIBS) $(MPI_LIBS)
+-	cp -f $(FFR_PARALLEL) $(INSTALL_DIR)/fflowHPC
++#	cp -f $(FFR_PARALLEL) $(INSTALL_DIR)/fflowHPC
+ 	cp -f $(FFR_PARALLEL) ../../bin_FFR/fflowHPC
+ 
+ parallel_lib: $(OBJPARALLEL) install
+diff -urN src_pre/src/Makefile.ORG src_pre/src/Makefile
+--- src_pre/src/Makefile.ORG	2020-02-26 13:50:16.000000000 +0900
++++ src_pre/src/Makefile	2020-02-26 13:51:05.000000000 +0900
+@@ -84,7 +84,7 @@
+ all: pre pre_lib
+ pre: $(OBJPRE)
+ 	$(F90LINKER) $(FFLAGS) $(OBJPRE) -o $(FFR_PRE) $(FLIBS) $(LIBPRE)
+-	cp -f $(FFR_PRE) $(INSTALL_DIR)/prefflow
++#	cp -f $(FFR_PRE) $(INSTALL_DIR)/prefflow
+ 	cp -f $(FFR_PRE) ../../bin_FFR/prefflow
+ 
+ pre_lib: $(OBJPRE) install
+@@ -93,7 +93,7 @@
+ 
+ debug: $(OBJPRE)
+ 	$(F90LINKER) $(FDEBUG) $(OBJPRE) -o $(FFR_PRE) $(FLIBS) $(LIBPRE)
+-	cp -f $(FFR_PRE) $(INSTALL_DIR)/prefflow
++#	cp -f $(FFR_PRE) $(INSTALL_DIR)/prefflow
+ 
+ $(OBJMAIN): $(MAIN)
+ 	$(F90)  $(FFLAGS) -c $? -o $@
+diff -urN FFR2VIZ/src/Makefile.ORG FFR2VIZ/src/Makefile
+--- FFR2VIZ/src/Makefile.ORG	2020-02-26 13:52:33.000000000 +0900
++++ FFR2VIZ/src/Makefile	2020-02-26 13:53:17.000000000 +0900
+@@ -82,7 +82,7 @@
+ all: viz viz_lib movie movie_lib
+ viz: $(OBJVIZ)
+ 	$(F90LINKER) $(FFLAGS) $(OBJVIZ) -o $(FFR_VIZ) $(FLIBS)
+-	cp -f $(FFR_VIZ) $(INSTALL_DIR)/ffr2viz
++#	cp -f $(FFR_VIZ) $(INSTALL_DIR)/ffr2viz
+ 	cp -f $(FFR_VIZ) ../../bin_FFR/ffr2viz
+ viz_lib: $(OBJVIZ) install
+ 	$(AR) $(FFR_VIZ_LIB) $(OBJVIZ)
+@@ -90,7 +90,7 @@
+ 
+ movie: $(OBJMOVIE)
+ 	$(F90LINKER) $(FFLAGS) $(OBJMOVIE) -o $(FFR_MOVIE) $(FLIBS)
+-	cp -f $(FFR_MOVIE) $(INSTALL_DIR)/ffrmovie
++#	cp -f $(FFR_MOVIE) $(INSTALL_DIR)/ffrmovie
+ 	cp -f $(FFR_MOVIE) ../../bin_FFR/ffrmovie
+ 
+ movie_lib: $(OBJMOVIE) install
