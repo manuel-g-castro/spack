@@ -86,3 +86,5 @@ class Scale(MakefilePackage):
         make('install')
 
         install_tree('doc', prefix.share.docs)
+        install_tree(os.path.join('scale-rm', 'test'),
+                     os.path.join(prefix.share, 'test'))
