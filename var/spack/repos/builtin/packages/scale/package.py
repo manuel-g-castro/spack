@@ -21,7 +21,6 @@ class Scale(MakefilePackage):
     version('5.2.6', '8049ae8bb96127236fefd91547d4cd6e')
 
     depends_on('mpi', type=('build', 'link', 'run'))
-    depends_on('hdf5+hl')
     depends_on('netcdf-c')
     depends_on('netcdf-fortran')
 
