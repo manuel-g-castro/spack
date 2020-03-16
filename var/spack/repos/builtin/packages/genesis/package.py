@@ -31,6 +31,7 @@ class Genesis(AutotoolsPackage):
     variant('hmdisk', default=False, description='Enable huge molecule on hard disk.')
 
     conflicts('%clang', when='+openmp')
+    conflicts('~openmp', when='@:1.4.0')
 
     depends_on('mpi', type=('build', 'run'))
     depends_on('cuda', when='+gpu')
@@ -50,7 +51,6 @@ class Genesis(AutotoolsPackage):
         if '+gpu' in spec:
             options.append('--enable-gpu')
             options.append('--with-cuda=%s' % spec['cuda'].prefix)
-            options.append('--enable-single')
         return options
 
     def configure(self, spec, prefix):
