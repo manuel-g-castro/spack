@@ -29,7 +29,11 @@ class Eigenexa(AutotoolsPackage):
 
     # In EigenExa, the combination of netlib-scalapack and openblas may give
     # incorrect calculation results.
-    conflicts('^netlib-scalapack ^openblas')
+    cmsg = '\nThe combination of netlib-scalapack and openblas can cause ' \
+           + 'incorrect calculation results of eigenexa.\n' \
+           + 'You can use netlib-lapack instead of openblas by specifying ' \
+           + '"^netlib-lapack".'
+    conflicts('^netlib-scalapack ^openblas', msg=cmsg)
 
     parallel = False
 
