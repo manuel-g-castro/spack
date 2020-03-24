@@ -32,6 +32,22 @@ class FfrHpc(MakefilePackage):
     def setup_environment(self, build_env, run_env):
         build_env.set('PREFIX', self.prefix)
 
+    def X_do_stage(self, mirror_only=False):
+        chmod = which('chmod')
+        tar = which('tar')
+
+        self.stage.create()
+        self.do_fetch(mirror_only)
+
+        expand_dir = os.path.join(self.stage.path, 'spack-expanded-archive')
+        mkdirp(expand_dir)
+        tar('xvfz', self.stage.archive_file, '-C', expand_dir)
+        chmod('-R', '+w', expand_dir)
+
+        src_dir = os.path.join(expand_dir, 'FFR-Aero-HPC')
+        shutil.move(src_dir, self.stage.source_path)
+        return
+
     def build(self, spec, prefix):
         debug = ''
         if '+pg' in self.spec:
