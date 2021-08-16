@@ -1,0 +1,38 @@
+From d7478d91e9122dafcabcfc4d53e5007e9febe047 Mon Sep 17 00:00:00 2001
+From: Gilles Gouaillardet <gilles@rist.or.jp>
+Date: Wed, 16 Sep 2020 22:21:22 +0900
+Subject: [PATCH] hardware: only check RDTSCP on x86 platforms
+
+This is consistent with docs/release-notes/2021/major/portability.rst
+---
+ src/gromacs/hardware/printhardware.cpp | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/src/gromacs/hardware/printhardware.cpp b/src/gromacs/hardware/printhardware.cpp
+index 616b7b9e09..c516a21225 100644
+--- a/src/gromacs/hardware/printhardware.cpp
++++ b/src/gromacs/hardware/printhardware.cpp
+@@ -60,6 +60,8 @@
+ #include "gromacs/utility/stringutil.h"
+ #include "gromacs/utility/sysinfo.h"
+ 
++#include "architecture.h"
++
+ //! Constant used to help minimize preprocessed code
+ static constexpr bool bGPUBinary = (GMX_GPU != 0);
+ 
+@@ -387,6 +389,9 @@ void gmx_print_detected_hardware(FILE*                fplog,
+         gmx::simdCheck(static_cast<gmx::SimdType>(hwinfo->simd_suggest_min), fplog, warnToStdErr);
+     }
+ 
+-    /* For RDTSCP we only check on our local node and skip the MPI reduction */
+-    check_use_of_rdtscp_on_this_cpu(mdlog, cpuInfo);
++    /* For RDTSCP we only check on our local node and skip the MPI reduction, only on x86 */
++    if (gmx::c_architecture == gmx::Architecture::X86)
++    {
++        check_use_of_rdtscp_on_this_cpu(mdlog, cpuInfo);
++    }
+ }
+-- 
+GitLab
+
