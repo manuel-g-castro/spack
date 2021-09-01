@@ -1,0 +1,108 @@
+diff --git a/cmake/gmxManageSimd.cmake b/cmake/gmxManageSimd.cmake
+index 46b75f2..df8ea4b 100644
+--- a/cmake/gmxManageSimd.cmake
++++ b/cmake/gmxManageSimd.cmake
+@@ -251,9 +251,11 @@ elseif(GMX_SIMD_ACTIVE STREQUAL "ARM_SVE")
+ 
+     # Note that GMX_RELAXED_DOUBLE_PRECISION is enabled by default in the top-level CMakeLists.txt
+ 
+-    if(NOT GMX_SIMD_ARM_SVE_LENGTH)
+-        set(GMX_SIMD_ARM_SVE_LENGTH 512)
+-    endif()
++    gmx_option_multichoice(
++        GMX_SIMD_ARM_SVE_LENGTH
++        "SVE vector length"
++        "512"
++        128 256 512 1024 2048 scalable)
+ 
+     if(GMX_SIMD_ARM_SVE_LENGTH STREQUAL "scalable")
+         if (GMX_DOUBLE)
+@@ -275,18 +277,20 @@ elseif(GMX_SIMD_ACTIVE STREQUAL "ARM_SVE")
+         add_definitions(-DGMX_SIMD_VLA=1)
+         set(SIMD_STATUS_MESSAGE "Enabling ARM (AArch64) SVE extensions for scalable vectors SIMD instructions using CXX flags: ${SIMD_ARM_NEON_ASIMD_CXX_FLAGS}")
+     else()
+-        add_definitions(-DGMX_SIMD_ARM_SVE_LENGTH=${GMX_SIMD_ARM_SVE_LENGTH})
++        gmx_find_simd_arm_sve_flags(SIMD_ARM_SVE_C_SUPPORTED SIMD_ARM_SVE_CXX_SUPPORTED
++                                    SIMD_ARM_SVE_C_FLAGS SIMD_ARM_SVE_CXX_FLAGS SIMD_ARM_SVE_FIXED_VECTOR_LENGTH)
+ 
+-        if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+-            add_definitions(-DGMX_SIMD_ARM_SVE_GNU=1)
+-        else()
+-            add_definitions(-DGMX_SIMD_ARM_SVE_GNU=0)
++        if(NOT SIMD_ARM_SVE_C_SUPPORTED OR NOT SIMD_ARM_SVE_CXX_SUPPORTED)
++            gmx_give_fatal_error_when_simd_support_not_found("ARM (AArch64) SVE SIMD" "particularly gcc version 10.1 or later, or disable SIMD support (slower)" "${SUGGEST_BINUTILS_UPDATE}")
+         endif()
+ 
++        # If multiple flags are neeed, make them into a list
++        string(REPLACE " " ";" SIMD_C_FLAGS ${SIMD_ARM_SVE_C_FLAGS})
++        string(REPLACE " " ";" SIMD_CXX_FLAGS ${SIMD_ARM_SVE_CXX_FLAGS})
++        set(GMX_SIMD_${GMX_SIMD_ACTIVE} 1)
+         option(GMX_SIMD_ARM_SVE_FULL_LENGTH "Always use full length vectors" ON)
+ 
+-        set(GMX_SIMD_${GMX_SIMD_ACTIVE} 1)
+-        set(SIMD_STATUS_MESSAGE "Enabling ARM (AArch64) SVE extensions without special flags.")
++        add_definitions(-DGMX_SIMD_ARM_SVE_GNU=${SIMD_ARM_SVE_FIXED_VECTOR_LENGTH})
+     endif()
+ 
+ elseif(GMX_SIMD_ACTIVE STREQUAL "IBM_VMX")
+diff --git a/cmake/gmxSimdFlags.cmake b/cmake/gmxSimdFlags.cmake
+index c8e9a8e..d874dca 100644
+--- a/cmake/gmxSimdFlags.cmake
++++ b/cmake/gmxSimdFlags.cmake
+@@ -341,6 +341,42 @@ function(gmx_find_simd_arm_neon_asimd_flags C_FLAGS_RESULT CXX_FLAGS_RESULT C_FL
+     set(${CXX_FLAGS_RESULT} ${SIMD_ARM_NEON_ASIMD_CXX_FLAGS_RESULT} CACHE INTERNAL "Result of test for Arm Neon Asimd C++ flags" FORCE)
+ endfunction()
+ 
++# Arm SVE (64-bit ARM)
++function(gmx_find_simd_arm_sve_flags C_FLAGS_RESULT CXX_FLAGS_RESULT C_FLAGS_VARIABLE CXX_FLAGS_VARIABLE FIXED_VECTOR_LENGTH)
++
++    gmx_find_flags(SIMD_ARM_SVE_C_FLAGS_RESULT SIMD_ARM_SVE_CXX_FLAGS_RESULT
++        "#include<arm_sve.h>
++         int main(){float32_t x __attribute((vector_size(${GMX_SIMD_ARM_SVE_LENGTH}/8))) = svdup_f32(0.5f); return 0;}"
++        TOOLCHAIN_C_FLAGS TOOLCHAIN_CXX_FLAGS
++        SIMD_ARM_SVE_C_FLAGS SIMD_ARM_SVE_CXX_FLAGS
++        "-msve-vector-bits=${GMX_SIMD_ARM_SVE_LENGTH}"
++        "-march=armv8.2-a+sve -msve-vector-bits=${GMX_SIMD_ARM_SVE_LENGTH}"
++        "-march=armv8.2a+sve -msve-vector-bits=${GMX_SIMD_ARM_SVE_LENGTH}")
++
++    if(${SIMD_ARM_SVE_C_FLAGS_RESULT})
++        set(${FIXED_VECTOR_LENGTH} 1 CACHE INTERNAL "Use fixed SVE vector length" FORCE)
++    else()
++        gmx_find_flags(SIMD_ARM_SVE_C_FLAGS_RESULT SIMD_ARM_SVE_CXX_FLAGS_RESULT
++            "#include<arm_sve.h>
++             typedef __sizeless_struct { svfloat32_t v; } svevec;
++             int main(){svevec v; v.v = svdup_f32(0.5f);; return 0;}"
++            TOOLCHAIN_C_FLAGS TOOLCHAIN_CXX_FLAGS
++            SIMD_ARM_SVE_C_FLAGS SIMD_ARM_SVE_CXX_FLAGS
++            "-march=armv8.2-a+sve"
++            "-march=armv8.2a+sve")
++        set(${FIXED_VECTOR_LENGTH} 0 CACHE INTERNAL "Use fixed SVE vector length" FORCE)
++    endif()
++
++    if(${SIMD_ARM_SVE_C_FLAGS_RESULT})
++        set(${C_FLAGS_VARIABLE} "${TOOLCHAIN_C_FLAGS} ${SIMD_ARM_SVE_C_FLAGS}" CACHE INTERNAL "C flags required for Arm SVE instructions")
++    endif()
++    if(${SIMD_ARM_SVE_CXX_FLAGS_RESULT})
++        set(${CXX_FLAGS_VARIABLE} "${TOOLCHAIN_CXX_FLAGS} ${SIMD_ARM_SVE_CXX_FLAGS}" CACHE INTERNAL "C++ flags required for Arm SVE instructions")
++    endif()
++    set(${C_FLAGS_RESULT} ${SIMD_ARM_SVE_C_FLAGS_RESULT} CACHE INTERNAL "Result of test for Arm SVE C flags" FORCE)
++    set(${CXX_FLAGS_RESULT} ${SIMD_ARM_SVE_CXX_FLAGS_RESULT} CACHE INTERNAL "Result of test for Arm SVE C++ flags" FORCE)
++endfunction()
++
+ # IBM VMX (power6)
+ function(gmx_find_simd_ibm_vmx_flags C_FLAGS_RESULT CXX_FLAGS_RESULT C_FLAGS_VARIABLE CXX_FLAGS_VARIABLE)
+ 
+diff --git a/src/config.h.cmakein b/src/config.h.cmakein
+index a9ee16e..2edc880 100644
+--- a/src/config.h.cmakein
++++ b/src/config.h.cmakein
+@@ -111,6 +111,9 @@
+
+ /* ARM (SVE) always use full length vectors */
+ #cmakedefine01 GMX_SIMD_ARM_SVE_FULL_LENGTH
++
++/* SVE vector length */
++#define GMX_SIMD_ARM_SVE_LENGTH @GMX_SIMD_ARM_SVE_LENGTH@
+ 
+ /* IBM VMX was selected as SIMD instructions (Power 6 and later) */
+ #cmakedefine01 GMX_SIMD_IBM_VMX

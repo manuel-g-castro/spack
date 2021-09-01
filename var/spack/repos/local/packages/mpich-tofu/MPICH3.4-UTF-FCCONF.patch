@@ -1,0 +1,180 @@
+--- spack-src/configure.ac	2021-01-21 03:04:56.000000000 +0900
++++ spack-src-fj/configure.ac	2021-03-08 10:39:30.975059712 +0900
+@@ -2910,6 +2910,9 @@
+     if test "$pac_cv_have_float16" = "yes" ; then
+         AC_DEFINE(HAVE_FLOAT16,1,[Define if _Float16 is supported])
+     fi
++    TYPE_FLOAT16=_Float16
++else
++    TYPE_FLOAT16=
+ fi
+ 
+ # ----------------------------------------------------------------------------
+@@ -3066,7 +3069,7 @@
+ for type in short int long long_long float double long_double wchar_t \
+     float_int double_int long_int short_int two_int long_double_int     \
+     _Bool float__Complex double__Complex long_double__Complex \
+-    _Float16; do
++    $TYPE_FLOAT16; do
+     eval len=\$ac_cv_sizeof_$type
+     if test -z "$len" ; then
+        len=0
+--- mpich.sav/autogen.sh	2021-03-09 11:59:57.000000000 +0900
++++ mpich-fj/autogen.sh	2021-03-09 14:24:16.000000000 +0900
+@@ -371,14 +371,14 @@ AC_INIT(foo,1.0)
+ AC_PROG_LIBTOOL
+ AC_OUTPUT
+ _EOF
+-        AUTORECONF="$autoreconf -I $libtoolm4dir"
++        AUTORECONF="$autoreconf -B $libtoolm4dir"
+         if (cd .tmp && $AUTORECONF -ivf >/dev/null 2>&1) ; then
+             new_autoreconf_works=yes
+         fi
+         rm -rf .tmp
+     fi
+     echo "$new_autoreconf_works"
+-    # If autoreconf accepts -I <libtool's m4 dir> correctly, use -I.
++    # If autoreconf accepts -B <libtool's m4 dir> correctly, use -B.
+     # If not, run libtoolize before autoreconf (i.e. for autoconf <= 2.63)
+     # This test is more general than checking the autoconf version.
+     if [ "$new_autoreconf_works" != "yes" ] ; then
+@@ -989,6 +989,8 @@ if [ "$do_build_configure" = "yes" ] ; t
+                 oracle_patch_requires_rebuild=no
+                 flang_patch_requires_rebuild=no
+                 arm_patch_requires_rebuild=no
++                fujitsu_patch_requires_rebuild=no
++                f77_patch_requires_rebuild=no
+                 ibm_patch_requires_rebuild=no
+                 nvc_patch_requires_rebuild=no
+                 sys_lib_dlsearch_path_patch_requires_rebuild=no
+@@ -1060,6 +1062,26 @@ if [ "$do_build_configure" = "yes" ] ; t
+                         # Remove possible leftovers, which don't imply a failure
+                         rm -f $amdir/confdb/libtool.m4.orig
+                         echo "done"
++                    else
++                        echo "failed"
++                    fi
++		    echo_n "Patching libtool.m4 for Fortran 77 compilers..."
++                    patch -N -s -l $amdir/confdb/libtool.m4 maint/patches/optional/confdb/f77.patch
++                    if [ $? -eq 0 ] ; then
++                        f77_patch_requires_rebuild=yes
++                        # Remove possible leftovers, which don't imply a failure
++                        rm -f $amdir/confdb/libtool.m4.orig
++                        echo "done"
++                    else
++                        echo "failed"
++                    fi
++                    echo_n "Patching libtool.m4 for Fujitsu Fortran compilers..."
++                    patch -N -s -l $amdir/confdb/libtool.m4 maint/patches/optional/confdb/fujitsu.patch
++                    if [ $? -eq 0 ] ; then
++			fujitsu_patch_requires_rebuild=yes
++                        # Remove possible leftovers, which don't imply a failure
++                        rm -f $amdir/confdb/libtool.m4.orig
++                        echo "done"
+                     else
+                         echo "failed"
+                     fi
+diff -rNu spack-src/maint/patches/optional/confdb/f77.patch spack-src-fj/maint/patches/optional/confdb/f77.patch
+--- spack-src/maint/patches/optional/confdb/f77.patch	1970-01-01 09:00:00.000000000 +0900
++++ spack-src-fj/maint/patches/optional/confdb/f77.patch	2021-03-08 12:36:25.742997550 +0900
+@@ -0,0 +1,18 @@
++--- libtool.m4.org	2021-03-03 16:21:54.800529915 +0900
+++++ libtool.m4	2021-03-03 16:29:34.959297925 +0900
++@@ -6291,6 +6291,7 @@
++ ## the running order or otherwise move them around unless you know exactly
++ ## what you are doing...
++ if test -n "$compiler"; then
+++  _LT_SYS_HIDDEN_LIBDEPS($1)
++   _LT_COMPILER_NO_RTTI($1)
++   _LT_COMPILER_PIC($1)
++   _LT_COMPILER_C_O($1)
++@@ -7829,6 +7830,7 @@
++     ## There is no encapsulation within the following macros, do not change
++     ## the running order or otherwise move them around unless you know exactly
++     ## what you are doing...
+++    _LT_SYS_HIDDEN_LIBDEPS($1)
++     _LT_COMPILER_PIC($1)
++     _LT_COMPILER_C_O($1)
++     _LT_COMPILER_FILE_LOCKS($1)
+diff -rNu spack-src/maint/patches/optional/confdb/f77.patch spack-src-fj/maint/patches/optional/confdb/fujitsu.patch
+--- spack-src/maint/patches/optional/confdb/fujitsu.patch	1970-01-01 09:00:00.000000000 +0900
++++ spack-src-fj/maint/patches/optional/confdb/fujitsu.patch	2021-03-08 12:36:25.742997550 +0900
+@@ -0,0 +1,78 @@
++--- libtool.m4.org     2021-04-26 09:28:18.000000000 +0900
+++++ libtool.m4 2021-04-26 10:00:23.000000000 +0900
++@@ -4285,6 +4285,12 @@
++       _LT_TAGVAR(lt_prog_compiler_pic, $1)='-fPIC'
++       ;;
++     esac
+++    case $cc_basename in
+++    fcc* | FCC* | frt*)
+++      _LT_TAGVAR(lt_prog_compiler_pic, $1)='-KPIC'
+++      _LT_TAGVAR(lt_prog_compiler_wl, $1)='-Wl,'
+++      ;;
+++    esac
++   else
++     case $host_os in
++       aix[[4-9]]*)
++@@ -4405,6 +4411,10 @@
++	    _LT_TAGVAR(lt_prog_compiler_pic, $1)='-qpic'
++	    _LT_TAGVAR(lt_prog_compiler_static, $1)='-qstaticlink'
++	    ;;
+++         fcc* | FCC* | frt*)
+++           _LT_TAGVAR(lt_prog_compiler_wl, $1)='-Wl,'
+++           _LT_TAGVAR(lt_prog_compiler_pic, $1)='-Kpic'
+++           ;;
++	  *)
++	    case `$CC -V 2>&1 | sed 5q` in
++	    *Sun\ C*)
++@@ -4628,6 +4638,10 @@
++         _LT_TAGVAR(lt_prog_compiler_pic, $1)="-Xcompiler $_LT_TAGVAR(lt_prog_compiler_pic, $1)"
++       fi
++       ;;
+++    fcc* | FCC* | frt*)
+++      _LT_TAGVAR(lt_prog_compiler_wl, $1)='-Wl,'
+++      _LT_TAGVAR(lt_prog_compiler_pic, $1)='-KPIC'
+++     ;;
++     esac
++   else
++     # PORTME Check for flag to pass linker flags through the system compiler.
++@@ -4750,6 +4764,10 @@
++         # ARM LLVM C/C++/Fortran
++         _LT_TAGVAR(lt_prog_compiler_wl, $1)='-Wl,'
++         ;;
+++      fcc* | FCC* | frt*)
+++        _LT_TAGVAR(lt_prog_compiler_wl, $1)='-Wl,'
+++        _LT_TAGVAR(lt_prog_compiler_pic, $1)='-KPIC'
+++      ;;
++       *)
++       case `$CC -V 2>&1 | sed 5q` in
++       *Sun\ Ceres\ Fortran* | *Sun*Fortran*\ [[1-7]].* | *Sun*Fortran*\ 8.[[0-3]]*)
++@@ -6448,6 +6467,13 @@
++       # what "hidden" libraries, object files and flags are used when
++       # linking a shared library.
++       output_verbose_link_cmd='$CC -shared $CFLAGS -v conftest.$objext 2>&1 | $GREP -v "^Configured with:" | $GREP "\-L"'
+++      case $cc_basename in
+++      fcc* | FCC* | frt*)
+++         output_verbose_link_cmd='$CC -shared -Knolargepage $CFLAGS -v conftest.$objext 2>&1 | $GREP -v "^Configured with:" | $GREP "\-L"'
+++         _LT_TAGVAR(archive_cmds, $1)='$CC -shared -Knolargepage $libobjs $deplibs $compiler_flags -Wl,-soname -Wl,$soname -o $lib'
+++          _LT_TAGVAR(archive_expsym_cmds, $1)='$CC -shared -Knolargepage $libobjs $deplibs $compiler_flags -Wl,-soname -Wl,$soname -Wl,-retain-symbols-file -Wl,$export_symbols -o $lib'
+++         ;;
+++      esac
++
++     else
++       GXX=no
++@@ -7917,6 +7945,15 @@
++         esac
++       fi
++         ;;
+++      linux* | k*bsd*-gnu | kopensolaris*-gnu | gnu*)
+++        case $cc_basename in
+++        fcc* | FCC* | frt*)
+++          output_verbose_link_cmd='$CC -Knolargepage $CFLAGS -v conftest.$objext 2>&1 | $GREP -v "^Configured with:" | $GREP "\-L"'
+++         archive_cmds='$CC -shared -Knolargepage $libobjs $deplibs $compiler_flags -Wl,-soname -Wl,$soname -o $lib'
+++          archive_expsym_cmds='$CC -shared -Knolargepage $libobjs $deplibs $compiler_flags -Wl,-soname -Wl,$soname -Wl,-retain-symbols-file -Wl,$export_symbols -o $lib'
+++          ;;
+++        esac
+++        ;;
++     esac
++     AC_MSG_RESULT([$enable_shared])
++

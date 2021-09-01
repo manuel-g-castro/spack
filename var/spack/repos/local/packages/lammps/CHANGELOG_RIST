@@ -1,0 +1,85 @@
+***** 13 Nov. 2020 *****
+Author: Yukihiro Ota (RIST) (yota@rist.or.jp) 
+
+package.py is made of that in v0.15.4 and the current
+master branch of spack git.
+
+* Summary of major changes
+1. Version list is updated, adding from 20201029 (stable version)
+to 20200602. For 20200630, a patch file is prepared to avoid an 
+error in linling (CMAKE_TUNE_DEFAULT in Clang).
+It seems to be an issue on CMake, but I'm not sure..
+2. New variant, mliap, is added. This variant is available from
+20200630 (See depend_on).
+3. Use fftw-api, instead of directly setting fftw. 
+4. Dependencies of latte and kokkos are modified.
+5. Add a setting of using BLAS and LAPACK for user-atc and 
+latte variants. 
+
+* TODO
++ To check kokkos with OpenMP and Atomic operation 
+support.
+
++ To check build with two kinds of variants, 
+latte and voronoi.
+
++ To add a specific archtecture setting of kokkos
+if that for A64FX is released. (I'm not sure when ...)
+
++ To tread KIM of the standard package of LAMMPS. This is 
+because package.py for kim-api has been already available.
+
++ Calculations with USER-ATC seems to be unstable
+in A64FX with FJ compiler, but I have not yet fully 
+resolved the origin.
+
+***** 26 Oct. 2020 *****
+Author: Yukihiro Ota (RIST) (yota@rist.or.jp) 
+
+package.py is made of that in v0.15.4. 
+The essentail part is completely equivalent to the recipe 
+at 16 Sep. 2020.
+
+TO-DO list is NOT changed.
+
+
+***** 16 Sep. 2020 *****
+Author: Yukihiro Ota (RIST) (yota@rist.or.jp) 
+
+YO replaces 'as-is' package.py with RIST version.
+The original package.py (v0.15.1) is in save/.
+Other files (*.patch and Makefile.inc) are the same
+as the original ones.
+
+* Summary of major changes
+1. When detecting Fujitsu compiler (i.e., %fj), a proper compiler 
+optimization flag is automatically set.
+Note that you can recover the original compiler flag, 
+which is automatically set by CMake, if build_type=MinSizeRel.
+
+2. A description on 'openmp' variant is added, to suggest  
+that users choose +user-omp or +kokkos (or BOTH) whenever 
+setting +openmp.
+
+3. Two new variants are added.
+   gzip:     To use gzip support
+   lmpsizes: To select integer type
+Note that +user-atc is NOT compatible for lmpsizes=bigbig.
+I add a conflict setting to package.py.
+
+4. Dependency checking on gzip, kokkos with OpenMP, 
+and zlib is added.
+
+* TODO
++ To check kokkos with OpenMP and Atomic operation 
+support.
+
++ To check build with two kinds of variants, 
+latte and voronoi.
+
++ To add a specific archtecture setting of kokkos
+if that for A64FX is released. (I'm not sure when ...)
+
++ To check usage of BLAS/LAPACK (and ScaLAPACK) via
+Fujitsu SSL2. Note that the relevant variatns are 
+latte and user-atc.
