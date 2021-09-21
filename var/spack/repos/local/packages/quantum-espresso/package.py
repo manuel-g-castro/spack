@@ -15,20 +15,29 @@ class QuantumEspresso(Package):
     """
 
     homepage = 'http://quantum-espresso.org'
-    url = 'https://gitlab.com/QEF/q-e/-/archive/qe-6.6/q-e-qe-6.6.tar.gz'
-    git = 'https://gitlab.com/QEF/q-e.git'
+    url = 'https://github.com/QEF/q-e/releases/download/qe-6.6/qe-6.6-ReleasePack.tgz'
+    git = 'https://github.com/QEF/q-e.git'
 
     maintainers = ['naromero77']
 
     version('develop', branch='develop')
-    version('6.6', sha256='924656cb083f52e5d2fe71ade05881389dac64b45316f1bdd6dee1c6170a672c', preferred=True)
-    version('6.5', sha256='258b2a8a6280e86dad779e5c56356d8b35dc96d12ff33dabeee914bc03d6d602')
-
+    version('6.7', sha256='8f06ea31ae52ad54e900a2f51afd5c70f78096d9dcf39c86c2b17dccb1ec9c87', 
+            url = 'https://github.com/QEF/q-e/releases/download/qe-6.7.0/qe-6.7-ReleasePack.tgz'
+            )
+    version('6.6', sha256='de6996b9f1bf480bcd0166d24e918f5ff3c8fdb710f59f781bc9d33819280eb5',
+            url = 'https://github.com/QEF/q-e/releases/download/qe-6.6/qe-6.6-ReleasePack.tgz'
+            )
+    version('6.5', sha256='b4a3a150d67f0f5f86df86c48e3d42f93daaee13a4b2509bb45f45c7fe84c573',
+            url = 'https://github.com/QEF/q-e/releases/download/qe-6.5/qe-6.5-ReleasePack.tgz'
+            )
     variant('mpi', default=True, description='Builds with mpi support')
     variant('openmp', default=True, description='Enables openMP support')
     variant('scalapack', default=True, description='Enables scalapack support')
     variant('fftw', default=True, description='Enables fftw support')
     variant('elpa', default=False, description='Uses elpa as an eigenvalue solver')
+
+    #version('6.5', sha256='b502215378f7dd629be5695aa9360f188cc0abe49b5f88f6ad51a8a5b98124c1',
+    #        url='https://github.com/QEF/q-e/releases/download/qe-6.5/qe-6.5-ReleasePack.tgz')
 
     # Support for HDF5 has been added starting in version 6.1.0 and is
     # still experimental, therefore we default to False for the variant
@@ -54,12 +63,18 @@ class QuantumEspresso(Package):
             description='Build QE-to-QMCPACK wave function converter')
 
     # Dependencies
-    # depends_on('fftw-api@3', when='+fftw3')
     depends_on('fftw-api@3')
     depends_on('mpi@3.1:', when='+mpi')
     depends_on('scalapack', when='+scalapack+mpi')
     depends_on('elpa+openmp', when='+elpa+openmp')
     depends_on('elpa~openmp', when='+elpa~openmp')
+
+# ---------------------------------------------------- Temporary
+#               ('FFTW_ARCH_PATH', spec['fftw-api'].prefix),  # Absolute
+#               ('LD_LIBRARY_PATH',
+#                foam_add_lib(
+#                    pkglib(spec['fftw-api'], '${BOOST_ARCH_PATH}'))),
+# ---------------------------------------------------- Temporary
 
     # SETUP_BUILD_ENVIRONMENT SECTION
     def setup_build_environment(self, env):
@@ -68,7 +83,7 @@ class QuantumEspresso(Package):
         env.set('IFLAGS', '-I./include -I./FoX/finclude -I../include -I')
         if '+fftw' in spec:
             env.set('DFLAGS', '-D__FFTW3')
-            fftw_prefix = spec['fujitsu-fftw'].prefix
+            fftw_prefix = spec['fftw-api'].prefix
             env.append_flags('IFLAGS', fftw_prefix.include)
         else:
             env.set('DFLAGS', '-D__FFTW')
@@ -77,8 +92,11 @@ class QuantumEspresso(Package):
         env.set('CPPFLAGS', '-traditional')
         env.set('FLIB_CNTL_BARRIER_ERR', 'FALSE')
         env.set('F90', self.compiler.fc)
-        env.set('CFLAGS', '-Kfast')
-        env.set('FFLAGS', '-Kfast')
+        env.set('CFLAGS', '-Kfast,openmp')
+        env.set('FFLAGS', '-Kfast,openmp')
+
+        if spec.satisfies('@6.7'):
+            env.append_flags('FFLAGS', '-X03 -Nalloc_assign')
 
         if '+mpi' in spec:
             env.append_flags('DFLAGS', '-D__MPI')
@@ -132,7 +150,7 @@ class QuantumEspresso(Package):
         if '+openmp' in spec:
             args.append('--enable-openmp')
         if '+scalapack' in spec:
-            args.append('--with-scalapack=yes')
+            args.append('--with-scalapack')
         return args
 
     def build(self, spec, prefix):
@@ -146,7 +164,8 @@ class QuantumEspresso(Package):
  
 
     # PATCHES SECTION
-    # Apply each patch file for QE-6.5 and QE-6.6 
+    # Apply each patch file for QE-6.7, QE-6.6 and QE-6.5 
+    patch('qe-6.7.patch', level=2, when='@6.7')
     patch('qe-6.6.patch', level=2, when='@6.6')
     patch('qe-6.5.patch', level=2, when='@6.5')
 
@@ -333,9 +352,16 @@ class QuantumEspresso(Package):
         if '^fujitsu-fftw@m:' in spec:
             fftw_prefix = spec['fujitsu-fftw'].prefix
             options.append('FFTW_INCLUDE={0}'.format(fftw_prefix.include))
+#              options.append('FFTW_INCLUDE={0}'.format(join_path(env['FFTW_ROOT'],'include')))
             fftw_ld_flags = spec['fujitsu-fftw:mpi,openmp'].libs.ld_flags
             options.append('FFT_LIBS={0}'.format(fftw_ld_flags))
-        #   options.append('FFT_LIBS={0}'.format(fftw_ld_flags + ' -lfftw3_mpi -lfftw3_omp'))
+#              options.append('FFT_LIBS={0}'.format(join_path(env['FFTW_ROOT'],'lib64')))
+
+#            if '+openmp' in spec:
+#               fftw_ld_flags = spec['fujitsu-fftw:mpi,openmp'].libs.ld_flags
+#            else:
+#               fftw_ld_flags = spec['fujitsu-fftw:mpi'].libs.ld_flags
+#            options.append('FFT_LIBS={0}'.format(fftw_ld_flags))
 
         # External BLAS and LAPACK requires the correct link line into
         # BLAS_LIBS, do no use LAPACK_LIBS as the autoconf scripts indicate
@@ -417,7 +443,7 @@ class QuantumEspresso(Package):
             make('all', 'epw')
         else:
             make('all')
-
+ 
         if 'platform=darwin' in spec:
             mkdirp(prefix.bin)
             install('bin/*.x', prefix.bin)

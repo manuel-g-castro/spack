@@ -24,6 +24,7 @@ class Gromacs(CMakePackage):
     maintainers = ['junghans', 'marvinbernhardt']
 
     version('master', branch='master')
+    version('2021.3', sha256='e109856ec444768dfbde41f3059e3123abdb8fe56ca33b1a83f31ed4575a1cc6')
     version('2021.2', sha256='d940d865ea91e78318043e71f229ce80d32b0dc578d64ee5aa2b1a4be801aadb')
     version('2021.1', sha256='bc1d0a75c134e1fb003202262fe10d3d32c59bbb40d714bc3e5015c71effe1e5')
     version('2021', sha256='efa78ab8409b0f5bf0fbca174fb8fbcf012815326b5c71a9d7c385cde9a8f87b')
@@ -97,6 +98,8 @@ class Gromacs(CMakePackage):
         multi=False
     )
     variant('opts', default=False, description='Extra nonbonded kernel optimizations')
+    variant('simd-kernels', default='builtin', description='External SIMD kernels')
+    variant('fft-kernel', default='builtin', description='External FFT kernel')
 
     depends_on('mpi', when='+mpi')
     # define matching plumed versions
@@ -136,6 +139,14 @@ class Gromacs(CMakePackage):
     patch('sve-2021.patch', when='@2021: +sve')
     patch('sve-2021-1.patch', when='@2021.2: +sve')
     patch('opts-2021.patch', when='@2021: +sve +opts')
+    patch('external-kernels.patch', when='@2021.3:')
+    patch('pme_simd.patch', when='@2021.3:')
+
+    flavor = ""
+
+    @property
+    def build_directory(self):
+        return join_path(super().build_directory, self.flavor)
 
     def patch(self):
         if '+plumed' in self.spec:
@@ -144,15 +155,14 @@ class Gromacs(CMakePackage):
     def cmake_args(self):
 
         options = []
+        suffix = ""
 
         if self.spec.satisfies('@2020:'):
             options.append('-DGMX_INSTALL_LEGACY_API=ON')
 
-        if '+mpi' in self.spec:
-            options.append('-DGMX_MPI:BOOL=ON')
-
         if '+double' in self.spec:
             options.append('-DGMX_DOUBLE:BOOL=ON')
+            suffix = "_d"
 
         if '+nosuffix' in self.spec:
             options.append('-DGMX_DEFAULT_SUFFIX:BOOL=OFF')
@@ -267,4 +277,31 @@ class Gromacs(CMakePackage):
         if '+sve' in self.spec or '+opts' in self.spec:
             options.append('-DGMX_VERSION_STRING_OF_FORK=fugaku')
 
+        if self.flavor == "parallel":
+            options.append('-DGMX_MPI:BOOL=ON')
+            suffix = "_mpi" + suffix
+
+        if self.spec.variants['simd-kernels'].value != 'builtin':
+            options.append('-DGMX_2XMM_USER={0}'.format(self.spec.variants['simd-kernels'].value+"/libsimd_2xmm"+suffix+".a"))
+            options.append('-DGMX_4XM_USER={0}'.format(self.spec.variants['simd-kernels'].value+"/libsimd_4xm"+suffix+".a"))
+
+        if self.spec.variants['fft-kernel'].value != 'builtin':
+            options.append('-DGMX_FFT_USER={0}'.format(self.spec.variants['fft-kernel'].value+"/libfft"+suffix+".a"))
+
         return options
+
+    def cmake(self, spec, prefix):
+        self.flavors = [ 'serial' ]
+        if '+mpi' in self.spec:
+            self.flavors.append('parallel')
+
+        for self.flavor in self.flavors:
+            super().cmake(spec, prefix)
+
+    def build(self, spec, prefix):
+        for self.flavor in self.flavors:
+            super().build(spec, prefix)
+
+    def install(self, spec, prefix):
+        for self.flavor in self.flavors:
+            super().install(spec, prefix)
