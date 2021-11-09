@@ -14,6 +14,8 @@ class MpichTofu(MakefilePackage):
     git      = "https://github.com/yutaka-ishikawa/mpich-tofu.git"
 
     version('master', branch='master')
+    # for mpiexec
+    depends_on('fujitsu-mpi%fj', type='run')
 
     resource(name='utf', git='https://github.com/yutaka-ishikawa/utf.git', branch='fast')
     resource(name='mpich', git='https://github.com/pmodels/mpich.git', commit='169740255305011686c1781e3554f83eea448212', submodules=True)
@@ -59,6 +61,9 @@ class MpichTofu(MakefilePackage):
         env.set('MPICXX', join_path(self.prefix.bin, 'mpic++'))
         env.set('MPIF77', join_path(self.prefix.bin, 'mpif77'))
         env.set('MPIF90', join_path(self.prefix.bin, 'mpif90'))
+        fjmpispec = self.spec['fujitsu-mpi']
+        if hasattr(fjmpispec, 'prefix'):
+            env.append_path('LD_LIBRARY_PATH', fjmpispec.prefix.lib64)
 
     def setup_dependent_build_environment(self, env, dependent_spec):
         self.setup_run_environment(env)
@@ -144,3 +149,4 @@ class MpichTofu(MakefilePackage):
     def install(self, spec, prefix):
         with working_dir(join_path('utf', 'src', 'mpi_vbg')):
             make('install')
+        copy(prefix.bin.mpich_exec, prefix.bin.mpirun)

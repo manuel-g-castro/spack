@@ -53,6 +53,18 @@ alternatively one can decide to load only the package or only
 the dependencies"""
     )
 
+    
+import os
+import spack.log
+
+logid = os.environ.get('PJM_JOBID')
+if logid:
+    logid += '_' + os.environ.get('PJM_SUBJOBID')
+else:
+    logid = '0000000_0000000'
+    
+spack.log.init_logfile(logid)
+
 
 import os
 import spack.log
@@ -72,7 +84,7 @@ def load(parser, args):
              for spec in spack.cmd.parse_specs(args.specs)]
 
     spack.log.output_specs(specs)
-    
+
     if not args.shell:
         specs_str = ' '.join(args.specs) or "SPECS"
         spack.cmd.common.shell_init_instructions(

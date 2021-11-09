@@ -2,11 +2,11 @@
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
-#---Modified-by-Yukihiro-Ota-in-RIST-on-3Feb2021-start-
+#---Modified-by-Yukihiro-Ota-in-RIST-on-13Sep2021-start-
 # The original package.py file comes from 
 #      ${SPACK_ROOT}/var/spack/repos/builtin/packages/lammps
-# in Spack v0.16. 
-#---Modified-by-Yukihiro-Ota-in-RIST-on-3Feb2021-end-
+# in Spack v0.16.2
+#---Modified-by-Yukihiro-Ota-in-RIST-on-13Sep2021-end-
 
 from spack import *
 import datetime as dt
@@ -27,14 +27,14 @@ class Lammps(CMakePackage, CudaPackage):
     tags = ['ecp', 'ecp-apps']
 
     version('master', branch='master')
-#---Modified-by-Yukihiro-Ota-in-RIST-on-3Feb2021-start-
-# Add versions from 20201029 (stable ver.) to 20200824
+    #---Modified-by-Yukihiro-Ota-in-RIST-on-13Sep2021-start-
+    # Add versions from 20201029 (stable ver.) to 20200824
     version('20201029', sha256='3d347f6b512bc360505019d1c6183c969a2e1da402e31a1e26577daf5e419d95')
     version('20201022', sha256='72edcc1c63458eea8bc0546d94840527bb6c68a2d99d08ca745e0a86fd89ae7d')
     version('20201009', sha256='0e31b390f2f8c28c2f64fbab96c1603951f0af2af04d0e8a7050e2819bb9669f')
     version('20200918', sha256='fda07ef0853575948603c14233493074693fba57ae733662da909cbaa345d522')
     version('20200824', sha256='a2ea34f93ed2cd1c789dad1f5b37b6ab7c9090703bc480ad1a4697fd564c0338')
-#---Modified-by-Yukihiro-Ota-in-RIST-on-3Feb2021-end-
+    #---Modified-by-Yukihiro-Ota-in-RIST-on-13Sep2021-end-
     version('20200721', sha256='845bfeddb7b667799a1a5dbc166b397d714c3d2720316604a979d3465b4190a9')
     version('20200630', sha256='413cbfabcc1541a339c7a4ab5693fbeb768f46bb1250640ba94686c6e90922fc')
     version('20200505', sha256='c49d77fd602d28ebd8cf10f7359b9fc4d14668c72039028ed7792453d416de73')
@@ -71,9 +71,7 @@ class Lammps(CMakePackage, CudaPackage):
         return "https://github.com/lammps/lammps/archive/patch_{0}.tar.gz".format(
             vdate.strftime("%d%b%Y").lstrip('0'))
 
-    #---Modified-by-Yukihiro-Ota-in-RIST-on-15Feb2021-start-
-    # milap is added (3Feb2021)
-    # opt, user-cgdna, user-cgsdk, user-colvars, user-fep (15Feb2021)
+    #---Modified-by-Yukihiro-Ota-in-RIST-on-13Sep2021-start-
     #TODO To treat KIM of the std pkg, requiring for kim-api as an external lib  
     supported_packages = ['asphere', 'body', 'class2', 'colloid', 'compress',
                           'coreshell', 'dipole', 'granular', 'kspace',
@@ -84,7 +82,7 @@ class Lammps(CMakePackage, CudaPackage):
                           'user-colvars', 'user-fep', 'user-h5md', 'user-lb',
                           'user-meamc', 'user-misc', 'user-netcdf', 'user-omp',
                           'user-reaxc', 'voronoi']
-    #---Modified-by-Yukihiro-Ota-in-RIST-on-15eb2021-end-
+    #---Modified-by-Yukihiro-Ota-in-RIST-on-13Sep2021-end-
 
     for pkg in supported_packages:
         variant(pkg, default=False,
@@ -99,23 +97,22 @@ class Lammps(CMakePackage, CudaPackage):
             description='Build with png support')
     variant('ffmpeg', default=True,
             description='Build with ffmpeg support')
-    #---Modified-by-Yukihiro-Ota-in-RIST-on-3Feb2021-start-
+    #---Modified-by-Yukihiro-Ota-in-RIST-on-13Sep2021-start-
     # If using OpenMP in LAMMPS itself except for external library, 
     # you choose either USER-OMP or KOKKOS (OR both). See Accelerator 
     # packages in LAMMPS documentaion.
-    #variant('openmp', default=True, description='Build with OpenMP')
     variant('openmp', default=True, description='Build with OpenMP: ' + 
             'Choose +user-omp or +kokkos (or BOTH) ' +
             'to effectively use thread parallel ' +
             '(See Accelerator packages in LAMMPS documentation)')
-    #---Modified-by-Yukihiro-Ota-in-RIST-on-3Feb2021-end-
+    #---Modified-by-Yukihiro-Ota-in-RIST-on-13Sep2021-end-
     variant('opencl', default=False, description='Build with OpenCL')
     variant('exceptions', default=False,
             description='Build with lammps exceptions')
     variant('cuda_mps', default=False,
             description='(CUDA only) Enable tweaks for running ' +
                         'with Nvidia CUDA Multi-process services daemon')
-    #---Modified-by-Yukihiro-Ota-in-RIST-on-3Feb2021-start-
+    #---Modified-by-Yukihiro-Ota-in-RIST-on-13Sep2021-start-
     variant('gzip', default=False,
             description='Build with gzip support to read/write files') 
     #TODO(?) use of LAMMPS internal kokkos library
@@ -131,7 +128,10 @@ class Lammps(CMakePackage, CudaPackage):
             description='Build with a specified integer type: ' + 
             'smallbig=32- and 64-bit, bigbig=64-bit, smallsmall=32-bit', 
             multi=False ) 
-    #---Modified-by-Yukihiro-Ota-in-RIST-on-3Feb2021-end-
+    variant('fj_loopopt',default=False,
+            description='Build with loop-optimization flags in Fujitsu compiler, ' +
+            'applying patch ')
+    #---Modified-by-Yukihiro-Ota-in-RIST-on-13Sep2021-end-
 
     depends_on('mpi', when='+mpi')
     depends_on('mpi', when='+mpiio')
@@ -157,7 +157,7 @@ class Lammps(CMakePackage, CudaPackage):
     depends_on('ffmpeg', when='+ffmpeg')
     depends_on('kokkos+deprecated_code+shared@3.0', when='@20200303+kokkos')
     depends_on('kokkos+shared@3.1:', when='@20200505:+kokkos')
-    #---Modified-by-Yukihiro-Ota-in-RIST-on-3Feb2021-start-
+    #---Modified-by-Yukihiro-Ota-in-RIST-on-13Sep2021-start-
     # Issue on Kokkos and C++ standard.
     # * kokkos version 3.2 and older require C++11 or newer.
     # * The develop version of kokkos requires *C++14* or newer.
@@ -166,7 +166,7 @@ class Lammps(CMakePackage, CudaPackage):
     depends_on('kokkos+openmp', when='+kokkos+openmp')
     depends_on('gzip', when='+gzip')
     depends_on('zlib', when='+compress')
-    #---Modified-by-Yukihiro-Ota-in-RIST-on-3Feb2021-end-
+    #---Modified-by-Yukihiro-Ota-in-RIST-on-13Sep2021-end-
 
     conflicts('+cuda', when='+opencl')
     conflicts('+body', when='+poems@:20180628')
@@ -181,7 +181,7 @@ class Lammps(CMakePackage, CudaPackage):
     conflicts('+kokkos', when='@:20200227')
     conflicts('+meam', when='@20181212:')
     conflicts('+user-meamc', when='@:20181212')
-    #---Modified-by-Yukihiro-Ota-in-RIST-on-3Feb2021-start-
+    #---Modified-by-Yukihiro-Ota-in-RIST-on-13Sep2021-start-
     #TODO(?) use of LAMMPS internal kokkos library
     #conflicts('+kokkos_internal',when='+kokkos')
     #TODO check atomic operation in KOKKOS with OpenMP 
@@ -195,18 +195,18 @@ class Lammps(CMakePackage, CudaPackage):
     conflicts('%fj', when='+kokkos',
               msg='Building LAMMPS with external KOKKOS lib under Spack '
                   'is not fully checked for Fujitsu compiler.')
-    #---Modified-by-Yukihiro-Ota-in-RIST-on-3Feb2021-end-
-    #---Modified-by-Yukihiro-Ota-in-RIST-on-15Feb2021-start-
     conflicts('+user-cgdna', when='@:20190919')
     conflicts('+user-colvars', when='lmpsizes=bigbig',
               msg='user-colvars is allowed when lmpsizes=smallbig or smallsmall.')
-    #---Modified-by-Yukihiro-Ota-in-RIST-on-15Feb2021-end-
+    conflicts('+fj_loopopt', when='%fj@:4.4.0')
+    #---Modified-by-Yukihiro-Ota-in-RIST-on-13Sep2021-end-
 
     patch("lib.patch", when="@20170901")
     patch("660.patch", when="@20170922")
-    #---Modified-by-Yukihiro-Ota-in-RIST-on-3Feb2021-start-
+    #---Modified-by-Yukihiro-Ota-in-RIST-on-13Sep2021-start-
     patch("cmake_tune_default_in_clang.patch",when="@20200630 %fj")
-    #---Modified-by-Yukihiro-Ota-in-RIST-on-3Feb2021-end-
+    patch("rist-29Oct2020.patch", when='@20201029 %fj +fj_loopopt')
+    #---Modified-by-Yukihiro-Ota-in-RIST-on-13Sep2021-end-
 
     root_cmakelists_dir = 'cmake'
 
@@ -267,7 +267,7 @@ class Lammps(CMakePackage, CudaPackage):
                 args.append('-DFFT=MKL')
         if '+kokkos' in spec:
             args.append('-DEXTERNAL_KOKKOS=ON')
-        #---Modified-by-Yukihiro-Ota-in-RIST-on-3Feb2021-start-
+        #---Modified-by-Yukihiro-Ota-in-RIST-on-13Sep2021-start-
         #TODO use of LAMMPS internal kokkos library 
         #if '+kokkos_internal' in spec:
         #    args.append('-DPKG_KOKKOS=ON')
@@ -290,17 +290,21 @@ class Lammps(CMakePackage, CudaPackage):
             'ON' if '+gzip' in spec else 'OFF'))
 
         #Fujitsu C++ Clang mode for A64FX with -Ofast
+        #TODO Use of C++14 standard must be checked
         if '%fj@4.3.1:' in spec:
             flagstr  = '-Nclang -std=c++11 -stdlib=libc++ -march=armv8.3-a+sve ' 
             flagstr += '-mcpu=a64fx -mtune=a64fx -fsigned-char -ffj-largepage ' 
             optfstr  = '-Ofast -fno-omit-frame-pointer -fvectorize -fno-slp-vectorize ' 
+            optfstr += '-ffj-no-swp -msve-vector-bits=scalable '
             optfstr += '-fstrict-aliasing -ffj-optlib-string '
+            if '+fj_loopopt' in spec:
+                optfstr += '-ffj-interleave-loop-insns=2 ' 
             infostr  = '-ffj-ocl -ffj-src -ffj-lst=t '
             if '+openmp' in spec:
-                ompfstr  = '-fopenmp -fno-openmp-simd -Nlibomp ' 
+                ompfstr  = '-fopenmp -Nlibomp ' 
                 args.append('-DOpenMP_CXX_FLAGS=-fopenmp') 
             else:
-                ompfstr  = '-fno-openmp -fno-openmp-simd ' 
+                ompfstr  = '-fno-openmp ' 
             # probably not needed
             if '+mpi' in spec:
                 flagstr += '-DMPICH_SKIP_MPICXX -DOMPI_SKIP_MPICXX=1 '
@@ -319,7 +323,7 @@ class Lammps(CMakePackage, CudaPackage):
             # flags for shared library with position independent code (pic)
             if '+lib' in spec:
                 args.append('-DCMAKE_SHARED_LINKER_FLAGS=-fPIC')
-        #---Modified-by-Yukihiro-Ota-in-RIST-on-3Feb2021-end-
+        #---Modified-by-Yukihiro-Ota-in-RIST-on-13Sep2021-end-
 
         return args
 
