@@ -1,0 +1,269 @@
+--- a/qe-6.5/archive/fox/configure      2015-12-24 06:28:29.000000000 +0900
++++ b/qe-6.5/archive/fox/configure      2020-09-10 12:45:33.000000000 +0900
+@@ -565,7 +565,7 @@
+ ac_clean_files=
+ ac_config_libobj_dir=.
+ LIBOBJS=
+-cross_compiling=no
++cross_compiling=yes
+ subdirs=
+ MFLAGS=
+ MAKEFLAGS=
+--- a/qe-6.5/archive/lapack-3.6.1/Makefile	2016-06-19 07:15:11.000000000 +0900
++++ b/qe-6.5/archive/lapack-3.6.1/Makefile	2020-09-10 12:45:33.000000000 +0900
+@@ -14,8 +14,7 @@
+ clean: cleanlib cleantesting cleanblas_testing cleancblas_testing
+ 
+ lapack_install:
+-	( cd INSTALL; $(MAKE); ./testlsame; ./testslamch; ./testdlamch; \
+-	./testsecond; ./testdsecnd; ./testieee; ./testversion )
++	( cd INSTALL; $(MAKE) )
+ 
+ blaslib:
+ 	( cd BLAS/SRC; $(MAKE) )
+--- a/qe-6.5/install/extlibs_makefile	2019-12-07 02:58:08.000000000 +0900
++++ b/qe-6.5/install/extlibs_makefile	2020-09-10 12:45:33.000000000 +0900
+@@ -89,7 +89,7 @@
+         mkdir ../FoX; \
+ 	(gzip -dc ../archive/fox.tgz | (cd ../FoX; tar -xvf -)); \
+ 	cd ../FoX/fox/; export FC=$(F90); export FCFLAGS="$(FOX_FLAGS)"; \
+-	./configure --prefix=$(TOPDIR)/FoX ;\
++	env CPPFLAGS= ./configure --prefix=$(TOPDIR)/FoX ;\
+ 	$(MAKE) install; cd ../; rm -fr fox;fi
+ # ELPA
+ libelpa : libelpa_$(ELPA_LIBS_SWITCH)
+--- a/qe-6.5/install/configure	2019-12-07 02:58:08.000000000 +0900
++++ b/qe-6.5/install/configure	2020-09-10 12:45:33.000000000 +0900
+@@ -3157,6 +3157,7 @@
+ $as_echo "$as_me: WARNING: parallel and serial compiler are the same" >&2;}
+ 	   fi
+ 	fi
++    f90_in_mpif90=$F90
+ 	f90=$f90_in_mpif90
+         ;;
+ esac
+--- a/qe-6.5/PW/src/tetra.f90	2019-12-07 02:58:08.000000000 +0900
++++ b/qe-6.5/PW/src/tetra.f90	2020-09-10 12:45:33.000000000 +0900
+@@ -611,7 +611,7 @@
+   !! the weight of each k point and band
+   ! wg must be (inout) and not (out) because if is/=0 only terms for
+   ! spin=is are initialized; the remaining terms should be kept, not lost.
+-  REAL(DP), INTENT(OUT) :: ef
++  REAL(DP), INTENT(IN) :: ef
+   !! Fermi energy
+   !
+   ! ... local variables
+--- a/qe-6.5/GWW/pw4gww/mp_wave_parallel.f90	2019-12-07 02:58:08.000000000 +0900
++++ b/qe-6.5/GWW/pw4gww/mp_wave_parallel.f90	2020-09-10 12:45:33.000000000 +0900
+@@ -282,7 +282,8 @@
+       IMPLICIT NONE
+ 
+       INTEGER, INTENT(in) :: npw1,npw2,nbands
+-      COMPLEX(DP), INTENT(OUT) :: pw1(npw1,nbands),pw2(npw2,nbands)
++      COMPLEX(DP), INTENT(IN) :: pw1(npw1,nbands)
++      COMPLEX(DP), INTENT(OUT) :: pw2(npw2,nbands)
+       INTEGER, INTENT(IN) :: mpime,  root, nproc
+       INTEGER, INTENT(IN) :: comm    ! communicator
+       INTEGER, INTENT(IN) :: ig_l2g1(ngwl1),ig_l2g2(ngwl2)
+--- a/qe-6.5/PHonon/PH/elphon.f90	2019-12-07 02:58:08.000000000 +0900
++++ b/qe-6.5/PHonon/PH/elphon.f90	2020-09-10 12:45:33.000000000 +0900
+@@ -685,7 +685,8 @@
+      IF (.NOT.done_elph(irr)) RETURN
+   ENDDO
+   elph_dir='elph_dir/'
+-  IF (ionode) INQUIRE(file=TRIM(elph_dir), EXIST=exst)
++!  IF (ionode) INQUIRE(file=TRIM(elph_dir), EXIST=exst)
++  exst= .FALSE.
+   CALL mp_bcast(exst, ionode_id, intra_image_comm) 
+   IF (.NOT.exst) CALL create_directory( elph_dir )
+   WRITE (6, '(5x,"electron-phonon interaction  ..."/)')
+--- a/qe-6.5/EPW/src/low_lvl.f90	2019-12-07 02:58:08.000000000 +0900
++++ b/qe-6.5/EPW/src/low_lvl.f90	2020-09-10 12:45:33.000000000 +0900
+@@ -735,10 +735,10 @@
+     !! 
+     LOGICAL :: ifxst
+     !! Does the file exists
+-#if defined(__PGI) || defined(__CRAY) || defined(__XLF)
++!!#if defined(__PGI) || defined(__CRAY) || defined(__XLF)
+     INTEGER, EXTERNAL :: getpid
+     !! PID of the process
+-#endif
++!!#endif
+     INTEGER :: pid
+     !! PID of the process
+     ! 
+--- a/qe-6.5/test-suite/run-ph.sh	2019-12-07 02:58:08.000000000 +0900
++++ b/qe-6.5/test-suite/run-ph.sh	2020-09-10 12:45:33.000000000 +0900
+@@ -21,7 +21,7 @@
+ then
+   echo "Running PW ..."
+ # echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x ${PARA_SUFFIX} < $2 > $3 2> $4"
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x ${PARA_SUFFIX} < $2 > $3 2> $4
++  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x ${PARA_SUFFIX} -input $2 > $3 2> $4
+   if [[ -e CRASH ]]
+   then
+     cat $3
+@@ -30,7 +30,7 @@
+ then
+   echo "Running PH ..."
+ # echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/ph.x ${PARA_SUFFIX} < $2 > $3 2> $4"
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/ph.x ${PARA_SUFFIX} < $2 > $3 2> $4
++  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/ph.x ${PARA_SUFFIX} -input $2 > $3 2> $4
+   if [[ -e CRASH ]]
+   then
+     cat $3
+@@ -39,7 +39,7 @@
+ then
+   echo "Running Q2R ..."
+ # echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/q2r.x < $2 > $3 2> $4"  
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/q2r.x < $2 > $3 2> $4
++  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/q2r.x -input $2 > $3 2> $4
+   if [[ -e CRASH ]]
+   then
+     cat $3
+@@ -48,7 +48,7 @@
+ then
+   echo "Running MATDYN ..."
+ # echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/matdyn.x < $2 > $3 2> $4"  
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/matdyn.x < $2 > $3 2> $4
++  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/matdyn.x -input $2 > $3 2> $4
+   if [[ -e CRASH ]]
+   then
+     cat $3
+--- a/qe-6.5/test-suite/run-hp.sh	2019-12-07 02:58:08.000000000 +0900
++++ b/qe-6.5/test-suite/run-hp.sh	2020-09-10 12:45:33.000000000 +0900
+@@ -21,8 +21,8 @@
+ if [[ "$1" == "1" ]]
+ then
+   echo "Running PW ..."
+-  echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x < $2 > $3 2> $4"
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x < $2 > $3 2> $4
++  echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x -input $2 > $3 2> $4"
++  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x -input $2 > $3 2> $4
+   if [[ -e CRASH ]]
+   then
+     cat $3
+@@ -31,8 +31,8 @@
+ elif [[ "$1" == "2" ]]
+ then
+   echo "Running PW ..."
+-  echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x < $2 > $3 2> $4"  
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x ${PARA_SUFFIX} < $2 > $3 2> $4
++  echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x -input $2 > $3 2> $4"  
++  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x ${PARA_SUFFIX} -input $2 > $3 2> $4
+   if [[ -e CRASH ]]
+   then
+     cat $3
+@@ -41,8 +41,8 @@
+ elif [[ "$1" == "3" ]]
+ then
+   echo "Running HP ..."
+-  echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/hp.x < $2 > $3 2> $4"  
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/hp.x < $2 > $3 2> $4
++  echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/hp.x -input $2 > $3 2> $4"  
++  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/hp.x -input $2 > $3 2> $4
+   cp *.Hubbard_parameters.dat $3
+   if [[ -e CRASH ]]
+   then
+@@ -52,8 +52,8 @@
+ elif [[ "$1" == "4" ]]
+ then
+   echo "Running HP ..."
+-  echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/hp.x < $2 > $3 2> $4"  
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/hp.x ${PARA_SUFFIX} < $2 > $3 2> $4
++  echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/hp.x -input $2 > $3 2> $4"  
++  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/hp.x ${PARA_SUFFIX} -input $2 > $3 2> $4
+   cp *.Hubbard_parameters.dat $3
+   if [[ -e CRASH ]]
+   then
+--- a/qe-6.5/test-suite/run-tddfpt.sh	2019-12-07 02:58:08.000000000 +0900
++++ b/qe-6.5/test-suite/run-tddfpt.sh	2020-09-10 12:45:33.000000000 +0900
+@@ -20,8 +20,8 @@
+ if [[ "$1" == "1" ]]
+ then
+   echo "Running PW ..."
+-  echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x ${PARA_SUFFIX} < $2 > $3 2> $4"
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x ${PARA_SUFFIX} < $2 > $3 2> $4
++  echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x ${PARA_SUFFIX} -input $2 > $3 2> $4"
++  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x ${PARA_SUFFIX} -input $2 > $3 2> $4
+   if [[ -e CRASH ]]
+   then
+     cat $3
+@@ -29,8 +29,8 @@
+ elif [[ "$1" == "2" ]]
+ then
+   echo "Running TURBO LANCZOS ..."
+-  echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/turbo_lanczos.x < $2 > $3 2> $4"  
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/turbo_lanczos.x < $2 > $3 2> $4
++  echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/turbo_lanczos.x -input $2 > $3 2> $4"  
++  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/turbo_lanczos.x -input $2 > $3 2> $4
+   if [[ -e CRASH ]]
+   then
+     cat $3
+@@ -38,8 +38,8 @@
+ elif [[ "$1" == "3" ]]
+ then
+   echo "Running TURBO SPECTRUM CHI ..."
+-  echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/turbo_spectrum.x ${PARA_SUFFIX} < $2 > $3 2> $4"  
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/turbo_spectrum.x ${PARA_SUFFIX} < $2 > $3 2> $4
++  echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/turbo_spectrum.x ${PARA_SUFFIX} -input $2 > $3 2> $4"  
++  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/turbo_spectrum.x ${PARA_SUFFIX} -input $2 > $3 2> $4
+   cp *.plot_chi.dat $3
+   if [[ -e CRASH ]]
+   then
+@@ -48,8 +48,8 @@
+ elif [[ "$1" == "4" ]]
+ then
+   echo "Running TURBO SPECTRUM EELS ..."
+-  echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/turbo_spectrum.x ${PARA_SUFFIX} < $2 > $3 2> $4"  
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/turbo_spectrum.x ${PARA_SUFFIX} < $2 > $3 2> $4
++  echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/turbo_spectrum.x ${PARA_SUFFIX} -input $2 > $3 2> $4"  
++  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/turbo_spectrum.x ${PARA_SUFFIX} -input $2 > $3 2> $4
+   cp *.plot_eps.dat $3
+   if [[ -e CRASH ]]
+   then
+@@ -58,8 +58,8 @@
+ elif [[ "$1" == "5" ]]
+ then
+   echo "Running TURBO EELS ..."
+-  echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/turbo_eels.x ${PARA_SUFFIX} < $2 > $3 2> $4"  
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/turbo_eels.x ${PARA_SUFFIX} < $2 > $3 2> $4
++  echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/turbo_eels.x ${PARA_SUFFIX} -input $2 > $3 2> $4"  
++  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/turbo_eels.x ${PARA_SUFFIX} -input $2 > $3 2> $4
+   if [[ -e CRASH ]]
+   then
+     cat $3
+--- a/qe-6.5/test-suite/extract-tddfpt.x	2019-12-07 02:58:08.000000000 +0900
++++ b/qe-6.5/test-suite/extract-tddfpt.x	2020-09-10 12:45:33.000000000 +0900
+@@ -33,7 +33,7 @@
+ then
+ alpha=`grep "alpha" $fname | awk '{print $2}'`
+ beta=`grep "beta " $fname | awk '{print $3}'`
+-gamma=`grep "gamma" $fname | awk '{print $2}'`
++gamma=`grep -E "gamma\([0-9]+\)=" $fname | awk '{print $2}'`
+ fi
+ 
+ #turbo_eels.x
+--- a/qe-6.5/FFTXlib/fft_scalar.FFTW3.f90	2019-12-07 02:58:08.000000000 +0900
++++ b/qe-6.5/FFTXlib/fft_scalar.FFTW3.f90	2020-09-11 16:34:23.000000000 +0900
+@@ -79,6 +79,7 @@
+      INTEGER :: offset, ldz_t
+      INTEGER :: omp_get_max_threads
+      EXTERNAL :: omp_get_max_threads
++     LOGICAL, SAVE :: fftw_thread_needs_initialise = .TRUE.
+ #endif
+ 
+      !   Pointers to the "C" structures containing FFT factors ( PLAN )
+@@ -143,9 +144,12 @@
+ 
+      SUBROUTINE init_plan()
+ #if defined(_OPENMP)
++       IF( fftw_thread_needs_initialise ) THEN
+        CALL dfftw_cleanup_threads() 
+        void = fftw_init_threads()
+        CALL dfftw_plan_with_nthreads(omp_get_max_threads())      
++       fftw_thread_needs_initialise = .FALSE.
++       ENDIF
+ #endif
+ 
+        IF( C_ASSOCIATED(fw_planz( icurrent)) ) CALL dfftw_destroy_plan( fw_planz( icurrent) )

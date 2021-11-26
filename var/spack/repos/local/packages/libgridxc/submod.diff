@@ -1,0 +1,1103 @@
+diff -ruN orig/libgridxc-0.8.5/extra/fj.mk libgridxc-0.8.5/extra/fj.mk
+--- orig/libgridxc-0.8.5/extra/fj.mk	1970-01-01 09:00:00.000000000 +0900
++++ libgridxc-0.8.5/extra/fj.mk	2021-08-19 22:13:20.000000000 +0900
+@@ -0,0 +1,47 @@
++#
++# Example Fortran macros: gfortran
++#
++# Make sure this variable is set if you intend to use libxc
++# You can set it here, or elsewhere (e.g., in an environment module)
++### LIBXC_ROOT=/path/to/libxc
++#
++# These two instances are needed, instead of just FC
++FC_SERIAL=frt
++FC_PARALLEL=mpifrt
++#
++
++FFLAGS= -O2
++FFLAGS_DEBUG= -g -O0 -fbacktrace -fcheck=all -fimplicit-none
++FFLAGS_CHECKS= -g  -O0 -g -Wall -Wextra -Warray-temporaries \
++              -Wconversion -fimplicit-none -fbacktrace \
++              -ffree-line-length-0 -fcheck=all \
++              -ffpe-trap=zero,overflow,underflow -finit-real=nan
++LDFLAGS=
++#
++AR=ar
++RANLIB=ranlib
++#
++DEFS_PREFIX=
++INC_PREFIX= -I
++MOD_PREFIX= -I
++MOD_EXT=.mod
++#
++.F.o:
++	$(FC) -c $(FFLAGS) $(INCFLAGS)  $(FPPFLAGS) $<
++.f.o:
++	$(FC) -c $(FFLAGS) $(INCFLAGS)   $<
++.F90.o:
++	$(FC) -c $(FFLAGS) $(INCFLAGS)  $(FPPFLAGS) $<
++.f90.o:
++	$(FC) -c $(FFLAGS) $(INCFLAGS)   $<
++#
++
++
++
++
++
++
++
++
++
++
+diff -ruN orig/libgridxc-0.8.5/src/am05.F90 libgridxc-0.8.5/src/am05.F90
+--- orig/libgridxc-0.8.5/src/am05.F90	2019-02-13 22:48:02.000000000 +0900
++++ libgridxc-0.8.5/src/am05.F90	2021-08-23 18:19:07.000000000 +0900
+@@ -62,8 +62,8 @@
+ ! OTHER DEALINGS IN THE SOFTWARE.
+ !
+ !**********************************************************************
+-  use precision, only : dp
+-  use sys,       only : die
++  use precisionxc, only : dp
++  use sysxc,       only : die
+ 
+   implicit none
+ 
+diff -ruN orig/libgridxc-0.8.5/src/array.F90 libgridxc-0.8.5/src/array.F90
+--- orig/libgridxc-0.8.5/src/array.F90	2019-02-13 22:48:02.000000000 +0900
++++ libgridxc-0.8.5/src/array.F90	2021-08-23 18:19:07.000000000 +0900
+@@ -32,8 +32,8 @@
+ 
+ module m_array
+ 
+-  use precision, only: sp, dp
+-  use sys,       only: die       ! Termination routine
++  use precisionxc, only: sp, dp
++  use sysxc,       only: die       ! Termination routine
+ 
+   private
+ 
+diff -ruN orig/libgridxc-0.8.5/src/atomxc.F90 libgridxc-0.8.5/src/atomxc.F90
+--- orig/libgridxc-0.8.5/src/atomxc.F90	2019-02-13 22:48:02.000000000 +0900
++++ libgridxc-0.8.5/src/atomxc.F90	2021-08-23 18:19:07.000000000 +0900
+@@ -40,7 +40,7 @@
+ !
+ ! A typical call sequence is:
+ !
+-!   use precision, only: dp
++!   use precisionxc, only: dp
+ !   use xcmod,     only: setXC
+ !   integer  :: nr, nSpin
+ !   real(dp) :: Dc, Dx, Ec, Ex
+@@ -80,7 +80,7 @@
+ ! as done in siesta):
+ !
+ ! module xcmod
+-!   use precision, only: dp
++!   use precisionxc, only: dp
+ !   implicit none
+ !   integer, parameter :: maxFunc = 10
+ !   integer,           save :: nXCfunc
+@@ -103,7 +103,7 @@
+ ! end module xcmod
+ !
+ ! Sample usage:
+-!   use precision, only: dp
++!   use precisionxc, only: dp
+ !   use xcmod, only: setxc
+ !   call setXC( 1, (/'GGA'/), (/'PBE'/), (/1._dp/), (/1._dp/) )
+ !   call atomXC( ... )
+@@ -153,7 +153,7 @@
+   use alloc,   only: alloc_default ! Sets (re)allocation defaults
+   use alloc,   only: de_alloc      ! Deallocates arrays
+   use mesh1d,  only: derivative    ! Performs numerical derivative
+-  use sys,     only: die           ! Termination routine
++  use sysxc,     only: die           ! Termination routine
+   use xcmod,   only: getXC         ! Returns the XC functional to be used
+   use m_ggaxc, only: ggaxc         ! General GGA XC routine
+   use mesh1d,  only: interpolation=>interpolation_local ! Interpolation routine
+@@ -171,7 +171,7 @@
+   use m_vdwxc, only: vdw_theta     ! Returns VDW theta function
+ 
+ ! Module types and variables
+-  use precision, only: dp          ! Double precision real type
++  use precisionxc, only: dp          ! Double precision real type
+   use alloc,   only: allocDefaults ! Derived type for allocation defaults
+ #ifdef DEBUG_XC
+ !  use m_vdwxc, only: qofrho        ! Returns q(rho,grad_rho)
+diff -ruN orig/libgridxc-0.8.5/src/bessph.F90 libgridxc-0.8.5/src/bessph.F90
+--- orig/libgridxc-0.8.5/src/bessph.F90	2019-02-13 22:48:02.000000000 +0900
++++ libgridxc-0.8.5/src/bessph.F90	2021-08-23 18:19:07.000000000 +0900
+@@ -16,8 +16,8 @@
+     ! REF: ABRAMOWITZ AND STEGUN, FORMULAS 10.1.2 AND 10.1.19
+     ! WRITTEN BY J.SOLER. NOV/89.
+     ! F90 conversion, by Nick Papior, feb/2018
+-    use precision, only: dp
+-    use sys, only: die
++    use precisionxc, only: dp
++    use sysxc, only: die
+ 
+     integer, intent(in)  :: L
+     real(dp), intent(in) :: X
+diff -ruN orig/libgridxc-0.8.5/src/cellsubs.F90 libgridxc-0.8.5/src/cellsubs.F90
+--- orig/libgridxc-0.8.5/src/cellsubs.F90	2019-02-13 22:48:02.000000000 +0900
++++ libgridxc-0.8.5/src/cellsubs.F90	2021-08-23 18:19:07.000000000 +0900
+@@ -2,7 +2,7 @@
+ 
+ module cellSubs
+ 
+-  use precision, only: dp   ! Double precision real kind
++  use precisionxc, only: dp   ! Double precision real kind
+ 
+   implicit none
+ 
+diff -ruN orig/libgridxc-0.8.5/src/cellxc.F90 libgridxc-0.8.5/src/cellxc.F90
+--- orig/libgridxc-0.8.5/src/cellxc.F90	2019-02-13 22:48:02.000000000 +0900
++++ libgridxc-0.8.5/src/cellxc.F90	2021-08-23 18:19:07.000000000 +0900
+@@ -63,7 +63,7 @@
+ !
+ ! A typical serial program call is:
+ !
+-!   use precision, only: dp, grid_p
++!   use precisionxc, only: dp, grid_p
+ !   use xcmod,     only: setXC
+ !   integer  :: nMesh(3), nSpin
+ !   real(dp) :: cell(3,3), Dc, Dx, Ec, Ex, stress(3,3), 
+@@ -78,7 +78,7 @@
+ !
+ ! A typical parallel program call is:
+ !
+-!   use precision, only: dp, grid_p
++!   use precisionxc, only: dp, grid_p
+ !   use xcmod,     only: setXC
+ !   integer  :: iSpin, myBox(2,3), nMesh(3), nSpin
+ !   real(dp) :: cell(3,3), Dc, Dx, Ec, Ex, stress(3,3), 
+@@ -164,7 +164,7 @@
+ ! as done in siesta):
+ !
+ ! module xcmod
+-!   use precision, only: dp
++!   use precisionxc, only: dp
+ !   implicit none
+ !   integer, parameter :: maxFunc = 10
+ !   integer,           save :: nXCfunc
+@@ -187,7 +187,7 @@
+ ! end module xcmod
+ !
+ ! Sample usage:
+-!   use precision, only: dp
++!   use precisionxc, only: dp
+ !   use xcmod, only: setxc
+ !   call setXC( 1, (/'GGA'/), (/'PBE'/), (/1._dp/), (/1._dp/) )
+ !   call cellXC( ... )
+@@ -244,7 +244,7 @@
+   use mesh3D,  only: associateMeshTask ! Associates mesh tasks & distr.
+   use mesh3D,  only: copyMeshData  ! Copies a box of a mesh array
+   use alloc,   only: de_alloc      ! Deallocates arrays
+-  use sys,     only: die           ! Termination routine
++  use sysxc,     only: die           ! Termination routine
+   use fftr,    only: fftk2r        ! Inverse real Fourier transform
+   use fftr,    only: fftr2k        ! Direct real Fourier transform
+   use mesh3D,  only: fftMeshDistr  ! Sets/gets distribution for FFTs
+@@ -267,8 +267,8 @@
+   use debugXC, only: setDebugOutputUnit ! Sets udebug variable
+ #endif /* DEBUG_XC */
+   ! To pass info to the caller
+-  use sys, only: timer_start=>gridxc_timer_start       ! Starts counting time
+-  use sys, only: timer_stop=>gridxc_timer_stop        ! Stops counting time
++  use sysxc, only: timer_start=>gridxc_timer_start       ! Starts counting time
++  use sysxc, only: timer_stop=>gridxc_timer_stop        ! Stops counting time
+ 
+   use m_vdwxc, only: vdw_localxc   ! Local LDA/GGA xc apropriate for vdW flavour
+   use m_vdwxc, only: vdw_decusp    ! Cusp correction to VDW energy
+@@ -280,8 +280,8 @@
+ 
+   ! Module types and variables
+   use alloc,     only: allocDefaults ! Derived type for allocation defaults
+-  use precision, only: dp            ! Double precision real type
+-  use precision, only: gp=>grid_p    ! Real precision type of mesh arrays
++  use precisionxc, only: dp            ! Double precision real type
++  use precisionxc, only: gp=>grid_p    ! Real precision type of mesh arrays
+ #ifdef DEBUG_XC
+   use debugXC,   only: udebug        ! Output file unit for debug info
+ #endif /* DEBUG_XC */
+diff -ruN orig/libgridxc-0.8.5/src/chkgmx.F90 libgridxc-0.8.5/src/chkgmx.F90
+--- orig/libgridxc-0.8.5/src/chkgmx.F90	2019-02-13 22:48:02.000000000 +0900
++++ libgridxc-0.8.5/src/chkgmx.F90	2021-08-23 18:19:07.000000000 +0900
+@@ -3,12 +3,12 @@
+ module m_chkgmx
+ 
+   ! Used module procedures
+-  use sys,       only: die     ! Termination routine
++  use sysxc,       only: die     ! Termination routine
+   use m_minvec,  only: minvec  ! Finds a lattice basis of minimal length
+   use cellsubs,  only: reclat  ! Finds reciprocal unit cell
+ 
+   ! Used module parameters and variables
+-  use precision, only: dp      ! Double precision real kind
++  use precisionxc, only: dp      ! Double precision real kind
+ 
+   implicit none
+ 
+diff -ruN orig/libgridxc-0.8.5/src/fft3d.F90 libgridxc-0.8.5/src/fft3d.F90
+--- orig/libgridxc-0.8.5/src/fft3d.F90	2019-02-13 22:48:02.000000000 +0900
++++ libgridxc-0.8.5/src/fft3d.F90	2021-08-23 18:19:07.000000000 +0900
+@@ -15,7 +15,7 @@
+ !******************************************************************************
+ !
+ !   USED module procedures:
+-! use sys,    only: die           ! Termination routine
++! use sysxc,    only: die           ! Termination routine
+ ! use alloc,  only: de_alloc      ! De-allocation routine
+ ! use alloc,  only: re_alloc      ! Re-allocation routine
+ ! use m_fft_gpfa,  only: gpfa          ! 1-D fast Fourier transform
+@@ -26,8 +26,8 @@
+ ! use mesh3D, only: redistributeMeshData ! Changes data distribution
+ !
+ !   USED module parameters:
+-! use precision,  only: dp              ! Real double precision type
+-! use precision,  only: gp=>grid_p      ! Real precision type of mesh arrays
++! use precisionxc,  only: dp              ! Real double precision type
++! use precisionxc,  only: gp=>grid_p      ! Real precision type of mesh arrays
+ !
+ !   EXTERNAL procedures used:
+ ! gpfa    : 1D complex FFT
+@@ -51,7 +51,7 @@
+ !----------------------------- UNITS ------------------------------------------
+ ! Units of dat are arbitrary
+ !----------------------------- USAGE ------------------------------------------
+-! use precision, only: gp=>grid_p
++! use precisionxc, only: gp=>grid_p
+ ! use mesh3D,    only: fftMeshDistr, myMeshBox, setMeshDistr
+ ! use m_fft3d,   only: fft3d
+ ! integer:: myBox(2,3), myDistr, nMesh(3)
+@@ -89,7 +89,7 @@
+ MODULE m_fft3d
+ 
+   ! Used module procedures
+-  use sys,    only: die          ! Terminates execution
++  use sysxc,    only: die          ! Terminates execution
+   use alloc,  only: de_alloc     ! Deallocates arrays
+   use alloc,  only: re_alloc     ! (Re)allocates arrays
+   use m_fft_gpfa,  only: gpfa          ! 1-D fast Fourier transform
+@@ -101,12 +101,12 @@
+   use mesh3D, only: redistributeMeshData ! Changes data distribution
+ 
+   ! To pass info to the external user
+-  use sys,only: timer_start=>gridxc_timer_start  ! Start counting CPU time
+-  use sys,only: timer_stop=>gridxc_timer_stop   ! Stop counting CPU time
++  use sysxc,only: timer_start=>gridxc_timer_start  ! Start counting CPU time
++  use sysxc,only: timer_stop=>gridxc_timer_stop   ! Stop counting CPU time
+ 
+   ! Used module parameters
+-  use precision,    only: dp           ! Real double precision type
+-  use precision,    only: gp=>grid_p   ! Real type of mesh array data
++  use precisionxc,    only: dp           ! Real double precision type
++  use precisionxc,    only: gp=>grid_p   ! Real type of mesh array data
+ #ifdef DEBUG_XC
+   use debugXC,      only: udebug    ! File unit for debug output
+ #endif /* DEBUG_XC */
+diff -ruN orig/libgridxc-0.8.5/src/fftr.F90 libgridxc-0.8.5/src/fftr.F90
+--- orig/libgridxc-0.8.5/src/fftr.F90	2019-02-13 22:48:02.000000000 +0900
++++ libgridxc-0.8.5/src/fftr.F90	2021-08-23 18:19:07.000000000 +0900
+@@ -24,11 +24,11 @@
+ ! use mesh3D,  only: copyMeshData  ! Copies data in a box of mesh points
+ ! use alloc,   only: de_alloc      ! De-allocation routine
+ ! use alloc,   only: re_alloc      ! Re-allocation routine
+-! use sys,     only: die           ! Termination routine
++! use sysxc,     only: die           ! Termination routine
+ !
+ !   USED module parameters:
+-! use precision,  only: dp              ! Real double precision type
+-! use precision,  only: gp=>grid_p      ! Real precision type of mesh arrays
++! use precisionxc,  only: dp              ! Real double precision type
++! use precisionxc,  only: gp=>grid_p      ! Real precision type of mesh arrays
+ !
+ !   EXTERNAL procedures used:
+ ! none
+@@ -56,7 +56,7 @@
+ ! Units of f are arbitrary
+ !----------------------------- USAGE ------------------------------------------
+ !   Sample usage to find the electrostatic Hartree potential:
+-! use precision, only: gp=>grid_p
++! use precisionxc, only: gp=>grid_p
+ ! use fftr,      only: fftk2r, fftr2k
+ ! use mesh3D,    only: fftMeshDistr, myMeshBox, setMeshDistr
+ ! integer:: kBox(2,3), kDistr, kMesh(3), maxMesh(3), nMesh(3), &
+@@ -136,8 +136,8 @@
+ 
+ MODULE fftr
+ 
+-  use precision, only: dp            ! Double precision real type
+-  use precision, only: gp=>grid_p    ! Real precision type of mesh arrays
++  use precisionxc, only: dp            ! Double precision real type
++  use precisionxc, only: gp=>grid_p    ! Real precision type of mesh arrays
+   use alloc,     only: de_alloc      ! De-allocates arrays
+   use alloc,     only: re_alloc      ! Re-allocates arrays
+   use m_fft3d,   only: fft3d         ! 3D FFT of a complex function
+@@ -147,7 +147,7 @@
+   use mesh3D,    only: fftMeshDistr  ! Sets a mesh distr. for FFTs
+   use mesh3D,    only: freeMeshDistr ! Frees a mesh distribution ID
+   use mesh3D,    only: copyMeshData  ! Copies data in a box of mesh points
+-  use sys,       only: die           ! Terminates execution
++  use sysxc,       only: die           ! Terminates execution
+ #ifdef DEBUG_XC
+ !  use debugXC,   only: udebug        ! File unit for debug output
+ #endif /* DEBUG_XC */
+diff -ruN orig/libgridxc-0.8.5/src/foo.f90 libgridxc-0.8.5/src/foo.f90
+--- orig/libgridxc-0.8.5/src/foo.f90	1970-01-01 09:00:00.000000000 +0900
++++ libgridxc-0.8.5/src/foo.f90	2021-08-23 17:47:40.000000000 +0900
+@@ -0,0 +1,3 @@
++program foo
++use precision
++end foo
+diff -ruN orig/libgridxc-0.8.5/src/fortran.mk libgridxc-0.8.5/src/fortran.mk
+--- orig/libgridxc-0.8.5/src/fortran.mk	1970-01-01 09:00:00.000000000 +0900
++++ libgridxc-0.8.5/src/fortran.mk	2021-08-18 20:27:55.000000000 +0900
+@@ -0,0 +1,47 @@
++#
++# Example Fortran macros: gfortran
++#
++# Make sure this variable is set if you intend to use libxc
++# You can set it here, or elsewhere (e.g., in an environment module)
++### LIBXC_ROOT=/path/to/libxc
++#
++# These two instances are needed, instead of just FC
++FC_SERIAL=frt
++FC_PARALLEL=mpifrt
++#
++
++FFLAGS= -O2  -fimplicit-none
++FFLAGS_DEBUG= -g -O0 -fbacktrace -fcheck=all -fimplicit-none
++FFLAGS_CHECKS= -g  -O0 -g -Wall -Wextra -Warray-temporaries \
++              -Wconversion -fimplicit-none -fbacktrace \
++              -ffree-line-length-0 -fcheck=all \
++              -ffpe-trap=zero,overflow,underflow -finit-real=nan
++LDFLAGS=
++#
++AR=ar
++RANLIB=ranlib
++#
++DEFS_PREFIX=
++INC_PREFIX= -I
++MOD_PREFIX= -I
++MOD_EXT=.mod
++#
++.F.o:
++	$(FC) -c $(FFLAGS) $(INCFLAGS)  $(FPPFLAGS) $<
++.f.o:
++	$(FC) -c $(FFLAGS) $(INCFLAGS)   $<
++.F90.o:
++	$(FC) -c $(FFLAGS) $(INCFLAGS)  $(FPPFLAGS) $<
++.f90.o:
++	$(FC) -c $(FFLAGS) $(INCFLAGS)   $<
++#
++
++
++
++
++
++
++
++
++
++
+diff -ruN orig/libgridxc-0.8.5/src/ggaxc.F90 libgridxc-0.8.5/src/ggaxc.F90
+--- orig/libgridxc-0.8.5/src/ggaxc.F90	2019-02-13 22:48:02.000000000 +0900
++++ libgridxc-0.8.5/src/ggaxc.F90	2021-08-23 18:19:07.000000000 +0900
+@@ -32,12 +32,12 @@
+ !******************************************************************************
+ !
+ !   USED module procedures:
+-! use sys,     only: die     ! Termination routine
++! use sysxc,     only: die     ! Termination routine
+ ! use m_ldaxc, only: exchng  ! Local exchange
+ ! use m_ldaxc, only: pw92c   ! Perdew & Wang, PRB, 45, 13244 (1992) (Corr. only)
+ !
+ !   USED module parameters:
+-! use precision,  only: dp   ! Real double precision type
++! use precisionxc,  only: dp   ! Real double precision type
+ !
+ !   EXTERNAL procedures used:
+ ! none
+@@ -47,12 +47,12 @@
+ MODULE m_ggaxc
+ 
+   ! Used module procedures
+-  use sys,     only: die     ! Termination routine
++  use sysxc,     only: die     ! Termination routine
+   USE m_ldaxc, only: exchng  ! Local exchange
+   USE m_ldaxc, only: pw92c   ! Perdew & Wang, PRB, 45, 13244 (1992) correl
+ 
+   ! Used module parameters
+-  use precision, only : dp   ! Double precision real kind
++  use precisionxc, only : dp   ! Double precision real kind
+ 
+ #ifdef LIBXC
+   use xc_f90_types_m
+@@ -1861,7 +1861,7 @@
+     ! am05wbs
+     ! ********************************************************************
+ 
+-    use precision, only : dp
++    use precisionxc, only : dp
+     use am05,      only : am05wbs
+ 
+     integer           irel, nspin
+diff -ruN orig/libgridxc-0.8.5/src/gridxc.F90 libgridxc-0.8.5/src/gridxc.F90
+--- orig/libgridxc-0.8.5/src/gridxc.F90	2019-02-13 22:48:02.000000000 +0900
++++ libgridxc-0.8.5/src/gridxc.F90	2021-08-23 18:20:16.000000000 +0900
+@@ -110,7 +110,7 @@
+ ! You must call setXC before calling atomXC for the first time.
+ ! A typical call sequence is:
+ !
+-!   use precision, only: dp
++!   use precisionxc, only: dp
+ !   use gridXC,  only: setXC, atomXC
+ !   integer  :: nr, nSpin
+ !   real(dp) :: Dc, Dx, Ec, Ex
+@@ -329,7 +329,7 @@
+ !     real(dp)        :: wc(n)   ! Functional weights for correlation
+ !
+ ! ------------------------ USAGE ----------------------------------------------
+-!   use precision, only: dp
++!   use precisionxc, only: dp
+ !   use gridXC,  only: getXC
+ !   integer,parameter:: maxFunc = 10
+ !   character(len=20):: func(maxFunc), auth(maxFunc)
+@@ -594,8 +594,8 @@
+ 
+ ! Real kinds (precision) of arguments
+ 
+-  USE precision, only: dp      ! Standard real-kind (double) precision
+-  USE precision, only: grid_p  ! Precision for grid arrays
++  USE precisionxc, only: dp      ! Standard real-kind (double) precision
++  USE precisionxc, only: grid_p  ! Precision for grid arrays
+ 
+ ! Main entry routines of gridXC library
+ !--------------------------------------------------------------
+diff -ruN orig/libgridxc-0.8.5/src/gridxc_config.F90 libgridxc-0.8.5/src/gridxc_config.F90
+--- orig/libgridxc-0.8.5/src/gridxc_config.F90	2019-02-13 22:48:02.000000000 +0900
++++ libgridxc-0.8.5/src/gridxc_config.F90	2021-08-23 18:19:07.000000000 +0900
+@@ -59,8 +59,8 @@
+ subroutine gridxc_timer_mpi(prog,iopt)
+ 
+   use gridxc_config, only: gridxc_time_mpi_calls
+-  use sys, only: gridxc_timer_start
+-  use sys, only: gridxc_timer_stop
++  use sysxc, only: gridxc_timer_start
++  use sysxc, only: gridxc_timer_stop
+ 
+   character(len=*), intent(in) :: prog
+   integer, intent(in)          :: iopt
+diff -ruN orig/libgridxc-0.8.5/src/ldaxc.F90 libgridxc-0.8.5/src/ldaxc.F90
+--- orig/libgridxc-0.8.5/src/ldaxc.F90	2019-02-13 22:48:02.000000000 +0900
++++ libgridxc-0.8.5/src/ldaxc.F90	2021-08-23 18:19:07.000000000 +0900
+@@ -18,10 +18,10 @@
+ !******************************************************************************
+ !
+ !   USED module procedures:
+-! use sys,        only: die             ! Termination routine
++! use sysxc,        only: die             ! Termination routine
+ !
+ !   USED module parameters:
+-! use precision,  only: dp              ! Real double precision type
++! use precisionxc,  only: dp              ! Real double precision type
+ !
+ !   EXTERNAL procedures used:
+ ! none
+@@ -91,8 +91,8 @@
+     ! Lengths in Bohr, energies in Hartrees
+     ! ******************************************************************
+     
+-    use precision, only : dp
+-    use sys,       only : die
++    use precisionxc, only : dp
++    use sysxc,       only : die
+ 
+ #ifdef LIBXC
+     use xc_f90_types_m
+@@ -247,7 +247,7 @@
+     ! Energies in Hartrees
+     ! *****************************************************************
+ 
+-    use precision, only: dp
++    use precisionxc, only: dp
+     implicit none
+ 
+     integer, intent(in) :: nsp, irel
+@@ -345,7 +345,7 @@
+     ! None
+     ! ********************************************************************
+ 
+-    use precision, only : dp
++    use precisionxc, only : dp
+ 
+     ! Next line is nonstandard but may be supressed
+     implicit          none
+@@ -466,7 +466,7 @@
+     ! EXCHNG, PW92C
+     ! ********************************************************************
+ 
+-    use precision, only : dp
++    use precisionxc, only : dp
+ 
+     INTEGER           IREL, nspin
+     real(dp)          Dens(nspin), EPSX, EPSC, VC(nspin), VX(nspin)
+@@ -505,7 +505,7 @@
+     ! Energies in Hartrees
+     ! *****************************************************************
+ 
+-    use precision, only: dp
++    use precisionxc, only: dp
+ 
+     implicit none
+ 
+diff -ruN orig/libgridxc-0.8.5/src/m_io.F90 libgridxc-0.8.5/src/m_io.F90
+--- orig/libgridxc-0.8.5/src/m_io.F90	2019-02-13 22:48:02.000000000 +0900
++++ libgridxc-0.8.5/src/m_io.F90	2021-08-23 18:19:07.000000000 +0900
+@@ -21,7 +21,7 @@
+   !
+   !     Used module procedures
+   !
+-  USE sys, only: die   ! Termination routine
++  USE sysxc, only: die   ! Termination routine
+ 
+   implicit none
+   !
+diff -ruN orig/libgridxc-0.8.5/src/makefile libgridxc-0.8.5/src/makefile
+--- orig/libgridxc-0.8.5/src/makefile	2019-02-13 22:48:02.000000000 +0900
++++ libgridxc-0.8.5/src/makefile	2021-08-23 19:04:47.000000000 +0900
+@@ -62,7 +62,7 @@
+              chkgmx.f  interpolation.f90  \
+              minvec.f m_io.f moreParallelSubs.F90 \
+              m_fft_gpfa.F  m_walltime.f90 \
+-	     precision.F radfft.f sorting.f sys.F \
++	     precisionxc.F radfft.f sorting.f sysxc.F \
+              array.F90
+ GRID_OBJS:= $(GRID_SRCS:.f=.o)
+ GRID_OBJS:= $(GRID_OBJS:.F=.o)
+@@ -105,7 +105,8 @@
+ 
+ MODULES_TO_INSTALL=gridxc.mod gridxc_config.mod m_atomxc.mod \
+                    m_cellxc.mod xcmod.mod m_ldaxc.mod m_ggaxc.mod \
+-                   m_fft_gpfa.mod debugxc.mod mesh3d.mod
++                   m_fft_gpfa.mod debugxc.mod mesh1d.mod mesh3d.mod \
++                   m_vdwxc.mod m_vv_vdwxc.mod precisionxc.mod sorting.mod sysxc.mod
+ 
+ ifdef WITH_LIBXC
+  ifdef WITH_MPI
+@@ -153,34 +154,34 @@
+ 
+ #
+ # DO NOT DELETE THIS LINE - used by make depend
+-am05.o: precision.o sys.o
+-array.o: precision.o sys.o
++am05.o: precisionxc.o sysxc.o
++array.o: precisionxc.o sysxc.o
+ atomxc.o: alloc.o debugxc.o ggaxc.o gridxc_config.o ldaxc.o mesh1d.o
+-atomxc.o: precision.o radfft.o sys.o vdwxc.o xcmod.o
+-bessph.o: precision.o sys.o
+-cellsubs.o: precision.o
++atomxc.o: precisionxc.o radfft.o sysxc.o vdwxc.o xcmod.o
++bessph.o: precisionxc.o sysxc.o
++cellsubs.o: precisionxc.o
+ cellxc.o: alloc.o cellsubs.o chkgmx.o debugxc.o fftr.o ggaxc.o gridxc_config.o
+-cellxc.o: ldaxc.o mesh3d.o moreParallelSubs.o precision.o sys.o vdwxc.o xcmod.o
+-chkgmx.o: cellsubs.o minvec.o precision.o sys.o
++cellxc.o: ldaxc.o mesh3d.o moreParallelSubs.o precisionxc.o sysxc.o vdwxc.o xcmod.o
++chkgmx.o: cellsubs.o minvec.o precisionxc.o sysxc.o
+ debugxc.o: m_io.o moreParallelSubs.o
+-fft3d.o: alloc.o debugxc.o m_fft_gpfa.o mesh3d.o precision.o sys.o
+-fftr.o: alloc.o fft3d.o mesh3d.o precision.o sys.o
+-ggaxc.o: am05.o ldaxc.o precision.o sys.o
++fft3d.o: alloc.o debugxc.o m_fft_gpfa.o mesh3d.o precisionxc.o sysxc.o
++fftr.o: alloc.o fft3d.o mesh3d.o precisionxc.o sysxc.o
++ggaxc.o: am05.o ldaxc.o precisionxc.o sysxc.o
+ gridxc.o: atomxc.o cellxc.o debugxc.o ggaxc.o gridxc_config.o ldaxc.o
+-gridxc.o: m_fft_gpfa.o mesh3d.o precision.o xcmod.o
+-gridxc_config.o: sys.o
+-ldaxc.o: precision.o sys.o
+-m_io.o: sys.o
+-mesh1d.o: interpolation.o precision.o
+-mesh3d.o: alloc.o array.o debugxc.o gridxc_config.o precision.o sorting.o sys.o
+-minvec.o: cellsubs.o precision.o sorting.o sys.o
+-moreParallelSubs.o: alloc.o array.o gridxc_config.o m_io.o precision.o sys.o
+-radfft.o: alloc.o bessph.o m_fft_gpfa.o precision.o
+-vdwxc.o: alloc.o debugxc.o ggaxc.o interpolation.o ldaxc.o mesh1d.o precision.o
+-vdwxc.o: radfft.o sys.o vv_vdwxc.o
+-vv_vdwxc.o: alloc.o debugxc.o interpolation.o mesh1d.o precision.o radfft.o
+-vv_vdwxc.o: sys.o
+-xcmod.o: precision.o sys.o vdwxc.o
++gridxc.o: m_fft_gpfa.o mesh3d.o precisionxc.o xcmod.o
++gridxc_config.o: sysxc.o
++ldaxc.o: precisionxc.o sysxc.o
++m_io.o: sysxc.o
++mesh1d.o: interpolation.o precisionxc.o
++mesh3d.o: alloc.o array.o debugxc.o gridxc_config.o precisionxc.o sorting.o sysxc.o
++minvec.o: cellsubs.o precisionxc.o sorting.o sysxc.o
++moreParallelSubs.o: alloc.o array.o gridxc_config.o m_io.o precisionxc.o sysxc.o
++radfft.o: alloc.o bessph.o m_fft_gpfa.o precisionxc.o
++vdwxc.o: alloc.o debugxc.o ggaxc.o interpolation.o ldaxc.o mesh1d.o precisionxc.o
++vdwxc.o: radfft.o sysxc.o vv_vdwxc.o
++vv_vdwxc.o: alloc.o debugxc.o interpolation.o mesh1d.o precisionxc.o radfft.o
++vv_vdwxc.o: sysxc.o
++xcmod.o: precisionxc.o sysxc.o vdwxc.o
+ m_array.o: array.o
+ m_atomxc.o: atomxc.o
+ m_bessph.o: bessph.o
+diff -ruN orig/libgridxc-0.8.5/src/mesh1d.f90 libgridxc-0.8.5/src/mesh1d.f90
+--- orig/libgridxc-0.8.5/src/mesh1d.f90	2019-02-13 22:48:02.000000000 +0900
++++ libgridxc-0.8.5/src/mesh1d.f90	2021-08-23 18:21:04.000000000 +0900
+@@ -346,7 +346,7 @@
+ use interpolation, only: splint  ! Finds spline interpolation
+ 
+ ! Used module types and variables
+-use precision, only: dp      ! Real double precision type
++use precisionxc, only: dp      ! Real double precision type
+ 
+ implicit none
+ 
+diff -ruN orig/libgridxc-0.8.5/src/mesh3d.F90 libgridxc-0.8.5/src/mesh3d.F90
+--- orig/libgridxc-0.8.5/src/mesh3d.F90	2019-02-13 22:48:02.000000000 +0900
++++ libgridxc-0.8.5/src/mesh3d.F90	2021-08-23 18:19:07.000000000 +0900
+@@ -27,14 +27,14 @@
+ !   USED module procedures:
+ ! use alloc,      only: de_alloc        ! De-allocation routine
+ ! use alloc,      only: re_alloc        ! Re-allocation routine
+-! use sys,        only: die             ! Termination routine
++! use sysxc,        only: die             ! Termination routine
+ ! use sorting,    only: ordix           ! Finds the sorting index of a vector
+ ! use m_array, only: array_copy         ! Copies flattened arrays (instead of reshaping)
+ ! use m_array, only: array_add          ! Adds flattened arrays (instead of reshaping)
+ !
+ !   USED module parameters:
+-! use precision,  only: dp              ! Real double precision type
+-! use precision,  only: gp=>grid_p      ! Grid-data real precision type
++! use precisionxc,  only: dp              ! Real double precision type
++! use precisionxc,  only: gp=>grid_p      ! Grid-data real precision type
+ ! use parallel,   only: myNode=>node    ! This process node
+ ! use parallel,   only: totNodes=>nodes ! Total number of processor nodes
+ !
+@@ -97,7 +97,7 @@
+ ! Units of srcData and dstData are arbitrary but they must be equal
+ !----------------------------- USAGE ------------------------------------------
+ !   Typical usage for parallel execution is:
+-! use precision,    only: gp=>grid_p
++! use precisionxc,    only: gp=>grid_p
+ ! use mesh3D, only: addMeshData, associateMeshTask, myMeshBox, setMeshDistr
+ ! integer:: box1(2,3), box2(2,3), myBox(2,3), nData, nMesh(3)
+ ! integer,save:: myDistr=-1, task1=-1, task2=-1
+@@ -254,7 +254,7 @@
+ ! Units of srcData and dstData are arbitrary but they must be equal
+ !----------------------------- USAGE ------------------------------------------
+ !   A typical usage for data redistribution in parallel execution is:
+-! use precision,    only: gp=>grid_p
++! use precisionxc,    only: gp=>grid_p
+ ! use mesh3D, only: associateMeshTask, copyMeshData, myMeshBox, setMeshDistr
+ ! integer:: box1(2,3), box2(2,3), nData, nMesh(3)
+ ! integer,save:: distr1=-1, distr2=-1, task=-1
+@@ -451,7 +451,7 @@
+ ! Units of srcData and dstData are arbitrary but they must be equal
+ !----------------------------- USAGE ------------------------------------------
+ !   Typical usage to 'translate' between two distributions:
+-! use precision,    only: gp=>grid_p
++! use precisionxc,    only: gp=>grid_p
+ ! use mesh3D, only: associateMeshTask, redistributeMeshData
+ ! integer:: nData, newBox(2,3), nMesh(3)
+ ! integer,save:: newDistr=-1, old2new=-1, oldDistr=-1
+@@ -638,12 +638,12 @@
+ ! Used module procedures
+   use alloc,     only: de_alloc        ! De-allocation routine
+   use alloc,     only: re_alloc        ! Re-allocation routine
+-  use sys,       only: die             ! Termination routine
++  use sysxc,       only: die             ! Termination routine
+   use sorting,   only: ordix           ! Sorting routine
+ 
+ ! Used module parameters
+-  use precision, only: dp              ! Real double precision type
+-  use precision, only: gp=>grid_p      ! Grid-data real precision type
++  use precisionxc, only: dp              ! Real double precision type
++  use precisionxc, only: gp=>grid_p      ! Grid-data real precision type
+ !  use parallel,  only: myNode=>node    ! This process node
+ !  use parallel,  only: totNodes=>nodes ! Total number of processor nodes
+ #ifdef DEBUG_XC
+@@ -662,7 +662,7 @@
+   use mpi_instr, only: MPI_STATUS_SIZE
+   use mpi_instr, only: MPI_Integer
+   use mpi_instr, only: MPI_Max
+-  use precision, only: MPI_grid_real
++  use precisionxc, only: MPI_grid_real
+ #endif
+ 
+   ! MPI variables
+diff -ruN orig/libgridxc-0.8.5/src/minvec.F90 libgridxc-0.8.5/src/minvec.F90
+--- orig/libgridxc-0.8.5/src/minvec.F90	2019-02-13 22:48:02.000000000 +0900
++++ libgridxc-0.8.5/src/minvec.F90	2021-08-23 18:21:09.000000000 +0900
+@@ -18,14 +18,14 @@
+ MODULE m_minvec
+ 
+   ! Module procedures:
+-  USE sys,     only: die    ! Termination routine
++  USE sysxc,     only: die    ! Termination routine
+   USE sorting, only: order  ! Orders a vector increasingly
+   USE sorting, only: ordix  ! Increasing order index of a vector
+   USE cellsubs,only: reclat ! Reciprocal lattice vectors
+   USE cellsubs,only: volcel ! Unit cell volume
+ 
+   ! Module parameters:
+-  USE precision, only: dp   ! Double precision real kind
++  USE precisionxc, only: dp   ! Double precision real kind
+ 
+   implicit none
+ 
+diff -ruN orig/libgridxc-0.8.5/src/moreParallelSubs.F90 libgridxc-0.8.5/src/moreParallelSubs.F90
+--- orig/libgridxc-0.8.5/src/moreParallelSubs.F90	2019-02-13 22:48:02.000000000 +0900
++++ libgridxc-0.8.5/src/moreParallelSubs.F90	2021-08-23 18:19:07.000000000 +0900
+@@ -19,11 +19,11 @@
+ !   USED module procedures:
+ ! use alloc,      only: de_alloc        ! De-allocation routine
+ ! use alloc,      only: re_alloc        ! Re-allocation routine
+-! use sys,        only: die             ! Termination routine
++! use sysxc,        only: die             ! Termination routine
+ ! use m_io,       only: io_assign, io_close  ! Get and reserve an available IO unit
+ !
+ !   USED module parameters:
+-! use precision,  only: dp              ! Real double precision type
++! use precisionxc,  only: dp              ! Real double precision type
+ !
+ !   USED MPI procedures, interfaces and types:
+ ! use mpi_instr, only: MPI_AllReduce
+@@ -108,7 +108,7 @@
+ !----------------------------- UNITS ------------------------------------------
+ ! Units of all arguments are arbitrary
+ !----------------------------- USAGE ------------------------------------------
+-! use precision,        only: dp
++! use precisionxc,        only: dp
+ ! use moreParallelSubs, only: miscAllReduce
+ ! real(dp):: Ek, Eh, polarization(3), stress(3,3)
+ ! real(dp),allocatable:: force(:,:)
+@@ -149,11 +149,11 @@
+ ! Used module procedures
+   use alloc,     only: de_alloc  ! De-allocation routine
+   use alloc,     only: re_alloc  ! Re-allocation routine
+-  use sys,       only: die       ! Termination routine
++  use sysxc,       only: die       ! Termination routine
+   use m_io,      only: io_assign, io_close ! Get and reserve an available IO unit
+ 
+ ! Used module parameters
+-  use precision, only: dp              ! Real double precision type
++  use precisionxc, only: dp              ! Real double precision type
+ 
+ ! Used MPI procedures and types
+ #ifdef MPI
+diff -ruN orig/libgridxc-0.8.5/src/precision.F90 libgridxc-0.8.5/src/precision.F90
+--- orig/libgridxc-0.8.5/src/precision.F90	2019-02-13 22:48:02.000000000 +0900
++++ libgridxc-0.8.5/src/precision.F90	1970-01-01 09:00:00.000000000 +0900
+@@ -1,45 +0,0 @@
+-!!@LICENSE
+-!
+-module precision
+-  !
+-  !     Precision handling
+-  !
+-#ifdef MPI
+-  use mpi, only: MPI_real, MPI_double_precision
+-#endif
+-
+-  implicit none
+-
+-  integer, parameter :: i8b = selected_int_kind(18)
+-
+-  integer, parameter :: sp = selected_real_kind(6,30)
+-  integer, parameter :: dp = selected_real_kind(14,100)
+-  !
+-  !     Select precision of certain parts of the program
+-  !     These are set through preprocessor directives.
+-  !
+-#ifdef MPI
+-#ifdef GRID_SP
+-  integer, parameter :: grid_p = sp
+-  integer, parameter :: MPI_grid_real = MPI_real
+-#elif defined(GRID_DP)
+-  integer, parameter :: grid_p = dp
+-  integer, parameter :: MPI_grid_real = MPI_double_precision
+-#else
+-  integer, parameter :: grid_p = dp
+-  integer, parameter :: MPI_grid_real = MPI_double_precision
+-#endif
+-
+-#else   
+-
+-#ifdef GRID_SP
+-  integer, parameter :: grid_p = sp
+-#elif defined(GRID_DP)
+-  integer, parameter :: grid_p = dp
+-#else
+-  integer, parameter :: grid_p = dp
+-#endif
+-
+-#endif
+-end module precision
+-
+diff -ruN orig/libgridxc-0.8.5/src/precisionxc.F90 libgridxc-0.8.5/src/precisionxc.F90
+--- orig/libgridxc-0.8.5/src/precisionxc.F90	1970-01-01 09:00:00.000000000 +0900
++++ libgridxc-0.8.5/src/precisionxc.F90	2021-08-23 18:19:43.000000000 +0900
+@@ -0,0 +1,45 @@
++!!@LICENSE
++!
++module precisionxc
++  !
++  !     Precision handling
++  !
++#ifdef MPI
++  use mpi, only: MPI_real, MPI_double_precision
++#endif
++
++  implicit none
++
++  integer, parameter :: i8b = selected_int_kind(18)
++
++  integer, parameter :: sp = selected_real_kind(6,30)
++  integer, parameter :: dp = selected_real_kind(14,100)
++  !
++  !     Select precision of certain parts of the program
++  !     These are set through preprocessor directives.
++  !
++#ifdef MPI
++#ifdef GRID_SP
++  integer, parameter :: grid_p = sp
++  integer, parameter :: MPI_grid_real = MPI_real
++#elif defined(GRID_DP)
++  integer, parameter :: grid_p = dp
++  integer, parameter :: MPI_grid_real = MPI_double_precision
++#else
++  integer, parameter :: grid_p = dp
++  integer, parameter :: MPI_grid_real = MPI_double_precision
++#endif
++
++#else   
++
++#ifdef GRID_SP
++  integer, parameter :: grid_p = sp
++#elif defined(GRID_DP)
++  integer, parameter :: grid_p = dp
++#else
++  integer, parameter :: grid_p = dp
++#endif
++
++#endif
++end module precisionxc
++
+diff -ruN orig/libgridxc-0.8.5/src/radfft.F90 libgridxc-0.8.5/src/radfft.F90
+--- orig/libgridxc-0.8.5/src/radfft.F90	2019-02-13 22:48:02.000000000 +0900
++++ libgridxc-0.8.5/src/radfft.F90	2021-08-23 18:20:36.000000000 +0900
+@@ -16,7 +16,7 @@
+ ! use alloc,     only: re_alloc  ! (Re)allocation routines
+ !
+ !   Used module parameters:
+-! use precision, only: dp        ! Double precision real kind
++! use precisionxc, only: dp        ! Double precision real kind
+ !
+ ! *********************************************************************
+ ! SUBROUTINE RADFFT( L, NR, RMAX, F, G )
+@@ -81,7 +81,7 @@
+ 
+       MODULE m_radfft
+ 
+-      USE precision, only: dp        ! Double precision real kind
++      USE precisionxc, only: dp        ! Double precision real kind
+       USE m_bessph,  only: bessph    ! Spherical Bessel functions
+       use m_fft_gpfa,only: fft_gpfa_ez     ! 1D fast Fourier transform
+       USE alloc,     only: re_alloc, de_alloc
+diff -ruN orig/libgridxc-0.8.5/src/sorting.F90 libgridxc-0.8.5/src/sorting.F90
+--- orig/libgridxc-0.8.5/src/sorting.F90	2019-02-13 22:48:02.000000000 +0900
++++ libgridxc-0.8.5/src/sorting.F90	2021-08-23 18:34:19.000000000 +0900
+@@ -12,7 +12,7 @@
+ 
+ MODULE sorting
+ 
+-  use precision, only: dp
++  use precisionxc, only: dp
+   implicit none
+ 
+   private
+@@ -189,6 +189,7 @@
+     ! *************** INPUT AND OUTPUT **********************************
+     ! REAL*8  X(M,N) : Array(s) to be ordered: Xout(I,J) = Xin(I,INDEX(J))
+     ! *******************************************************************
++    use precisionxc, only : dp
+     INTEGER, intent(in) :: M, N, INDX(N)
+     REAL(DP), intent(inout) :: X(M,N)
+     X = X(:,INDX)
+diff -ruN orig/libgridxc-0.8.5/src/sys.F90 libgridxc-0.8.5/src/sys.F90
+--- orig/libgridxc-0.8.5/src/sys.F90	2019-02-13 22:48:02.000000000 +0900
++++ libgridxc-0.8.5/src/sys.F90	1970-01-01 09:00:00.000000000 +0900
+@@ -1,31 +0,0 @@
+-!!@LICENSE
+-
+-module sys
+-
+-  ! This module contains interfaces to routines
+-  ! that must be provided as external by the user
+-  ! of the library
+-
+-  interface
+-    subroutine die(str)
+-      character(len=*), intent(in)  :: str
+-    end subroutine die
+-  end interface
+-  interface
+-    subroutine gridxc_timer_start(str)
+-      character(len=*), intent(in)  :: str
+-    end subroutine gridxc_timer_start
+-  end interface
+-  interface
+-    subroutine gridxc_timer_stop(str)
+-      character(len=*), intent(in)  :: str
+-    end subroutine gridxc_timer_stop
+-  end interface
+-  interface
+-    subroutine memory_accouting_event(name,bytes)
+-      character(len=*), intent(in)  :: name
+-      integer, intent(in)           :: bytes
+-    end subroutine memory_accouting_event
+-  end interface
+-end module sys
+-
+diff -ruN orig/libgridxc-0.8.5/src/sysxc.F90 libgridxc-0.8.5/src/sysxc.F90
+--- orig/libgridxc-0.8.5/src/sysxc.F90	1970-01-01 09:00:00.000000000 +0900
++++ libgridxc-0.8.5/src/sysxc.F90	2021-08-23 18:19:07.000000000 +0900
+@@ -0,0 +1,31 @@
++!!@LICENSE
++
++module sysxc
++
++  ! This module contains interfaces to routines
++  ! that must be provided as external by the user
++  ! of the library
++
++  interface
++    subroutine die(str)
++      character(len=*), intent(in)  :: str
++    end subroutine die
++  end interface
++  interface
++    subroutine gridxc_timer_start(str)
++      character(len=*), intent(in)  :: str
++    end subroutine gridxc_timer_start
++  end interface
++  interface
++    subroutine gridxc_timer_stop(str)
++      character(len=*), intent(in)  :: str
++    end subroutine gridxc_timer_stop
++  end interface
++  interface
++    subroutine memory_accouting_event(name,bytes)
++      character(len=*), intent(in)  :: name
++      integer, intent(in)           :: bytes
++    end subroutine memory_accouting_event
++  end interface
++end module sysxc
++
+diff -ruN orig/libgridxc-0.8.5/src/vdwxc.F90 libgridxc-0.8.5/src/vdwxc.F90
+--- orig/libgridxc-0.8.5/src/vdwxc.F90	2019-02-13 22:48:02.000000000 +0900
++++ libgridxc-0.8.5/src/vdwxc.F90	2021-08-23 18:19:07.000000000 +0900
+@@ -20,7 +20,7 @@
+ ! Written by J.M.Soler. July 2007 - April 2010 and July 2012.
+ !------------------------------------------------------------------------------
+ ! Used module procedures:
+-!  use sys,         only: die               ! termination routine
++!  use sysxc,         only: die               ! termination routine
+ !  use mesh1D,      only: derivative        ! Derivative of a function in a mesh
+ !  use m_ggaxc      only: ggaxc             ! General GGA XC routine
+ !  use m_ldaxc,     only: ldaxc             ! General LDA XC routine
+@@ -39,7 +39,7 @@
+ !  use m_vv_vdwxc,  only: vv_vdw_set_kcut   ! Sets the planewave cutoff kc
+ !------------------------------------------------------------------------------
+ ! Used module parameters:
+-!   use precision,  only: dp                ! Real double precision type
++!   use precisionxc,  only: dp                ! Real double precision type
+ !------------------------------------------------------------------------------
+ ! Public procedures available from this module:
+ !   vdw_decusp    : Energy due to the softening of the VdW kernel cusp
+@@ -239,7 +239,7 @@
+ MODULE m_vdwxc
+ 
+ ! Used module procedures
+-  use sys,         only: die               ! termination routine
++  use sysxc,         only: die               ! termination routine
+   use mesh1D,      only: derivative        ! Derivative of a function in a mesh
+   use mesh1D,      only: integral          ! Integral of a function in a mesh
+   use mesh1D,      only: get_mesh          ! Returns the mesh points
+@@ -259,7 +259,7 @@
+   use m_vv_vdwxc,  only: vv_vdw_set_kcut   ! Sets the planewave cutoff kc
+ 
+ ! Used module parameters
+-  use precision,   only: dp                ! Real double precision type
++  use precisionxc,   only: dp                ! Real double precision type
+ 
+ #ifdef DEBUG_XC
+   use m_vv_vdwxc,  only: vv_vdw_phiofr     ! Interpolates rho1*rho2*phi(k1,k2,r)
+diff -ruN orig/libgridxc-0.8.5/src/vv_vdwxc.F90 libgridxc-0.8.5/src/vv_vdwxc.F90
+--- orig/libgridxc-0.8.5/src/vv_vdwxc.F90	2019-02-13 22:48:02.000000000 +0900
++++ libgridxc-0.8.5/src/vv_vdwxc.F90	2021-08-23 18:19:08.000000000 +0900
+@@ -13,7 +13,7 @@
+ ! Written by J.M.Soler. July 2012
+ !------------------------------------------------------------------------------
+ ! Used module procedures:
+-!  use sys,         only: die               ! termination routine
++!  use sysxc,         only: die               ! termination routine
+ !  use mesh1D,      only: get_mesh          ! Returns the mesh points
+ !  use m_radfft,    only: radfft            ! Radial fast Fourier transform
+ !  use mesh1D,      only: set_mesh          ! Sets a 1D mesh
+@@ -21,7 +21,7 @@
+ !  use interpolation, only: splint            ! Calculates spline interpolation
+ !------------------------------------------------------------------------------
+ ! Used module parameters:
+-!   use precision,  only: dp                ! Real double precision type
++!   use precisionxc,  only: dp                ! Real double precision type
+ !------------------------------------------------------------------------------
+ ! Public procedures available from this module:
+ !   vv_vdw_beta      : Returns constant beta of eq.(13) of VV2010 JCP paper
+@@ -166,7 +166,7 @@
+ MODULE m_vv_vdwxc
+ 
+ ! Used module procedures
+-  use sys,          only: die              ! Termination routine
++  use sysxc,          only: die              ! Termination routine
+   use mesh1D,       only: get_mesh         ! Returns the mesh points
+   use m_radfft,     only: radfft           ! Radial fast Fourier transform
+   use alloc,        only: re_alloc         ! Re-allocation routine
+@@ -175,7 +175,7 @@
+   use interpolation,only: splint           ! Calculates spline interpolation
+ 
+ ! Used module parameters
+-  use precision,    only: dp               ! Real double precision type
++  use precisionxc,    only: dp               ! Real double precision type
+ 
+ #ifdef DEBUG_XC
+   use debugXC,      only: udebug           ! File unit for debug output
+diff -ruN orig/libgridxc-0.8.5/src/xcmod.F90 libgridxc-0.8.5/src/xcmod.F90
+--- orig/libgridxc-0.8.5/src/xcmod.F90	2019-02-13 22:48:02.000000000 +0900
++++ libgridxc-0.8.5/src/xcmod.F90	2021-08-23 18:19:08.000000000 +0900
+@@ -67,7 +67,7 @@
+ !     real(dp)        :: wc(n)   ! Functional weights for correlation
+ !
+ ! ------------------------ USAGE ----------------------------------------------
+-!   use precision, only: dp
++!   use precisionxc, only: dp
+ !   use siestaXC,  only: getXC
+ !   integer,parameter:: maxFunc = 10
+ !   character(len=20):: func(maxFunc), auth(maxFunc)
+@@ -87,8 +87,8 @@
+ !
+ module xcmod
+ 
+-  use precision, only: dp              ! Double precision real kind
+-  use sys,       only: die             ! Termination routine
++  use precisionxc, only: dp              ! Double precision real kind
++  use sysxc,       only: die             ! Termination routine
+   use m_vdwxc,   only: vdw_set_author  ! Sets vdW functional flavour
+ 
+   implicit none
