@@ -319,7 +319,7 @@ class Openfoam(Package):
     depends_on('fftw-api')
     depends_on('boost')
     # OpenFOAM does not play nice with CGAL 5.X
-    depends_on('cgal@:4.99')
+    depends_on('cgal@:4')
     # The flex restriction is ONLY to deal with a spec resolution clash
     # introduced by the restriction within scotch!
     depends_on('flex@:2.6.1,2.6.4:')
@@ -637,10 +637,14 @@ class Openfoam(Package):
             'CGAL': [
                 ('BOOST_ARCH_PATH', spec['boost'].prefix),
                 ('CGAL_ARCH_PATH',  spec['cgal'].prefix),
+                ('MPFR_ARCH_PATH',  spec['mpfr'].prefix),
+                ('GMP_ARCH_PATH',   spec['gmp'].prefix),
                 ('LD_LIBRARY_PATH',
                  foam_add_lib(
                      pkglib(spec['boost'], '${BOOST_ARCH_PATH}'),
-                     pkglib(spec['cgal'], '${CGAL_ARCH_PATH}'))),
+                     pkglib(spec['cgal'], '${CGAL_ARCH_PATH}'),
+                     pkglib(spec['mpfr'], '${MPFR_ARCH_PATH}'),
+                     pkglib(spec['gmp'], '${GMP_ARCH_PATH}'))),
             ],
             'FFTW': [
                 ('FFTW_ARCH_PATH', spec['fftw-api'].prefix),  # Absolute

@@ -24,6 +24,7 @@ class Gromacs(CMakePackage):
     maintainers = ['junghans', 'marvinbernhardt']
 
     version('master', branch='master')
+    version('2021.4', sha256='cb708a3e3e83abef5ba475fdb62ef8d42ce8868d68f52dafdb6702dc9742ba1d')
     version('2021.3', sha256='e109856ec444768dfbde41f3059e3123abdb8fe56ca33b1a83f31ed4575a1cc6')
     version('2021.2', sha256='d940d865ea91e78318043e71f229ce80d32b0dc578d64ee5aa2b1a4be801aadb')
     version('2021.1', sha256='bc1d0a75c134e1fb003202262fe10d3d32c59bbb40d714bc3e5015c71effe1e5')
@@ -124,9 +125,6 @@ class Gromacs(CMakePackage):
     depends_on('blas')
     depends_on('lapack')
 
-    # TODO: openmpi constraint; remove when concretizer is fixed
-    depends_on('hwloc@:1.999', when='+hwloc')
-
     patch('gmxDetectCpu-cmake-3.14.patch', when='@2018:2019.3^cmake@3.14.0:')
     patch('gmxDetectSimd-cmake-3.14.patch', when='@:2017.99^cmake@3.14.0:')
     patch('arm_neon_asimd-2016.3.patch', when='@2016.3')
@@ -141,6 +139,7 @@ class Gromacs(CMakePackage):
     patch('opts-2021.patch', when='@2021: +sve +opts')
     patch('external-kernels.patch', when='@2021.3:')
     patch('pme_simd.patch', when='@2021.3:')
+    patch('gmx_make_edi.patch', when='@2021.3:')
 
     flavor = ""
 
