@@ -1,0 +1,181 @@
+diff -ruN orig/charm-v6.10.2/src/arch/mpi-linux-arm8/cc-fcc.h charm-v6.10.2/src/arch/mpi-linux-arm8/cc-fcc.h
+--- orig/charm-v6.10.2/src/arch/mpi-linux-arm8/cc-fcc.h	1970-01-01 09:00:00.000000000 +0900
++++ charm-v6.10.2/src/arch/mpi-linux-arm8/cc-fcc.h	2021-11-26 16:15:58.668295625 +0900
+@@ -0,0 +1,6 @@
++#undef CMK_DLL_CC
++
++#undef  CMK_COMPILEMODE_ORIG
++#undef  CMK_COMPILEMODE_ANSI
++#define CMK_COMPILEMODE_ORIG                               1
++#define CMK_COMPILEMODE_ANSI                               0
+diff -ruN orig/charm-v6.10.2/src/arch/mpi-linux-arm8/cc-fcc.sh charm-v6.10.2/src/arch/mpi-linux-arm8/cc-fcc.sh
+--- orig/charm-v6.10.2/src/arch/mpi-linux-arm8/cc-fcc.sh	1970-01-01 09:00:00.000000000 +0900
++++ charm-v6.10.2/src/arch/mpi-linux-arm8/cc-fcc.sh	2021-11-26 16:15:58.668295625 +0900
+@@ -0,0 +1,15 @@
++# Assumes Fujitsu C/C++ compiler:
++CMK_CPP_CHARM="cpp -P"
++CMK_CPP_C="fcc$CMK_COMPILER_SUFFIX"
++CMK_CC="fcc$CMK_COMPILER_SUFFIX"
++CMK_LD="fcc$CMK_COMPILER_SUFFIX"
++CMK_CXX="FCC$CMK_COMPILER_SUFFIX"
++CMK_LDXX="FCC$CMK_COMPILER_SUFFIX"
++
++CMK_CPP_C_FLAGS="-E"
++
++CMK_PIC='' # empty string: will be reset to default by conv-config.sh
++CMK_PIE='-fPIE'
++
++CMK_COMPILER='fcc'
++CMK_WARNINGS_ARE_ERRORS="-Werror"
+diff -ruN orig/charm-v6.10.2/src/arch/mpi-linux-arm8/conv-mach-frt.h charm-v6.10.2/src/arch/mpi-linux-arm8/conv-mach-frt.h
+--- orig/charm-v6.10.2/src/arch/mpi-linux-arm8/conv-mach-frt.h	1970-01-01 09:00:00.000000000 +0900
++++ charm-v6.10.2/src/arch/mpi-linux-arm8/conv-mach-frt.h	2021-11-26 16:15:58.668295625 +0900
+@@ -0,0 +1 @@
++/* This file intentionally left blank */
+diff -ruN orig/charm-v6.10.2/src/arch/mpi-linux-arm8/conv-mach-frt.sh charm-v6.10.2/src/arch/mpi-linux-arm8/conv-mach-frt.sh
+--- orig/charm-v6.10.2/src/arch/mpi-linux-arm8/conv-mach-frt.sh	1970-01-01 09:00:00.000000000 +0900
++++ charm-v6.10.2/src/arch/mpi-linux-arm8/conv-mach-frt.sh	2021-11-26 16:15:58.678295624 +0900
+@@ -0,0 +1,15 @@
++CMK_CF90="frt"
++
++CMK_FPP="$CMK_CF90 -Ccpp"
++
++CMK_CF90_FIXED="$CMK_CF90 -Fixed "
++
++CMK_F90LIBS="-lfj90i -lfj90f -lfjsrcinfo -lfjsrcinfo -lelf"
++
++CMK_CF77=$CMK_CF90
++CMK_F77LIBS=$CMK_F90LIBS
++
++CMK_MOD_NAME_ALLCAPS=
++CMK_MOD_EXT="mod"
++CMK_F90_USE_MODDIR=1
++CMK_F90_MODINC="-I"
+diff -ruN orig/charm-v6.10.2/src/arch/mpi-linux-arm8/conv-mach-smp.h charm-v6.10.2/src/arch/mpi-linux-arm8/conv-mach-smp.h
+--- orig/charm-v6.10.2/src/arch/mpi-linux-arm8/conv-mach-smp.h	1970-01-01 09:00:00.000000000 +0900
++++ charm-v6.10.2/src/arch/mpi-linux-arm8/conv-mach-smp.h	2021-11-26 16:10:28.388359785 +0900
+@@ -0,0 +1,20 @@
++
++#define CMK_SMP						   1
++
++
++#undef CMK_SHARED_VARS_UNAVAILABLE
++#undef CMK_SHARED_VARS_POSIX_THREADS_SMP
++#define CMK_SHARED_VARS_UNAVAILABLE                        0
++#define CMK_SHARED_VARS_POSIX_THREADS_SMP                  1
++
++#undef CMK_MALLOC_USE_GNU_MALLOC
++#undef CMK_MALLOC_USE_OS_BUILTIN
++#define CMK_MALLOC_USE_GNU_MALLOC                          0
++#define CMK_MALLOC_USE_OS_BUILTIN                          1
++
++/*#define CMK_MMAP_PROBE                                     1 */
++
++/*#define CMK_PCQUEUE_LOCK				   1 */
++/*#define CMK_USE_MFENCE 					   1 */
++/* Replaced by CMK_NOT_USE_TLS_THREAD as default */
++/*#define CMK_USE_TLS_THREAD                                 1*/
+diff -ruN orig/charm-v6.10.2/src/arch/mpi-linux-arm8/conv-mach-smp.sh charm-v6.10.2/src/arch/mpi-linux-arm8/conv-mach-smp.sh
+--- orig/charm-v6.10.2/src/arch/mpi-linux-arm8/conv-mach-smp.sh	1970-01-01 09:00:00.000000000 +0900
++++ charm-v6.10.2/src/arch/mpi-linux-arm8/conv-mach-smp.sh	2021-11-26 16:10:28.398359784 +0900
+@@ -0,0 +1,3 @@
++CMK_DEFS="$CMK_DEFS -D_REENTRANT"
++CMK_LIBS="-lpthread $CMK_LIBS "
++CMK_SMP='1'
+diff -ruN orig/charm-v6.10.2/src/arch/mpi-linux-arm8/conv-mach.h charm-v6.10.2/src/arch/mpi-linux-arm8/conv-mach.h
+--- orig/charm-v6.10.2/src/arch/mpi-linux-arm8/conv-mach.h	1970-01-01 09:00:00.000000000 +0900
++++ charm-v6.10.2/src/arch/mpi-linux-arm8/conv-mach.h	2021-11-26 16:10:28.378359787 +0900
+@@ -0,0 +1,50 @@
++
++#ifndef _CONV_MACH_H
++#define _CONV_MACH_H
++
++#define CMK_ARM					  1
++
++#define CMK_CONVERSE_MPI                                   1
++
++#define CMK_DLL_CC  "g++ -shared -O3 -o "
++
++#define CMK_GETPAGESIZE_AVAILABLE                          1
++
++#define CMK_MALLOC_USE_GNU_MALLOC                          0
++#define CMK_MALLOC_USE_OS_BUILTIN                          1
++
++#define CMK_MEMORY_PAGESIZE                                4096
++#define CMK_MEMORY_PROTECTABLE                             0
++
++#define CMK_SHARED_VARS_UNAVAILABLE                        1
++
++#define CMK_THREADS_USE_CONTEXT                            1
++#define CMK_THREADS_USE_JCONTEXT                           0
++#define CMK_THREADS_USE_FCONTEXT                           0
++#define CMK_THREADS_USE_PTHREADS                           0
++#define CMK_THREADS_ARE_WIN32_FIBERS                       0
++
++#define CMK_SIGNAL_NOT_NEEDED                              0
++#define CMK_SIGNAL_USE_SIGACTION                           0
++#define CMK_SIGNAL_USE_SIGACTION_WITH_RESTART              1
++
++#define CMK_THREADS_REQUIRE_NO_CPV                         0
++#define CMK_THREADS_COPY_STACK                             0
++
++#define CMK_TIMER_USE_RDTSC                                0
++#define CMK_TIMER_USE_GETRUSAGE                            1
++#define CMK_TIMER_USE_SPECIAL                              0
++#define CMK_TIMER_USE_TIMES                                0
++
++#define CMK_64BIT   1
++#define CMK_32BIT   0
++#define CMK_WHEN_PROCESSOR_IDLE_BUSYWAIT                   0
++#define CMK_WHEN_PROCESSOR_IDLE_USLEEP                     1
++
++
++#define CMK_DEBUG_MODE					   0
++#define CMK_WEB_MODE                                       1
++
++#define CMK_LBDB_ON					   1
++
++#endif
+diff -ruN orig/charm-v6.10.2/src/arch/mpi-linux-arm8/conv-mach.sh charm-v6.10.2/src/arch/mpi-linux-arm8/conv-mach.sh
+--- orig/charm-v6.10.2/src/arch/mpi-linux-arm8/conv-mach.sh	1970-01-01 09:00:00.000000000 +0900
++++ charm-v6.10.2/src/arch/mpi-linux-arm8/conv-mach.sh	2021-11-26 16:10:28.388359785 +0900
+@@ -0,0 +1,39 @@
++. $CHARMINC/cc-mpiopts.sh
++
++CMK_XIOPTS=''
++CMK_WARNINGS_ARE_ERRORS='-Werror'
++CMK_CXX_OPTIMIZE='-O3'
++
++CMK_QT='generic64-light'
++
++
++CMK_CC="$MPICC"
++CMK_CXX="$MPICXX"
++
++CMK_LD_LIBRARY_PATH="-Wl,-rpath,$CHARMLIBSO/"
++
++CMK_NATIVE_CC='gcc'
++CMK_NATIVE_LD='gcc'
++CMK_NATIVE_CXX='g++'
++CMK_NATIVE_LDXX='g++'
++CMK_NATIVE_LIBS=''
++
++CMK_NATIVE_FLAGS='-fPIC'
++
++CMK_NATIVE_CC_FLAGS="$CMK_NATIVE_FLAGS"
++CMK_NATIVE_LD_FLAGS="$CMK_NATIVE_FLAGS"
++CMK_NATIVE_CXX_FLAGS="$CMK_NATIVE_FLAGS"
++CMK_NATIVE_LDXX_FLAGS="$CMK_NATIVE_FLAGS"
++
++# Fortran
++CMK_CXX_IS_GCC=`$MPICXX -V 2>&1 | grep 'g++' `
++CMK_CXX_IS_ICC=`$MPICXX -V 2>&1 | grep Intel `
++if test -n "$CMK_CXX_IS_GCC"
++then
++    . $CHARMINC/conv-mach-gfortran.sh
++elif test -n "$CMK_CXX_IS_ICC"
++then
++    . $CHARMINC/conv-mach-ifort.sh
++fi
++
++CMK_COMPILER='mpicc'

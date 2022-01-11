@@ -33,7 +33,7 @@ class PyMpi4py(PythonPackage):
     depends_on('py-3to2', when='@3.1: ^python@:2', type='build')
 
     def build_args(self, spec, prefix):
-        return ['--mpi=fujitsu-mpi -shared']
+        return ['--mpi=fujitsu-mpi']
 #        return ['--mpicc=%s -shared' % spec['mpi'].mpicc]
 
     @property
