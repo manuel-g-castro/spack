@@ -24,6 +24,7 @@ class Gromacs(CMakePackage):
     maintainers = ['junghans', 'marvinbernhardt']
 
     version('master', branch='master')
+    version('2021.5', sha256='eba63fe6106812f72711ef7f76447b12dd1ee6c81b3d8d4d0e3098cd9ea009b6')
     version('2021.4', sha256='cb708a3e3e83abef5ba475fdb62ef8d42ce8868d68f52dafdb6702dc9742ba1d')
     version('2021.3', sha256='e109856ec444768dfbde41f3059e3123abdb8fe56ca33b1a83f31ed4575a1cc6')
     version('2021.2', sha256='d940d865ea91e78318043e71f229ce80d32b0dc578d64ee5aa2b1a4be801aadb')
@@ -137,9 +138,10 @@ class Gromacs(CMakePackage):
     patch('sve-2021.patch', when='@2021: +sve')
     patch('sve-2021-1.patch', when='@2021.2: +sve')
     patch('opts-2021.patch', when='@2021: +sve +opts')
-    patch('external-kernels.patch', when='@2021.3:')
+    patch('external-kernels.patch', when='@2021.3:2021.4')
+    patch('external-kernels.v2.patch', when='@2021.5:')
     patch('pme_simd.patch', when='@2021.3:')
-    patch('gmx_make_edi.patch', when='@2021.3:')
+    patch('gmx_make_edi.patch', when='@2021.3:2021.4')
 
     flavor = ""
 
@@ -168,6 +170,8 @@ class Gromacs(CMakePackage):
 
         if '~shared' in self.spec:
             options.append('-DBUILD_SHARED_LIBS:BOOL=OFF')
+            if self.spec.satisfies('@2021:'):
+                options.append('-DGMXAPI=OFF') 
 
         if '+hwloc' in self.spec:
             options.append('-DGMX_HWLOC:BOOL=ON')
