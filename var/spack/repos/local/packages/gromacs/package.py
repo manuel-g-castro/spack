@@ -24,6 +24,7 @@ class Gromacs(CMakePackage):
     maintainers = ['junghans', 'marvinbernhardt']
 
     version('master', branch='master')
+    version('2022', sha256='fad60d606c02e6164018692c6c9f2c159a9130c2bf32e8c5f4f1b6ba2dda2b68')
     version('2021.5', sha256='eba63fe6106812f72711ef7f76447b12dd1ee6c81b3d8d4d0e3098cd9ea009b6')
     version('2021.4', sha256='cb708a3e3e83abef5ba475fdb62ef8d42ce8868d68f52dafdb6702dc9742ba1d')
     version('2021.3', sha256='e109856ec444768dfbde41f3059e3123abdb8fe56ca33b1a83f31ed4575a1cc6')
@@ -100,6 +101,13 @@ class Gromacs(CMakePackage):
         values=('128', '256', '512', 'scalable'),
         multi=False
     )
+    variant(
+        'pmswp',
+        default='0',
+        description='Poor man software pipelining',
+        values=('0', '1', '2', '3'),
+        multi=False
+    )
     variant('opts', default=False, description='Extra nonbonded kernel optimizations')
     variant('simd-kernels', default='builtin', description='External SIMD kernels')
     variant('fft-kernel', default='builtin', description='External FFT kernel')
@@ -136,13 +144,21 @@ class Gromacs(CMakePackage):
     patch('sve.1.patch', when='@2020.5:2020.99 +sve')
     patch('opts.patch', when='@2020.4:2020.99 +sve +opts')
 
-    patch('sve-2021.patch', when='@2021: +sve')
-    patch('sve-2021-1.patch', when='@2021.2: +sve')
-    patch('opts-2021.patch', when='@2021: +sve +opts')
+    patch('sve-2021.patch', when='@2021:2021.99 +sve')
+    patch('sve-2021-1.patch', when='@2021.2:2021.99 +sve')
+    patch('opts-2021.patch', when='@2021:2021.99 +sve +opts')
     patch('external-kernels.patch', when='@2021.3:2021.4')
-    patch('external-kernels.v2.patch', when='@2021.5:')
-    patch('pme_simd.patch', when='@2021.3:')
+    patch('external-kernels.v2.patch', when='@2021.5:2021.99')
+    patch('pme_simd.patch', when='@2021.3:2021.99')
     patch('gmx_make_edi.patch', when='@2021.3:2021.4')
+
+    patch('sve-2022.patch', when='@2022:2022.99 +sve')
+    patch('opts-2022.patch', when='@2022:2022.99 +sve +opts')
+    patch('external-kernels-2022.patch', when='@2022:')
+    patch('pme_simd-2022.patch', when='@2022:')
+    patch('pme_spread-2022.patch', when='@2022:')
+    patch('pmswp-2022.patch', when='@2022:')
+    patch('tune_pme-2022.patch', when='@2022: ^fujitsu-mpi')
 
     flavor = ""
 
