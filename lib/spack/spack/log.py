@@ -30,7 +30,17 @@ def init_logfile(logid=None):
     if logdir and os.path.isdir(logdir):
 
         d = datetime.now(JST())
-        target_dir = '%s/%s/%s' % (logdir, d.strftime('%Y%m%d'), logid)
+        date_dir = '%s/%s' % (logdir, d.strftime('%Y%m%d'))
+        if not(os.path.exists(date_dir)):
+            try:
+                os.makedirs(date_dir)
+                os.chmod(date_dir, 0o777)
+            except OSError as e:
+                if e.errno != 17:
+                    return
+                pass
+
+        target_dir = '%s/%s' % (date_dir, logid)
         if not(os.path.exists(target_dir)):
             try:
                 os.makedirs(target_dir)
@@ -52,5 +62,6 @@ def output_specs(specs):
             with open(logfile, mode='a') as f:
                 for spec in specs:
                     f.write(str(spec) + '\n')
+            os.chmod(logfile, 0o644)
         except:
             pass

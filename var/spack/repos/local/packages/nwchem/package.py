@@ -14,9 +14,11 @@ class Nwchem(Package):
 
     homepage = "https://nwchemgit.github.io"
     url      = "https://github.com/nwchemgit/nwchem/releases/download/v7.0.2-release/nwchem-7.0.2-release.revision-b9985dfa-srconly.2020-10-12.tar.bz2"
+    git      = "https://github.com/nwchemgit/nwchem.git"
 
     tags = ['ecp', 'ecp-apps']
 
+    version('master', branch='master', preferred=True)
     version('7.0.2', sha256='9bf913b811b97c8ed51bc5a02bf1c8e18456d0719c0a82b2e71223a596d945a7',
             url='https://github.com/nwchemgit/nwchem/releases/download/v7.0.2-release/nwchem-7.0.2-release.revision-b9985dfa-srconly.2020-10-12.tar.bz2')
     version('7.0.0', sha256='e3c6510627345be596f4079047e5e7b59e6c20599798ecfe122e3527f8ad6eb0',
@@ -42,6 +44,7 @@ class Nwchem(Package):
         args = []
         args.extend([
             'NWCHEM_TOP=%s' % self.stage.source_path,
+            'ARMCI_NETWORK=MPI-PR',
             # NWCHEM is picky about FC and CC. They should NOT be full path.
             # see https://nwchemgit.github.io/Special_AWCforum/sp/id7524
             'CC=%s' % os.path.basename(spack_cc),
@@ -52,7 +55,8 @@ class Nwchem(Package):
             'BLAS_LIB=%s' % blas.ld_flags,
             'LAPACK_LIB=%s' % lapack.ld_flags,
             'SCALAPACK_LIB=%s' % scalapack.ld_flags,
-            'NWCHEM_MODULES=all python',
+            #'NWCHEM_MODULES=all python',
+            'NWCHEM_MODULES=driver',
             'NWCHEM_LONG_PATHS=Y',  # by default NWCHEM_TOP is 64 char max
             'USE_NOIO=Y'  # skip I/O algorithms
         ])
