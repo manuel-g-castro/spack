@@ -24,10 +24,14 @@ class Gromacs(CMakePackage):
     maintainers = ['junghans', 'marvinbernhardt']
 
     version('master', branch='master')
+    version('2022', sha256='fad60d606c02e6164018692c6c9f2c159a9130c2bf32e8c5f4f1b6ba2dda2b68')
+    version('2021.5', sha256='eba63fe6106812f72711ef7f76447b12dd1ee6c81b3d8d4d0e3098cd9ea009b6')
+    version('2021.4', sha256='cb708a3e3e83abef5ba475fdb62ef8d42ce8868d68f52dafdb6702dc9742ba1d')
     version('2021.3', sha256='e109856ec444768dfbde41f3059e3123abdb8fe56ca33b1a83f31ed4575a1cc6')
     version('2021.2', sha256='d940d865ea91e78318043e71f229ce80d32b0dc578d64ee5aa2b1a4be801aadb')
     version('2021.1', sha256='bc1d0a75c134e1fb003202262fe10d3d32c59bbb40d714bc3e5015c71effe1e5')
     version('2021', sha256='efa78ab8409b0f5bf0fbca174fb8fbcf012815326b5c71a9d7c385cde9a8f87b')
+    version('2020.7', sha256='744158d8f61b0d36ffe89ec934519b7e0981a7af438897740160da648d36c2f0')
     version('2020.6', sha256='d8bbe57ed3c9925a8cb99ecfe39e217f930bed47d5268a9e42b33da544bdb2ee')
     version('2020.5', sha256='7b6aff647f7c8ee1bf12204d02cef7c55f44402a73195bd5f42cf11850616478')
     version('2020.4', sha256='5519690321b5500c7951aaf53ff624042c3edd1a5f5d6dd1f2d802a3ecdbf4e6')
@@ -97,6 +101,13 @@ class Gromacs(CMakePackage):
         values=('128', '256', '512', 'scalable'),
         multi=False
     )
+    variant(
+        'pmswp',
+        default='0',
+        description='Poor man software pipelining',
+        values=('0', '1', '2', '3'),
+        multi=False
+    )
     variant('opts', default=False, description='Extra nonbonded kernel optimizations')
     variant('simd-kernels', default='builtin', description='External SIMD kernels')
     variant('fft-kernel', default='builtin', description='External FFT kernel')
@@ -124,9 +135,6 @@ class Gromacs(CMakePackage):
     depends_on('blas')
     depends_on('lapack')
 
-    # TODO: openmpi constraint; remove when concretizer is fixed
-    depends_on('hwloc@:1.999', when='+hwloc')
-
     patch('gmxDetectCpu-cmake-3.14.patch', when='@2018:2019.3^cmake@3.14.0:')
     patch('gmxDetectSimd-cmake-3.14.patch', when='@:2017.99^cmake@3.14.0:')
     patch('arm_neon_asimd-2016.3.patch', when='@2016.3')
@@ -136,11 +144,21 @@ class Gromacs(CMakePackage):
     patch('sve.1.patch', when='@2020.5:2020.99 +sve')
     patch('opts.patch', when='@2020.4:2020.99 +sve +opts')
 
-    patch('sve-2021.patch', when='@2021: +sve')
-    patch('sve-2021-1.patch', when='@2021.2: +sve')
-    patch('opts-2021.patch', when='@2021: +sve +opts')
-    patch('external-kernels.patch', when='@2021.3:')
-    patch('pme_simd.patch', when='@2021.3:')
+    patch('sve-2021.patch', when='@2021:2021.99 +sve')
+    patch('sve-2021-1.patch', when='@2021.2:2021.99 +sve')
+    patch('opts-2021.patch', when='@2021:2021.99 +sve +opts')
+    patch('external-kernels.patch', when='@2021.3:2021.4')
+    patch('external-kernels.v2.patch', when='@2021.5:2021.99')
+    patch('pme_simd.patch', when='@2021.3:2021.99')
+    patch('gmx_make_edi.patch', when='@2021.3:2021.4')
+
+    patch('sve-2022.patch', when='@2022:2022.99 +sve')
+    patch('opts-2022.patch', when='@2022:2022.99 +sve +opts')
+    patch('external-kernels-2022.patch', when='@2022:')
+    patch('pme_simd-2022.patch', when='@2022:')
+    patch('pme_spread-2022.patch', when='@2022:')
+    patch('pmswp-2022.patch', when='@2022:')
+    patch('tune_pme-2022.patch', when='@2022: ^fujitsu-mpi')
 
     flavor = ""
 
@@ -169,6 +187,8 @@ class Gromacs(CMakePackage):
 
         if '~shared' in self.spec:
             options.append('-DBUILD_SHARED_LIBS:BOOL=OFF')
+            if self.spec.satisfies('@2021:'):
+                options.append('-DGMXAPI=OFF') 
 
         if '+hwloc' in self.spec:
             options.append('-DGMX_HWLOC:BOOL=ON')

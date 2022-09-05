@@ -63,12 +63,13 @@ the dependencies"""
 
 import os
 import spack.log
+import uuid
 
 logid = os.environ.get('PJM_JOBID')
 if logid:
     logid += '_' + os.environ.get('PJM_SUBJOBID')
 else:
-    logid = '0000000_0000000'
+    logid = os.uname()[1] + '_' + str(uuid.uuid1())
     
 spack.log.init_logfile(logid)
 

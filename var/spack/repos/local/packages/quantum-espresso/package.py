@@ -21,6 +21,9 @@ class QuantumEspresso(Package):
     maintainers = ['naromero77']
 
     version('develop', branch='develop')
+    version('6.8', sha256='fc9b8141705d31db30f6cfe61d4e49867c7c3b04a59533eb7f90301fa8bd50ce', 
+            url = 'https://github.com/QEF/q-e/releases/download/qe-6.8/qe-6.8-ReleasePack.tgz'
+            )
     version('6.7', sha256='8f06ea31ae52ad54e900a2f51afd5c70f78096d9dcf39c86c2b17dccb1ec9c87', 
             url = 'https://github.com/QEF/q-e/releases/download/qe-6.7.0/qe-6.7-ReleasePack.tgz'
             )
@@ -95,8 +98,8 @@ class QuantumEspresso(Package):
         env.set('CFLAGS', '-Kfast,openmp')
         env.set('FFLAGS', '-Kfast,openmp')
 
-        if spec.satisfies('@6.7'):
-            env.append_flags('FFLAGS', '-X03 -Nalloc_assign')
+        if spec.satisfies('@6.7:6.8'):
+            env.append_flags('FFLAGS', '-Nalloc_assign')
 
         if '+mpi' in spec:
             env.append_flags('DFLAGS', '-D__MPI')
@@ -165,6 +168,7 @@ class QuantumEspresso(Package):
 
     # PATCHES SECTION
     # Apply each patch file for QE-6.7, QE-6.6 and QE-6.5 
+    patch('qe-6.8.patch', level=2, when='@6.8')
     patch('qe-6.7.patch', level=2, when='@6.7')
     patch('qe-6.6.patch', level=2, when='@6.6')
     patch('qe-6.5.patch', level=2, when='@6.5')

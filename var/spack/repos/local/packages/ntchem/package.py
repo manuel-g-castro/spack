@@ -12,7 +12,7 @@ class Ntchem(Package):
     homepage = "https://molsc.riken.jp/ntchem_e.html"
     has_code = False
 
-    version('12.1')
+    version('12.2.0')
 
     def install(self, spec, prefix):
         ##NTChem is available as an external package; it is not installable in user space.

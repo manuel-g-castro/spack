@@ -13,6 +13,7 @@ class Abinitmp(Package):
     has_code = False
 
     version('1-22')
+    version('2-4')
 
     def install(self, spec, prefix):
         ##ABINIT-MP is available as an external package; it is not installable in user space.
