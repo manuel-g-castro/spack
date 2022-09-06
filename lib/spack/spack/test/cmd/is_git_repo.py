@@ -1,9 +1,12 @@
-# Copyright 2013-2021 Lawrence Livermore National Security, LLC and other
+# Copyright 2013-2022 Lawrence Livermore National Security, LLC and other
 # Spack Project Developers. See the top-level COPYRIGHT file for details.
 #
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 from __future__ import print_function
+
+import os
+import sys
 
 import pytest
 
@@ -14,7 +17,7 @@ from spack.util.executable import which
 from spack.version import ver
 
 git = which("git")
-git_required_version = '2.17.0'
+git_required_version = "2.17.0"
 
 
 def check_git_version():
@@ -32,8 +35,7 @@ def check_git_version():
 
 
 pytestmark = pytest.mark.skipif(
-    not git or not check_git_version(),
-    reason="we need git to test if we are in a git repo"
+    not git or not check_git_version(), reason="we need git to test if we are in a git repo"
 )
 
 
@@ -42,7 +44,17 @@ def git_tmp_worktree(tmpdir):
     """Create new worktree in a temporary folder and monkeypatch
     spack.paths.prefix to point to it.
     """
-    worktree_root = str(tmpdir.join("tmp_worktree"))
+    # TODO: This is fragile and should be high priority for
+    # follow up fixes. 27021
+    # Path length is occasionally too long on Windows
+    # the following reduces the path length to acceptable levels
+    if sys.platform == "win32":
+        long_pth = str(tmpdir).split(os.path.sep)
+        tmp_worktree = os.path.sep.join(long_pth[:-1])
+    else:
+        tmp_worktree = str(tmpdir)
+    worktree_root = os.path.sep.join([tmp_worktree, "wrktree"])
+
     mkdirp(worktree_root)
 
     git("worktree", "add", "--detach", worktree_root, "HEAD")
