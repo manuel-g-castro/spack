@@ -82,7 +82,7 @@ class N2p2(MakefilePackage):
         if '+openmp' in self.spec:
             cflags += ' ' + self.compiler.openmp_flag
 
-        makefile.filter("PROJECT_CFLAGS=.*", "PROJECT_CFLAGS={0}".format(cflags)
+        makefile.filter("PROJECT_CFLAGS=.*", "PROJECT_CFLAGS={0}".format(cflags))
         makefile.filter(
             "PROJECT_LDFLAGS_BLAS.*",
             "PROJECT_LDFLAGS_BLAS={0} -lgsl -lgslcblas".format(blas_libs.ld_flags),
