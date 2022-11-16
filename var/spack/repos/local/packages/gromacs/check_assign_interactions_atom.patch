@@ -1,0 +1,41 @@
+From 644cc24233f9295b9f3a4813eee6380eb3383d0f Mon Sep 17 00:00:00 2001
+From: Gilles Gouaillardet <gilles@rist.or.jp>
+Date: Fri, 21 Aug 2020 11:17:35 +0900
+Subject: [PATCH 01/32] fix check_assign_interactions_atom()
+
+fix a bug introduced in gromacs/gromacs@c507ae4d3f4b0d516e53896dac35a52911a8a44b
+
+Thanks Berk Hess for the guidance to the right fix
+
+Refs. gromacs/gromacs#3635
+
+(cherry picked from commit 7d83d16072e7521bcf8fc43ceda7bf29803466e1)
+---
+ src/gromacs/domdec/domdec_topology.cpp | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/src/gromacs/domdec/domdec_topology.cpp b/src/gromacs/domdec/domdec_topology.cpp
+index 5ae42b9..f2f85df 100644
+--- a/src/gromacs/domdec/domdec_topology.cpp
++++ b/src/gromacs/domdec/domdec_topology.cpp
+@@ -1153,7 +1153,6 @@ static inline void check_assign_interactions_atom(int                       i,
+             {
+                 add_vsite(*dd->ga2la, index, rtil, ftype, nral, TRUE, i, i_gl, i_mol, iatoms.data(), idef);
+             }
+-            j += 1 + nral + 2;
+         }
+         else
+         {
+@@ -1313,8 +1312,8 @@ static inline void check_assign_interactions_atom(int                       i,
+                     (*nbonded_local)++;
+                 }
+             }
+-            j += 1 + nral;
+         }
++        j += 1 + nral_rt(ftype);
+     }
+ }
+ 
+-- 
+1.8.3.1
+

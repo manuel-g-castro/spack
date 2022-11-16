@@ -1,0 +1,86 @@
+From 548450bcdfbfbfb430568f1acf6481e8c4f28393 Mon Sep 17 00:00:00 2001
+From: Gilles Gouaillardet <gilles@rist.or.jp>
+Date: Wed, 9 Sep 2020 17:59:27 +0900
+Subject: [PATCH 02/32] hardware: fix hardware detection on A64fx
+
+---
+ src/gromacs/hardware/architecture.h     | 5 +++++
+ src/gromacs/hardware/detecthardware.cpp | 2 +-
+ 2 files changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/src/gromacs/hardware/architecture.h b/src/gromacs/hardware/architecture.h
+index 4a82221..fd9483a 100644
+--- a/src/gromacs/hardware/architecture.h
++++ b/src/gromacs/hardware/architecture.h
+@@ -50,6 +50,7 @@ enum class Architecture
+     Unknown, //! Not one of the cases below
+     X86,     //! X86
+     Arm,     //! ARM
++    Arm_sve, //! ARM + SVE
+     PowerPC  //! IBM PowerPC
+ };
+ 
+@@ -73,7 +74,11 @@ static constexpr Architecture c_architecture =
+ #if GMX_IS_X86_32 || GMX_IS_X86_64
+         Architecture::X86;
+ #elif defined __arm__ || defined __arm || defined _M_ARM || defined __aarch64__
++#ifdef __ARM_FEATURE_SVE
++        Architecture::Arm_sve;
++#else
+         Architecture::Arm;
++#endif
+ #elif defined __powerpc__ || defined __ppc__ || defined __PPC__
+         Architecture::PowerPC;
+ #else
+diff --git a/src/gromacs/hardware/detecthardware.cpp b/src/gromacs/hardware/detecthardware.cpp
+index c24a8b2..4ea7db1 100644
+--- a/src/gromacs/hardware/detecthardware.cpp
++++ b/src/gromacs/hardware/detecthardware.cpp
+@@ -351,7 +351,7 @@ static void hardwareTopologyPrepareDetection()
+         && (defined(THREAD_PTHREADS) || defined(THREAD_WINDOWS))
+ 
+     // Modify this conditional when/if x86 or PowerPC starts to sleep some cores
+-    if (c_architecture != Architecture::X86 && c_architecture != Architecture::PowerPC)
++    if (c_architecture != Architecture::X86 && c_architecture != Architecture::PowerPC && c_architecture != Architecture::Arm_sve)
+     {
+         int                      countConfigured = sysconf(_SC_NPROCESSORS_CONF);
+         std::vector<std::thread> workThreads(countConfigured);
+-- 
+1.8.3.1
+
+From e6a0dab74ef3b8d48e01f74973eb08d4b5c3807f Mon Sep 17 00:00:00 2001
+From: Gilles Gouaillardet <gilles@rist.or.jp>
+Date: Tue, 25 Feb 2020 09:35:56 +0900
+Subject: [PATCH 03/32] do not inline copy_rvecn() on ARMv8+sve platforms
+
+to workaround a bug with clang based compilers on arm+sve
+
+(cherry picked from commit 7ad0aa2cfb15d2a0e979b15113b8ee8fe5cb247f)
+---
+ src/gromacs/math/vec.h | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/src/gromacs/math/vec.h b/src/gromacs/math/vec.h
+index 61f51d8..b1a3bd0 100644
+--- a/src/gromacs/math/vec.h
++++ b/src/gromacs/math/vec.h
+@@ -223,7 +223,15 @@ static inline void copy_dvec_to_rvec(const dvec a, rvec b)
+     b[ZZ] = static_cast<real>(a[ZZ]);
+ }
+ 
+-static inline void copy_rvecn(const rvec* a, rvec* b, int startn, int endn)
++#if defined(__ARM_FEATURE_SVE) && defined(__clang__)
++/* work around a bug in LLVM based compilers that causes bad code
++   to be generated when inlining this function on ARMv8+SVE arch */
++__attribute__((noinline))
++#else
++inline
++#endif
++static void
++copy_rvecn(const rvec* a, rvec* b, int startn, int endn)
+ {
+     int i;
+     for (i = startn; i < endn; i++)
+-- 
+1.8.3.1
+
