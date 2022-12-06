@@ -1,0 +1,38 @@
+diff -Nur numpy-1.21.3/numpy/distutils/ccompiler.py numpy-1.21.3-patched/numpy/distutils/ccompiler.py
+--- numpy-1.21.3/numpy/distutils/ccompiler.py	2021-10-19 16:17:30.000000000 +0900
++++ numpy-1.21.3-patched/numpy/distutils/ccompiler.py	2022-08-19 16:16:28.000000000 +0900
+@@ -689,6 +689,8 @@
+ 
+ compiler_class['intel'] = ('intelccompiler', 'IntelCCompiler',
+                            "Intel C Compiler for 32-bit applications")
++compiler_class['fj'] = ('fjccompiler', 'fjCCompiler',
++                        "fj C Compiler")
+ compiler_class['intele'] = ('intelccompiler', 'IntelItaniumCCompiler',
+                             "Intel C Itanium Compiler for Itanium-based applications")
+ compiler_class['intelem'] = ('intelccompiler', 'IntelEM64TCCompiler',
+diff -Nur numpy-1.21.3/numpy/distutils/fjccompiler.py numpy-1.21.3-patched/numpy/distutils/fjccompiler.py
+--- numpy-1.21.3/numpy/distutils/fjccompiler.py	1970-01-01 09:00:00.000000000 +0900
++++ numpy-1.21.3-patched/numpy/distutils/fjccompiler.py	2022-08-19 16:20:30.000000000 +0900
+@@ -0,0 +1,22 @@
++from __future__ import division, absolute_import, print_function
++
++import platform
++
++from distutils.unixccompiler import UnixCCompiler
++from numpy.distutils.exec_command import find_executable
++from numpy.distutils.ccompiler import simple_version_match
++if platform.system() == 'Windows':
++    from numpy.distutils.msvc9compiler import MSVCCompiler
++
++
++class fjCCompiler(UnixCCompiler):
++    """FJ compiler for Python."""
++    compiler_type = 'fj'
++
++    def __init__ (self, verbose=0, dry_run=0, force=0):
++        UnixCCompiler.__init__ (self, verbose, dry_run, force)
++        self.set_executables(compiler='fcc -Nclang -O3',
++                             compiler_so='fcc -Nclang -O3 -fPIC',
++                             compiler_cxx='FCC -Nclang -O3 -stdlib=libc++',
++                             linker_exe='fcc -Nclang',
++                             linker_so='fcc -Nclang -shared')

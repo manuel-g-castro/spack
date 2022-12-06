@@ -1,91 +1,12 @@
-diff -urpN a/src/memory.cpp b/src/memory.cpp
---- a/src/memory.cpp	2022-12-02 11:12:40.000000000 +0900
-+++ b/src/memory.cpp	2022-12-02 11:32:40.000000000 +0900
-@@ -33,6 +33,15 @@
- #define LAMMPS_MEMALIGN 64
- #endif
- 
-+//[RIST] alignment for A64FX
-+#if defined(__CLANG_FUJITSU) || defined(__FUJITSU)
-+#if not defined(LAMMPS_MEMALIGN)
-+#define LAMMPS_MEMALIGN 256
-+#endif
-+#include <cstring>
-+#include <malloc.h>
-+#endif
-+
- using namespace LAMMPS_NS;
+diff -urpN a/src/OPENMP/pair_lj_charmm_coul_long_omp.cpp b/src/OPENMP/pair_lj_charmm_coul_long_omp.cpp
+--- a/src/OPENMP/pair_lj_charmm_coul_long_omp.cpp	2022-10-04 17:57:12.537075000 +0900
++++ b/src/OPENMP/pair_lj_charmm_coul_long_omp.cpp	2022-10-05 08:19:12.684484700 +0900
+@@ -37,6 +37,148 @@ PairLJCharmmCoulLongOMP::PairLJCharmmCou
+ }
  
  /* ---------------------------------------------------------------------- */
-@@ -70,6 +79,7 @@ void *Memory::smalloc(bigint nbytes, con
-    safe realloc
- ------------------------------------------------------------------------- */
- 
-+//[RIST] aligned realloc for A64FX
- void *Memory::srealloc(void *ptr, bigint nbytes, const char *name)
- {
-   if (nbytes == 0) {
-@@ -96,6 +106,17 @@ void *Memory::srealloc(void *ptr, bigint
- #endif
-     free(optr);
-   }
-+#elif defined(__CLANG_FUJITSU) || defined(__FUJITSU)
-+#if defined(LAMMPS_MEMALIGN)
-+  ptr = realloc(ptr, nbytes);
-+  uintptr_t offset = ((uintptr_t)(const void *)(ptr)) % LAMMPS_MEMALIGN;
-+  if (offset) {
-+     void *optr = ptr;
-+     ptr = smalloc(nbytes, name);
-+     memcpy(ptr, optr, MIN(nbytes,malloc_usable_size(optr)));
-+     free(optr);
-+  }
-+#endif
- #else
-   ptr = realloc(ptr,nbytes);
- #endif
-diff -urpN a/src/my_page.cpp b/src/my_page.cpp
---- a/src/my_page.cpp	2022-12-02 11:12:40.000000000 +0900
-+++ b/src/my_page.cpp	2022-12-02 11:32:40.000000000 +0900
-@@ -19,6 +19,13 @@
- #define LAMMPS_MEMALIGN 64
- #endif
- 
-+//[RIST] alignment for A64FX
-+#if defined(__CLANG_FUJITSU) || defined(__FUJITSU)
-+#if not defined(LAMMPS_MEMALIGN)
-+#define LAMMPS_MEMALIGN 256
-+#endif
-+#endif
-+
- using namespace LAMMPS_NS;
- 
- /** \class LAMMPS_NS::MyPage
-diff -urpN a/src/my_pool_chunk.cpp b/src/my_pool_chunk.cpp
---- a/src/my_pool_chunk.cpp	2022-12-02 11:12:40.000000000 +0900
-+++ b/src/my_pool_chunk.cpp	2022-12-02 11:32:40.000000000 +0900
-@@ -20,6 +20,13 @@
- #define LAMMPS_MEMALIGN 64
- #endif
- 
-+//[RIST] alignment for A64FX
-+#if defined(__CLANG_FUJITSU) || defined(__FUJITSU)
-+#if not defined(LAMMPS_MEMALIGN)
-+#define LAMMPS_MEMALIGN 256
-+#endif
-+#endif
-+
- using namespace LAMMPS_NS;
- 
- /** \class LAMMPS_NS::MyPoolChunk
-diff -urpN a/src/USER-OMP/pair_lj_charmm_coul_long_omp.cpp b/src/USER-OMP/pair_lj_charmm_coul_long_omp.cpp
---- a/src/USER-OMP/pair_lj_charmm_coul_long_omp.cpp	2022-12-02 11:12:40.000000000 +0900
-+++ b/src/USER-OMP/pair_lj_charmm_coul_long_omp.cpp	2022-12-02 11:32:40.000000000 +0900
-@@ -37,6 +37,149 @@ PairLJCharmmCoulLongOMP::PairLJCharmmCou
- 
- /* ---------------------------------------------------------------------- */
- 
 +//[RIST] template specialization: EVFLAG=0, EFLAG=0, NEWTON_PAIR=1
-+template <>
++template<>
 +void PairLJCharmmCoulLongOMP::eval<0,0,1>(int iifrom, int iito, ThrData * const thr)
 +{
 +
@@ -160,7 +81,7 @@ diff -urpN a/src/USER-OMP/pair_lj_charmm_coul_long_omp.cpp b/src/USER-OMP/pair_l
 +            const double prefactor = qqrd2e * qtmp*q[j]/r;
 +            forcecoul = prefactor * (erfc + EWALD_F*grij*expm2);
 +            //if (EFLAG) ecoul = prefactor*erfc;
-+            //if (sbindex) {
++            //if (sbindex) { special_coul[0] = 1.0 (fixed)
 +              const double adjust = (1.0-special_coul[sbindex])*prefactor;
 +              forcecoul -= adjust;
 +              //if (EFLAG) ecoul -= adjust;
@@ -218,7 +139,7 @@ diff -urpN a/src/USER-OMP/pair_lj_charmm_coul_long_omp.cpp b/src/USER-OMP/pair_l
 +        //if (EVFLAG) ev_tally_thr(this,i,j,nlocal,NEWTON_PAIR,
 +        //                         evdwl,ecoul,fpair,delx,dely,delz,thr);
 +      //}
-+    } // End of jj-loop
++    } // End of jj-loop 
 +    f[i].x += fxtmp;
 +    f[i].y += fytmp;
 +    f[i].z += fztmp;
@@ -226,14 +147,13 @@ diff -urpN a/src/USER-OMP/pair_lj_charmm_coul_long_omp.cpp b/src/USER-OMP/pair_l
 +}
 +
 +/* ---------------------------------------------------------------------- */
-+
+ 
  void PairLJCharmmCoulLongOMP::compute(int eflag, int vflag)
  {
-   ev_init(eflag,vflag);
-diff -urpN a/src/USER-OMP/pair_lj_cut_omp.cpp b/src/USER-OMP/pair_lj_cut_omp.cpp
---- a/src/USER-OMP/pair_lj_cut_omp.cpp	2022-12-02 11:12:40.000000000 +0900
-+++ b/src/USER-OMP/pair_lj_cut_omp.cpp	2022-12-02 11:32:40.000000000 +0900
-@@ -71,6 +71,7 @@ void PairLJCutOMP::compute(int eflag, in
+diff -urpN a/src/OPENMP/pair_lj_cut_omp.cpp b/src/OPENMP/pair_lj_cut_omp.cpp
+--- a/src/OPENMP/pair_lj_cut_omp.cpp	2022-10-04 17:57:12.765552000 +0900
++++ b/src/OPENMP/pair_lj_cut_omp.cpp	2022-10-05 08:20:15.880066100 +0900
+@@ -72,6 +72,7 @@ void PairLJCutOMP::compute(int eflag, in
    } // end of omp parallel region
  }
  
@@ -241,7 +161,7 @@ diff -urpN a/src/USER-OMP/pair_lj_cut_omp.cpp b/src/USER-OMP/pair_lj_cut_omp.cpp
  template <int EVFLAG, int EFLAG, int NEWTON_PAIR>
  void PairLJCutOMP::eval(int iifrom, int iito, ThrData * const thr)
  {
-@@ -109,6 +110,7 @@ void PairLJCutOMP::eval(int iifrom, int
+@@ -110,6 +111,7 @@ void PairLJCutOMP::eval(int iifrom, int
      jnum = numneigh[i];
      fxtmp=fytmp=fztmp=0.0;
  
@@ -249,3 +169,82 @@ diff -urpN a/src/USER-OMP/pair_lj_cut_omp.cpp b/src/USER-OMP/pair_lj_cut_omp.cpp
      for (jj = 0; jj < jnum; jj++) {
        j = jlist[jj];
        factor_lj = special_lj[sbmask(j)];
+diff -urpN a/src/memory.cpp b/src/memory.cpp
+--- a/src/memory.cpp	2022-10-04 17:57:11.990310700 +0900
++++ b/src/memory.cpp	2022-10-05 08:21:28.254708500 +0900
+@@ -35,6 +35,15 @@
+ #define LAMMPS_MEMALIGN 64
+ #endif
+ 
++//[RIST] alignment for A64FX
++#if defined(__CLANG_FUJITSU) || defined(__FUJITSU)
++#if not defined(LAMMPS_MEMALIGN)
++#define LAMMPS_MEMALIGN 256
++#endif
++#include <cstring>
++#include <malloc.h>
++#endif
++
+ using namespace LAMMPS_NS;
+ 
+ /* ---------------------------------------------------------------------- */
+@@ -72,6 +81,7 @@ void *Memory::smalloc(bigint nbytes, con
+    safe realloc
+ ------------------------------------------------------------------------- */
+ 
++//[RIST] aligned realloc for A64FX
+ void *Memory::srealloc(void *ptr, bigint nbytes, const char *name)
+ {
+   if (nbytes == 0) {
+@@ -98,6 +108,17 @@ void *Memory::srealloc(void *ptr, bigint
+ #endif
+     free(optr);
+   }
++#elif defined(__CLANG_FUJITSU) || defined(__FUJITSU)
++#if defined(LAMMPS_MEMALIGN)
++  ptr = realloc(ptr, nbytes);
++  uintptr_t offset = ((uintptr_t)(const void *)(ptr)) % LAMMPS_MEMALIGN;
++  if (offset) {
++     void *optr = ptr;
++     ptr = smalloc(nbytes, name);
++     memcpy(ptr, optr, MIN(nbytes,malloc_usable_size(optr)));
++     free(optr);
++  }
++#endif
+ #else
+   ptr = realloc(ptr,nbytes);
+ #endif
+diff -urpN a/src/my_page.cpp b/src/my_page.cpp
+--- a/src/my_page.cpp	2022-10-04 17:57:12.162143500 +0900
++++ b/src/my_page.cpp	2022-10-05 08:21:49.102249300 +0900
+@@ -17,6 +17,13 @@
+ #define LAMMPS_MEMALIGN 64
+ #endif
+ 
++//[RIST] alignment for A64FX
++#if defined(__CLANG_FUJITSU) || defined(__FUJITSU)
++#if not defined(LAMMPS_MEMALIGN)
++#define LAMMPS_MEMALIGN 256
++#endif
++#endif
++
+ using namespace LAMMPS_NS;
+ 
+ /** \class LAMMPS_NS::MyPage
+diff -urpN a/src/my_pool_chunk.cpp b/src/my_pool_chunk.cpp
+--- a/src/my_pool_chunk.cpp	2022-10-04 17:57:12.349601400 +0900
++++ b/src/my_pool_chunk.cpp	2022-10-05 08:22:01.431979100 +0900
+@@ -19,6 +19,13 @@
+ #define LAMMPS_MEMALIGN 64
+ #endif
+ 
++//[RIST] alignment for A64FX
++#if defined(__CLANG_FUJITSU) || defined(__FUJITSU)
++#if not defined(LAMMPS_MEMALIGN)
++#define LAMMPS_MEMALIGN 256
++#endif
++#endif
++
+ using namespace LAMMPS_NS;
+ 
+ /** \class LAMMPS_NS::MyPoolChunk
