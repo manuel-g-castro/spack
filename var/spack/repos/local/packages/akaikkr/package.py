@@ -36,8 +36,8 @@ LDA/GGA) of the density functional theory.
     """
 
     homepage = "http://kkr.issp.u-tokyo.ac.jp/"
-    url = "file://{0}/cpa2002v010.tgz".format(os.getcwd())
-#    url = "./cpa2002v010.tgz"
+#    url = "file://{0}/cpa2002v010.tgz".format(os.getcwd())
+    url = "/vol0004/apps/oss/spack-v0.19/var/spack/repos/local/packages/akaikkr/cpa2002v010.tgz"
 
     # FIXME: Add a list of GitHub accounts to
     # notify when the package is updated.

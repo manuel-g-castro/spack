@@ -6,14 +6,14 @@ spack:
     # packages to be compiled with fj
     #
     - fjs:
-      - abinit@8.10.2 %fj +openmp optimization-flavor=aggressive ^fujitsu-fftw
+#      - abinit@8.10.2 %fj +openmp optimization-flavor=aggressive ^fujitsu-fftw
       - adios2 %fj
 #      - alps %fj # cannot be installed
       - batchedblas %fj
-      - bcftools %fj
+      - bcftools %fj ^htslib@1.12
       - bedtools2 %fj
       - biobambam2 %fj
-      - boost %fj +atomic+chrono+date_time+exception+filesystem+graph+iostreams+locale+log+math+program_options+random+regex+serialization+signals+system+test+thread+timer+wave
+      - boost %fj
       - bwa %fj
       - cblas %fj
       - cmake %fj
@@ -23,16 +23,16 @@ spack:
       - fujitsu-fftw %fj
       - fujitsu-frontistr@5.0 %fj
       - fujitsu-ssl2 %fj
-      - grads %fj
+      - grads %fj ^pcre2@10.39
       - h5z-zfp %fj
-      - hdf5 %fj +cxx+fortran
+      - hdf5 %fj +cxx+fortran+hl
       - htslib@1.12 %fj
       - improved-rdock %fj
       - julia %fj
       - lis %fj
 #      - llvm %fj  ^binutils@2.37~nls # "because no binutils+ld in /usr"
-      - llvm %fj
-      - mapsplice2 %fj
+      - llvm %fj ^libedit@3.1-20210216 ^hwloc~pci
+      - mapsplice2 %fj ^samtools/xxxxx
       - metis %fj
 #      - mesa %fj ^llvm/xxxxx # to avoid a concretization error in llvm
       - mptensor %fj
@@ -46,21 +46,21 @@ spack:
       - openblas %fj
       - openfdtd@2.6.0 %fj +mpi
       - openjdk %fj
-#      - openmx %fj
+      - openmx %fj
       - parallel-netcdf %fj
       - paraview+osmesa+python3 %fj
       - parmetis %fj
       - petsc%fj
       - pfapack %fj
       - picard %fj
-      - povray %fj ~mkl ^boost@1.74.0
+      - povray %fj ~mkl
       - py-ase %fj
       - py-dask %fj
       - py-h5py %fj
       - py-horovod %fj
       - py-hypothesis %fj
       - py-jupyterhub %fj
-      - py-keras %fj
+      - py-keras %fj  ^libtool@2.4.7
       - py-matplotlib %fj
       - py-netcdf4 %fj
       - py-pandas %fj
@@ -69,7 +69,7 @@ spack:
       - py-pygps %fj
       - py-pymol %fj
       - py-pytest %fj
-      - py-pysam %fj ^py-setuptools@57.4.0 # can be installed with setuptools@57.4.0 or older
+      - py-pysam %fj ^samtools/xxxx
       - py-scikit-learn %fj
       - py-scipy %fj
       - py-seaborn %fj
@@ -80,14 +80,14 @@ spack:
       - r %fj
       - raja %fj
       - rdkit %fj
-      - samtools %fj ^ncurses@6.2 ^htslib@1.12 # "because ncurses-dev in /usr is incomplete"
+      - samtools %fj ^ncurses@6.3 ^htslib@1.12 # "because ncurses-dev in /usr is incomplete"
       - scale %fj
       - screen %fj
       - scsumma25d %fj
       - star %fj
       - suite-sparse %fj
       - tmux %fj
-#      - wrf@3.9.1.1 %fj build_type=dm+sm # export PATH=/usr/libexec/gcc/aarch64-redhat-linux/8:$PATH
+      - wrf@3.9.1.1 %fj build_type=dm+sm # export PATH=/usr/libexec/gcc/aarch64-redhat-linux/8:$PATH
       - xios %fj
       - zpares %fj
 
@@ -95,26 +95,27 @@ spack:
     # packages to be compiled with gcc
     #
     - gccs:
-      - gcc %gcc
-      - llvm %gcc ^binutils@2.37~nls # "because no binutils+ld in /usr"
-#      - process-in-process@2 %gcc # cannot be installed
-#      - process-in-process@3 %gcc # cannot be installed
+      - gcc %gcc@8.5.0
+#      - llvm %gcc@8.5.0 ^binutils@2.37~nls # "because no binutils+ld in /usr"
+      - llvm %gcc@8.5.0
+#      - process-in-process@2 %gcc@8.5.0 # cannot be installed
+#      - process-in-process@3 %gcc@8.5.0 # cannot be installed
 
     #
     # packages from local-repo ("Fugaku" packages)
     #
     - local_repo:
       - blitz %fj
-      - cp2k@7.1 %fj
+      - cp2k@7.1 %fj smm=blas ~libint ~libxc
       - fujitsu-mpi %fj
-      - fujitsu-mpi %gcc
+#      - fujitsu-mpi %gcc@8.5.0
       - genesis %fj
       - gmt %fj
-      - gmt %gcc
+      - gmt %gcc@8.5.0
       - kokkos %fj +openmp
       - n2p2 %fj
       - netlib-lapack %fj
-      - nwchem@master %fj
+      - nwchem@master %fj +mpipr
       - py-mpi4py %fj
       - py-numpy %fj
       - siesta %fj
@@ -124,8 +125,8 @@ spack:
       - abinitmp@2-4 %fj
       - mpich-tofu %fj +mt
       - mpich-tofu %fj ~mt
-      - mpich-tofu %gcc +mt
-      - mpich-tofu %gcc ~mt
+      - mpich-tofu %gcc@8.5.0 +mt
+      - mpich-tofu %gcc@8.5.0 ~mt
       - ntchem %fj
 
   specs:

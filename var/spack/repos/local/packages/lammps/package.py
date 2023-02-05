@@ -27,6 +27,7 @@ class Lammps(CMakePackage, CudaPackage):
     tags = ['ecp', 'ecp-apps']
 
     version('master', branch='master')
+    version("20220623", sha256="41fb7249efae944b9c308e02e02503d391042c1616810e83617e5f68374d506e",url="https://download.lammps.org/tars/lammps-stable.tar.gz")
     version('20210310', sha256='25708378dbeccf794bc5045aceb84380bf4a3ca03fc8e5d150a26ca88d371474')
     #---Modified-by-Yukihiro-Ota-in-RIST-on-30Nov2021-start-
     #version('20201029', sha256='759705e16c1fedd6aa6e07d028cc0c78d73c76b76736668420946a74050c3726')
@@ -89,7 +90,8 @@ class Lammps(CMakePackage, CudaPackage):
                           'user-phonon', 'user-plumed', 'user-ptm', 'user-qtb',
                           'user-reaction', 'user-reaxc', 'user-sdpd',
                           'user-smd', 'user-smtbq', 'user-sph', 'user-tally',
-                          'user-uef', 'user-yaff', 'voronoi']
+                          'user-uef', 'user-yaff', 'voronoi', 
+                          'ptm']
     #---Modified-by-Yukihiro-Ota-in-RIST-on-30Nov2021-end-
 
     for pkg in supported_packages:
@@ -239,7 +241,16 @@ class Lammps(CMakePackage, CudaPackage):
     #---Modified-by-Yukihiro-Ota-in-RIST-on-30Nov2021-start-
     patch("cmake_tune_default_in_clang.patch",when="@20200630 %fj")
     patch("rist-29Oct2020.patch", when='@20201029 %fj +fj_loopopt')
+    patch("rist-23Jun2022.patch", when='@20220623 %fj +fj_loopopt')
     #---Modified-by-Yukihiro-Ota-in-RIST-on-30Nov2021-end-
+
+    #---Modified-by-Yukihiro-Ota-in-RIST-on-20Jan2023-start-
+    patch("rist-29Oct2020-fjbugfix.patch", when='@20201029 %fj@:4.8.1 +user-ptm')
+    patch("rist-23Jun2022-fjbugfix.patch", when='@20220623 %fj@:4.8.1 +ptm')
+    ### rist-29Oct2020-fjbugfix.patch was made for the compiler bug of fj4.8.1
+    ### if this bug is fixed after this compiler version, this patch is not necessarily used.
+    ###
+    #---Modified-by-Yukihiro-Ota-in-RIST-on-20Jan2023-end-
 
     root_cmakelists_dir = 'cmake'
 
@@ -351,7 +362,11 @@ class Lammps(CMakePackage, CudaPackage):
 
         #---Modified-by-Yukihiro-Ota-in-RIST-on-30Nov2021-start-
         if '%fj@4.3.1:' in spec:
-            flagstr  = '-Nclang -std=c++14 -stdlib=libc++ -march=armv8.3-a+sve ' 
+            #---Modified-by-Yukihiro-Ota-in-RIST-on-6Jan2023-start-
+            # Default is libstdc++ for STL.
+            #flagstr  = '-Nclang -std=c++14 -stdlib=libc++ -march=armv8.3-a+sve ' 
+            flagstr  = '-Nclang -std=c++14 -stdlib=libstdc++ -march=armv8.3-a+sve ' 
+            #---Modified-by-Yukihiro-Ota-in-RIST-on-6Jan2023-end-
             flagstr += '-mcpu=a64fx -mtune=a64fx -fsigned-char -ffj-largepage ' 
             optfstr  = '-Ofast -fno-omit-frame-pointer -fvectorize -fno-slp-vectorize ' 
             optfstr += '-ffj-no-swp -msve-vector-bits=scalable '

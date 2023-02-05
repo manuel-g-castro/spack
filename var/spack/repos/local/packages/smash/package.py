@@ -39,6 +39,7 @@ class Smash(MakefilePackage):
     # notify when the package is updated.
     # maintainers = ['github_user1', 'github_user2']
 
+    version('3.0.2', sha256='eeaaf6d3d4b787d06e20a96757eed927f39d536564f8b193c21dc07dbac623a9', url="file://{0}/smash-3.0.2.tgz".format(os.getcwd()))
     version('3.0.0', sha256='55b5ca63f910573a504dd026a34842eac09f405c24be825633eefb926923b978')
     version('2.2.0', sha256='b8122087d14ae36d4fbc72bfc32655243733e5fb8a1a92172df649e29c62214a')    
     version('1.1.0', sha256='3174342c43d9a4038e84bf84296ba9adacfd5a0b6bb71c8d7e70474ee0cf3b18')
