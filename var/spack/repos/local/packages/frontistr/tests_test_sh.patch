@@ -1,0 +1,30 @@
+--- spack-src/tests/test.sh.org	2021-03-19 18:49:00.000000000 +0900
++++ spack-src/tests/test.sh	2021-03-19 18:47:55.000000000 +0900
+@@ -130,15 +130,15 @@
+   # Execute Tests
+   #
+   if [ $mpi_num_process -gt 1 ]; then
+-    $hecmw_part1 2>&1 \
++    mpirun -n 1 $hecmw_part1 2>&1 \
+       | tee hecmw_part1.log \
+       | sed -e "s/^/    hecmw_part1 > /"
+-    mpirun --oversubscribe --allow-run-as-root -n $mpi_num_process \
++    mpirun -n $mpi_num_process \
+       $fistr1 -t $omp_num_threads 2>&1 \
+       | tee fistr1.log \
+       | sed -e "s/^/    fistr1 > /"
+   else
+-    $fistr1 -t $omp_num_threads 2>&1 \
++    mpirun -n 1 $fistr1 -t $omp_num_threads 2>&1 \
+       | tee fistr1.log \
+       | sed -e "s/^/    fistr1 > /"
+   fi
+@@ -150,7 +150,7 @@
+     | awk -F. '{print $NF}' \
+     | sort \
+     | uniq \
+-    | xargs -I{} $rmerge -n $mpi_num_process -s {} -e {} ${res} >/dev/null 2>&1
++    | xargs -I{} mpirun -n 1 $rmerge -n $mpi_num_process -s {} -e {} ${res} >/dev/null 2>&1
+ 
+   #
+   # Compare result
