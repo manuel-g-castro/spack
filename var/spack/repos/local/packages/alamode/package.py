@@ -10,8 +10,11 @@ class Alamode(CMakePackage):
     #spglib_url="https://github.com/spglib/spglib/archive/refs/tags/v1.16.2.tar.gz"
 
     homepage = "https://alamode.readthedocs.io/"
-    url      = "https://github.com/ttadano/alamode/archive/refs/tags/v.1.3.0.tar.gz"
+    #url      = "https://github.com/ttadano/alamode/archive/refs/tags/v.1.3.0.tar.gz"
+    url      = "https://github.com/ttadano/alamode/archive/refs/tags/v.1.4.2.tar.gz"
+    #url      = "/vol0004/apps/oss/spack-v0.19/var/spack/repos/local/packages/alamode/alamode-v.1.4.2.tar.gz"
 
+    version('1.4.2', sha256='18fb80a183c2a9b68488aeeccd6efa95e8c21d4cb21b08319a557389d55c067a')
     version('1.3.0', sha256='23ecc9f870dc28bf2d6efabb5a98b0d476f37231e8d5d9abdd9c87b11ac93d65')
 
     resource(

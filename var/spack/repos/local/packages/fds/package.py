@@ -8,6 +8,7 @@ class Fds(Package):
     has_code = False
 
     version('6.7.7')
+    version('6.7.9')
 
     def setup_run_environment(self, env):
         env.prepend_path('PATH', self.prefix)

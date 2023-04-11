@@ -215,6 +215,7 @@ class Llvm(CMakePackage, CudaPackage):
         "z3", default=False, when="+clang @8:", description="Use Z3 for the clang static analyzer"
     )
 
+    provides("libllvm@15", when="@15.0.0:15")
     provides("libllvm@14", when="@14.0.0:14")
     provides("libllvm@13", when="@13.0.0:13")
     provides("libllvm@12", when="@12.0.0:12")
@@ -368,6 +369,7 @@ class Llvm(CMakePackage, CudaPackage):
 
     # avoid build failed with Fujitsu compiler
     patch("llvm13-fujitsu.patch", when="@13 %fj")
+    patch("llvm14-fujitsu.patch", when="@14 %fj")
 
     # patch for missing hwloc.h include for libompd
     patch("llvm14-hwloc-ompd.patch", when="@14")

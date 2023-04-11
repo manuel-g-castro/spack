@@ -1,0 +1,517 @@
+diff -ru a/qe-7.1/EPW/src/low_lvl.f90 b/qe-7.1/EPW/src/low_lvl.f90
+--- a/qe-7.1/EPW/src/low_lvl.f90	2022-06-15 21:33:59.000000000 +0900
++++ b/qe-7.1/EPW/src/low_lvl.f90	2022-12-13 16:58:14.000000000 +0900
+@@ -735,10 +735,10 @@
+     !!
+     LOGICAL :: ifxst
+     !! Does the file exists
+-#if defined(__PGI) || defined(__CRAY) || defined(__XLF) || defined(__FLANG)
++!!#if defined(__PGI) || defined(__CRAY) || defined(__XLF) || defined(__FLANG)
+     INTEGER, EXTERNAL :: getpid
+     !! PID of the process
+-#endif
++!!#endif
+     INTEGER :: pid
+     !! PID of the process
+     !
+diff -ru a/qe-7.1/external/fox/configure b/qe-7.1/external/fox/configure
+--- a/qe-7.1/external/fox/configure	2022-06-15 21:33:59.000000000 +0900
++++ b/qe-7.1/external/fox/configure	2022-12-13 16:58:14.000000000 +0900
+@@ -565,7 +565,7 @@
+ ac_clean_files=
+ ac_config_libobj_dir=.
+ LIBOBJS=
+-cross_compiling=no
++cross_compiling=yes
+ subdirs=
+ MFLAGS=
+ MAKEFLAGS=
+diff -ru a/qe-7.1/install/configure b/qe-7.1/install/configure
+--- a/qe-7.1/install/configure	2022-06-15 21:33:57.000000000 +0900
++++ b/qe-7.1/install/configure	2022-12-13 16:58:14.000000000 +0900
+@@ -3280,6 +3280,7 @@
+     ;;
+ * )
+     # For all other cases f90=f90_flavor=f90_in_mpif90
++    f90_in_mpif90=$F90
+     f90=$f90_in_mpif90
+     f90_flavor=$f90
+     ;;
+diff -ru a/qe-7.1/install/extlibs_makefile b/qe-7.1/install/extlibs_makefile
+--- a/qe-7.1/install/extlibs_makefile	2022-06-15 21:33:57.000000000 +0900
++++ b/qe-7.1/install/extlibs_makefile	2022-12-13 17:03:01.000000000 +0900
+@@ -38,7 +38,7 @@
+ #	$(call update_submodule,external,fox)
+ 	if test ! -d ../FoX ; then \
+   cd $(TOPDIR)/external/fox; \
+-    ./configure --prefix=$(TOPDIR)/FoX FC=$(F90) FCFLAGS="$(FOX_FLAGS)"; \
++    env CPPFLAGS= ./configure --prefix=$(TOPDIR)/FoX FC=$(F90) FCFLAGS="$(FOX_FLAGS)"; \
+     touch cp_test; \
+     if cp -p cp_test cp_test_1; then \
+         rm cp_test_1; \
+@@ -64,8 +64,17 @@
+ CUDA_PATH := $(if $(GPU_ARCH),$(CUDA_PATH),no)
+ libcuda_devxlib :
+ #	$(call update_submodule,external,devxlib)
+-	cd $(TOPDIR)/external/devxlib/src; \
+-	ln -fs $(TOPDIR)/make.inc ../; \
++	cd $(TOPDIR)/external/devxlib; \
++	touch make.inc; \
++	$(MAKE) clean; \
++	export F90FLAGS="$(FOX_FLAGS)"; \
++	./configure FC=$(F90) F90=$(F90) CC=$(CC) \
++	            --with-cuda=$(CUDA_PATH) \
++		    --with-cuda-cc=$(GPU_ARCH) \
++		    --with-cuda-runtime=$(CUDA_RUNTIME) \
++		    --disable-parallel \
++		    --enable-cuda-env-check=no \
++		    --host=arm-linux-gnu; \
+ 	$(MAKE) all; \
+ 	touch $(TOPDIR)/install/libcuda_devxlib # do not download and configure again
+ 
+@@ -88,7 +97,7 @@
+         mkdir ../MBD; \
+         cd $(TOPDIR)/external/mbd/src; \
+ 	export FXX=$(F90); export FXXOPT="$(F90FLAGS)"; \
+-	$(MAKE) -f ../../mbd.make; cp *.mod *.a $(TOPDIR)/MBD; cd ../../.. ;fi
++	$(MAKE) -f ../../mbd.make LIBMBD_C_API=0; cp *.mod *.a $(TOPDIR)/MBD; cd ../../.. ;fi
+ 
+ libmbd_clean:
+ 	if test -d ../MBD; then (rm -R -f ../MBD); fi
+Only in b/qe-7.1/install: extlibs_makefile.orig
+Only in b/qe-7.1/install: extlibs_makefile.rej
+diff -ru a/qe-7.1/PHonon/PH/ahc.f90 b/qe-7.1/PHonon/PH/ahc.f90
+--- a/qe-7.1/PHonon/PH/ahc.f90	2022-06-15 21:34:04.000000000 +0900
++++ b/qe-7.1/PHonon/PH/ahc.f90	2022-12-13 16:58:14.000000000 +0900
+@@ -998,7 +998,8 @@
+   !
+   ! Create output directory
+   !
+-  IF (ionode) INQUIRE(FILE=TRIM(ahc_dir), EXIST=exst)
++!  IF (ionode) INQUIRE(FILE=TRIM(ahc_dir), EXIST=exst)
++  exst = .false.
+   CALL mp_bcast(exst, ionode_id, intra_image_comm)
+   IF (.NOT. exst) CALL create_directory(ahc_dir)
+   !
+diff -ru a/qe-7.1/PHonon/PH/elphon.f90 b/qe-7.1/PHonon/PH/elphon.f90
+--- a/qe-7.1/PHonon/PH/elphon.f90	2022-06-15 21:34:04.000000000 +0900
++++ b/qe-7.1/PHonon/PH/elphon.f90	2022-12-13 16:58:14.000000000 +0900
+@@ -795,7 +795,8 @@
+   CALL start_clock('elphsum')
+ 
+   elph_dir='elph_dir/'
+-  IF (ionode) INQUIRE(file=TRIM(elph_dir), EXIST=exst)
++!  IF (ionode) INQUIRE(file=TRIM(elph_dir), EXIST=exst)
++  exst= .FALSE.
+   CALL mp_bcast(exst, ionode_id, intra_image_comm) 
+   IF (.NOT.exst) CALL create_directory( elph_dir )
+   WRITE (6, '(5x,"electron-phonon interaction  ..."/)')
+diff -ru a/qe-7.1/PHonon/PH/openfilq.f90 b/qe-7.1/PHonon/PH/openfilq.f90
+--- a/qe-7.1/PHonon/PH/openfilq.f90	2022-06-15 21:34:04.000000000 +0900
++++ b/qe-7.1/PHonon/PH/openfilq.f90	2022-12-13 16:58:14.000000000 +0900
+@@ -188,6 +188,13 @@
+ 
+   IF (((trans.AND.(start_irr/=0.OR.last_irr/=0)).OR.elph).AND..NOT.xmldyn) THEN
+      iudyn = 26
++     IF(elph.AND.(.NOT.trans)) THEN
++         IF(ionode) THEN
++             OPEN (iudyn, file=fildyn, status='unknown')
++             CLOSE(iudyn)
++         ENDIF
++         CALL mp_barrier(world_comm)
++     ENDIF
+      OPEN (unit=iudyn, file=fildyn, status='unknown', err=100, iostat=ios)
+ 100  CALL errore ('openfilq', 'opening file'//fildyn, ABS (ios) )
+      REWIND (iudyn)
+diff -ru a/qe-7.1/test-suite/pw_scf/scf-ppcg-k.in b/qe-7.1/test-suite/pw_scf/scf-ppcg-k.in
+--- a/qe-7.1/test-suite/pw_scf/scf-ppcg-k.in	2022-06-15 21:34:02.000000000 +0900
++++ b/qe-7.1/test-suite/pw_scf/scf-ppcg-k.in	2022-12-13 16:58:14.000000000 +0900
+@@ -10,7 +10,7 @@
+  /
+  &electrons
+   diagonalization='ppcg',
+-  conv_thr=1.0e-15
++  conv_thr=1.0e-10
+  /
+ ATOMIC_SPECIES
+  Si  28.086  Si.pbe-rrkj.UPF   
+diff -ru a/qe-7.1/test-suite/pw_uspp/uspp-ppcg-k.in b/qe-7.1/test-suite/pw_uspp/uspp-ppcg-k.in
+--- a/qe-7.1/test-suite/pw_uspp/uspp-ppcg-k.in	2022-06-15 21:34:01.000000000 +0900
++++ b/qe-7.1/test-suite/pw_uspp/uspp-ppcg-k.in	2022-12-13 16:58:14.000000000 +0900
+@@ -10,7 +10,7 @@
+  /
+  &electrons
+   diagonalization='ppcg',
+-  conv_thr=1.0e-15
++  conv_thr=1.0e-9
+  /
+ ATOMIC_SPECIES
+  Si  28.086  Si.pbe-nl-rrkjus_psl.1.0.0.UPF   
+diff -ru a/qe-7.1/test-suite/run-cp.sh b/qe-7.1/test-suite/run-cp.sh
+--- a/qe-7.1/test-suite/run-cp.sh	2022-06-15 21:34:03.000000000 +0900
++++ b/qe-7.1/test-suite/run-cp.sh	2022-12-13 16:58:14.000000000 +0900
+@@ -26,7 +26,9 @@
+   unset PARA_SUFFIX
+ fi
+ 
+-echo ' RUNNING ',${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/cp.x ${PARA_SUFFIX} "$@"
+-${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/cp.x ${PARA_SUFFIX} "$@"
++echo "Running cp ..."
++echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/cp.x ${PARA_SUFFIX} -input $1 > $2 2> $3"
++${PARA_PREFIX} sh -c 'if [ $PMIX_RANK == 0 ];then '"$ESPRESSO_ROOT"'/bin/cp.x '"${PARA_SUFFIX}"' -in '"$1"' > '"$2"' 2> '"$3"';else '"$ESPRESSO_ROOT"'/bin/cp.x '"${PARA_SUFFIX}"' -in '"$1"';fi'
++rm -rf output.*
+ 
+ rm -f input_tmp.in
+diff -ru a/qe-7.1/test-suite/run-epw.sh b/qe-7.1/test-suite/run-epw.sh
+--- a/qe-7.1/test-suite/run-epw.sh	2022-06-15 21:34:02.000000000 +0900
++++ b/qe-7.1/test-suite/run-epw.sh	2022-12-13 16:58:14.000000000 +0900
+@@ -22,7 +22,8 @@
+ then
+   echo "Running PW ..."
+   echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x -input $2 > $3 2> $4"
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x -input $2 > $3 2> $4
++  ${PARA_PREFIX} sh -c 'if [ $PMIX_RANK == 0 ];then '"$ESPRESSO_ROOT"'/bin/pw.x -in '"$2"' > '"$3"' 2> '"$4"';else '"$ESPRESSO_ROOT"'/bin/pw.x -in '"$2"';fi'
++  rm -rf output.*
+   if [[ -e CRASH ]]
+   then
+     cat $3
+@@ -31,7 +32,8 @@
+ then
+   echo "Running PW ..."
+   echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x ${PARA_SUFFIX} -input $2 > $3 2> $4"
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x ${PARA_SUFFIX} -input $2 > $3 2> $4
++  ${PARA_PREFIX} sh -c 'if [ $PMIX_RANK == 0 ];then '"$ESPRESSO_ROOT"'/bin/pw.x '"${PARA_SUFFIX}"' -in '"$2"' > '"$3"' 2> '"$4"';else '"$ESPRESSO_ROOT"'/bin/pw.x '"${PARA_SUFFIX}"' -in '"$2"';fi'
++  rm -rf output.*
+   if [[ -e CRASH ]]
+   then
+     cat $3
+@@ -40,7 +42,8 @@
+ then
+   echo "Running PH ..."
+   echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/ph.x ${PARA_SUFFIX} -input $2 > $3 2> $4"
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/ph.x ${PARA_SUFFIX} -input $2 > $3 2> $4
++  ${PARA_PREFIX} sh -c 'if [ $PMIX_RANK == 0 ];then '"$ESPRESSO_ROOT"'/bin/ph.x '"${PARA_SUFFIX}"' -in '"$2"' > '"$3"' 2> '"$4"';else '"$ESPRESSO_ROOT"'/bin/ph.x '"${PARA_SUFFIX}"' -in '"$2"';fi'
++  rm -rf output.*
+   if [[ -e CRASH ]]
+   then
+     cat $3
+@@ -51,7 +54,8 @@
+ then
+   echo "Running EPW ..."
+   echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/epw.x ${PARA_SUFFIX} -input $2 > $3 2> $4"
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/epw.x ${PARA_SUFFIX} -input $2 > $3 2> $4
++  ${PARA_PREFIX} sh -c 'if [ $PMIX_RANK == 0 ];then '"$ESPRESSO_ROOT"'/bin/epw.x '"${PARA_SUFFIX}"' -in '"$2"' > '"$3"' 2> '"$4"';else '"$ESPRESSO_ROOT"'/bin/epw.x '"${PARA_SUFFIX}"' -in '"$2"';fi'
++  rm -rf output.*
+   if [[ -e CRASH ]]
+   then
+     cat $3
+@@ -60,7 +64,8 @@
+ then
+   echo "Running Q2R ..."
+   echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/q2r.x -input $2 > $3 2> $4"
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/q2r.x -input $2 > $3 2> $4
++  ${PARA_PREFIX} sh -c 'if [ $PMIX_RANK == 0 ];then '"$ESPRESSO_ROOT"'/bin/q2r.x -in '"$2"' > '"$3"' 2> '"$4"';else '"$ESPRESSO_ROOT"'/bin/q2r.x -in '"$2"';fi'
++  rm -rf output.*
+   if [[ -e CRASH ]]
+   then
+     cat $3
+@@ -74,7 +79,8 @@
+ ######  rm *.Fin_restart1 *.Fin_restartcb1 restart.fmt
+   rm restart.fmt
+   echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/epw.x ${PARA_SUFFIX} -input $2 > $3 2> $4"
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/epw.x ${PARA_SUFFIX} -input $2 > $3 2> $4
++  ${PARA_PREFIX} sh -c 'if [ $PMIX_RANK == 0 ];then '"$ESPRESSO_ROOT"'/bin/epw.x '"${PARA_SUFFIX}"' -in '"$2"' > '"$3"' 2> '"$4"';else '"$ESPRESSO_ROOT"'/bin/epw.x '"${PARA_SUFFIX}"' -in '"$2"';fi'
++  rm -rf output.*
+   if [[ -e CRASH ]]
+   then
+     cat $3
+diff -ru a/qe-7.1/test-suite/run-hp.sh b/qe-7.1/test-suite/run-hp.sh
+--- a/qe-7.1/test-suite/run-hp.sh	2022-06-15 21:34:02.000000000 +0900
++++ b/qe-7.1/test-suite/run-hp.sh	2022-12-13 16:58:14.000000000 +0900
+@@ -22,7 +22,8 @@
+ then
+   echo "Running PW ..."
+   echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x < $2 > $3 2> $4"
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x < $2 > $3 2> $4
++  ${PARA_PREFIX} sh -c 'if [ $PMIX_RANK == 0 ];then '"$ESPRESSO_ROOT"'/bin/pw.x -in '"$2"' > '"$3"' 2> '"$4"';else '"$ESPRESSO_ROOT"'/bin/pw.x -in '"$2"';fi'
++  rm -rf output.*
+   if [[ -e CRASH ]]
+   then
+     cat $3
+@@ -32,7 +33,8 @@
+ then
+   echo "Running PW ..."
+   echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x < $2 > $3 2> $4"  
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x ${PARA_SUFFIX} < $2 > $3 2> $4
++  ${PARA_PREFIX} sh -c 'if [ $PMIX_RANK == 0 ];then '"$ESPRESSO_ROOT"'/bin/pw.x '"${PARA_SUFFIX}"' -in '"$2"' > '"$3"' 2> '"$4"';else '"$ESPRESSO_ROOT"'/bin/pw.x '"${PARA_SUFFIX}"' -in '"$2"';fi'
++  rm -rf output.*
+   if [[ -e CRASH ]]
+   then
+     cat $3
+@@ -42,7 +44,8 @@
+ then
+   echo "Running HP ..."
+   echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/hp.x < $2 > $3 2> $4"  
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/hp.x < $2 > $3 2> $4
++  ${PARA_PREFIX} sh -c 'if [ $PMIX_RANK == 0 ];then '"$ESPRESSO_ROOT"'/bin/hp.x -in '"$2"' > '"$3"' 2> '"$4"';else '"$ESPRESSO_ROOT"'/bin/hp.x -in '"$2"';fi'
++  rm -rf output.*
+   cp *.Hubbard_parameters.dat $3
+   if [[ -e CRASH ]]
+   then
+@@ -53,7 +56,8 @@
+ then
+   echo "Running HP ..."
+   echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/hp.x < $2 > $3 2> $4"  
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/hp.x ${PARA_SUFFIX} < $2 > $3 2> $4
++  ${PARA_PREFIX} sh -c 'if [ $PMIX_RANK == 0 ];then '"$ESPRESSO_ROOT"'/bin/hp.x '"${PARA_SUFFIX}"' -in '"$2"' > '"$3"' 2> '"$4"';else '"$ESPRESSO_ROOT"'/bin/hp.x '"${PARA_SUFFIX}"' -in '"$2"';fi'
++  rm -rf output.*
+   cp *.Hubbard_parameters.dat $3
+   if [[ -e CRASH ]]
+   then
+diff -ru a/qe-7.1/test-suite/run-image.sh b/qe-7.1/test-suite/run-image.sh
+--- a/qe-7.1/test-suite/run-image.sh	2022-06-15 21:34:01.000000000 +0900
++++ b/qe-7.1/test-suite/run-image.sh	2022-12-13 16:58:14.000000000 +0900
+@@ -21,7 +21,8 @@
+ then
+   echo "Running PW ..."
+ # echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x < $2 > $3 2> $4"
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x  < $2 > $3 2> $4
++  ${PARA_PREFIX} sh -c 'if [ $PMIX_RANK == 0 ];then '"$ESPRESSO_ROOT"'/bin/pw.x -in '"$2"' > '"$3"' 2> '"$4"';else '"$ESPRESSO_ROOT"'/bin/pw.x -in '"$2"';fi'
++  rm -rf output.*
+   if [[ -e CRASH ]]
+   then
+     cat $3
+@@ -30,7 +31,8 @@
+ then
+   echo "Running PH ..."
+ # echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/ph.x ${PARA_SUFFIX} < $2 > $3 2> $4"
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/ph.x ${PARA_SUFFIX} < $2 > $3 2> $4
++  ${PARA_PREFIX} sh -c 'if [ $PMIX_RANK == 0 ];then '"$ESPRESSO_ROOT"'/bin/ph.x '"${PARA_SUFFIX}"' -in '"$2"' > '"$3"' 2> '"$4"';else '"$ESPRESSO_ROOT"'/bin/ph.x '"${PARA_SUFFIX}"' -in '"$2"';fi'
++  rm -rf output.*
+   if [[ -e CRASH ]]
+   then
+     cat $3
+diff -ru a/qe-7.1/test-suite/run-ph.sh b/qe-7.1/test-suite/run-ph.sh
+--- a/qe-7.1/test-suite/run-ph.sh	2022-06-15 21:34:02.000000000 +0900
++++ b/qe-7.1/test-suite/run-ph.sh	2022-12-13 16:58:14.000000000 +0900
+@@ -21,7 +21,8 @@
+ then
+   echo "Running PW ..."
+ # echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x ${PARA_SUFFIX} < $2 > $3 2> $4"
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x ${PARA_SUFFIX} < $2 > $3 2> $4
++  ${PARA_PREFIX} sh -c 'if [ $PMIX_RANK == 0 ];then '"$ESPRESSO_ROOT"'/bin/pw.x '"${PARA_SUFFIX}"' -in '"$2"' > '"$3"' 2> '"$4"';else '"$ESPRESSO_ROOT"'/bin/pw.x '"${PARA_SUFFIX}"' -in '"$2"';fi'
++  rm -rf output.*
+   if [[ -e CRASH ]]
+   then
+     cat $3
+@@ -30,7 +31,8 @@
+ then
+   echo "Running PH ..."
+ # echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/ph.x ${PARA_SUFFIX} < $2 > $3 2> $4"
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/ph.x ${PARA_SUFFIX} < $2 > $3 2> $4
++  ${PARA_PREFIX} sh -c 'if [ $PMIX_RANK == 0 ];then '"$ESPRESSO_ROOT"'/bin/ph.x '"${PARA_SUFFIX}"' -in '"$2"' > '"$3"' 2> '"$4"';else '"$ESPRESSO_ROOT"'/bin/ph.x '"${PARA_SUFFIX}"' -in '"$2"';fi'
++  rm -rf output.*
+   if [[ -e CRASH ]]
+   then
+     cat $3
+@@ -39,7 +41,8 @@
+ then
+   echo "Running Q2R ..."
+ # echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/q2r.x < $2 > $3 2> $4"
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/q2r.x < $2 > $3 2> $4
++  ${PARA_PREFIX} sh -c 'if [ $PMIX_RANK == 0 ];then '"$ESPRESSO_ROOT"'/bin/q2r.x -in '"$2"' > '"$3"' 2> '"$4"';else '"$ESPRESSO_ROOT"'/bin/q2r.x -in '"$2"';fi'
++  rm -rf output.*
+   if [[ -e CRASH ]]
+   then
+     cat $3
+@@ -48,7 +51,8 @@
+ then
+   echo "Running MATDYN ..."
+ # echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/matdyn.x < $2 > $3 2> $4"
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/matdyn.x < $2 > $3 2> $4
++  ${PARA_PREFIX} sh -c 'if [ $PMIX_RANK == 0 ];then '"$ESPRESSO_ROOT"'/bin/matdyn.x -in '"$2"' > '"$3"' 2> '"$4"';else '"$ESPRESSO_ROOT"'/bin/matdyn.x -in '"$2"';fi'
++  rm -rf output.*
+   if [[ -e CRASH ]]
+   then
+     cat $3
+@@ -66,7 +70,8 @@
+ then
+   echo "Running DVSCF_Q2R ..."
+ # echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/dvscf_q2r.x < $2 > $3 2> $4"
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/dvscf_q2r.x < $2 > $3 2> $4
++  ${PARA_PREFIX} sh -c 'if [ $PMIX_RANK == 0 ];then '"$ESPRESSO_ROOT"'/bin/dvscf_q2r.x -in '"$2"' > '"$3"' 2> '"$4"';else '"$ESPRESSO_ROOT"'/bin/dvscf_q2r.x -in '"$2"';fi'
++  rm -rf output.*
+   if [[ -e CRASH ]]
+   then
+     cat $3
+@@ -75,10 +80,10 @@
+ then
+   echo "Running POSTAHC ..."
+ # echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/postahc.x < $2 > $3 2> $4"
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/postahc.x < $2 > $3 2> $4
++  ${PARA_PREFIX} sh -c 'if [ $PMIX_RANK == 0 ];then '"$ESPRESSO_ROOT"'/bin/postahc.x -in '"$2"' > '"$3"' 2> '"$4"';else '"$ESPRESSO_ROOT"'/bin/postahc.x -in '"$2"';fi'
++  rm -rf output.*
+   if [[ -e CRASH ]]
+   then
+     cat $3
+   fi
+ fi
+-
+diff -ru a/qe-7.1/test-suite/run-pp.sh b/qe-7.1/test-suite/run-pp.sh
+--- a/qe-7.1/test-suite/run-pp.sh	2022-06-15 21:34:02.000000000 +0900
++++ b/qe-7.1/test-suite/run-pp.sh	2022-12-13 16:58:15.000000000 +0900
+@@ -18,16 +18,18 @@
+ 
+ if [[ "$1" == "1" ]]
+ then
+-  # echo "Running PW ..."
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x ${PARA_SUFFIX} < $2 > $3 2> $4
++  echo "Running PW ..."
++  ${PARA_PREFIX} sh -c 'if [ $PMIX_RANK == 0 ];then '"$ESPRESSO_ROOT"'/bin/pw.x '"${PARA_SUFFIX}"' -in '"$2"' > '"$3"' 2> '"$4"';else '"$ESPRESSO_ROOT"'/bin/pw.x '"${PARA_SUFFIX}"' -in '"$2"';fi'
++  rm -rf output.*
+   if [[ -e CRASH ]]
+   then
+     cat $3
+   fi  
+ elif [[ "$1" == "2" ]]
+ then
+-  # echo "Running PP ..."
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/ppacf.x ${PARA_SUFFIX} < $2 > $3 2> $4
++  echo "Running PP ..."
++  ${PARA_PREFIX} sh -c 'if [ $PMIX_RANK == 0 ];then '"$ESPRESSO_ROOT"'/bin/ppacf.x '"${PARA_SUFFIX}"' -in '"$2"' > '"$3"' 2> '"$4"';else '"$ESPRESSO_ROOT"'/bin/ppacf.x '"${PARA_SUFFIX}"' -in '"$2"';fi'
++  rm -rf output.*
+   if [[ -e CRASH ]]
+   then
+     cat $3
+diff -ru a/qe-7.1/test-suite/run-pw.sh b/qe-7.1/test-suite/run-pw.sh
+--- a/qe-7.1/test-suite/run-pw.sh	2022-06-15 21:34:02.000000000 +0900
++++ b/qe-7.1/test-suite/run-pw.sh	2022-12-13 16:58:15.000000000 +0900
+@@ -20,7 +20,8 @@
+ then
+   echo "Running PW ..."
+ # echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x ${PARA_SUFFIX} < $2 > $3 2> $4"
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x ${PARA_SUFFIX} < $2 > $3 2> $4
++  ${PARA_PREFIX} sh -c 'if [ $PMIX_RANK == 0 ];then '"$ESPRESSO_ROOT"'/bin/pw.x '"${PARA_SUFFIX}"' -in '"$2"' > '"$3"' 2> '"$4"';else '"$ESPRESSO_ROOT"'/bin/pw.x '"${PARA_SUFFIX}"' -in '"$2"';fi'
++  rm -rf output.*
+   if [[ -e CRASH ]]
+   then
+     cat $3
+@@ -29,7 +30,8 @@
+ then
+   echo "Running PW ..."
+ # echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/ph.x ${PARA_SUFFIX} < $2 > $3 2> $4"
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/ph.x ${PARA_SUFFIX} < $2 > $3 2> $4
++  ${PARA_PREFIX} sh -c 'if [ $PMIX_RANK == 0 ];then '"$ESPRESSO_ROOT"'/bin/pw.x '"${PARA_SUFFIX}"' -in '"$2"' > '"$3"' 2> '"$4"';else '"$ESPRESSO_ROOT"'/bin/pw.x '"${PARA_SUFFIX}"' -in '"$2"';fi'
++  rm -rf output.*
+   if [[ -e CRASH ]]
+   then
+     cat $3
+@@ -38,17 +40,20 @@
+ then
+   export PARA_SUFFIX="$PARA_SUFFIX --pw2casino"
+   # echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x ${PARA_SUFFIX} -input $1 > $2 2> $3"
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x ${PARA_SUFFIX} -input $1 > $2 2> $3
++  ${PARA_PREFIX} sh -c 'if [ $PMIX_RANK == 0 ];then '"$ESPRESSO_ROOT"'/bin/pw.x '"${PARA_SUFFIX}"' -in '"$1"' > '"$2"' 2> '"$3"';else '"$ESPRESSO_ROOT"'/bin/pw.x '"${PARA_SUFFIX}"' -in '"$1"';fi'
++  rm -rf output.*
+ elif [[ "$1" = "md_restart_verlet.in" ]]
+ then
+   # This is a restart test, need to clean up previous results if present
+   rm -rf md_restart_verlet.save
+   cp md_restart_verlet_original.md md_restart_verlet.md
+   # echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x ${PARA_SUFFIX} -input $1 > $2 2> $3"
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x ${PARA_SUFFIX} -input $1 > $2 2> $3
++  ${PARA_PREFIX} sh -c 'if [ $PMIX_RANK == 0 ];then '"$ESPRESSO_ROOT"'/bin/pw.x '"${PARA_SUFFIX}"' -in '"$1"' > '"$2"' 2> '"$3"';else '"$ESPRESSO_ROOT"'/bin/pw.x '"${PARA_SUFFIX}"' -in '"$1"';fi'
++  rm -rf output.*
+ else
+   # echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x ${PARA_SUFFIX} -input $1 > $2 2> $3"
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x ${PARA_SUFFIX} -input $1 > $2 2> $3
++  ${PARA_PREFIX} sh -c 'if [ $PMIX_RANK == 0 ];then '"$ESPRESSO_ROOT"'/bin/pw.x '"${PARA_SUFFIX}"' -in '"$1"' > '"$2"' 2> '"$3"';else '"$ESPRESSO_ROOT"'/bin/pw.x '"${PARA_SUFFIX}"' -in '"$1"';fi'
++  rm -rf output.*
+ fi
+ 
+ rm -f input_tmp.in
+diff -ru a/qe-7.1/test-suite/run-tddfpt.sh b/qe-7.1/test-suite/run-tddfpt.sh
+--- a/qe-7.1/test-suite/run-tddfpt.sh	2022-06-15 21:34:02.000000000 +0900
++++ b/qe-7.1/test-suite/run-tddfpt.sh	2022-12-13 16:58:15.000000000 +0900
+@@ -21,7 +21,8 @@
+ then
+   echo "Running PW ..."
+   echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x ${PARA_SUFFIX} < $2 > $3 2> $4"
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/pw.x ${PARA_SUFFIX} < $2 > $3 2> $4
++  ${PARA_PREFIX} sh -c 'if [ $PMIX_RANK == 0 ];then '"$ESPRESSO_ROOT"'/bin/pw.x '"${PARA_SUFFIX}"' -in '"$2"' > '"$3"' 2> '"$4"';else '"$ESPRESSO_ROOT"'/bin/pw.x '"${PARA_SUFFIX}"' -in '"$2"';fi'
++  rm -rf output.*
+   if [[ -e CRASH ]]
+   then
+     cat $3
+@@ -30,7 +31,8 @@
+ then
+   echo "Running TURBO LANCZOS ..."
+   echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/turbo_lanczos.x < $2 > $3 2> $4"  
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/turbo_lanczos.x < $2 > $3 2> $4
++  ${PARA_PREFIX} sh -c 'if [ $PMIX_RANK == 0 ];then '"$ESPRESSO_ROOT"'/bin/turbo_lanczos.x -in '"$2"' > '"$3"' 2> '"$4"';else '"$ESPRESSO_ROOT"'/bin/turbo_lanczos.x -in '"$2"';fi'
++  rm -rf output.*
+   if [[ -e CRASH ]]
+   then
+     cat $3
+@@ -39,7 +41,8 @@
+ then
+   echo "Running TURBO SPECTRUM CHI ..."
+   echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/turbo_spectrum.x ${PARA_SUFFIX} < $2 > $3 2> $4"  
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/turbo_spectrum.x ${PARA_SUFFIX} < $2 > $3 2> $4
++  ${PARA_PREFIX} sh -c 'if [ $PMIX_RANK == 0 ];then '"$ESPRESSO_ROOT"'/bin/turbo_spectrum.x '"${PARA_SUFFIX}"' -in '"$2"' > '"$3"' 2> '"$4"';else '"$ESPRESSO_ROOT"'/bin/turbo_spectrum.x '"${PARA_SUFFIX}"' -in '"$2"';fi'
++  rm -rf output.*
+   cp $3 turbo_spectrum.out
+   cp *.plot_chi.dat $3
+   if [[ -e CRASH ]]
+@@ -50,7 +53,8 @@
+ then
+   echo "Running TURBO SPECTRUM EELS ..."
+   echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/turbo_spectrum.x ${PARA_SUFFIX} < $2 > $3 2> $4"  
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/turbo_spectrum.x ${PARA_SUFFIX} < $2 > $3 2> $4
++  ${PARA_PREFIX} sh -c 'if [ $PMIX_RANK == 0 ];then '"$ESPRESSO_ROOT"'/bin/turbo_spectrum.x '"${PARA_SUFFIX}"' -in '"$2"' > '"$3"' 2> '"$4"';else '"$ESPRESSO_ROOT"'/bin/turbo_spectrum.x '"${PARA_SUFFIX}"' -in '"$2"';fi'
++  rm -rf output.*
+   cp $3 turbo_spectrum.out
+   cp *.plot_eps.dat $3
+   if [[ -e CRASH ]]
+@@ -61,7 +65,8 @@
+ then
+   echo "Running TURBO EELS ..."
+   echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/turbo_eels.x ${PARA_SUFFIX} < $2 > $3 2> $4"  
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/turbo_eels.x ${PARA_SUFFIX} < $2 > $3 2> $4
++  ${PARA_PREFIX} sh -c 'if [ $PMIX_RANK == 0 ];then '"$ESPRESSO_ROOT"'/bin/turbo_eels.x '"${PARA_SUFFIX}"' -in '"$2"' > '"$3"' 2> '"$4"';else '"$ESPRESSO_ROOT"'/bin/turbo_eels.x '"${PARA_SUFFIX}"' -in '"$2"';fi'
++  rm -rf output.*
+   if [[ -e CRASH ]]
+   then
+     cat $3
+@@ -70,7 +75,8 @@
+ then
+   echo "Running TURBO MAGNON ..."
+   echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/turbo_magnon.x ${PARA_SUFFIX} < $2 > $3 2> $4"  
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/turbo_magnon.x ${PARA_SUFFIX} < $2 > $3 2> $4
++  ${PARA_PREFIX} sh -c 'if [ $PMIX_RANK == 0 ];then '"$ESPRESSO_ROOT"'/bin/turbo_magnon.x '"${PARA_SUFFIX}"' -in '"$2"' > '"$3"' 2> '"$4"';else '"$ESPRESSO_ROOT"'/bin/turbo_magnon.x '"${PARA_SUFFIX}"' -in '"$2"';fi'
++  rm -rf output.*
+   if [[ -e CRASH ]]
+   then
+     cat $3
+@@ -79,7 +85,8 @@
+ then
+   echo "Running TURBO SPECTRUM MAGNON ..."
+   echo "${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/turbo_spectrum.x ${PARA_SUFFIX} < $2 > $3 2> $4"  
+-  ${PARA_PREFIX} ${ESPRESSO_ROOT}/bin/turbo_spectrum.x ${PARA_SUFFIX} < $2 > $3 2> $4
++  ${PARA_PREFIX} sh -c 'if [ $PMIX_RANK == 0 ];then '"$ESPRESSO_ROOT"'/bin/turbo_spectrum.x '"${PARA_SUFFIX}"' -in '"$2"' > '"$3"' 2> '"$4"';else '"$ESPRESSO_ROOT"'/bin/turbo_spectrum.x '"${PARA_SUFFIX}"' -in '"$2"';fi'
++  rm -rf output.*
+   cp $3 turbo_spectrum.out
+   cp *.plot_chi.dat $3
+   if [[ -e CRASH ]]
+diff -ru a/qe-7.1/test-suite/userconfig.tmp b/qe-7.1/test-suite/userconfig.tmp
+--- a/qe-7.1/test-suite/userconfig.tmp	2022-06-15 21:34:02.000000000 +0900
++++ b/qe-7.1/test-suite/userconfig.tmp	2022-12-13 16:58:15.000000000 +0900
+@@ -21,7 +21,7 @@
+ exe = XXXXXX/test-suite/run-cp.sh
+ extract_program = XXXXXX/test-suite/extract-cp.sh
+ inputs_args = ('*.in', '')
+-run_cmd_template = tc.program -input tc.input tc.args > tc.output 2> tc.error
++run_cmd_template = tc.program tc.input tc.output tc.error
+ tolerance = ( (1.0e-5, 1.0e-5, 'e1'),
+               (5.0e-4, 1.0e-4, 's1'),
+               (1.0e-2, 1.0e-2, 'v1u'),

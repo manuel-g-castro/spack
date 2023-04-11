@@ -19,7 +19,7 @@ class Blitz(AutotoolsPackage):
     depends_on("python@:2.7", type="build", when="@:1.0.1")
     depends_on("python@3:", type="build", when="@1.0.2:")
 
-    patch('genstencils.patch')
+#    patch('genstencils.patch')
     patch('fj.patch', when='%fj')
 
     build_targets = ["lib"]

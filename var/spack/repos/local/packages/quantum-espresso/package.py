@@ -21,6 +21,9 @@ class QuantumEspresso(Package):
     maintainers = ['naromero77']
 
     version('develop', branch='develop')
+    version('7.1', sha256='feacdbc67d084d55df464f989a916f20dfe11a50ccfda782573cdeed4fab3d3a',
+            url="file://{0}/qe-7.1-ReleasePack.tar.gz".format(os.getcwd())
+            )
     version('6.8', sha256='fc9b8141705d31db30f6cfe61d4e49867c7c3b04a59533eb7f90301fa8bd50ce', 
             url = 'https://github.com/QEF/q-e/releases/download/qe-6.8/qe-6.8-ReleasePack.tgz'
             )
@@ -90,6 +93,8 @@ class QuantumEspresso(Package):
             env.append_flags('IFLAGS', fftw_prefix.include)
         else:
             env.set('DFLAGS', '-D__FFTW')
+        if spec.satisfies('@7.1'):
+            env.append_flags('IFLAGS', '-I{0}/include'.format(self.stage.source_path))
 
         env.set('CPP', 'cpp')
         env.set('CPPFLAGS', '-traditional')
@@ -98,7 +103,8 @@ class QuantumEspresso(Package):
         env.set('CFLAGS', '-Kfast,openmp')
         env.set('FFLAGS', '-Kfast,openmp')
 
-        if spec.satisfies('@6.7:6.8'):
+        #if spec.satisfies('@6.7:6.8'):
+        if spec.satisfies('@6.7:'):
             env.append_flags('FFLAGS', '-Nalloc_assign')
 
         if '+mpi' in spec:
@@ -126,23 +132,25 @@ class QuantumEspresso(Package):
 
     def do_stage(self, mirror_only=False):
         super(QuantumEspresso, self).do_stage(mirror_only)
-        wdir = os.path.join(self.stage.source_path, 'archive')
-        command = ['tar', '-xzf', 'fox.tgz']
-        subprocess.check_call(command, cwd = wdir)
-        command = ['tar', '-xzf', 'lapack-3.6.1.tgz']
-        subprocess.check_call(command, cwd = wdir)
+        if self.spec.satisfies('@:6.8'):
+            wdir = os.path.join(self.stage.source_path, 'archive')
+            command = ['tar', '-xzf', 'fox.tgz']
+            subprocess.check_call(command, cwd = wdir)
+            command = ['tar', '-xzf', 'lapack-3.6.1.tgz']
+            subprocess.check_call(command, cwd = wdir)
 
     def do_patch(self):
         super(QuantumEspresso, self).do_patch()
-        wdir = os.path.join(self.stage.source_path, 'archive')
-        command = ['tar', '-czf', 'fox.tgz', 'fox']
-        subprocess.check_call(command, cwd = wdir)
-        command = ['tar', '-czf', 'lapack-3.6.1.tgz', 'lapack-3.6.1']
-        subprocess.check_call(command, cwd = wdir)
-        command = ['rm', '-r', 'fox']
-        subprocess.check_call(command, cwd = wdir)
-        command = ['rm', '-r', 'lapack-3.6.1']
-        subprocess.check_call(command, cwd = wdir)
+        if self.spec.satisfies('@:6.8'):
+            wdir = os.path.join(self.stage.source_path, 'archive')
+            command = ['tar', '-czf', 'fox.tgz', 'fox']
+            subprocess.check_call(command, cwd = wdir)
+            command = ['tar', '-czf', 'lapack-3.6.1.tgz', 'lapack-3.6.1']
+            subprocess.check_call(command, cwd = wdir)
+            command = ['rm', '-r', 'fox']
+            subprocess.check_call(command, cwd = wdir)
+            command = ['rm', '-r', 'lapack-3.6.1']
+            subprocess.check_call(command, cwd = wdir)
 
     def configure_args(self):
         spec = self.spec
@@ -167,7 +175,9 @@ class QuantumEspresso(Package):
  
 
     # PATCHES SECTION
-    # Apply each patch file for QE-6.7, QE-6.6 and QE-6.5 
+    # Apply each patch file for QE 6.5 and later
+    patch('qe-7.1.patch', level=2, when='@7.1')
+    patch('qe-7.1_fox.patch', level=2, when='@7.1')
     patch('qe-6.8.patch', level=2, when='@6.8')
     patch('qe-6.7.patch', level=2, when='@6.7')
     patch('qe-6.6.patch', level=2, when='@6.6')
