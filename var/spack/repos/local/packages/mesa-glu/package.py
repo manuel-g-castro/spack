@@ -45,9 +45,9 @@ class MesaGlu(AutotoolsPackage):
             args.append("--disable-osmesa")
 
         if "gl=glx" in self.spec:
-            gl_libs = spec["glx"].libs
-            args.append("GL_CFLAGS={0}".format(gl_libs.heades.include_flags))
-            args.append("GL_LIBS={0}".format(gl_libs.ld_flags))
+            gl = self.spec["glx"]
+            args.append("GL_CFLAGS={0}".format(gl.headers.include_flags))
+            args.append("GL_LIBS={0}".format(gl.libs.ld_flags))
             
         return args
 

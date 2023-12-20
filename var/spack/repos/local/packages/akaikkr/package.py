@@ -36,14 +36,16 @@ LDA/GGA) of the density functional theory.
     """
 
     homepage = "http://kkr.issp.u-tokyo.ac.jp/"
-    url = "file://{0}/cpa2002v010.tgz".format(os.getcwd())
+#    url = "file://{0}/cpa2002v010.tgz".format(os.getcwd())
 #    url = "./cpa2002v010.tgz"
+    url = "./cpa2021v001.tgz"
 
     # FIXME: Add a list of GitHub accounts to
     # notify when the package is updated.
     # maintainers = ['github_user1', 'github_user2']
 
-    version('2021v001', sha256='a1a17d20d79d2474314610dce8d6739925f595857fb51cb53adf4a9b011f62d3', url="file://{0}/cpa2021.tgz".format(os.getcwd()))
+#    version('2021v001', sha256='a1a17d20d79d2474314610dce8d6739925f595857fb51cb53adf4a9b011f62d3', url="file://{0}/cpa2021.tgz".format(os.getcwd()))
+    version('2021v001', sha256='a1a17d20d79d2474314610dce8d6739925f595857fb51cb53adf4a9b011f62d3')
     version('2002v010', sha256='e7de95110090f875634d71c5ff7f28d1ab4167231f16b97e3d0601dce75535bf')
 
     parallel = False

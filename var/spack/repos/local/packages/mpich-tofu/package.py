@@ -13,6 +13,7 @@ class MpichTofu(MakefilePackage):
     homepage = "https://www.sys.r-ccs.riken.jp"
     git      = "https://github.com/yutaka-ishikawa/mpich-tofu.git"
 
+    version('1.0', tag='v1.0')
     version('master', branch='master')
     # for mpiexec
     depends_on('fujitsu-mpi%fj', type='run')

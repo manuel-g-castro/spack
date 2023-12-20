@@ -313,7 +313,7 @@ class PyNumpy(PythonPackage):
 
             if "^fujitsu-ssl2" in spec:
                 if spec.satisfies("+blas"):
-                    f.write("[blas]\n")
+                    f.write("[openblas]\n")
                     f.write("libraries = {0}\n".format(spec["blas"].libs.names[0]))
                     write_library_dirs(f, blas_lib_dirs)
                     f.write("include_dirs = {0}\n".format(blas_header_dirs))
@@ -341,7 +341,10 @@ class PyNumpy(PythonPackage):
             blas = "mkl"
         elif spec["blas"].name == "blis" or spec["blas"].name == "amdblis":
             blas = "blis"
-        elif spec["blas"].name == "openblas":
+        elif (
+            spec["blas"].name == "openblas"
+            or spec["blas"].name == "fujitsu-ssl2"
+        ):
             blas = "openblas"
         elif spec["blas"].name == "atlas":
             blas = "atlas"
@@ -361,7 +364,10 @@ class PyNumpy(PythonPackage):
             or spec["lapack"].name == "intel-oneapi-mkl"
         ):
             lapack = "mkl"
-        elif spec["lapack"].name == "openblas":
+        elif (
+            spec["lapack"].name == "openblas"
+            or spec["lapack"].name == "fujitsu-ssl2"
+        ):
             lapack = "openblas"
         elif spec["lapack"].name == "libflame" or spec["lapack"].name == "amdlibflame":
             lapack = "flame"

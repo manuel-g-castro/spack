@@ -28,6 +28,8 @@ class Gromacs(CMakePackage):
 
     version("main", branch="main")
     version("master", branch="main", deprecated=True)
+    version("2023.2", sha256="bce1480727e4b2bb900413b75d99a3266f3507877da4f5b2d491df798f9fcdae")
+    version("2023.1", sha256="eef2bb4a6cb6314cf9da47f26df2a0d27af4bf7b3099723d43601073ab0a42f4")
     version("2022.4", sha256="c511be602ff29402065b50906841def98752639b92a95f1b0a1060d9b5e27297")
     version("2022.3", sha256="14cfb130ddaf8f759a3af643c04f5a0d0d32b09bc3448b16afa5b617f5e35dae")
     version("2022.2", sha256="656404f884d2fa2244c97d2a5b92af148d0dbea94ad13004724b3fcbf45e01bf")
@@ -234,8 +236,9 @@ class Gromacs(CMakePackage):
     depends_on("cmake@3.9.6:3", type="build", when="@2020")
     depends_on("cmake@3.13.0:3", type="build", when="@2021")
     depends_on("cmake@3.16.3:3", type="build", when="@2022:")
+    depends_on("cmake@3.18.4:3", type="build", when="@2023:")
     depends_on("cmake@3.18.4:3", type="build", when="@main")
-    depends_on("cmake@3.16.0:3", type="build", when="%fj")
+    depends_on("cmake@3.21.0:3", type="build", when="%fj")
     depends_on("cuda", when="+cuda")
     depends_on("sycl", when="+sycl")
     depends_on("lapack", when="+lapack")
@@ -264,11 +267,20 @@ class Gromacs(CMakePackage):
 
     patch("sve-2022.patch", when="@2022:2022.99 +sve")
     patch("opts-2022.patch", when="@2022:2022.99 +sve +opts")
-    patch("external-kernels-2022.patch", when="@2022:")
-    patch("pme_simd-2022.patch", when="@2022:")
-    patch("pme_spread-2022.patch", when="@2022:")
-    patch("pmswp-2022.patch", when="@2022:")
-    patch("tune_pme-2022.patch", when="@2022: ^fujitsu-mpi")
+    patch("external-kernels-2022.patch", when="@2022:2022.99")
+    patch("pme_simd-2022.patch", when="@2022:2022.99")
+    patch("pme_spread-2022.patch", when="@2022:2022.99")
+    patch("pmswp-2022.patch", when="@2022:2022.99 +opts")
+    patch("tune_pme-2022.patch", when="@2022:2022.99 ^fujitsu-mpi")
+
+    patch("sve-2023.patch", when="@2023:2023.99 +sve")
+    patch("external-kernels-2023.patch", when="@2023:2023.99")
+    patch("pme_simd-2023.patch", when="@2023:2023.99")
+    patch("pme_spread-2023.patch", when="@2023:2023.99")
+    patch("tune_pme-2023.patch", when="@2023:2023.99 ^fujitsu-mpi")
+    patch("tune_pme-2023.patch", when="@2023:2023.99 ^fj-mpi")
+    patch("pmswp-2023.patch", when="@2023:2023.99")
+    patch("std_filesystem_equivalent.patch", when="@2023.2:2023.99")
 
     filter_compiler_wrappers(
         "*.cmake", relative_root=os.path.join("share", "cmake", "gromacs_mpi")
@@ -572,3 +584,7 @@ class Gromacs(CMakePackage):
     def install(self, spec, prefix):
         for self.flavor in self.flavors:
            super().install(spec, prefix)
+
+    def setup_run_environment(self, env):
+        env.set("GMX_NO_TERM", "1")
+

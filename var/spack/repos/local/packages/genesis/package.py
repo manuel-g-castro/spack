@@ -19,6 +19,9 @@ class Genesis(AutotoolsPackage, CudaPackage):
 
     version("master", branch="master")
     version(
+        "2.1.1",tag='v2.1.1',
+    )
+    version(
         "2.0.3",tag='v2.0.3',
     )
     version(
@@ -159,4 +162,4 @@ class Genesis(AutotoolsPackage, CudaPackage):
                 self.spec["mpi"].prefix.bin.mpirun + " -np 8 " + bin_name,
             ]
             env["OMP_NUM_THREADS"] = "1"
-            self.run_test(exe_name, options=opts, expected="Passed  53 / 53")
+            self.run_test(exe_name, options=opts, expected="Passed  61 / 61")

@@ -157,7 +157,8 @@ class SIPBuilder(BaseBuilder):
             ]
         )
 
-        self.python(configure, *args)
+        # self.python(configure, *args)
+        self.pkg.python(configure, *args)
 
     def configure_args(self):
         """Arguments to pass to configure."""

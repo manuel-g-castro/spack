@@ -123,6 +123,9 @@ class DarshanRuntime(AutotoolsPackage):
             extra_args.append("CC=%s" % self.compiler.cc)
             extra_args.append("--without-mpi")
 
+        if spec.satisfies("%fj"):
+            extra_args.append("--disable-lustre-mod")
+
         return extra_args
 
     def setup_run_environment(self, env):
