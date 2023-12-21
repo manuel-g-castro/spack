@@ -23,7 +23,7 @@ class Julia(MakefilePackage):
     url = "https://github.com/JuliaLang/julia/releases/download/v1.7.0/julia-1.7.0.tar.gz"
     git = "https://github.com/JuliaLang/julia.git"
 
-    #maintainers("vchuravy", "haampie", "giordano")
+    maintainers("vchuravy", "haampie", "giordano")
 
     version("master", branch="master")
     version("1.9.3", sha256="8d7dbd8c90e71179e53838cdbe24ff40779a90d7360e29766609ed90d982081d")
@@ -188,9 +188,8 @@ class Julia(MakefilePackage):
     depends_on("suite-sparse +pic")
     depends_on("unwind")
     depends_on("utf8proc")
-    depends_on("zlib +shared +pic +optimize")
-    #depends_on("zlib-api")
-    #depends_on("zlib +shared +pic +optimize", when="^zlib")
+    depends_on("zlib-api")
+    depends_on("zlib +shared +pic +optimize", when="^zlib")
 
     # Patches for julia
     patch("julia-1.6-system-libwhich-and-p7zip-symlink.patch", when="@1.6.0:1.6")
@@ -257,7 +256,6 @@ class Julia(MakefilePackage):
             "pcre2",
             "suite-sparse",
             "utf8proc",
-            "zlib",
         ]
         if "+openlibm" in self.spec:
             pkgs.append("openlibm")
@@ -266,8 +264,8 @@ class Julia(MakefilePackage):
         for pkg in pkgs:
             for dir in self.spec[pkg].libs.directories:
                 env.prepend_path(linker_var, dir)
-        # for dir in self.spec["zlib-api"].libs.directories:
-        #     env.prepend_path(linker_var, dir)
+        for dir in self.spec["zlib-api"].libs.directories:
+            env.prepend_path(linker_var, dir)
 
     def edit(self, spec, prefix):
         # TODO: use a search query for blas / lapack?
@@ -275,10 +273,7 @@ class Julia(MakefilePackage):
         liblapack = os.path.splitext(spec["lapack"].libs.basenames[0])[0]
 
         # Host compiler target name
-        #march = get_best_target(spec.target, spec.compiler.name, spec.compiler.version)
-        march = 'armv8-a'
-
-        filter_file(r'libquadmath,0', 'libquadmath,0,ALLOW_FAILURE', "base/Makefile")
+        march = get_best_target(spec.target, spec.compiler.name, spec.compiler.version)
 
         # LLVM compatible name for the JIT
         julia_cpu_target = get_best_target(spec.target, "clang", spec["llvm"].version)
@@ -312,8 +307,7 @@ class Julia(MakefilePackage):
             "USE_SYSTEM_MPFR:=1",
             "USE_SYSTEM_P7ZIP:=1",
             "USE_SYSTEM_PATCHELF:=1",
-            #"USE_SYSTEM_PCRE:=1",
-            "USE_SYSTEM_PCRE:=0",
+            "USE_SYSTEM_PCRE:=1",
             "USE_SYSTEM_UTF8PROC:=1",
             "USE_SYSTEM_ZLIB:=1",
             # todo: ilp depends on arch
@@ -339,7 +333,6 @@ class Julia(MakefilePackage):
                 "override CC:={0}".format(spack_cc),
                 "override CXX:={0}".format(spack_cxx),
                 "override FC:={0}".format(spack_fc),
-                "override LIBGFORTRAN_VERSION:=5",
             ]
         )
 
