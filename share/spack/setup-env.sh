@@ -328,6 +328,17 @@ if [ "$_sp_shell" = bash ]; then
     export -f _spack_shell_wrapper
 fi
 
+arch=$(arch)
+case $arch in
+    "aarch64")
+        SPACK_PYTHON=/vol0004/apps/oss/spack-v0.19/opt/spack/linux-rhel8-a64fx/fj-4.8.1/python-3.10.8-7q66snjvhvy7im57hncbgpirmddrb5sk/bin/python;;
+    "x86_64")
+        SPACK_PYTHON=/vol0004/apps/oss/spack-v0.19/opt/spack/linux-rhel8-cascadelake/gcc-12.2.0/python-3.10.8-yt6afcnywa36aebxovs3ldscknyzlva3/bin/python;;
+    *)
+        SPACK_PYTHON=""
+esac
+export SPACK_PYTHON
+
 # Identify and lock the python interpreter
 for cmd in "${SPACK_PYTHON:-}" python3 python python2; do
     if command -v > /dev/null "$cmd"; then
