@@ -14,6 +14,7 @@ class Abinitmp(Package):
 
     version('1-22')
     version('2-4')
+    version('2-8')
 
     def install(self, spec, prefix):
         ##ABINIT-MP is available as an external package; it is not installable in user space.
