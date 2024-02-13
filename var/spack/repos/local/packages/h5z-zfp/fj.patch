@@ -1,0 +1,25 @@
+diff -ur a/config.make b/config.make
+--- a/config.make	2019-06-30 03:09:23.000000000 +0900
++++ b/config.make	2023-03-29 15:21:42.000000000 +0900
+@@ -82,6 +82,11 @@
+     SOEXT ?= so
+     SHFLAG ?= -shared
+     PREPATH = -Wl,-rpath,
++else ifneq ($(findstring fcc, $(CC)),)
++    CFLAGS += -KPIC
++    SOEXT ?= so
++    SHFLAG ?= -shared
++    PREPATH = -Wl,-rpath,
+ else ifneq ($(findstring clang, $(CC)),)
+     SOEXT ?= dylib
+     SHFLAG ?= -dynamiclib
+@@ -118,6 +123,8 @@
+     FCFLAGS += -qpic
+ else ifneq ($(findstring bgxlf_r, $(FC)),)
+     FCFLAGS += -qpic
++else ifneq ($(findstring frt, $(FC)),)
++    FCFLAGS += -KPIC
+ else ifneq ($(findstring f77, $(FC)),)
+ # some makefile versions set FC=f77 if FC is not set
+     FC =
+Only in b: config.make~

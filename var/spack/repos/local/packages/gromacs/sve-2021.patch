@@ -1,0 +1,2342 @@
+From b9dbcdada1fd4da546384dec61482e9e3e3defc6 Mon Sep 17 00:00:00 2001
+From: Gilles Gouaillardet <gilles@rist.or.jp>
+Date: Thu, 4 Jun 2020 12:35:13 +0900
+Subject: [PATCH 1/5] Add GMX_SIMD_HAVE_REAL_ARRAY macro
+
+With upcoming scalable vectors, it might not always be possible to
+simply declare an array of registers (e.g. SimdReal foo[]).
+This can be avoided by setting the GMX_SIMD_HAVE_FLOAT_ARRAY and/or
+GMX_SIMD_HAVE_DOUBLE_ARRAY macros to zero.
+---
+ src/gromacs/listed_forces/pairs.cpp                                | 2 +-
+ src/gromacs/mdlib/settle.cpp                                       | 2 +-
+ src/gromacs/pbcutil/pbc_simd.h                                     | 7 +++++--
+ src/gromacs/simd/impl_arm_neon/impl_arm_neon_definitions.h         | 2 ++
+ .../simd/impl_arm_neon_asimd/impl_arm_neon_asimd_definitions.h     | 2 ++
+ src/gromacs/simd/impl_ibm_vmx/impl_ibm_vmx_definitions.h           | 2 ++
+ src/gromacs/simd/impl_ibm_vsx/impl_ibm_vsx_definitions.h           | 4 ++++
+ src/gromacs/simd/impl_none/impl_none.h                             | 2 ++
+ src/gromacs/simd/impl_reference/impl_reference_definitions.h       | 6 ++++++
+ src/gromacs/simd/impl_x86_avx2_128/impl_x86_avx2_128_definitions.h | 2 ++
+ src/gromacs/simd/impl_x86_avx2_256/impl_x86_avx2_256_definitions.h | 2 ++
+ .../simd/impl_x86_avx_128_fma/impl_x86_avx_128_fma_definitions.h   | 2 ++
+ src/gromacs/simd/impl_x86_avx_256/impl_x86_avx_256_definitions.h   | 2 ++
+ src/gromacs/simd/impl_x86_avx_512/impl_x86_avx_512_definitions.h   | 2 ++
+ .../simd/impl_x86_avx_512_knl/impl_x86_avx_512_knl_definitions.h   | 2 ++
+ src/gromacs/simd/impl_x86_mic/impl_x86_mic_definitions.h           | 2 ++
+ src/gromacs/simd/impl_x86_sse2/impl_x86_sse2_definitions.h         | 2 ++
+ src/gromacs/simd/impl_x86_sse4_1/impl_x86_sse4_1_definitions.h     | 2 ++
+ src/gromacs/simd/simd.h                                            | 7 +++++++
+ 19 files changed, 50 insertions(+), 4 deletions(-)
+
+diff --git a/src/gromacs/listed_forces/pairs.cpp b/src/gromacs/listed_forces/pairs.cpp
+index 1d0393f..f0bebac 100644
+--- a/src/gromacs/listed_forces/pairs.cpp
++++ b/src/gromacs/listed_forces/pairs.cpp
+@@ -661,7 +661,7 @@ void do_pairs(int                      ftype,
+          * and sum the virial for the shifts. But we should do this
+          * at once for the angles and dihedrals as well.
+          */
+-#if GMX_SIMD_HAVE_REAL
++#if GMX_SIMD_HAVE_REAL_ARRAY
+         if (fr->use_simd_kernels)
+         {
+             alignas(GMX_SIMD_ALIGNMENT) real pbc_simd[9 * GMX_SIMD_REAL_WIDTH];
+diff --git a/src/gromacs/mdlib/settle.cpp b/src/gromacs/mdlib/settle.cpp
+index 508bafc..28c5fe3 100644
+--- a/src/gromacs/mdlib/settle.cpp
++++ b/src/gromacs/mdlib/settle.cpp
+@@ -762,7 +762,7 @@ void csettle(const SettleData&               settled,
+     real*       xprimePtr = as_rvec_array(xprime.paddedArrayRef().data())[0];
+     real*       vPtr      = as_rvec_array(v.paddedArrayRef().data())[0];
+ 
+-#if GMX_SIMD_HAVE_REAL
++#if GMX_SIMD_HAVE_REAL_ARRAY
+     if (settled.useSimd())
+     {
+         /* Convert the pbc struct for SIMD */
+diff --git a/src/gromacs/pbcutil/pbc_simd.h b/src/gromacs/pbcutil/pbc_simd.h
+index 09ba1e7..8ccf436 100644
+--- a/src/gromacs/pbcutil/pbc_simd.h
++++ b/src/gromacs/pbcutil/pbc_simd.h
+@@ -1,7 +1,7 @@
+ /*
+  * This file is part of the GROMACS molecular simulation package.
+  *
+- * Copyright (c) 2015,2016,2017,2018,2019, by the GROMACS development team, led by
++ * Copyright (c) 2015,2016,2017,2018,2019,2020, by the GROMACS development team, led by
+  * Mark Abraham, David van der Spoel, Berk Hess, and Erik Lindahl,
+  * and including many others, as listed in the AUTHORS file in the
+  * top-level source directory and at http://www.gromacs.org.
+@@ -100,6 +100,9 @@ static inline void gmx_simdcall pbc_correct_dx_simd(gmx::SimdReal* dx,
+     shx = round(*dx * load<SimdReal>(pbc_simd + 7 * GMX_SIMD_REAL_WIDTH)); // load inv_bxx
+     *dx = *dx - shx * load<SimdReal>(pbc_simd + 8 * GMX_SIMD_REAL_WIDTH);  // load bxx
+ }
++#endif /* GMX_SIMD_HAVE_REAL */
++
++#if GMX_SIMD_HAVE_REAL_ARRAY
+ 
+ /*! \brief Calculates the PBC corrected distance between SIMD coordinates.
+  *
+@@ -124,6 +127,6 @@ static inline void gmx_simdcall pbc_dx_aiuc(const real*          pbc_simd,
+     pbc_correct_dx_simd(&dx[XX], &dx[YY], &dx[ZZ], pbc_simd);
+ }
+ 
+-#endif /* GMX_SIMD_HAVE_REAL */
++#endif /* GMX_SIMD_HAVE_REAL_ARRAY */
+ 
+ #endif
+diff --git a/src/gromacs/simd/impl_arm_neon/impl_arm_neon_definitions.h b/src/gromacs/simd/impl_arm_neon/impl_arm_neon_definitions.h
+index 5aa27d5..78c51ee 100644
+--- a/src/gromacs/simd/impl_arm_neon/impl_arm_neon_definitions.h
++++ b/src/gromacs/simd/impl_arm_neon/impl_arm_neon_definitions.h
+@@ -38,7 +38,9 @@
+ 
+ #define GMX_SIMD 1
+ #define GMX_SIMD_HAVE_FLOAT 1
++#define GMX_SIMD_HAVE_FLOAT_ARRAY 1
+ #define GMX_SIMD_HAVE_DOUBLE 0
++#define GMX_SIMD_HAVE_DOUBLE_ARRAY 0
+ #define GMX_SIMD_HAVE_LOADU 1
+ #define GMX_SIMD_HAVE_STOREU 1
+ #define GMX_SIMD_HAVE_LOGICAL 1
+diff --git a/src/gromacs/simd/impl_arm_neon_asimd/impl_arm_neon_asimd_definitions.h b/src/gromacs/simd/impl_arm_neon_asimd/impl_arm_neon_asimd_definitions.h
+index f40c43b..6914b62 100644
+--- a/src/gromacs/simd/impl_arm_neon_asimd/impl_arm_neon_asimd_definitions.h
++++ b/src/gromacs/simd/impl_arm_neon_asimd/impl_arm_neon_asimd_definitions.h
+@@ -40,7 +40,9 @@
+ 
+ #define GMX_SIMD 1
+ #define GMX_SIMD_HAVE_FLOAT 1
++#define GMX_SIMD_HAVE_FLOAT_ARRAY 1
+ #define GMX_SIMD_HAVE_DOUBLE 1
++#define GMX_SIMD_HAVE_DOUBLE_ARRAY 1
+ #define GMX_SIMD_HAVE_LOADU 1
+ #define GMX_SIMD_HAVE_STOREU 1
+ #define GMX_SIMD_HAVE_LOGICAL 1
+diff --git a/src/gromacs/simd/impl_ibm_vmx/impl_ibm_vmx_definitions.h b/src/gromacs/simd/impl_ibm_vmx/impl_ibm_vmx_definitions.h
+index ece4a52..7e1313a 100644
+--- a/src/gromacs/simd/impl_ibm_vmx/impl_ibm_vmx_definitions.h
++++ b/src/gromacs/simd/impl_ibm_vmx/impl_ibm_vmx_definitions.h
+@@ -51,7 +51,9 @@
+ 
+ #define GMX_SIMD 1
+ #define GMX_SIMD_HAVE_FLOAT 1
++#define GMX_SIMD_HAVE_FLOAT_ARRAY 1
+ #define GMX_SIMD_HAVE_DOUBLE 0
++#define GMX_SIMD_HAVE_DOUBLE_ARRAY 0
+ #define GMX_SIMD_HAVE_LOADU 0
+ #define GMX_SIMD_HAVE_STOREU 0
+ 
+diff --git a/src/gromacs/simd/impl_ibm_vsx/impl_ibm_vsx_definitions.h b/src/gromacs/simd/impl_ibm_vsx/impl_ibm_vsx_definitions.h
+index fe67d4b..2df8499 100644
+--- a/src/gromacs/simd/impl_ibm_vsx/impl_ibm_vsx_definitions.h
++++ b/src/gromacs/simd/impl_ibm_vsx/impl_ibm_vsx_definitions.h
+@@ -57,7 +57,9 @@
+ 
+ #define GMX_SIMD 1
+ #define GMX_SIMD_HAVE_FLOAT 1
++#define GMX_SIMD_HAVE_FLOAT_ARRAY 1
+ // GMX_SIMD_HAVE_DOUBLE is conditionally defined further down
++// GMX_SIMD_HAVE_DOUBLE_ARRAY is conditionally defined further down
+ #define GMX_SIMD_HAVE_LOADU 1
+ #define GMX_SIMD_HAVE_STOREU 1
+ #define GMX_SIMD_HAVE_LOGICAL 1
+@@ -93,12 +95,14 @@
+ #if defined(__ibmxl__) || defined(__xlC__) \
+         || !(defined(__GNUC__) && ((__GNUC__ < 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ < 9))))
+ #    define GMX_SIMD_HAVE_DOUBLE 1
++#    define GMX_SIMD_HAVE_DOUBLE_ARRAY 1
+ #    define GMX_SIMD_HAVE_DINT32_EXTRACT 1
+ #    define GMX_SIMD_HAVE_DINT32_LOGICAL 1
+ #    define GMX_SIMD_HAVE_DINT32_ARITHMETICS 1
+ #    define GMX_SIMD_HAVE_GATHER_LOADU_BYSIMDINT_TRANSPOSE_DOUBLE 1
+ #else
+ #    define GMX_SIMD_HAVE_DOUBLE 0
++#    define GMX_SIMD_HAVE_DOUBLE_ARRAY 0
+ #    define GMX_SIMD_HAVE_DINT32_EXTRACT 0
+ #    define GMX_SIMD_HAVE_DINT32_LOGICAL 0
+ #    define GMX_SIMD_HAVE_DINT32_ARITHMETICS 0
+diff --git a/src/gromacs/simd/impl_none/impl_none.h b/src/gromacs/simd/impl_none/impl_none.h
+index e9ce083..26cb37e 100644
+--- a/src/gromacs/simd/impl_none/impl_none.h
++++ b/src/gromacs/simd/impl_none/impl_none.h
+@@ -39,7 +39,9 @@
+ /* No SIMD implementation - assign 0 to all defines */
+ #define GMX_SIMD 0
+ #define GMX_SIMD_HAVE_FLOAT 0
++#define GMX_SIMD_HAVE_FLOAT_ARRAY 0
+ #define GMX_SIMD_HAVE_DOUBLE 0
++#define GMX_SIMD_HAVE_DOUBLE_ARRAY 0
+ #define GMX_SIMD_HAVE_LOADU 0
+ #define GMX_SIMD_HAVE_STOREU 0
+ #define GMX_SIMD_HAVE_LOGICAL 0
+diff --git a/src/gromacs/simd/impl_reference/impl_reference_definitions.h b/src/gromacs/simd/impl_reference/impl_reference_definitions.h
+index 29dd4ae..cede940 100644
+--- a/src/gromacs/simd/impl_reference/impl_reference_definitions.h
++++ b/src/gromacs/simd/impl_reference/impl_reference_definitions.h
+@@ -70,9 +70,15 @@ namespace gmx
+  */
+ #define GMX_SIMD_HAVE_FLOAT 1
+ 
++//! \brief 1 when SIMD float array is supported, otherwise 0
++#define GMX_SIMD_HAVE_FLOAT_ARRAY 1
++
+ //! \brief 1 if SIMD double support is present, otherwise 0
+ #define GMX_SIMD_HAVE_DOUBLE 1
+ 
++//! \brief 1 when SIMD double array is supported, otherwise 0
++#define GMX_SIMD_HAVE_DOUBLE_ARRAY 1
++
+ //! \brief 1 if the SIMD implementation supports unaligned loads, otherwise 0
+ #define GMX_SIMD_HAVE_LOADU 1
+ 
+diff --git a/src/gromacs/simd/impl_x86_avx2_128/impl_x86_avx2_128_definitions.h b/src/gromacs/simd/impl_x86_avx2_128/impl_x86_avx2_128_definitions.h
+index cffb4c6..cc0f572 100644
+--- a/src/gromacs/simd/impl_x86_avx2_128/impl_x86_avx2_128_definitions.h
++++ b/src/gromacs/simd/impl_x86_avx2_128/impl_x86_avx2_128_definitions.h
+@@ -39,7 +39,9 @@
+ // Capability definitions for (mostly) 128-bit AVX2
+ #define GMX_SIMD 1
+ #define GMX_SIMD_HAVE_FLOAT 1
++#define GMX_SIMD_HAVE_FLOAT_ARRAY 1
+ #define GMX_SIMD_HAVE_DOUBLE 1
++#define GMX_SIMD_HAVE_DOUBLE_ARRAY 1
+ #define GMX_SIMD_HAVE_LOADU 1
+ #define GMX_SIMD_HAVE_STOREU 1
+ #define GMX_SIMD_HAVE_LOGICAL 1
+diff --git a/src/gromacs/simd/impl_x86_avx2_256/impl_x86_avx2_256_definitions.h b/src/gromacs/simd/impl_x86_avx2_256/impl_x86_avx2_256_definitions.h
+index 7c2a6b1..90bf127 100644
+--- a/src/gromacs/simd/impl_x86_avx2_256/impl_x86_avx2_256_definitions.h
++++ b/src/gromacs/simd/impl_x86_avx2_256/impl_x86_avx2_256_definitions.h
+@@ -39,7 +39,9 @@
+ // Capability definitions for 256-bit AVX2
+ #define GMX_SIMD 1
+ #define GMX_SIMD_HAVE_FLOAT 1
++#define GMX_SIMD_HAVE_FLOAT_ARRAY 1
+ #define GMX_SIMD_HAVE_DOUBLE 1
++#define GMX_SIMD_HAVE_DOUBLE_ARRAY 1
+ #define GMX_SIMD_HAVE_LOADU 1
+ #define GMX_SIMD_HAVE_STOREU 1
+ #define GMX_SIMD_HAVE_LOGICAL 1
+diff --git a/src/gromacs/simd/impl_x86_avx_128_fma/impl_x86_avx_128_fma_definitions.h b/src/gromacs/simd/impl_x86_avx_128_fma/impl_x86_avx_128_fma_definitions.h
+index 9b65882..53df9a4 100644
+--- a/src/gromacs/simd/impl_x86_avx_128_fma/impl_x86_avx_128_fma_definitions.h
++++ b/src/gromacs/simd/impl_x86_avx_128_fma/impl_x86_avx_128_fma_definitions.h
+@@ -40,7 +40,9 @@
+ // Capability definitions for AVX-128-FMA
+ #define GMX_SIMD 1
+ #define GMX_SIMD_HAVE_FLOAT 1
++#define GMX_SIMD_HAVE_FLOAT_ARRAY 1
+ #define GMX_SIMD_HAVE_DOUBLE 1
++#define GMX_SIMD_HAVE_DOUBLE_ARRAY 1
+ #define GMX_SIMD_HAVE_LOADU 1
+ #define GMX_SIMD_HAVE_STOREU 1
+ #define GMX_SIMD_HAVE_LOGICAL 1
+diff --git a/src/gromacs/simd/impl_x86_avx_256/impl_x86_avx_256_definitions.h b/src/gromacs/simd/impl_x86_avx_256/impl_x86_avx_256_definitions.h
+index aa633c2..d28c1ac 100644
+--- a/src/gromacs/simd/impl_x86_avx_256/impl_x86_avx_256_definitions.h
++++ b/src/gromacs/simd/impl_x86_avx_256/impl_x86_avx_256_definitions.h
+@@ -39,7 +39,9 @@
+ // Capability definitions for 256-bit AVX
+ #define GMX_SIMD 1
+ #define GMX_SIMD_HAVE_FLOAT 1
++#define GMX_SIMD_HAVE_FLOAT_ARRAY 1
+ #define GMX_SIMD_HAVE_DOUBLE 1
++#define GMX_SIMD_HAVE_DOUBLE_ARRAY 1
+ #define GMX_SIMD_HAVE_LOADU 1
+ #define GMX_SIMD_HAVE_STOREU 1
+ #define GMX_SIMD_HAVE_LOGICAL 1
+diff --git a/src/gromacs/simd/impl_x86_avx_512/impl_x86_avx_512_definitions.h b/src/gromacs/simd/impl_x86_avx_512/impl_x86_avx_512_definitions.h
+index 75e4a97..d906e9f 100644
+--- a/src/gromacs/simd/impl_x86_avx_512/impl_x86_avx_512_definitions.h
++++ b/src/gromacs/simd/impl_x86_avx_512/impl_x86_avx_512_definitions.h
+@@ -52,7 +52,9 @@
+ 
+ #define GMX_SIMD 1
+ #define GMX_SIMD_HAVE_FLOAT 1
++#define GMX_SIMD_HAVE_FLOAT_ARRAY 1
+ #define GMX_SIMD_HAVE_DOUBLE 1
++#define GMX_SIMD_HAVE_DOUBLE_ARRAY 1
+ #define GMX_SIMD_HAVE_LOADU 1
+ #define GMX_SIMD_HAVE_STOREU 1
+ #define GMX_SIMD_HAVE_LOGICAL 1
+diff --git a/src/gromacs/simd/impl_x86_avx_512_knl/impl_x86_avx_512_knl_definitions.h b/src/gromacs/simd/impl_x86_avx_512_knl/impl_x86_avx_512_knl_definitions.h
+index 13e924d..48f4045 100644
+--- a/src/gromacs/simd/impl_x86_avx_512_knl/impl_x86_avx_512_knl_definitions.h
++++ b/src/gromacs/simd/impl_x86_avx_512_knl/impl_x86_avx_512_knl_definitions.h
+@@ -41,7 +41,9 @@
+ 
+ #define GMX_SIMD 1
+ #define GMX_SIMD_HAVE_FLOAT 1
++#define GMX_SIMD_HAVE_FLOAT_ARRAY 1
+ #define GMX_SIMD_HAVE_DOUBLE 1
++#define GMX_SIMD_HAVE_DOUBLE_ARRAY 1
+ #define GMX_SIMD_HAVE_LOADU 1
+ #define GMX_SIMD_HAVE_STOREU 1
+ #define GMX_SIMD_HAVE_LOGICAL 1
+diff --git a/src/gromacs/simd/impl_x86_mic/impl_x86_mic_definitions.h b/src/gromacs/simd/impl_x86_mic/impl_x86_mic_definitions.h
+index 2f85b0c..97b3120 100644
+--- a/src/gromacs/simd/impl_x86_mic/impl_x86_mic_definitions.h
++++ b/src/gromacs/simd/impl_x86_mic/impl_x86_mic_definitions.h
+@@ -38,7 +38,9 @@
+ 
+ #define GMX_SIMD 1
+ #define GMX_SIMD_HAVE_FLOAT 1
++#define GMX_SIMD_HAVE_FLOAT_ARRAY 1
+ #define GMX_SIMD_HAVE_DOUBLE 1
++#define GMX_SIMD_HAVE_DOUBLE_ARRAY 1
+ #define GMX_SIMD_HAVE_LOADU 1
+ #define GMX_SIMD_HAVE_STOREU 1
+ #define GMX_SIMD_HAVE_LOGICAL 1
+diff --git a/src/gromacs/simd/impl_x86_sse2/impl_x86_sse2_definitions.h b/src/gromacs/simd/impl_x86_sse2/impl_x86_sse2_definitions.h
+index f47f56b..6bcdfb3 100644
+--- a/src/gromacs/simd/impl_x86_sse2/impl_x86_sse2_definitions.h
++++ b/src/gromacs/simd/impl_x86_sse2/impl_x86_sse2_definitions.h
+@@ -39,7 +39,9 @@
+ // Capability definitions for SSE2.
+ #define GMX_SIMD 1
+ #define GMX_SIMD_HAVE_FLOAT 1
++#define GMX_SIMD_HAVE_FLOAT_ARRAY 1
+ #define GMX_SIMD_HAVE_DOUBLE 1
++#define GMX_SIMD_HAVE_DOUBLE_ARRAY 1
+ #define GMX_SIMD_HAVE_LOADU 1
+ #define GMX_SIMD_HAVE_STOREU 1
+ #define GMX_SIMD_HAVE_LOGICAL 1
+diff --git a/src/gromacs/simd/impl_x86_sse4_1/impl_x86_sse4_1_definitions.h b/src/gromacs/simd/impl_x86_sse4_1/impl_x86_sse4_1_definitions.h
+index 0e50fb0..c3e4722 100644
+--- a/src/gromacs/simd/impl_x86_sse4_1/impl_x86_sse4_1_definitions.h
++++ b/src/gromacs/simd/impl_x86_sse4_1/impl_x86_sse4_1_definitions.h
+@@ -39,7 +39,9 @@
+ // Capability definitions for SSE4.1
+ #define GMX_SIMD 1
+ #define GMX_SIMD_HAVE_FLOAT 1
++#define GMX_SIMD_HAVE_FLOAT_ARRAY 1
+ #define GMX_SIMD_HAVE_DOUBLE 1
++#define GMX_SIMD_HAVE_DOUBLE_ARRAY 1
+ #define GMX_SIMD_HAVE_LOADU 1
+ #define GMX_SIMD_HAVE_STOREU 1
+ #define GMX_SIMD_HAVE_LOGICAL 1
+diff --git a/src/gromacs/simd/simd.h b/src/gromacs/simd/simd.h
+index 55fd89f..a491857 100644
+--- a/src/gromacs/simd/simd.h
++++ b/src/gromacs/simd/simd.h
+@@ -177,6 +177,7 @@ struct SimdDInt32Tag
+ 
+ #if GMX_DOUBLE
+ #    define GMX_SIMD_HAVE_REAL GMX_SIMD_HAVE_DOUBLE
++#    define GMX_SIMD_HAVE_REAL_ARRAY GMX_SIMD_HAVE_DOUBLE_ARRAY
+ #    define GMX_SIMD_REAL_WIDTH GMX_SIMD_DOUBLE_WIDTH
+ #    define GMX_SIMD_HAVE_INT32_EXTRACT GMX_SIMD_HAVE_DINT32_EXTRACT
+ #    define GMX_SIMD_HAVE_INT32_LOGICAL GMX_SIMD_HAVE_DINT32_LOGICAL
+@@ -193,6 +194,12 @@ struct SimdDInt32Tag
+  */
+ #    define GMX_SIMD_HAVE_REAL GMX_SIMD_HAVE_FLOAT
+ 
++/*! \brief 1 if SimdReal[] is available, otherwise 0.
++ *
++ *  \ref GMX_SIMD_HAVE_DOUBLE_ARRAY if GMX_DOUBLE is 1, otherwise \ref GMX_SIMD_HAVE_FLOAT_ARRAY.
++ */
++#    define GMX_SIMD_HAVE_REAL_ARRAY GMX_SIMD_HAVE_FLOAT_ARRAY
++
+ /*! \brief Width of SimdReal.
+  *
+  *  \ref GMX_SIMD_DOUBLE_WIDTH if GMX_DOUBLE is 1, otherwise \ref GMX_SIMD_FLOAT_WIDTH.
+-- 
+1.8.3.1
+
+From 46916fe985bb10e03d3f0563942d1373b74ec1c3 Mon Sep 17 00:00:00 2001
+From: Gilles Gouaillardet <gilles@rist.or.jp>
+Date: Tue, 30 Jun 2020 19:38:31 +0900
+Subject: [PATCH 2/5] Add GMX_SIMD4_HAVE_REAL_ARRAY macro
+
+With upcoming scalable vectors, it might not always be possible to
+simply declare an array of registers (e.g. Simd4Real foo[]).
+This can be avoided by setting the GMX_SIMD4_HAVE_FLOAT_ARRAY and/or
+GMX_SIMD4_HAVE_DOUBLE_ARRAY macros to zero.
+---
+ src/gromacs/ewald/pme_simd.h                                   | 10 +++++-----
+ src/gromacs/simd/impl_arm_neon/impl_arm_neon_definitions.h     |  2 ++
+ .../simd/impl_arm_neon_asimd/impl_arm_neon_asimd_definitions.h |  2 ++
+ src/gromacs/simd/impl_ibm_vmx/impl_ibm_vmx_definitions.h       |  2 ++
+ src/gromacs/simd/impl_ibm_vsx/impl_ibm_vsx_definitions.h       |  2 ++
+ src/gromacs/simd/impl_none/impl_none.h                         |  3 +++
+ src/gromacs/simd/impl_reference/impl_reference_definitions.h   |  6 ++++++
+ .../simd/impl_x86_avx2_128/impl_x86_avx2_128_definitions.h     |  2 ++
+ .../simd/impl_x86_avx2_256/impl_x86_avx2_256_definitions.h     |  2 ++
+ .../impl_x86_avx_128_fma/impl_x86_avx_128_fma_definitions.h    |  2 ++
+ .../simd/impl_x86_avx_256/impl_x86_avx_256_definitions.h       |  2 ++
+ .../simd/impl_x86_avx_512/impl_x86_avx_512_definitions.h       |  2 ++
+ .../impl_x86_avx_512_knl/impl_x86_avx_512_knl_definitions.h    |  2 ++
+ src/gromacs/simd/impl_x86_mic/impl_x86_mic_definitions.h       |  2 ++
+ src/gromacs/simd/impl_x86_sse2/impl_x86_sse2_definitions.h     |  2 ++
+ src/gromacs/simd/impl_x86_sse4_1/impl_x86_sse4_1_definitions.h |  2 ++
+ src/gromacs/simd/simd.h                                        |  7 +++++++
+ 17 files changed, 47 insertions(+), 5 deletions(-)
+
+diff --git a/src/gromacs/ewald/pme_simd.h b/src/gromacs/ewald/pme_simd.h
+index 03c03df..8645911 100644
+--- a/src/gromacs/ewald/pme_simd.h
++++ b/src/gromacs/ewald/pme_simd.h
+@@ -1,7 +1,7 @@
+ /*
+  * This file is part of the GROMACS molecular simulation package.
+  *
+- * Copyright (c) 2014,2015,2017,2019, by the GROMACS development team, led by
++ * Copyright (c) 2014,2015,2017,2019,2020, by the GROMACS development team, led by
+  * Mark Abraham, David van der Spoel, Berk Hess, and Erik Lindahl,
+  * and including many others, as listed in the AUTHORS file in the
+  * top-level source directory and at http://www.gromacs.org.
+@@ -39,18 +39,18 @@
+ #include "gromacs/simd/simd.h"
+ 
+ /* Check if we have 4-wide SIMD macro support */
+-#if GMX_SIMD4_HAVE_REAL
++#if GMX_SIMD4_HAVE_REAL_ARRAY
+ /* Do PME spread and gather with 4-wide SIMD.
+  * NOTE: SIMD is only used with PME order 4 and 5 (which are the most common).
+  */
+ #    define PME_SIMD4_SPREAD_GATHER
++#endif
+ 
+-#    if GMX_SIMD_HAVE_LOADU && GMX_SIMD_HAVE_STOREU
++#if GMX_SIMD4_HAVE_REAL && GMX_SIMD_HAVE_LOADU && GMX_SIMD_HAVE_STOREU
+ /* With PME-order=4 on x86, unaligned load+store is slightly faster
+  * than doubling all SIMD operations when using aligned load+store.
+  */
+-#        define PME_SIMD4_UNALIGNED
+-#    endif
++#    define PME_SIMD4_UNALIGNED
+ #endif
+ 
+ #ifdef PME_SIMD4_SPREAD_GATHER
+diff --git a/src/gromacs/simd/impl_arm_neon/impl_arm_neon_definitions.h b/src/gromacs/simd/impl_arm_neon/impl_arm_neon_definitions.h
+index 78c51ee..fbd2ddd 100644
+--- a/src/gromacs/simd/impl_arm_neon/impl_arm_neon_definitions.h
++++ b/src/gromacs/simd/impl_arm_neon/impl_arm_neon_definitions.h
+@@ -70,7 +70,9 @@
+ #define GMX_SIMD_HAVE_HSIMD_UTIL_DOUBLE 0
+ 
+ #define GMX_SIMD4_HAVE_FLOAT 1
++#define GMX_SIMD4_HAVE_FLOAT_ARRAY 1
+ #define GMX_SIMD4_HAVE_DOUBLE 0
++#define GMX_SIMD4_HAVE_DOUBLE_ARRAY 0
+ 
+ // Implementation details
+ #define GMX_SIMD_FLOAT_WIDTH 4
+diff --git a/src/gromacs/simd/impl_arm_neon_asimd/impl_arm_neon_asimd_definitions.h b/src/gromacs/simd/impl_arm_neon_asimd/impl_arm_neon_asimd_definitions.h
+index 6914b62..d60ec88 100644
+--- a/src/gromacs/simd/impl_arm_neon_asimd/impl_arm_neon_asimd_definitions.h
++++ b/src/gromacs/simd/impl_arm_neon_asimd/impl_arm_neon_asimd_definitions.h
+@@ -71,7 +71,9 @@
+ #define GMX_SIMD_HAVE_HSIMD_UTIL_DOUBLE 0
+ 
+ #define GMX_SIMD4_HAVE_FLOAT 1
++#define GMX_SIMD4_HAVE_FLOAT_ARRAY 1
+ #define GMX_SIMD4_HAVE_DOUBLE 0
++#define GMX_SIMD4_HAVE_DOUBLE_ARRAY 0
+ 
+ // Implementation details
+ #define GMX_SIMD_FLOAT_WIDTH 4
+diff --git a/src/gromacs/simd/impl_ibm_vmx/impl_ibm_vmx_definitions.h b/src/gromacs/simd/impl_ibm_vmx/impl_ibm_vmx_definitions.h
+index 7e1313a..7013efe 100644
+--- a/src/gromacs/simd/impl_ibm_vmx/impl_ibm_vmx_definitions.h
++++ b/src/gromacs/simd/impl_ibm_vmx/impl_ibm_vmx_definitions.h
+@@ -83,7 +83,9 @@
+ #define GMX_SIMD_HAVE_HSIMD_UTIL_DOUBLE 0
+ 
+ #define GMX_SIMD4_HAVE_FLOAT 1
++#define GMX_SIMD4_HAVE_FLOAT_ARRAY 1
+ #define GMX_SIMD4_HAVE_DOUBLE 0
++#define GMX_SIMD4_HAVE_DOUBLE_ARRAY 0
+ 
+ // Implementation details
+ #define GMX_SIMD_FLOAT_WIDTH 4
+diff --git a/src/gromacs/simd/impl_ibm_vsx/impl_ibm_vsx_definitions.h b/src/gromacs/simd/impl_ibm_vsx/impl_ibm_vsx_definitions.h
+index 2df8499..28701ba 100644
+--- a/src/gromacs/simd/impl_ibm_vsx/impl_ibm_vsx_definitions.h
++++ b/src/gromacs/simd/impl_ibm_vsx/impl_ibm_vsx_definitions.h
+@@ -87,7 +87,9 @@
+ #define GMX_SIMD_HAVE_HSIMD_UTIL_FLOAT 0  // No need for half-simd, width is 4
+ #define GMX_SIMD_HAVE_HSIMD_UTIL_DOUBLE 0 // No need for half-simd, width is 2
+ #define GMX_SIMD4_HAVE_FLOAT 1
++#define GMX_SIMD4_HAVE_FLOAT_ARRAY 1
+ #define GMX_SIMD4_HAVE_DOUBLE 0
++#define GMX_SIMD4_HAVE_DOUBLE_ARRAY 0
+ 
+ // With GCC, only version 4.9 or later supports all parts of double precision VSX.
+ // We check explicitly for xlc, since that compiler appears to like pretending it is gcc,
+diff --git a/src/gromacs/simd/impl_none/impl_none.h b/src/gromacs/simd/impl_none/impl_none.h
+index 26cb37e..3b4bc3d 100644
+--- a/src/gromacs/simd/impl_none/impl_none.h
++++ b/src/gromacs/simd/impl_none/impl_none.h
+@@ -53,7 +53,10 @@
+ #define GMX_SIMD_HAVE_DINT32_LOGICAL 0
+ #define GMX_SIMD_HAVE_DINT32_ARITHMETICS 0
+ #define GMX_SIMD4_HAVE_FLOAT 0
++#define GMX_SIMD4_HAVE_FLOAT_ARRAY 0
+ #define GMX_SIMD4_HAVE_DOUBLE 0
++#define GMX_SIMD4_HAVE_DOUBLE_ARRAY 0
++
+ #define GMX_SIMD_HAVE_HSIMD_UTIL_FLOAT 0
+ #define GMX_SIMD_HAVE_HSIMD_UTIL_DOUBLE 0
+ 
+diff --git a/src/gromacs/simd/impl_reference/impl_reference_definitions.h b/src/gromacs/simd/impl_reference/impl_reference_definitions.h
+index cede940..cea8d8c 100644
+--- a/src/gromacs/simd/impl_reference/impl_reference_definitions.h
++++ b/src/gromacs/simd/impl_reference/impl_reference_definitions.h
+@@ -226,9 +226,15 @@ namespace gmx
+ //! \brief 1 if implementation provides \ref gmx::Simd4Float, otherwise 0.
+ #define GMX_SIMD4_HAVE_FLOAT 1
+ 
++//! \brief 1 when SIMD4 float array is supported, otherwise 0
++#define GMX_SIMD4_HAVE_FLOAT_ARRAY 1
++
+ //! \brief 1 if the implementation provides \ref gmx::Simd4Double, otherwise 0.
+ #define GMX_SIMD4_HAVE_DOUBLE 1
+ 
++//! \brief 1 when SIMD4 double array is supported, otherwise 0
++#define GMX_SIMD4_HAVE_DOUBLE_ARRAY 1
++
+ //! \brief Width of the \ref gmx::SimdFInt32 datatype.
+ #define GMX_SIMD_FINT32_WIDTH GMX_SIMD_FLOAT_WIDTH
+ 
+diff --git a/src/gromacs/simd/impl_x86_avx2_128/impl_x86_avx2_128_definitions.h b/src/gromacs/simd/impl_x86_avx2_128/impl_x86_avx2_128_definitions.h
+index cc0f572..e191974 100644
+--- a/src/gromacs/simd/impl_x86_avx2_128/impl_x86_avx2_128_definitions.h
++++ b/src/gromacs/simd/impl_x86_avx2_128/impl_x86_avx2_128_definitions.h
+@@ -70,7 +70,9 @@
+ #define GMX_SIMD_HAVE_HSIMD_UTIL_DOUBLE 0 // No need for half-simd, width is 2
+ 
+ #define GMX_SIMD4_HAVE_FLOAT 1
++#define GMX_SIMD4_HAVE_FLOAT_ARRAY 1
+ #define GMX_SIMD4_HAVE_DOUBLE 1
++#define GMX_SIMD4_HAVE_DOUBLE_ARRAY 1
+ 
+ // Implementation details
+ #define GMX_SIMD_FLOAT_WIDTH 4
+diff --git a/src/gromacs/simd/impl_x86_avx2_256/impl_x86_avx2_256_definitions.h b/src/gromacs/simd/impl_x86_avx2_256/impl_x86_avx2_256_definitions.h
+index 90bf127..0ab7aa3 100644
+--- a/src/gromacs/simd/impl_x86_avx2_256/impl_x86_avx2_256_definitions.h
++++ b/src/gromacs/simd/impl_x86_avx2_256/impl_x86_avx2_256_definitions.h
+@@ -71,7 +71,9 @@
+ #define GMX_SIMD_HAVE_4NSIMD_UTIL_FLOAT 1
+ 
+ #define GMX_SIMD4_HAVE_FLOAT 1
++#define GMX_SIMD4_HAVE_FLOAT_ARRAY 1
+ #define GMX_SIMD4_HAVE_DOUBLE 1
++#define GMX_SIMD4_HAVE_DOUBLE_ARRAY 1
+ 
+ // Implementation details
+ #define GMX_SIMD_FLOAT_WIDTH 8
+diff --git a/src/gromacs/simd/impl_x86_avx_128_fma/impl_x86_avx_128_fma_definitions.h b/src/gromacs/simd/impl_x86_avx_128_fma/impl_x86_avx_128_fma_definitions.h
+index 53df9a4..e44d2bd 100644
+--- a/src/gromacs/simd/impl_x86_avx_128_fma/impl_x86_avx_128_fma_definitions.h
++++ b/src/gromacs/simd/impl_x86_avx_128_fma/impl_x86_avx_128_fma_definitions.h
+@@ -72,7 +72,9 @@
+ #define GMX_SIMD_HAVE_HSIMD_UTIL_DOUBLE 0 // No need for half-simd, width is 2
+ 
+ #define GMX_SIMD4_HAVE_FLOAT 1
++#define GMX_SIMD4_HAVE_FLOAT_ARRAY 1
+ #define GMX_SIMD4_HAVE_DOUBLE 1 // Uses 256-bit avx for SIMD4-double
++#define GMX_SIMD4_HAVE_DOUBLE_ARRAY 1
+ 
+ // Implementation details
+ #define GMX_SIMD_FLOAT_WIDTH 4
+diff --git a/src/gromacs/simd/impl_x86_avx_256/impl_x86_avx_256_definitions.h b/src/gromacs/simd/impl_x86_avx_256/impl_x86_avx_256_definitions.h
+index d28c1ac..262cb78 100644
+--- a/src/gromacs/simd/impl_x86_avx_256/impl_x86_avx_256_definitions.h
++++ b/src/gromacs/simd/impl_x86_avx_256/impl_x86_avx_256_definitions.h
+@@ -71,7 +71,9 @@
+ #define GMX_SIMD_HAVE_4NSIMD_UTIL_FLOAT 1
+ 
+ #define GMX_SIMD4_HAVE_FLOAT 1
++#define GMX_SIMD4_HAVE_FLOAT_ARRAY 1
+ #define GMX_SIMD4_HAVE_DOUBLE 1
++#define GMX_SIMD4_HAVE_DOUBLE_ARRAY 1
+ 
+ // Implementation details
+ #define GMX_SIMD_FLOAT_WIDTH 8
+diff --git a/src/gromacs/simd/impl_x86_avx_512/impl_x86_avx_512_definitions.h b/src/gromacs/simd/impl_x86_avx_512/impl_x86_avx_512_definitions.h
+index d906e9f..ecda346 100644
+--- a/src/gromacs/simd/impl_x86_avx_512/impl_x86_avx_512_definitions.h
++++ b/src/gromacs/simd/impl_x86_avx_512/impl_x86_avx_512_definitions.h
+@@ -88,7 +88,9 @@
+ #define GMX_SIMD_HAVE_4NSIMD_UTIL_DOUBLE 1
+ 
+ #define GMX_SIMD4_HAVE_FLOAT 1
++#define GMX_SIMD4_HAVE_FLOAT_ARRAY 1
+ #define GMX_SIMD4_HAVE_DOUBLE 1
++#define GMX_SIMD4_HAVE_DOUBLE_ARRAY 1
+ 
+ // Implementation details
+ #define GMX_SIMD_FLOAT_WIDTH 16
+diff --git a/src/gromacs/simd/impl_x86_avx_512_knl/impl_x86_avx_512_knl_definitions.h b/src/gromacs/simd/impl_x86_avx_512_knl/impl_x86_avx_512_knl_definitions.h
+index 48f4045..e32a1b4 100644
+--- a/src/gromacs/simd/impl_x86_avx_512_knl/impl_x86_avx_512_knl_definitions.h
++++ b/src/gromacs/simd/impl_x86_avx_512_knl/impl_x86_avx_512_knl_definitions.h
+@@ -77,7 +77,9 @@
+ #define GMX_SIMD_HAVE_4NSIMD_UTIL_DOUBLE 1
+ 
+ #define GMX_SIMD4_HAVE_FLOAT 1
++#define GMX_SIMD4_HAVE_FLOAT_ARRAY 1
+ #define GMX_SIMD4_HAVE_DOUBLE 1
++#define GMX_SIMD4_HAVE_DOUBLE_ARRAY 1
+ 
+ // Implementation details
+ #define GMX_SIMD_FLOAT_WIDTH 16
+diff --git a/src/gromacs/simd/impl_x86_mic/impl_x86_mic_definitions.h b/src/gromacs/simd/impl_x86_mic/impl_x86_mic_definitions.h
+index 97b3120..a5ebc42 100644
+--- a/src/gromacs/simd/impl_x86_mic/impl_x86_mic_definitions.h
++++ b/src/gromacs/simd/impl_x86_mic/impl_x86_mic_definitions.h
+@@ -69,7 +69,9 @@
+ #define GMX_SIMD_HAVE_HSIMD_UTIL_DOUBLE 1
+ 
+ #define GMX_SIMD4_HAVE_FLOAT 1
++#define GMX_SIMD4_HAVE_FLOAT_ARRAY 1
+ #define GMX_SIMD4_HAVE_DOUBLE 1
++#define GMX_SIMD4_HAVE_DOUBLE_ARRAY 1
+ 
+ // Implementation details
+ #define GMX_SIMD_FLOAT_WIDTH 16
+diff --git a/src/gromacs/simd/impl_x86_sse2/impl_x86_sse2_definitions.h b/src/gromacs/simd/impl_x86_sse2/impl_x86_sse2_definitions.h
+index 6bcdfb3..8f8ff1e 100644
+--- a/src/gromacs/simd/impl_x86_sse2/impl_x86_sse2_definitions.h
++++ b/src/gromacs/simd/impl_x86_sse2/impl_x86_sse2_definitions.h
+@@ -70,7 +70,9 @@
+ #define GMX_SIMD_HAVE_HSIMD_UTIL_DOUBLE 0 // No need for half-simd, width is 2
+ 
+ #define GMX_SIMD4_HAVE_FLOAT 1
++#define GMX_SIMD4_HAVE_FLOAT_ARRAY 1
+ #define GMX_SIMD4_HAVE_DOUBLE 0
++#define GMX_SIMD4_HAVE_DOUBLE_ARRAY 0
+ 
+ // Implementation details
+ #define GMX_SIMD_FLOAT_WIDTH 4
+diff --git a/src/gromacs/simd/impl_x86_sse4_1/impl_x86_sse4_1_definitions.h b/src/gromacs/simd/impl_x86_sse4_1/impl_x86_sse4_1_definitions.h
+index c3e4722..9f9ce11 100644
+--- a/src/gromacs/simd/impl_x86_sse4_1/impl_x86_sse4_1_definitions.h
++++ b/src/gromacs/simd/impl_x86_sse4_1/impl_x86_sse4_1_definitions.h
+@@ -70,7 +70,9 @@
+ #define GMX_SIMD_HAVE_HSIMD_UTIL_DOUBLE 0 // No need for half-simd, width is 2
+ 
+ #define GMX_SIMD4_HAVE_FLOAT 1
++#define GMX_SIMD4_HAVE_FLOAT_ARRAY 1
+ #define GMX_SIMD4_HAVE_DOUBLE 0
++#define GMX_SIMD4_HAVE_DOUBLE_ARRAY 0
+ 
+ // Implementation details
+ #define GMX_SIMD_FLOAT_WIDTH 4
+diff --git a/src/gromacs/simd/simd.h b/src/gromacs/simd/simd.h
+index a491857..faae160 100644
+--- a/src/gromacs/simd/simd.h
++++ b/src/gromacs/simd/simd.h
+@@ -186,6 +186,7 @@ struct SimdDInt32Tag
+         GMX_SIMD_HAVE_GATHER_LOADU_BYSIMDINT_TRANSPOSE_DOUBLE
+ #    define GMX_SIMD_HAVE_HSIMD_UTIL_REAL GMX_SIMD_HAVE_HSIMD_UTIL_DOUBLE
+ #    define GMX_SIMD4_HAVE_REAL GMX_SIMD4_HAVE_DOUBLE
++#    define GMX_SIMD4_HAVE_REAL_ARRAY GMX_SIMD4_HAVE_DOUBLE_ARRAY
+ #else // GMX_DOUBLE
+ 
+ /*! \brief 1 if SimdReal is available, otherwise 0.
+@@ -248,6 +249,12 @@ struct SimdDInt32Tag
+  */
+ #    define GMX_SIMD4_HAVE_REAL GMX_SIMD4_HAVE_FLOAT
+ 
++/*! \brief 1 if Simd4Real[] is available, otherwise 0.
++ *
++ *  \ref GMX_SIMD4_HAVE_DOUBLE_ARRAY if GMX_DOUBLE is 1, otherwise \ref GMX_SIMD4_HAVE_FLOAT_ARRAY.
++ */
++#    define GMX_SIMD4_HAVE_REAL_ARRAY GMX_SIMD4_HAVE_FLOAT_ARRAY
++
+ #endif // GMX_DOUBLE
+ 
+ //! \}  end of name-group describing high-level capabilities
+-- 
+1.8.3.1
+
+From 0540f029a6c07874f85e1e9867376667c57cd1da Mon Sep 17 00:00:00 2001
+From: Gilles Gouaillardet <gilles@rist.or.jp>
+Date: Tue, 1 Dec 2020 15:37:31 +0900
+Subject: [PATCH 3/5] tests: use macros instead of global variables for
+ scalable vectors.
+
+If SimdReal, Simd4Real and/or SimdFint32 are scalable vectors, their size
+is unknown at compile time and these types cannot be used to declare
+global variables. In that case only, define them as macros instead
+of global variables.
+---
+ .../simd/impl_arm_neon/impl_arm_neon_definitions.h |  6 ++
+ .../impl_arm_neon_asimd_definitions.h              |  6 ++
+ .../simd/impl_ibm_vmx/impl_ibm_vmx_definitions.h   |  6 ++
+ .../simd/impl_ibm_vsx/impl_ibm_vsx_definitions.h   |  8 ++
+ src/gromacs/simd/impl_none/impl_none.h             |  4 +
+ .../impl_reference/impl_reference_definitions.h    | 18 ++++
+ .../impl_x86_avx2_128_definitions.h                |  6 ++
+ .../impl_x86_avx2_256_definitions.h                |  6 ++
+ .../impl_x86_avx_128_fma_definitions.h             |  6 ++
+ .../impl_x86_avx_256_definitions.h                 |  8 +-
+ .../impl_x86_avx_512_definitions.h                 |  6 ++
+ .../impl_x86_avx_512_knl_definitions.h             |  6 ++
+ .../simd/impl_x86_mic/impl_x86_mic_definitions.h   |  6 ++
+ .../simd/impl_x86_sse2/impl_x86_sse2_definitions.h |  6 ++
+ .../impl_x86_sse4_1/impl_x86_sse4_1_definitions.h  |  6 ++
+ src/gromacs/simd/simd.h                            | 22 +++++
+ src/gromacs/simd/tests/simd.cpp                    |  6 +-
+ src/gromacs/simd/tests/simd.h                      | 99 ++++++++++++++++++++--
+ src/gromacs/simd/tests/simd4.cpp                   | 12 +--
+ src/gromacs/simd/tests/simd4.h                     | 54 +++++++++++-
+ 20 files changed, 281 insertions(+), 16 deletions(-)
+
+diff --git a/src/gromacs/simd/impl_arm_neon/impl_arm_neon_definitions.h b/src/gromacs/simd/impl_arm_neon/impl_arm_neon_definitions.h
+index fbd2ddd..a4c613c 100644
+--- a/src/gromacs/simd/impl_arm_neon/impl_arm_neon_definitions.h
++++ b/src/gromacs/simd/impl_arm_neon/impl_arm_neon_definitions.h
+@@ -39,8 +39,10 @@
+ #define GMX_SIMD 1
+ #define GMX_SIMD_HAVE_FLOAT 1
+ #define GMX_SIMD_HAVE_FLOAT_ARRAY 1
++#define GMX_SIMD_HAVE_FLOAT_GLOBAL 1
+ #define GMX_SIMD_HAVE_DOUBLE 0
+ #define GMX_SIMD_HAVE_DOUBLE_ARRAY 0
++#define GMX_SIMD_HAVE_DOUBLE_GLOBAL 0
+ #define GMX_SIMD_HAVE_LOADU 1
+ #define GMX_SIMD_HAVE_STOREU 1
+ #define GMX_SIMD_HAVE_LOGICAL 1
+@@ -48,9 +50,11 @@
+ #define GMX_SIMD_HAVE_FINT32_EXTRACT 1
+ #define GMX_SIMD_HAVE_FINT32_LOGICAL 1
+ #define GMX_SIMD_HAVE_FINT32_ARITHMETICS 1
++#define GMX_SIMD_HAVE_FINT32_GLOBAL 1
+ #define GMX_SIMD_HAVE_DINT32_EXTRACT 0
+ #define GMX_SIMD_HAVE_DINT32_LOGICAL 0
+ #define GMX_SIMD_HAVE_DINT32_ARITHMETICS 0
++#define GMX_SIMD_HAVE_DINT32_GLOBAL 0
+ #define GMX_SIMD_HAVE_NATIVE_COPYSIGN_FLOAT 0
+ #define GMX_SIMD_HAVE_NATIVE_RSQRT_ITER_FLOAT \
+     0 // Although there is support, it is disabled in GROMACS, because rsqrtIter does not work correctly for inputs near MAX_FLOAT
+@@ -71,8 +75,10 @@
+ 
+ #define GMX_SIMD4_HAVE_FLOAT 1
+ #define GMX_SIMD4_HAVE_FLOAT_ARRAY 1
++#define GMX_SIMD4_HAVE_FLOAT_GLOBAL 1
+ #define GMX_SIMD4_HAVE_DOUBLE 0
+ #define GMX_SIMD4_HAVE_DOUBLE_ARRAY 0
++#define GMX_SIMD4_HAVE_DOUBLE_GLOBAL 0
+ 
+ // Implementation details
+ #define GMX_SIMD_FLOAT_WIDTH 4
+diff --git a/src/gromacs/simd/impl_arm_neon_asimd/impl_arm_neon_asimd_definitions.h b/src/gromacs/simd/impl_arm_neon_asimd/impl_arm_neon_asimd_definitions.h
+index d60ec88..d7c2651 100644
+--- a/src/gromacs/simd/impl_arm_neon_asimd/impl_arm_neon_asimd_definitions.h
++++ b/src/gromacs/simd/impl_arm_neon_asimd/impl_arm_neon_asimd_definitions.h
+@@ -41,8 +41,10 @@
+ #define GMX_SIMD 1
+ #define GMX_SIMD_HAVE_FLOAT 1
+ #define GMX_SIMD_HAVE_FLOAT_ARRAY 1
++#define GMX_SIMD_HAVE_FLOAT_GLOBAL 1
+ #define GMX_SIMD_HAVE_DOUBLE 1
+ #define GMX_SIMD_HAVE_DOUBLE_ARRAY 1
++#define GMX_SIMD_HAVE_DOUBLE_GLOBAL 1
+ #define GMX_SIMD_HAVE_LOADU 1
+ #define GMX_SIMD_HAVE_STOREU 1
+ #define GMX_SIMD_HAVE_LOGICAL 1
+@@ -50,9 +52,11 @@
+ #define GMX_SIMD_HAVE_FINT32_EXTRACT 1
+ #define GMX_SIMD_HAVE_FINT32_LOGICAL 1
+ #define GMX_SIMD_HAVE_FINT32_ARITHMETICS 1
++#define GMX_SIMD_HAVE_FINT32_GLOBAL 1
+ #define GMX_SIMD_HAVE_DINT32_EXTRACT 1
+ #define GMX_SIMD_HAVE_DINT32_LOGICAL 1
+ #define GMX_SIMD_HAVE_DINT32_ARITHMETICS 1
++#define GMX_SIMD_HAVE_DINT32_GLOBAL 1
+ #define GMX_SIMD_HAVE_NATIVE_COPYSIGN_FLOAT 0
+ #define GMX_SIMD_HAVE_NATIVE_RSQRT_ITER_FLOAT 1
+ #define GMX_SIMD_HAVE_NATIVE_RCP_ITER_FLOAT 1
+@@ -72,8 +76,10 @@
+ 
+ #define GMX_SIMD4_HAVE_FLOAT 1
+ #define GMX_SIMD4_HAVE_FLOAT_ARRAY 1
++#define GMX_SIMD4_HAVE_FLOAT_GLOBAL 1
+ #define GMX_SIMD4_HAVE_DOUBLE 0
+ #define GMX_SIMD4_HAVE_DOUBLE_ARRAY 0
++#define GMX_SIMD4_HAVE_DOUBLE_GLOBAL 0
+ 
+ // Implementation details
+ #define GMX_SIMD_FLOAT_WIDTH 4
+diff --git a/src/gromacs/simd/impl_ibm_vmx/impl_ibm_vmx_definitions.h b/src/gromacs/simd/impl_ibm_vmx/impl_ibm_vmx_definitions.h
+index 7013efe..74f82d2 100644
+--- a/src/gromacs/simd/impl_ibm_vmx/impl_ibm_vmx_definitions.h
++++ b/src/gromacs/simd/impl_ibm_vmx/impl_ibm_vmx_definitions.h
+@@ -52,8 +52,10 @@
+ #define GMX_SIMD 1
+ #define GMX_SIMD_HAVE_FLOAT 1
+ #define GMX_SIMD_HAVE_FLOAT_ARRAY 1
++#define GMX_SIMD_HAVE_FLOAT_GLOBAL 1
+ #define GMX_SIMD_HAVE_DOUBLE 0
+ #define GMX_SIMD_HAVE_DOUBLE_ARRAY 0
++#define GMX_SIMD_HAVE_DOUBLE_GLOBAL 0
+ #define GMX_SIMD_HAVE_LOADU 0
+ #define GMX_SIMD_HAVE_STOREU 0
+ 
+@@ -62,9 +64,11 @@
+ #define GMX_SIMD_HAVE_FINT32_EXTRACT 0
+ #define GMX_SIMD_HAVE_FINT32_LOGICAL 1
+ #define GMX_SIMD_HAVE_FINT32_ARITHMETICS 1
++#define GMX_SIMD_HAVE_FINT32_GLOBAL 1
+ #define GMX_SIMD_HAVE_DINT32_EXTRACT 0
+ #define GMX_SIMD_HAVE_DINT32_LOGICAL 0
+ #define GMX_SIMD_HAVE_DINT32_ARITHMETICS 0
++#define GMX_SIMD_HAVE_DINT32_GLOBAL 0
+ #define GMX_SIMD_HAVE_NATIVE_COPYSIGN_FLOAT 0
+ #define GMX_SIMD_HAVE_NATIVE_RSQRT_ITER_FLOAT 0
+ #define GMX_SIMD_HAVE_NATIVE_RCP_ITER_FLOAT 0
+@@ -84,8 +88,10 @@
+ 
+ #define GMX_SIMD4_HAVE_FLOAT 1
+ #define GMX_SIMD4_HAVE_FLOAT_ARRAY 1
++#define GMX_SIMD4_HAVE_FLOAT_GLOBAL 1
+ #define GMX_SIMD4_HAVE_DOUBLE 0
+ #define GMX_SIMD4_HAVE_DOUBLE_ARRAY 0
++#define GMX_SIMD4_HAVE_DOUBLE_GLOBAL 0
+ 
+ // Implementation details
+ #define GMX_SIMD_FLOAT_WIDTH 4
+diff --git a/src/gromacs/simd/impl_ibm_vsx/impl_ibm_vsx_definitions.h b/src/gromacs/simd/impl_ibm_vsx/impl_ibm_vsx_definitions.h
+index 28701ba..dcc89ae 100644
+--- a/src/gromacs/simd/impl_ibm_vsx/impl_ibm_vsx_definitions.h
++++ b/src/gromacs/simd/impl_ibm_vsx/impl_ibm_vsx_definitions.h
+@@ -58,6 +58,7 @@
+ #define GMX_SIMD 1
+ #define GMX_SIMD_HAVE_FLOAT 1
+ #define GMX_SIMD_HAVE_FLOAT_ARRAY 1
++#define GMX_SIMD_HAVE_FLOAT_GLOBAL 1
+ // GMX_SIMD_HAVE_DOUBLE is conditionally defined further down
+ // GMX_SIMD_HAVE_DOUBLE_ARRAY is conditionally defined further down
+ #define GMX_SIMD_HAVE_LOADU 1
+@@ -67,6 +68,7 @@
+ #define GMX_SIMD_HAVE_FINT32_EXTRACT 1
+ #define GMX_SIMD_HAVE_FINT32_LOGICAL 1
+ #define GMX_SIMD_HAVE_FINT32_ARITHMETICS 1
++#define GMX_SIMD_HAVE_FINT32_GLOBAL 1
+ // GMX_SIMD_HAVE_DINT32_EXTRACT is conditionally defined further down
+ // GMX_SIMD_HAVE_DINT32_LOGICAL is conditionally defined further down
+ // GMX_SIMD_HAVE_DINT32_ARITHMETICS is conditionally defined further down
+@@ -88,8 +90,10 @@
+ #define GMX_SIMD_HAVE_HSIMD_UTIL_DOUBLE 0 // No need for half-simd, width is 2
+ #define GMX_SIMD4_HAVE_FLOAT 1
+ #define GMX_SIMD4_HAVE_FLOAT_ARRAY 1
++#define GMX_SIMD4_HAVE_FLOAT_GLOBAL 1
+ #define GMX_SIMD4_HAVE_DOUBLE 0
+ #define GMX_SIMD4_HAVE_DOUBLE_ARRAY 0
++#define GMX_SIMD4_HAVE_DOUBLE_GLOBAL 0
+ 
+ // With GCC, only version 4.9 or later supports all parts of double precision VSX.
+ // We check explicitly for xlc, since that compiler appears to like pretending it is gcc,
+@@ -98,16 +102,20 @@
+         || !(defined(__GNUC__) && ((__GNUC__ < 4) || ((__GNUC__ == 4) && (__GNUC_MINOR__ < 9))))
+ #    define GMX_SIMD_HAVE_DOUBLE 1
+ #    define GMX_SIMD_HAVE_DOUBLE_ARRAY 1
++#    define GMX_SIMD_HAVE_DOUBLE_GLOBAL 1
+ #    define GMX_SIMD_HAVE_DINT32_EXTRACT 1
+ #    define GMX_SIMD_HAVE_DINT32_LOGICAL 1
+ #    define GMX_SIMD_HAVE_DINT32_ARITHMETICS 1
++#    define GMX_SIMD_HAVE_DINT32_GLOBAL 1
+ #    define GMX_SIMD_HAVE_GATHER_LOADU_BYSIMDINT_TRANSPOSE_DOUBLE 1
+ #else
+ #    define GMX_SIMD_HAVE_DOUBLE 0
+ #    define GMX_SIMD_HAVE_DOUBLE_ARRAY 0
++#    define GMX_SIMD_HAVE_DOUBLE_GLOBAL 0
+ #    define GMX_SIMD_HAVE_DINT32_EXTRACT 0
+ #    define GMX_SIMD_HAVE_DINT32_LOGICAL 0
+ #    define GMX_SIMD_HAVE_DINT32_ARITHMETICS 0
++#    define GMX_SIMD_HAVE_DINT32_GLOBAL 0
+ #    define GMX_SIMD_HAVE_GATHER_LOADU_BYSIMDINT_TRANSPOSE_DOUBLE 0
+ #endif
+ 
+diff --git a/src/gromacs/simd/impl_none/impl_none.h b/src/gromacs/simd/impl_none/impl_none.h
+index 3b4bc3d..4f43815 100644
+--- a/src/gromacs/simd/impl_none/impl_none.h
++++ b/src/gromacs/simd/impl_none/impl_none.h
+@@ -40,8 +40,10 @@
+ #define GMX_SIMD 0
+ #define GMX_SIMD_HAVE_FLOAT 0
+ #define GMX_SIMD_HAVE_FLOAT_ARRAY 0
++#define GMX_SIMD_HAVE_GLOBAL_FLOAT 0
+ #define GMX_SIMD_HAVE_DOUBLE 0
+ #define GMX_SIMD_HAVE_DOUBLE_ARRAY 0
++#define GMX_SIMD_HAVE_GLOBAL_DOUBLE 0
+ #define GMX_SIMD_HAVE_LOADU 0
+ #define GMX_SIMD_HAVE_STOREU 0
+ #define GMX_SIMD_HAVE_LOGICAL 0
+@@ -54,8 +56,10 @@
+ #define GMX_SIMD_HAVE_DINT32_ARITHMETICS 0
+ #define GMX_SIMD4_HAVE_FLOAT 0
+ #define GMX_SIMD4_HAVE_FLOAT_ARRAY 0
++#define GMX_SIMD4_HAVE_FLOAT_GLOBAL 0
+ #define GMX_SIMD4_HAVE_DOUBLE 0
+ #define GMX_SIMD4_HAVE_DOUBLE_ARRAY 0
++#define GMX_SIMD4_HAVE_DOUBLE_GLOBAL 0
+ 
+ #define GMX_SIMD_HAVE_HSIMD_UTIL_FLOAT 0
+ #define GMX_SIMD_HAVE_HSIMD_UTIL_DOUBLE 0
+diff --git a/src/gromacs/simd/impl_reference/impl_reference_definitions.h b/src/gromacs/simd/impl_reference/impl_reference_definitions.h
+index cea8d8c..dc8869f 100644
+--- a/src/gromacs/simd/impl_reference/impl_reference_definitions.h
++++ b/src/gromacs/simd/impl_reference/impl_reference_definitions.h
+@@ -73,12 +73,18 @@ namespace gmx
+ //! \brief 1 when SIMD float array is supported, otherwise 0
+ #define GMX_SIMD_HAVE_FLOAT_ARRAY 1
+ 
++//! \brief 1 when SimdFloat can be a global variable, otherwise 0
++#define GMX_SIMD_HAVE_FLOAT_GLOBAL 1
++
+ //! \brief 1 if SIMD double support is present, otherwise 0
+ #define GMX_SIMD_HAVE_DOUBLE 1
+ 
+ //! \brief 1 when SIMD double array is supported, otherwise 0
+ #define GMX_SIMD_HAVE_DOUBLE_ARRAY 1
+ 
++//! \brief 1 when SimdDouble can be a global variable, otherwise 0
++#define GMX_SIMD_HAVE_DOUBLE_GLOBAL 1
++
+ //! \brief 1 if the SIMD implementation supports unaligned loads, otherwise 0
+ #define GMX_SIMD_HAVE_LOADU 1
+ 
+@@ -106,6 +112,9 @@ namespace gmx
+ //! \brief 1 if SIMD arithmetic ops are supported for \ref gmx::SimdFInt32, otherwise 0
+ #define GMX_SIMD_HAVE_FINT32_ARITHMETICS 1
+ 
++//! \brief 1 if SimdFInt32 can be a global variable, otherwse 0
++#define GMX_SIMD_HAVE_FINT32_GLOBAL 1
++
+ //! \brief Support for extracting integer from \ref gmx::SimdDInt32 (1/0 for present/absent)
+ #define GMX_SIMD_HAVE_DINT32_EXTRACT 1
+ 
+@@ -115,6 +124,9 @@ namespace gmx
+ //! \brief 1 if SIMD arithmetic ops are supported for \ref gmx::SimdDInt32, otherwise 0
+ #define GMX_SIMD_HAVE_DINT32_ARITHMETICS 1
+ 
++//! \brief 1 if SimdDInt32 can be a global variable, otherwise 0
++#define GMX_SIMD_HAVE_DINT32_GLOBAL 1
++
+ /*! \brief 1 if implementation provides single precision copysign()
+  *
+  *  Only used in simd_math.h to selectively override the generic implementation.
+@@ -229,12 +241,18 @@ namespace gmx
+ //! \brief 1 when SIMD4 float array is supported, otherwise 0
+ #define GMX_SIMD4_HAVE_FLOAT_ARRAY 1
+ 
++//! \brief 1 when Simd4Float can be a global variable, otherwise 0
++#define GMX_SIMD4_HAVE_FLOAT_GLOBAL 1
++
+ //! \brief 1 if the implementation provides \ref gmx::Simd4Double, otherwise 0.
+ #define GMX_SIMD4_HAVE_DOUBLE 1
+ 
+ //! \brief 1 when SIMD4 double array is supported, otherwise 0
+ #define GMX_SIMD4_HAVE_DOUBLE_ARRAY 1
+ 
++//! \brief 1 when Simd4Double can be a global variable, otherwise 0
++#define GMX_SIMD4_HAVE_DOUBLE_GLOBAL 1
++
+ //! \brief Width of the \ref gmx::SimdFInt32 datatype.
+ #define GMX_SIMD_FINT32_WIDTH GMX_SIMD_FLOAT_WIDTH
+ 
+diff --git a/src/gromacs/simd/impl_x86_avx2_128/impl_x86_avx2_128_definitions.h b/src/gromacs/simd/impl_x86_avx2_128/impl_x86_avx2_128_definitions.h
+index e191974..68f57bc 100644
+--- a/src/gromacs/simd/impl_x86_avx2_128/impl_x86_avx2_128_definitions.h
++++ b/src/gromacs/simd/impl_x86_avx2_128/impl_x86_avx2_128_definitions.h
+@@ -40,8 +40,10 @@
+ #define GMX_SIMD 1
+ #define GMX_SIMD_HAVE_FLOAT 1
+ #define GMX_SIMD_HAVE_FLOAT_ARRAY 1
++#define GMX_SIMD_HAVE_FLOAT_GLOBAL 1
+ #define GMX_SIMD_HAVE_DOUBLE 1
+ #define GMX_SIMD_HAVE_DOUBLE_ARRAY 1
++#define GMX_SIMD_HAVE_DOUBLE_GLOBAL 1
+ #define GMX_SIMD_HAVE_LOADU 1
+ #define GMX_SIMD_HAVE_STOREU 1
+ #define GMX_SIMD_HAVE_LOGICAL 1
+@@ -49,9 +51,11 @@
+ #define GMX_SIMD_HAVE_FINT32_EXTRACT 1
+ #define GMX_SIMD_HAVE_FINT32_LOGICAL 1
+ #define GMX_SIMD_HAVE_FINT32_ARITHMETICS 1
++#define GMX_SIMD_HAVE_FINT32_GLOBAL 1
+ #define GMX_SIMD_HAVE_DINT32_EXTRACT 1
+ #define GMX_SIMD_HAVE_DINT32_LOGICAL 1
+ #define GMX_SIMD_HAVE_DINT32_ARITHMETICS 1
++#define GMX_SIMD_HAVE_DINT32_GLOBAL 1
+ #define GMX_SIMD_HAVE_NATIVE_COPYSIGN_FLOAT 0
+ #define GMX_SIMD_HAVE_NATIVE_RSQRT_ITER_FLOAT 0
+ #define GMX_SIMD_HAVE_NATIVE_RCP_ITER_FLOAT 0
+@@ -71,8 +75,10 @@
+ 
+ #define GMX_SIMD4_HAVE_FLOAT 1
+ #define GMX_SIMD4_HAVE_FLOAT_ARRAY 1
++#define GMX_SIMD4_HAVE_FLOAT_GLOBAL 1
+ #define GMX_SIMD4_HAVE_DOUBLE 1
+ #define GMX_SIMD4_HAVE_DOUBLE_ARRAY 1
++#define GMX_SIMD4_HAVE_DOUBLE_GLOBAL 1
+ 
+ // Implementation details
+ #define GMX_SIMD_FLOAT_WIDTH 4
+diff --git a/src/gromacs/simd/impl_x86_avx2_256/impl_x86_avx2_256_definitions.h b/src/gromacs/simd/impl_x86_avx2_256/impl_x86_avx2_256_definitions.h
+index 0ab7aa3..0d4bfcb 100644
+--- a/src/gromacs/simd/impl_x86_avx2_256/impl_x86_avx2_256_definitions.h
++++ b/src/gromacs/simd/impl_x86_avx2_256/impl_x86_avx2_256_definitions.h
+@@ -40,8 +40,10 @@
+ #define GMX_SIMD 1
+ #define GMX_SIMD_HAVE_FLOAT 1
+ #define GMX_SIMD_HAVE_FLOAT_ARRAY 1
++#define GMX_SIMD_HAVE_FLOAT_GLOBAL 1
+ #define GMX_SIMD_HAVE_DOUBLE 1
+ #define GMX_SIMD_HAVE_DOUBLE_ARRAY 1
++#define GMX_SIMD_HAVE_DOUBLE_GLOBAL 1
+ #define GMX_SIMD_HAVE_LOADU 1
+ #define GMX_SIMD_HAVE_STOREU 1
+ #define GMX_SIMD_HAVE_LOGICAL 1
+@@ -49,9 +51,11 @@
+ #define GMX_SIMD_HAVE_FINT32_EXTRACT 1
+ #define GMX_SIMD_HAVE_FINT32_LOGICAL 1
+ #define GMX_SIMD_HAVE_FINT32_ARITHMETICS 1
++#define GMX_SIMD_HAVE_FINT32_GLOBAL 1
+ #define GMX_SIMD_HAVE_DINT32_EXTRACT 1
+ #define GMX_SIMD_HAVE_DINT32_LOGICAL 1
+ #define GMX_SIMD_HAVE_DINT32_ARITHMETICS 1
++#define GMX_SIMD_HAVE_DINT32_GLOBAL 1
+ #define GMX_SIMD_HAVE_NATIVE_COPYSIGN_FLOAT 0
+ #define GMX_SIMD_HAVE_NATIVE_RSQRT_ITER_FLOAT 0
+ #define GMX_SIMD_HAVE_NATIVE_RCP_ITER_FLOAT 0
+@@ -72,8 +76,10 @@
+ 
+ #define GMX_SIMD4_HAVE_FLOAT 1
+ #define GMX_SIMD4_HAVE_FLOAT_ARRAY 1
++#define GMX_SIMD4_HAVE_FLOAT_GLOBAL 1
+ #define GMX_SIMD4_HAVE_DOUBLE 1
+ #define GMX_SIMD4_HAVE_DOUBLE_ARRAY 1
++#define GMX_SIMD4_HAVE_DOUBLE_GLOBAL 1
+ 
+ // Implementation details
+ #define GMX_SIMD_FLOAT_WIDTH 8
+diff --git a/src/gromacs/simd/impl_x86_avx_128_fma/impl_x86_avx_128_fma_definitions.h b/src/gromacs/simd/impl_x86_avx_128_fma/impl_x86_avx_128_fma_definitions.h
+index e44d2bd..e91d54c 100644
+--- a/src/gromacs/simd/impl_x86_avx_128_fma/impl_x86_avx_128_fma_definitions.h
++++ b/src/gromacs/simd/impl_x86_avx_128_fma/impl_x86_avx_128_fma_definitions.h
+@@ -41,8 +41,10 @@
+ #define GMX_SIMD 1
+ #define GMX_SIMD_HAVE_FLOAT 1
+ #define GMX_SIMD_HAVE_FLOAT_ARRAY 1
++#define GMX_SIMD_HAVE_FLOAT_GLOBAL 1
+ #define GMX_SIMD_HAVE_DOUBLE 1
+ #define GMX_SIMD_HAVE_DOUBLE_ARRAY 1
++#define GMX_SIMD_HAVE_DOUBLE_GLOBAL 1
+ #define GMX_SIMD_HAVE_LOADU 1
+ #define GMX_SIMD_HAVE_STOREU 1
+ #define GMX_SIMD_HAVE_LOGICAL 1
+@@ -50,9 +52,11 @@
+ #define GMX_SIMD_HAVE_FINT32_EXTRACT 1
+ #define GMX_SIMD_HAVE_FINT32_LOGICAL 1
+ #define GMX_SIMD_HAVE_FINT32_ARITHMETICS 1
++#define GMX_SIMD_HAVE_FINT32_GLOBAL 1
+ #define GMX_SIMD_HAVE_DINT32_EXTRACT 1
+ #define GMX_SIMD_HAVE_DINT32_LOGICAL 1
+ #define GMX_SIMD_HAVE_DINT32_ARITHMETICS 1
++#define GMX_SIMD_HAVE_DINT32_GLOBAL 1
+ #define GMX_SIMD_HAVE_NATIVE_COPYSIGN_FLOAT 0
+ #define GMX_SIMD_HAVE_NATIVE_RSQRT_ITER_FLOAT 0
+ #define GMX_SIMD_HAVE_NATIVE_RCP_ITER_FLOAT 0
+@@ -73,8 +77,10 @@
+ 
+ #define GMX_SIMD4_HAVE_FLOAT 1
+ #define GMX_SIMD4_HAVE_FLOAT_ARRAY 1
++#define GMX_SIMD4_HAVE_FLOAT_GLOBAL 1
+ #define GMX_SIMD4_HAVE_DOUBLE 1 // Uses 256-bit avx for SIMD4-double
+ #define GMX_SIMD4_HAVE_DOUBLE_ARRAY 1
++#define GMX_SIMD4_HAVE_DOUBLE_GLOBAL 1
+ 
+ // Implementation details
+ #define GMX_SIMD_FLOAT_WIDTH 4
+diff --git a/src/gromacs/simd/impl_x86_avx_256/impl_x86_avx_256_definitions.h b/src/gromacs/simd/impl_x86_avx_256/impl_x86_avx_256_definitions.h
+index 262cb78..4745d7d 100644
+--- a/src/gromacs/simd/impl_x86_avx_256/impl_x86_avx_256_definitions.h
++++ b/src/gromacs/simd/impl_x86_avx_256/impl_x86_avx_256_definitions.h
+@@ -40,8 +40,10 @@
+ #define GMX_SIMD 1
+ #define GMX_SIMD_HAVE_FLOAT 1
+ #define GMX_SIMD_HAVE_FLOAT_ARRAY 1
++#define GMX_SIMD_HAVE_FLOAT_GLOBAL 1
+ #define GMX_SIMD_HAVE_DOUBLE 1
+ #define GMX_SIMD_HAVE_DOUBLE_ARRAY 1
++#define GMX_SIMD_HAVE_DOUBLE_GLOBAL 1
+ #define GMX_SIMD_HAVE_LOADU 1
+ #define GMX_SIMD_HAVE_STOREU 1
+ #define GMX_SIMD_HAVE_LOGICAL 1
+@@ -49,9 +51,11 @@
+ #define GMX_SIMD_HAVE_FINT32_EXTRACT 1     // Emulated
+ #define GMX_SIMD_HAVE_FINT32_LOGICAL 0     // AVX1 cannot do 256-bit int shifts
+ #define GMX_SIMD_HAVE_FINT32_ARITHMETICS 0 // AVX1 cannot do 256-bit int +,-,*
+-#define GMX_SIMD_HAVE_DINT32_EXTRACT 1     // Native, since we use __m128i
++#define GMX_SIMD_HAVE_FINT32_GLOBAL 1
++#define GMX_SIMD_HAVE_DINT32_EXTRACT 1 // Native, since we use __m128i
+ #define GMX_SIMD_HAVE_DINT32_LOGICAL 1
+ #define GMX_SIMD_HAVE_DINT32_ARITHMETICS 1
++#define GMX_SIMD_HAVE_DINT32_GLOBAL 1
+ #define GMX_SIMD_HAVE_NATIVE_COPYSIGN_FLOAT 0
+ #define GMX_SIMD_HAVE_NATIVE_RSQRT_ITER_FLOAT 0
+ #define GMX_SIMD_HAVE_NATIVE_RCP_ITER_FLOAT 0
+@@ -72,8 +76,10 @@
+ 
+ #define GMX_SIMD4_HAVE_FLOAT 1
+ #define GMX_SIMD4_HAVE_FLOAT_ARRAY 1
++#define GMX_SIMD4_HAVE_FLOAT_GLOBAL 1
+ #define GMX_SIMD4_HAVE_DOUBLE 1
+ #define GMX_SIMD4_HAVE_DOUBLE_ARRAY 1
++#define GMX_SIMD4_HAVE_DOUBLE_GLOBAL 1
+ 
+ // Implementation details
+ #define GMX_SIMD_FLOAT_WIDTH 8
+diff --git a/src/gromacs/simd/impl_x86_avx_512/impl_x86_avx_512_definitions.h b/src/gromacs/simd/impl_x86_avx_512/impl_x86_avx_512_definitions.h
+index ecda346..71d797f 100644
+--- a/src/gromacs/simd/impl_x86_avx_512/impl_x86_avx_512_definitions.h
++++ b/src/gromacs/simd/impl_x86_avx_512/impl_x86_avx_512_definitions.h
+@@ -53,8 +53,10 @@
+ #define GMX_SIMD 1
+ #define GMX_SIMD_HAVE_FLOAT 1
+ #define GMX_SIMD_HAVE_FLOAT_ARRAY 1
++#define GMX_SIMD_HAVE_FLOAT_GLOBAL 1
+ #define GMX_SIMD_HAVE_DOUBLE 1
+ #define GMX_SIMD_HAVE_DOUBLE_ARRAY 1
++#define GMX_SIMD_HAVE_DOUBLE_GLOBAL 1
+ #define GMX_SIMD_HAVE_LOADU 1
+ #define GMX_SIMD_HAVE_STOREU 1
+ #define GMX_SIMD_HAVE_LOGICAL 1
+@@ -62,12 +64,14 @@
+ #define GMX_SIMD_HAVE_FINT32_EXTRACT 0
+ #define GMX_SIMD_HAVE_FINT32_LOGICAL 1
+ #define GMX_SIMD_HAVE_FINT32_ARITHMETICS 1
++#define GMX_SIMD_HAVE_FINT32_GLOBAL 1
+ // Technically it is straightforward to emulate extract on AVX-512 through
+ // memory operations, but when applied to 16 elements as part of a table lookup
+ // it will be faster to just store the entire vector once, so we avoid setting it.
+ #define GMX_SIMD_HAVE_DINT32_EXTRACT 0
+ #define GMX_SIMD_HAVE_DINT32_LOGICAL 1
+ #define GMX_SIMD_HAVE_DINT32_ARITHMETICS 1
++#define GMX_SIMD_HAVE_DINT32_GLOBAL 1
+ #define GMX_SIMD_HAVE_NATIVE_COPYSIGN_FLOAT 1
+ #define GMX_SIMD_HAVE_NATIVE_RSQRT_ITER_FLOAT 0
+ #define GMX_SIMD_HAVE_NATIVE_RCP_ITER_FLOAT 0
+@@ -89,8 +93,10 @@
+ 
+ #define GMX_SIMD4_HAVE_FLOAT 1
+ #define GMX_SIMD4_HAVE_FLOAT_ARRAY 1
++#define GMX_SIMD4_HAVE_FLOAT_GLOBAL 1
+ #define GMX_SIMD4_HAVE_DOUBLE 1
+ #define GMX_SIMD4_HAVE_DOUBLE_ARRAY 1
++#define GMX_SIMD4_HAVE_DOUBLE_GLOBAL 1
+ 
+ // Implementation details
+ #define GMX_SIMD_FLOAT_WIDTH 16
+diff --git a/src/gromacs/simd/impl_x86_avx_512_knl/impl_x86_avx_512_knl_definitions.h b/src/gromacs/simd/impl_x86_avx_512_knl/impl_x86_avx_512_knl_definitions.h
+index e32a1b4..4ad9b03 100644
+--- a/src/gromacs/simd/impl_x86_avx_512_knl/impl_x86_avx_512_knl_definitions.h
++++ b/src/gromacs/simd/impl_x86_avx_512_knl/impl_x86_avx_512_knl_definitions.h
+@@ -42,8 +42,10 @@
+ #define GMX_SIMD 1
+ #define GMX_SIMD_HAVE_FLOAT 1
+ #define GMX_SIMD_HAVE_FLOAT_ARRAY 1
++#define GMX_SIMD_HAVE_FLOAT_GLOBAL 1
+ #define GMX_SIMD_HAVE_DOUBLE 1
+ #define GMX_SIMD_HAVE_DOUBLE_ARRAY 1
++#define GMX_SIMD_HAVE_DOUBLE_GLOBAL 1
+ #define GMX_SIMD_HAVE_LOADU 1
+ #define GMX_SIMD_HAVE_STOREU 1
+ #define GMX_SIMD_HAVE_LOGICAL 1
+@@ -51,12 +53,14 @@
+ #define GMX_SIMD_HAVE_FINT32_EXTRACT 0
+ #define GMX_SIMD_HAVE_FINT32_LOGICAL 1
+ #define GMX_SIMD_HAVE_FINT32_ARITHMETICS 1
++#define GMX_SIMD_HAVE_FINT32_GLOBAL 1
+ // Technically it is straightforward to emulate extract on AVX-512F through
+ // memory operations, but when applied to 16 elements as part of a table lookup
+ // it will be faster to just store the entire vector once, so we avoid setting it.
+ #define GMX_SIMD_HAVE_DINT32_EXTRACT 0
+ #define GMX_SIMD_HAVE_DINT32_LOGICAL 1
+ #define GMX_SIMD_HAVE_DINT32_ARITHMETICS 1
++#define GMX_SIMD_HAVE_DINT32_GLOBAL 1
+ #define GMX_SIMD_HAVE_NATIVE_COPYSIGN_FLOAT 1
+ #define GMX_SIMD_HAVE_NATIVE_RSQRT_ITER_FLOAT 0
+ #define GMX_SIMD_HAVE_NATIVE_RCP_ITER_FLOAT 0
+@@ -78,8 +82,10 @@
+ 
+ #define GMX_SIMD4_HAVE_FLOAT 1
+ #define GMX_SIMD4_HAVE_FLOAT_ARRAY 1
++#define GMX_SIMD4_HAVE_FLOAT_GLOBAL 1
+ #define GMX_SIMD4_HAVE_DOUBLE 1
+ #define GMX_SIMD4_HAVE_DOUBLE_ARRAY 1
++#define GMX_SIMD4_HAVE_DOUBLE_GLOBAL 1
+ 
+ // Implementation details
+ #define GMX_SIMD_FLOAT_WIDTH 16
+diff --git a/src/gromacs/simd/impl_x86_mic/impl_x86_mic_definitions.h b/src/gromacs/simd/impl_x86_mic/impl_x86_mic_definitions.h
+index a5ebc42..f0cf975 100644
+--- a/src/gromacs/simd/impl_x86_mic/impl_x86_mic_definitions.h
++++ b/src/gromacs/simd/impl_x86_mic/impl_x86_mic_definitions.h
+@@ -39,8 +39,10 @@
+ #define GMX_SIMD 1
+ #define GMX_SIMD_HAVE_FLOAT 1
+ #define GMX_SIMD_HAVE_FLOAT_ARRAY 1
++#define GMX_SIMD_HAVE_FLOAT_GLOBAL 1
+ #define GMX_SIMD_HAVE_DOUBLE 1
+ #define GMX_SIMD_HAVE_DOUBLE_ARRAY 1
++#define GMX_SIMD_HAVE_DOUBLE_GLOBAL 1
+ #define GMX_SIMD_HAVE_LOADU 1
+ #define GMX_SIMD_HAVE_STOREU 1
+ #define GMX_SIMD_HAVE_LOGICAL 1
+@@ -48,9 +50,11 @@
+ #define GMX_SIMD_HAVE_FINT32_EXTRACT 1
+ #define GMX_SIMD_HAVE_FINT32_LOGICAL 1
+ #define GMX_SIMD_HAVE_FINT32_ARITHMETICS 1
++#define GMX_SIMD_HAVE_FINT32_GLOBAL 1
+ #define GMX_SIMD_HAVE_DINT32_EXTRACT 1
+ #define GMX_SIMD_HAVE_DINT32_LOGICAL 1
+ #define GMX_SIMD_HAVE_DINT32_ARITHMETICS 1
++#define GMX_SIMD_HAVE_DINT32_GLOBAL 1
+ #define GMX_SIMD_HAVE_NATIVE_COPYSIGN_FLOAT 0
+ #define GMX_SIMD_HAVE_NATIVE_RSQRT_ITER_FLOAT 0
+ #define GMX_SIMD_HAVE_NATIVE_RCP_ITER_FLOAT 0
+@@ -70,8 +74,10 @@
+ 
+ #define GMX_SIMD4_HAVE_FLOAT 1
+ #define GMX_SIMD4_HAVE_FLOAT_ARRAY 1
++#define GMX_SIMD4_HAVE_FLOAT_GLOBAL 1
+ #define GMX_SIMD4_HAVE_DOUBLE 1
+ #define GMX_SIMD4_HAVE_DOUBLE_ARRAY 1
++#define GMX_SIMD4_HAVE_DOUBLE_GLOBAL 1
+ 
+ // Implementation details
+ #define GMX_SIMD_FLOAT_WIDTH 16
+diff --git a/src/gromacs/simd/impl_x86_sse2/impl_x86_sse2_definitions.h b/src/gromacs/simd/impl_x86_sse2/impl_x86_sse2_definitions.h
+index 8f8ff1e..53c9315 100644
+--- a/src/gromacs/simd/impl_x86_sse2/impl_x86_sse2_definitions.h
++++ b/src/gromacs/simd/impl_x86_sse2/impl_x86_sse2_definitions.h
+@@ -40,8 +40,10 @@
+ #define GMX_SIMD 1
+ #define GMX_SIMD_HAVE_FLOAT 1
+ #define GMX_SIMD_HAVE_FLOAT_ARRAY 1
++#define GMX_SIMD_HAVE_FLOAT_GLOBAL 1
+ #define GMX_SIMD_HAVE_DOUBLE 1
+ #define GMX_SIMD_HAVE_DOUBLE_ARRAY 1
++#define GMX_SIMD_HAVE_DOUBLE_GLOBAL 1
+ #define GMX_SIMD_HAVE_LOADU 1
+ #define GMX_SIMD_HAVE_STOREU 1
+ #define GMX_SIMD_HAVE_LOGICAL 1
+@@ -49,9 +51,11 @@
+ #define GMX_SIMD_HAVE_FINT32_EXTRACT 1 // No SSE2 instruction, but use shifts
+ #define GMX_SIMD_HAVE_FINT32_LOGICAL 1
+ #define GMX_SIMD_HAVE_FINT32_ARITHMETICS 1
++#define GMX_SIMD_HAVE_FINT32_GLOBAL 1
+ #define GMX_SIMD_HAVE_DINT32_EXTRACT 1 // No SSE2 instruction, but use shifts
+ #define GMX_SIMD_HAVE_DINT32_LOGICAL 1
+ #define GMX_SIMD_HAVE_DINT32_ARITHMETICS 1
++#define GMX_SIMD_HAVE_DINT32_GLOBAL 1
+ #define GMX_SIMD_HAVE_NATIVE_COPYSIGN_FLOAT 0
+ #define GMX_SIMD_HAVE_NATIVE_RSQRT_ITER_FLOAT 0
+ #define GMX_SIMD_HAVE_NATIVE_RCP_ITER_FLOAT 0
+@@ -71,8 +75,10 @@
+ 
+ #define GMX_SIMD4_HAVE_FLOAT 1
+ #define GMX_SIMD4_HAVE_FLOAT_ARRAY 1
++#define GMX_SIMD4_HAVE_FLOAT_GLOBAL 1
+ #define GMX_SIMD4_HAVE_DOUBLE 0
+ #define GMX_SIMD4_HAVE_DOUBLE_ARRAY 0
++#define GMX_SIMD4_HAVE_DOUBLE_GLOBAL 0
+ 
+ // Implementation details
+ #define GMX_SIMD_FLOAT_WIDTH 4
+diff --git a/src/gromacs/simd/impl_x86_sse4_1/impl_x86_sse4_1_definitions.h b/src/gromacs/simd/impl_x86_sse4_1/impl_x86_sse4_1_definitions.h
+index 9f9ce11..ca8a4c8 100644
+--- a/src/gromacs/simd/impl_x86_sse4_1/impl_x86_sse4_1_definitions.h
++++ b/src/gromacs/simd/impl_x86_sse4_1/impl_x86_sse4_1_definitions.h
+@@ -40,8 +40,10 @@
+ #define GMX_SIMD 1
+ #define GMX_SIMD_HAVE_FLOAT 1
+ #define GMX_SIMD_HAVE_FLOAT_ARRAY 1
++#define GMX_SIMD_HAVE_FLOAT_GLOBAL 1
+ #define GMX_SIMD_HAVE_DOUBLE 1
+ #define GMX_SIMD_HAVE_DOUBLE_ARRAY 1
++#define GMX_SIMD_HAVE_DOUBLE_GLOBAL 1
+ #define GMX_SIMD_HAVE_LOADU 1
+ #define GMX_SIMD_HAVE_STOREU 1
+ #define GMX_SIMD_HAVE_LOGICAL 1
+@@ -49,9 +51,11 @@
+ #define GMX_SIMD_HAVE_FINT32_EXTRACT 1
+ #define GMX_SIMD_HAVE_FINT32_LOGICAL 1
+ #define GMX_SIMD_HAVE_FINT32_ARITHMETICS 1
++#define GMX_SIMD_HAVE_FINT32_GLOBAL 1
+ #define GMX_SIMD_HAVE_DINT32_EXTRACT 1
+ #define GMX_SIMD_HAVE_DINT32_LOGICAL 1
+ #define GMX_SIMD_HAVE_DINT32_ARITHMETICS 1
++#define GMX_SIMD_HAVE_DINT32_GLOBAL 1
+ #define GMX_SIMD_HAVE_NATIVE_COPYSIGN_FLOAT 0
+ #define GMX_SIMD_HAVE_NATIVE_RSQRT_ITER_FLOAT 0
+ #define GMX_SIMD_HAVE_NATIVE_RCP_ITER_FLOAT 0
+@@ -71,8 +75,10 @@
+ 
+ #define GMX_SIMD4_HAVE_FLOAT 1
+ #define GMX_SIMD4_HAVE_FLOAT_ARRAY 1
++#define GMX_SIMD4_HAVE_FLOAT_GLOBAL 1
+ #define GMX_SIMD4_HAVE_DOUBLE 0
+ #define GMX_SIMD4_HAVE_DOUBLE_ARRAY 0
++#define GMX_SIMD4_HAVE_DOUBLE_GLOBAL 0
+ 
+ // Implementation details
+ #define GMX_SIMD_FLOAT_WIDTH 4
+diff --git a/src/gromacs/simd/simd.h b/src/gromacs/simd/simd.h
+index faae160..6ef695b 100644
+--- a/src/gromacs/simd/simd.h
++++ b/src/gromacs/simd/simd.h
+@@ -178,15 +178,18 @@ struct SimdDInt32Tag
+ #if GMX_DOUBLE
+ #    define GMX_SIMD_HAVE_REAL GMX_SIMD_HAVE_DOUBLE
+ #    define GMX_SIMD_HAVE_REAL_ARRAY GMX_SIMD_HAVE_DOUBLE_ARRAY
++#    define GMX_SIMD_HAVE_REAL_GLOBAL GMX_SIMD_HAVE_DOUBLE_GLOBAL
+ #    define GMX_SIMD_REAL_WIDTH GMX_SIMD_DOUBLE_WIDTH
+ #    define GMX_SIMD_HAVE_INT32_EXTRACT GMX_SIMD_HAVE_DINT32_EXTRACT
+ #    define GMX_SIMD_HAVE_INT32_LOGICAL GMX_SIMD_HAVE_DINT32_LOGICAL
+ #    define GMX_SIMD_HAVE_INT32_ARITHMETICS GMX_SIMD_HAVE_DINT32_ARITHMETICS
++#    define GMX_SIMD_HAVE_INT32_GLOBAL GMX_SIMD_HAVE_DINT32_GLOBAL
+ #    define GMX_SIMD_HAVE_GATHER_LOADU_BYSIMDINT_TRANSPOSE_REAL \
+         GMX_SIMD_HAVE_GATHER_LOADU_BYSIMDINT_TRANSPOSE_DOUBLE
+ #    define GMX_SIMD_HAVE_HSIMD_UTIL_REAL GMX_SIMD_HAVE_HSIMD_UTIL_DOUBLE
+ #    define GMX_SIMD4_HAVE_REAL GMX_SIMD4_HAVE_DOUBLE
+ #    define GMX_SIMD4_HAVE_REAL_ARRAY GMX_SIMD4_HAVE_DOUBLE_ARRAY
++#    define GMX_SIMD4_HAVE_REAL_GLOBAL GMX_SIMD4_HAVE_DOUBLE_GLOBAL
+ #else // GMX_DOUBLE
+ 
+ /*! \brief 1 if SimdReal is available, otherwise 0.
+@@ -201,6 +204,12 @@ struct SimdDInt32Tag
+  */
+ #    define GMX_SIMD_HAVE_REAL_ARRAY GMX_SIMD_HAVE_FLOAT_ARRAY
+ 
++/*! \brief 1 if SimdReal can be a global variable, otherwise 0.
++ *
++ *  \ref GMX_SIMD_HAVE_DOUBLE_GLOBAL if GMX_DOUBLE is 1, otherwise \ref GMX_SIMD_HAVE_FLOAT_GLOBAL.
++ */
++#    define GMX_SIMD_HAVE_REAL_GLOBAL GMX_SIMD_HAVE_FLOAT_GLOBAL
++
+ /*! \brief Width of SimdReal.
+  *
+  *  \ref GMX_SIMD_DOUBLE_WIDTH if GMX_DOUBLE is 1, otherwise \ref GMX_SIMD_FLOAT_WIDTH.
+@@ -221,6 +230,13 @@ struct SimdDInt32Tag
+  */
+ #    define GMX_SIMD_HAVE_INT32_LOGICAL GMX_SIMD_HAVE_FINT32_LOGICAL
+ 
++/*! \brief 1 if SimdInt32 can be a global variable, otherwise 0.
++ *
++ *  \ref GMX_SIMD_HAVE_DINT32_GLOBAL if GMX_DOUBLE is 1, otherwise
++ *  \ref GMX_SIMD_HAVE_FINT32_GLOBAL.
++ */
++#    define GMX_SIMD_HAVE_INT32_GLOBAL GMX_SIMD_HAVE_FINT32_GLOBAL
++
+ /*! \brief 1 if arithmetic ops are supported on SimdInt32, otherwise 0.
+  *
+  *  \ref GMX_SIMD_HAVE_DINT32_ARITHMETICS if GMX_DOUBLE is 1, otherwise
+@@ -255,6 +271,12 @@ struct SimdDInt32Tag
+  */
+ #    define GMX_SIMD4_HAVE_REAL_ARRAY GMX_SIMD4_HAVE_FLOAT_ARRAY
+ 
++/*! \brief 1 if Simd4Real can be a global variable, otherwise 0.
++ *
++ *  \ref GMX_SIMD4_HAVE_DOUBLE_GLOBAL if GMX_DOUBLE is 1, otherwise \ref GMX_SIMD4_HAVE_FLOAT_GLOBAL.
++ */
++#    define GMX_SIMD4_HAVE_REAL_GLOBAL GMX_SIMD4_HAVE_FLOAT_GLOBAL
++
+ #endif // GMX_DOUBLE
+ 
+ //! \}  end of name-group describing high-level capabilities
+diff --git a/src/gromacs/simd/tests/simd.cpp b/src/gromacs/simd/tests/simd.cpp
+index c742ba1..7d5b935 100644
+--- a/src/gromacs/simd/tests/simd.cpp
++++ b/src/gromacs/simd/tests/simd.cpp
+@@ -64,7 +64,7 @@ namespace test
+  * occasionally have many digits that need to be exactly right, and keeping
+  * them in a single place makes sure they are consistent.
+  */
+-#    if GMX_SIMD_HAVE_REAL
++#    if GMX_SIMD_HAVE_REAL && GMX_SIMD_HAVE_REAL_GLOBAL
+ const SimdReal rSimd_c0c1c2 = setSimdRealFrom3R(c0, c1, c2);
+ const SimdReal rSimd_c3c4c5 = setSimdRealFrom3R(c3, c4, c5);
+ const SimdReal rSimd_c6c7c8 = setSimdRealFrom3R(c6, c7, c8);
+@@ -113,7 +113,7 @@ const SimdReal rSimd_logicalResultOr = setSimdRealFrom1R(1.8666534423828125); //
+ #        endif                                    // GMX_SIMD_HAVE_LOGICAL
+ 
+ #    endif // GMX_SIMD_HAVE_REAL
+-#    if GMX_SIMD_HAVE_INT32_ARITHMETICS
++#    if GMX_SIMD_HAVE_INT32_ARITHMETICS && GMX_SIMD_HAVE_INT32_GLOBAL
+ const SimdInt32 iSimd_1_2_3    = setSimdIntFrom3I(1, 2, 3);
+ const SimdInt32 iSimd_4_5_6    = setSimdIntFrom3I(4, 5, 6);
+ const SimdInt32 iSimd_7_8_9    = setSimdIntFrom3I(7, 8, 9);
+@@ -122,7 +122,7 @@ const SimdInt32 iSimd_1M_2M_3M = setSimdIntFrom3I(1000000, 2000000, 3000000);
+ const SimdInt32 iSimd_4M_5M_6M = setSimdIntFrom3I(4000000, 5000000, 6000000);
+ const SimdInt32 iSimd_5M_7M_9M = setSimdIntFrom3I(5000000, 7000000, 9000000);
+ #    endif
+-#    if GMX_SIMD_HAVE_INT32_LOGICAL
++#    if GMX_SIMD_HAVE_INT32_LOGICAL && GMX_SIMD_HAVE_INT32_GLOBAL
+ const SimdInt32 iSimd_0xF0F0F0F0 = setSimdIntFrom1I(0xF0F0F0F0);
+ const SimdInt32 iSimd_0xCCCCCCCC = setSimdIntFrom1I(0xCCCCCCCC);
+ #    endif
+diff --git a/src/gromacs/simd/tests/simd.h b/src/gromacs/simd/tests/simd.h
+index 6e1d32d..49efd50 100644
+--- a/src/gromacs/simd/tests/simd.h
++++ b/src/gromacs/simd/tests/simd.h
+@@ -110,6 +110,7 @@ namespace test
+  * them in a single place makes sure they are consistent.
+  */
+ #    if GMX_SIMD_HAVE_REAL
++#        if GMX_SIMD_HAVE_REAL_GLOBAL
+ extern const SimdReal rSimd_c0c1c2; //!< c0,c1,c2 repeated
+ extern const SimdReal rSimd_c3c4c5; //!< c3,c4,c5 repeated
+ extern const SimdReal rSimd_c6c7c8; //!< c6,c7,c8 repeated
+@@ -128,14 +129,14 @@ extern const SimdReal rSimd_m3p75; //!< Negative value that rounds down.
+ //! Three large floating-point values whose exponents are >32.
+ extern const SimdReal rSimd_Exp;
+ 
+-#        if GMX_SIMD_HAVE_LOGICAL
++#            if GMX_SIMD_HAVE_LOGICAL
+ extern const SimdReal rSimd_logicalA;         //!< Bit pattern to test logical ops
+ extern const SimdReal rSimd_logicalB;         //!< Bit pattern to test logical ops
+ extern const SimdReal rSimd_logicalResultOr;  //!< Result or bitwise 'or' of A and B
+ extern const SimdReal rSimd_logicalResultAnd; //!< Result or bitwise 'and' of A and B
+-#        endif                                // GMX_SIMD_HAVE_LOGICAL
++#            endif                            // GMX_SIMD_HAVE_LOGICAL
+ 
+-#        if GMX_SIMD_HAVE_DOUBLE && GMX_DOUBLE
++#            if GMX_SIMD_HAVE_DOUBLE && GMX_DOUBLE
+ // Make sure we also test exponents outside single precision when we use double
+ extern const SimdReal rSimd_ExpDouble1;
+ extern const SimdReal rSimd_ExpDouble2;
+@@ -147,8 +148,74 @@ extern const SimdReal rSimd_Bits3; //!< Pattern C0 repeated to fill single/doubl
+ extern const SimdReal rSimd_Bits4; //!< Pattern 0C repeated to fill single/double.
+ extern const SimdReal rSimd_Bits5; //!< Pattern FC repeated to fill single/double.
+ extern const SimdReal rSimd_Bits6; //!< Pattern 3C repeated to fill single/double.
+-#    endif                         // GMX_SIMD_HAVE_REAL
++#        else                      // GMX_SIMD_HAVE_REAL_GLOBAL
++//!< c0,c1,c2 repeated
++#            define rSimd_c0c1c2 setSimdRealFrom3R(c0, c1, c2)
++//!< c3,c4,c5 repeated
++#            define rSimd_c3c4c5 setSimdRealFrom3R(c3, c4, c5)
++//!< c6,c7,c8 repeated
++#            define rSimd_c6c7c8 setSimdRealFrom3R(c6, c7, c8)
++//!< c3,c0,c4 repeated
++#            define rSimd_c3c0c4 setSimdRealFrom3R(c3, c0, c4)
++//!< c4,c6,c8 repeated
++#            define rSimd_c4c6c8 setSimdRealFrom3R(c4, c6, c8)
++//!< c7,c2,c3 repeated
++#            define rSimd_c7c2c3 setSimdRealFrom3R(c7, c2, c3)
++//!< -c0,-c1,-c2 repeated
++#            define rSimd_m0m1m2 setSimdRealFrom3R(-c0, -c1, -c2)
++//!< -c3,-c0,-c4 repeated
++#            define rSimd_m3m0m4 setSimdRealFrom3R(-c3, -c0, -c4)
++
++//!< Value that rounds down.
++#            define rSimd_2p25 setSimdRealFrom1R(2.25)
++//!< Value that rounds down.
++#            define rSimd_3p25 setSimdRealFrom1R(3.25)
++//!< Value that rounds up.
++#            define rSimd_3p75 setSimdRealFrom1R(3.75)
++//!< Negative value that rounds up.
++#            define rSimd_m2p25 setSimdRealFrom1R(-2.25)
++//!< Negative value that rounds up.
++#            define rSimd_m3p25 setSimdRealFrom1R(-3.25)
++//!< Negative value that rounds down.
++#            define rSimd_m3p75 setSimdRealFrom1R(-3.75)
++//! Three large floating-point values whose exponents are >32.
++#            define rSimd_Exp                                                                       \
++                setSimdRealFrom3R(1.4055235171027452623914516e+18, 5.3057102734253445623914516e-13, \
++                                  -2.1057102745623934534514516e+16)
++
++#            if GMX_SIMD_HAVE_DOUBLE && GMX_DOUBLE
++// Make sure we also test exponents outside single precision when we use double
++#                define rSimd_ExpDouble                                                                 \
++                    setSimdRealFrom3R(6.287393598732017379054414e+176, 8.794495252903116023030553e-140, \
++                                      -3.637060701570496477655022e+202)
++#            endif // GMX_SIMD_HAVE_DOUBLE && GMX_DOUBLE
++
++#            if GMX_SIMD_HAVE_LOGICAL
++#                if GMX_DOUBLE
++//!< Bit pattern to test logical ops
++#                    define rSimd_logicalA setSimdRealFrom1R(1.3333333332557231188)
++//!< Bit pattern to test logical ops
++#                    define rSimd_logicalB setSimdRealFrom1R(1.7999999998137354851)
++//!< Result or bitwise 'or' of A and B
++#                    define rSimd_logicalResultAnd setSimdRealFrom1R(1.266666666604578495)
++//!< Result or bitwise 'and' of A and B
++#                    define rSimd_logicalResultOr setSimdRealFrom1R(1.8666666664648801088)
++#                else // GMX_DOUBLE
++//!< Bit pattern to test logical ops
++#                    define rSimd_logicalA setSimdRealFrom1R(1.3333282470703125)
++//!< Bit pattern to test logical ops
++#                    define rSimd_logicalB setSimdRealFrom1R(1.79998779296875)
++//!< Result or bitwise 'or' of A and B
++#                    define rSimd_logicalResultAnd setSimdRealFrom1R(1.26666259765625)
++//!< Result or bitwise 'and' of A and B
++#                    define rSimd_logicalResultOr setSimdRealFrom1R(1.8666534423828125)
++#                endif // GMX_DOUBLE
++#            endif     // GMX_SIMD_HAVE_LOGICAL
++
++#        endif // GMX_SIMD_HAVE_REAL_GLOBAL
++#    endif     // GMX_SIMD_HAVE_REAL
+ #    if GMX_SIMD_HAVE_INT32_ARITHMETICS
++#        if GMX_SIMD_HAVE_INT32_GLOBAL
+ extern const SimdInt32 iSimd_1_2_3;    //!< Three generic ints.
+ extern const SimdInt32 iSimd_4_5_6;    //!< Three generic ints.
+ extern const SimdInt32 iSimd_7_8_9;    //!< Three generic ints.
+@@ -156,13 +223,35 @@ extern const SimdInt32 iSimd_5_7_9;    //!< iSimd_1_2_3 + iSimd_4_5_6.
+ extern const SimdInt32 iSimd_1M_2M_3M; //!< Term1 for 32bit add/sub.
+ extern const SimdInt32 iSimd_4M_5M_6M; //!< Term2 for 32bit add/sub.
+ extern const SimdInt32 iSimd_5M_7M_9M; //!< iSimd_1M_2M_3M + iSimd_4M_5M_6M.
++#        else                          // GMX_SIMD_HAVE_INT32_GLOBAL
++//!< Three generic ints.
++#            define iSimd_1_2_3 setSimdIntFrom3I(1, 2, 3)
++//!< Three generic ints.
++#            define iSimd_4_5_6 setSimdIntFrom3I(4, 5, 6)
++//!< Three generic ints.
++#            define iSimd_7_8_9 setSimdIntFrom3I(7, 8, 9)
++//!< iSimd_1_2_3 + iSimd_4_5_6.
++#            define iSimd_5_7_9 setSimdIntFrom3I(5, 7, 9)
++//!< Term1 for 32bit add/sub.
++#            define iSimd_1M_2M_3M setSimdIntFrom3I(1000000, 2000000, 3000000)
++//!< Term2 for 32bit add/sub.
++#            define iSimd_4M_5M_6M setSimdIntFrom3I(4000000, 5000000, 6000000)
++//!< iSimd_1M_2M_3M + iSimd_4M_5M_6M.
++#            define iSimd_5M_7M_9M setSimdIntFrom3I(5000000, 7000000, 9000000)
++#        endif // GMX_SIMD_HAVE_INT32_GLOBAL
+ #    endif
+ #    if GMX_SIMD_HAVE_INT32_LOGICAL
++#        if GMX_SIMD_HAVE_INT32_GLOBAL
+ extern const SimdInt32 iSimd_0xF0F0F0F0; //!< Bitpattern to test integer logical operations.
+ extern const SimdInt32 iSimd_0xCCCCCCCC; //!< Bitpattern to test integer logical operations.
++#        else                            // GMX_SIMD_HAVE_INT32_GLOBAL
++//!< Bitpattern to test integer logical operations.
++#            define iSimd_0xF0F0F0F0 setSimdIntFrom1I(0xF0F0F0F0)
++//!< Bitpattern to test integer logical operations.
++#            define iSimd_0xCCCCCCCC setSimdIntFrom1I(0xCCCCCCCC)
++#        endif // GMX_SIMD_HAVE_INT32_GLOBAL
+ #    endif
+ 
+-
+ /*! \internal
+  * \brief
+  * Test fixture for SIMD tests.
+diff --git a/src/gromacs/simd/tests/simd4.cpp b/src/gromacs/simd/tests/simd4.cpp
+index dca3403..173bfef 100644
+--- a/src/gromacs/simd/tests/simd4.cpp
++++ b/src/gromacs/simd/tests/simd4.cpp
+@@ -54,6 +54,7 @@ namespace test
+ 
+ #    if GMX_SIMD4_HAVE_REAL
+ 
++#        if GMX_SIMD4_HAVE_REAL_GLOBAL
+ const Simd4Real rSimd4_c0c1c2 = setSimd4RealFrom3R(c0, c1, c2);
+ const Simd4Real rSimd4_c3c4c5 = setSimd4RealFrom3R(c3, c4, c5);
+ const Simd4Real rSimd4_c6c7c8 = setSimd4RealFrom3R(c6, c7, c8);
+@@ -67,10 +68,10 @@ const Simd4Real rSimd4_3p75   = setSimd4RealFrom1R(3.75);
+ const Simd4Real rSimd4_m2p25  = setSimd4RealFrom1R(-2.25);
+ const Simd4Real rSimd4_m3p75  = setSimd4RealFrom1R(-3.75);
+ 
+-#        if GMX_SIMD_HAVE_LOGICAL
++#            if GMX_SIMD_HAVE_LOGICAL
+ // The numbers below all have exponent (2^0), which will not change with AND/OR operations.
+ // We also leave the last part of the mantissa as zeros, to avoid rounding issues in the compiler
+-#            if GMX_DOUBLE
++#                if GMX_DOUBLE
+ const Simd4Real rSimd4_logicalA =
+         setSimd4RealFrom1R(1.3333333332557231188); // mantissa 01010101010101010101010101010101
+ const Simd4Real rSimd4_logicalB =
+@@ -79,13 +80,14 @@ const Simd4Real rSimd4_logicalResultAnd =
+         setSimd4RealFrom1R(1.266666666604578495); // mantissa 01000100010001000100010001000100
+ const Simd4Real rSimd4_logicalResultOr =
+         setSimd4RealFrom1R(1.8666666664648801088); // mantissa 11011101110111011101110111011101
+-#            else                                  // GMX_DOUBLE
++#                else                              // GMX_DOUBLE
+ const Simd4Real rSimd4_logicalA = setSimd4RealFrom1R(1.3333282470703125); // mantissa 0101010101010101
+ const Simd4Real rSimd4_logicalB = setSimd4RealFrom1R(1.79998779296875); // mantissa 1100110011001100
+ const Simd4Real rSimd4_logicalResultAnd = setSimd4RealFrom1R(1.26666259765625); // mantissa 0100010001000100
+ const Simd4Real rSimd4_logicalResultOr = setSimd4RealFrom1R(1.8666534423828125); // mantissa 1101110111011101
+-#            endif                                 // GMX_DOUBLE
+-#        endif                                     // GMX_SIMD_HAVE_LOGICAL
++#                endif                             // GMX_DOUBLE
++#            endif                                 // GMX_SIMD_HAVE_LOGICAL
++#        endif                                     // GMX_SIMD4_HAVE_REAL_GLOBAL
+ 
+ ::std::vector<real> simd4Real2Vector(const Simd4Real simd4)
+ {
+diff --git a/src/gromacs/simd/tests/simd4.h b/src/gromacs/simd/tests/simd4.h
+index 6378bf9..09c68d4 100644
+--- a/src/gromacs/simd/tests/simd4.h
++++ b/src/gromacs/simd/tests/simd4.h
+@@ -68,6 +68,7 @@ namespace test
+ /*! \{ */
+ 
+ #    if GMX_SIMD4_HAVE_REAL
++#        if GMX_SIMD4_HAVE_REAL_GLOBAL
+ extern const Simd4Real rSimd4_c0c1c2; //!< c0,c1,c2 repeated
+ extern const Simd4Real rSimd4_c3c4c5; //!< c3,c4,c5 repeated
+ extern const Simd4Real rSimd4_c6c7c8; //!< c6,c7,c8 repeated
+@@ -83,12 +84,12 @@ extern const Simd4Real rSimd4_m3p75;  //!< Negative value that rounds down.
+ //! Three large floating-point values whose exponents are >32.
+ extern const Simd4Real rSimd4_Exp;
+ 
+-#        if GMX_SIMD_HAVE_LOGICAL
++#            if GMX_SIMD_HAVE_LOGICAL
+ extern const Simd4Real rSimd4_logicalA;         //!< Bit pattern to test logical ops
+ extern const Simd4Real rSimd4_logicalB;         //!< Bit pattern to test logical ops
+ extern const Simd4Real rSimd4_logicalResultOr;  //!< Result or bitwise 'or' of A and B
+ extern const Simd4Real rSimd4_logicalResultAnd; //!< Result or bitwise 'and' of A and B
+-#        endif                                  // GMX_SIMD_HAVE_LOGICAL
++#            endif                              // GMX_SIMD_HAVE_LOGICAL
+ 
+ extern const Simd4Real rSimd4_Bits1; //!< Pattern F0 repeated to fill single/double.
+ extern const Simd4Real rSimd4_Bits2; //!< Pattern CC repeated to fill single/double.
+@@ -96,6 +97,55 @@ extern const Simd4Real rSimd4_Bits3; //!< Pattern C0 repeated to fill single/dou
+ extern const Simd4Real rSimd4_Bits4; //!< Pattern 0C repeated to fill single/double.
+ extern const Simd4Real rSimd4_Bits5; //!< Pattern FC repeated to fill single/double.
+ extern const Simd4Real rSimd4_Bits6; //!< Pattern 3C repeated to fill single/double.
++#        else                        // GMX_SIMD4_HAVE_REAL_GLOBAL
++//!< c0,c1,c2 repeated
++#            define rSimd4_c0c1c2 setSimd4RealFrom3R(c0, c1, c2)
++//!< c3,c4,c5 repeated
++#            define rSimd4_c3c4c5 setSimd4RealFrom3R(c3, c4, c5)
++//!< c6,c7,c8 repeated
++#            define rSimd4_c6c7c8 setSimd4RealFrom3R(c6, c7, c8)
++//!< c3,c0,c4 repeated
++#            define rSimd4_c3c0c4 setSimd4RealFrom3R(c3, c0, c4)
++//!< c4,c6,c8 repeated
++#            define rSimd4_c4c6c8 setSimd4RealFrom3R(c4, c6, c8)
++//!< c7,c2,c3 repeated
++#            define rSimd4_c7c2c3 setSimd4RealFrom3R(c7, c2, c3)
++//!< -c0,-c1,-c2 repeated
++#            define rSimd4_m0m1m2 setSimd4RealFrom3R(-c0, -c1, -c2)
++//!< -c3,-c0,-c4 repeated
++#            define rSimd4_m3m0m4 setSimd4RealFrom3R(-c3, -c0, -c4)
++//!< Value that rounds down.
++#            define rSimd4_2p25 setSimd4RealFrom1R(2.25)
++//!< Value that rounds up.
++#            define rSimd4_3p75 setSimd4RealFrom1R(3.75)
++//!< Negative value that rounds up.
++#            define rSimd4_m2p25 setSimd4RealFrom1R(-2.25)
++//!< Negative value that rounds down.
++#            define rSimd4_m3p75 setSimd4RealFrom1R(-3.75)
++//! Three large floating-point values whose exponents are >32.
++
++#            if GMX_SIMD_HAVE_LOGICAL
++//!< Result or bitwise 'and' of A and B
++#                if GMX_DOUBLE
++#                    define rSimd4_logicalA setSimd4RealFrom1R(1.3333333332557231188)
++//!< Bit pattern to test logical ops
++#                    define rSimd4_logicalB setSimd4RealFrom1R(1.7999999998137354851)
++//!< Result or bitwise 'or' of A and B
++#                    define rSimd4_logicalResultAnd setSimd4RealFrom1R(1.266666666604578495)
++//!< Bit pattern to test logical ops
++#                    define rSimd4_logicalResultOr setSimd4RealFrom1R(1.8666666664648801088)
++#                else // GMX_DOUBLE
++//!< Bit pattern to test logical ops
++#                    define rSimd4_logicalA setSimd4RealFrom1R(1.3333282470703125)
++//!< Bit pattern to test logical ops
++#                    define rSimd4_logicalB setSimd4RealFrom1R(1.79998779296875)
++//!< Result or bitwise 'or' of A and B
++#                    define rSimd4_logicalResultAnd setSimd4RealFrom1R(1.26666259765625)
++//!< Bit pattern to test logical ops
++#                    define rSimd4_logicalResultOr setSimd4RealFrom1R(1.8666534423828125)
++#                endif // GMX_DOUBLE
++#            endif     // GMX_SIMD_HAVE_LOGICAL
++#        endif         // GMX_SIMD4_HAVE_REAL_GLOBAL
+ 
+ /*! \internal
+  * \brief
+-- 
+1.8.3.1
+
+From ac8568fd2b5608e2a1bd35a906ba5187cbadd0b7 Mon Sep 17 00:00:00 2001
+From: Gilles Gouaillardet <gilles@rist.or.jp>
+Date: Fri, 29 Jan 2021 11:49:43 +0900
+Subject: [PATCH 4/5] arm_sve: add support for variable length SVE vectors
+
+---
+ cmake/gmxManageSimd.cmake                          |   8 +-
+ cmake/gmxSimdFlags.cmake                           |  16 ++-
+ .../simd/impl_arm_sve/impl_arm_sve_definitions.h   |   5 +
+ .../simd/impl_arm_sve/impl_arm_sve_simd4_double.h  |  36 ++++++
+ .../simd/impl_arm_sve/impl_arm_sve_simd_double.h   | 116 ++++++++++++++++++--
+ .../simd/impl_arm_sve/impl_arm_sve_simd_float.h    | 121 +++++++++++++++++++--
+ 6 files changed, 282 insertions(+), 20 deletions(-)
+
+diff --git a/cmake/gmxManageSimd.cmake b/cmake/gmxManageSimd.cmake
+index af870d4..091e532 100644
+--- a/cmake/gmxManageSimd.cmake
++++ b/cmake/gmxManageSimd.cmake
+@@ -273,7 +273,7 @@ elseif(GMX_SIMD_ACTIVE STREQUAL "ARM_SVE")
+     endif()
+ 
+     gmx_find_simd_arm_sve_flags(SIMD_ARM_SVE_C_SUPPORTED SIMD_ARM_SVE_CXX_SUPPORTED
+-                                SIMD_ARM_SVE_C_FLAGS SIMD_ARM_SVE_CXX_FLAGS)
++                                SIMD_ARM_SVE_C_FLAGS SIMD_ARM_SVE_CXX_FLAGS SIMD_ARM_SVE_FIXED_VECTOR_LENGTH)
+ 
+     if(NOT SIMD_ARM_SVE_C_SUPPORTED OR NOT SIMD_ARM_SVE_CXX_SUPPORTED)
+         gmx_give_fatal_error_when_simd_support_not_found("ARM (AArch64) SVE SIMD" "particularly gcc version 10.1 or later, or disable SIMD support (slower)" "${SUGGEST_BINUTILS_UPDATE}")
+@@ -283,6 +283,12 @@ elseif(GMX_SIMD_ACTIVE STREQUAL "ARM_SVE")
+     string(REPLACE " " ";" SIMD_C_FLAGS ${SIMD_ARM_SVE_C_FLAGS})
+     string(REPLACE " " ";" SIMD_CXX_FLAGS ${SIMD_ARM_SVE_CXX_FLAGS})
+     set(GMX_SIMD_${GMX_SIMD_ACTIVE} 1)
++    add_definitions(-DGMX_SIMD_ARM_SVE_FIXED_VECTOR_LENGTH=${SIMD_ARM_SVE_FIXED_VECTOR_LENGTH})
++
++    # If multiple flags are neeed, make them into a list
++    string(REPLACE " " ";" SIMD_C_FLAGS ${SIMD_ARM_SVE_C_FLAGS})
++    string(REPLACE " " ";" SIMD_CXX_FLAGS ${SIMD_ARM_SVE_CXX_FLAGS})
++    set(GMX_SIMD_${GMX_SIMD_ACTIVE} 1)
+     set(SIMD_STATUS_MESSAGE "Enabling ARM (AArch64) SVE Advanced SIMD instructions using CXX flags: ${SIMD_ARM_SVE_CXX_FLAGS}")
+ 
+ elseif(GMX_SIMD_ACTIVE STREQUAL "IBM_VMX")
+diff --git a/cmake/gmxSimdFlags.cmake b/cmake/gmxSimdFlags.cmake
+index 1b09d52..a1985ae 100644
+--- a/cmake/gmxSimdFlags.cmake
++++ b/cmake/gmxSimdFlags.cmake
+@@ -342,7 +342,7 @@ function(gmx_find_simd_arm_neon_asimd_flags C_FLAGS_RESULT CXX_FLAGS_RESULT C_FL
+ endfunction()
+ 
+ # Arm SVE (64-bit ARM)
+-function(gmx_find_simd_arm_sve_flags C_FLAGS_RESULT CXX_FLAGS_RESULT C_FLAGS_VARIABLE CXX_FLAGS_VARIABLE)
++function(gmx_find_simd_arm_sve_flags C_FLAGS_RESULT CXX_FLAGS_RESULT C_FLAGS_VARIABLE CXX_FLAGS_VARIABLE FIXED_VECTOR_LENGTH)
+ 
+     gmx_find_flags(SIMD_ARM_SVE_C_FLAGS_RESULT SIMD_ARM_SVE_CXX_FLAGS_RESULT
+         "#include<arm_sve.h>
+@@ -354,6 +354,20 @@ function(gmx_find_simd_arm_sve_flags C_FLAGS_RESULT CXX_FLAGS_RESULT C_FLAGS_VAR
+         "-march=armv8.2a+sve -msve-vector-bits=${GMX_SIMD_ARM_SVE_LENGTH_VALUE}")
+ 
+     if(${SIMD_ARM_SVE_C_FLAGS_RESULT})
++        set(${FIXED_VECTOR_LENGTH} 1 CACHE INTERNAL "Use fixed SVE vector length" FORCE)
++    else()
++        gmx_find_flags(SIMD_ARM_SVE_C_FLAGS_RESULT SIMD_ARM_SVE_CXX_FLAGS_RESULT
++            "#include<arm_sve.h>
++             typedef __sizeless_struct { svfloat32_t v; } svevec;
++             int main(){svevec v; v.v = svdup_f32(0.5f); return 0;}"
++            TOOLCHAIN_C_FLAGS TOOLCHAIN_CXX_FLAGS
++            SIMD_ARM_SVE_C_FLAGS SIMD_ARM_SVE_CXX_FLAGS
++            "-march=armv8.2-a+sve"
++            "-march=armv8.2a+sve")
++        set(${FIXED_VECTOR_LENGTH} 0 CACHE INTERNAL "Use fixed SVE vector length" FORCE)
++    endif()
++
++    if(${SIMD_ARM_SVE_C_FLAGS_RESULT})
+         set(${C_FLAGS_VARIABLE} "${TOOLCHAIN_C_FLAGS} ${SIMD_ARM_SVE_C_FLAGS}" CACHE INTERNAL "C flags required for Arm SVE instructions")
+     endif()
+     if(${SIMD_ARM_SVE_CXX_FLAGS_RESULT})
+diff --git a/src/gromacs/simd/impl_arm_sve/impl_arm_sve_definitions.h b/src/gromacs/simd/impl_arm_sve/impl_arm_sve_definitions.h
+index 90443b7..2a997c1 100644
+--- a/src/gromacs/simd/impl_arm_sve/impl_arm_sve_definitions.h
++++ b/src/gromacs/simd/impl_arm_sve/impl_arm_sve_definitions.h
+@@ -46,7 +46,9 @@
+ 
+ #define GMX_SIMD 1
+ #define GMX_SIMD_HAVE_FLOAT 1
++#define GMX_SIMD_HAVE_FLOAT_ARRAY GMX_SIMD_ARM_SVE_FIXED_VECTOR_LENGTH
+ #define GMX_SIMD_HAVE_DOUBLE 1
++#define GMX_SIMD_HAVE_DOUBLE_ARRAY GMX_SIMD_ARM_SVE_FIXED_VECTOR_LENGTH
+ #define GMX_SIMD_HAVE_LOADU 1
+ #define GMX_SIMD_HAVE_STOREU 1
+ #define GMX_SIMD_HAVE_LOGICAL 1
+@@ -96,9 +98,12 @@
+ #endif
+ 
+ #define GMX_SIMD4_HAVE_FLOAT 1
++#define GMX_SIMD4_HAVE_FLOAT_ARRAY 1
+ #if GMX_SIMD_DOUBLE_WIDTH < 4
+ #    define GMX_SIMD4_HAVE_DOUBLE 0
++#    define GMX_SIMD4_HAVE_DOUBLE_ARRAY 0
+ #else
+ #    define GMX_SIMD4_HAVE_DOUBLE 1
++#    define GMX_SIMD4_HAVE_DOUBLE_ARRAY GMX_SIMD_ARM_SVE_FIXED_VECTOR_LENGTH
+ #endif
+ #endif // GMX_SIMD_IMPL_ARM_SVE_DEFINITIONS_H
+diff --git a/src/gromacs/simd/impl_arm_sve/impl_arm_sve_simd4_double.h b/src/gromacs/simd/impl_arm_sve/impl_arm_sve_simd4_double.h
+index 037f3e6..55e2aa5 100644
+--- a/src/gromacs/simd/impl_arm_sve/impl_arm_sve_simd4_double.h
++++ b/src/gromacs/simd/impl_arm_sve/impl_arm_sve_simd4_double.h
+@@ -55,6 +55,7 @@
+ namespace gmx
+ {
+ 
++#if GMX_SIMD_ARM_SVE_FIXED_VECTOR_LENGTH
+ typedef struct Simd4Double
+ {
+     float64_t simdInternal_ __attribute__((vector_size(GMX_SIMD_ARM_SVE_LENGTH_VALUE / 8)));
+@@ -81,6 +82,41 @@ static inline svbool_t getMask(Simd4DBool m)
+ {
+     return svcmpne_n_u64(svptrue_b64(), m.simdInternal_, 0);
+ }
++#else
++typedef __sizeless_struct Simd4Double
++{
++    svfloat64_t simdInternal_;
++
++    Simd4Double(const double d) { this->simdInternal_ = svdup_f64(d); }
++
++    Simd4Double(svfloat64_t simd) : simdInternal_(simd) {}
++
++    Simd4Double() {}
++} Simd4Double;
++
++typedef __sizeless_struct Simd4DBool
++{
++    svbool_t simdInternal_;
++
++    Simd4DBool(const bool b)
++    {
++        if (b)
++        {
++            this->simdInternal_ = svptrue_b64();
++        }
++        else
++        {
++            this->simdInternal_ = svpfalse_b();
++        }
++    }
++
++    Simd4DBool(svbool_t simd) : simdInternal_(simd) {}
++
++    Simd4DBool() {}
++} Simd4DBool;
++
++#define getMask(m) (m).simdInternal_
++#endif
+ 
+ static inline Simd4Double gmx_simdcall load4(const double* m)
+ {
+diff --git a/src/gromacs/simd/impl_arm_sve/impl_arm_sve_simd_double.h b/src/gromacs/simd/impl_arm_sve/impl_arm_sve_simd_double.h
+index 99046af..00b5f2a 100644
+--- a/src/gromacs/simd/impl_arm_sve/impl_arm_sve_simd_double.h
++++ b/src/gromacs/simd/impl_arm_sve/impl_arm_sve_simd_double.h
+@@ -60,6 +60,7 @@
+ namespace gmx
+ {
+ 
++#if GMX_SIMD_ARM_SVE_FIXED_VECTOR_LENGTH
+ class SimdDouble
+ {
+ public:
+@@ -118,6 +119,67 @@ public:
+     uint64_t simdInternal_ __attribute__((vector_size(GMX_SIMD_ARM_SVE_LENGTH_VALUE / 8)));
+ };
+ 
++static inline svbool_t getMask(SimdDBool m)
++{
++    return svcmpne_n_u64(svptrue_b64(), m.simdInternal_, 0);
++}
++
++static inline svbool_t getMask(SimdDIBool m)
++{
++    return svcmpne_n_u64(svptrue_b64(), m.simdInternal_, 0);
++}
++#else
++typedef __sizeless_struct SimdDouble
++{
++    svfloat64_t simdInternal_;
++
++    SimdDouble(const double d) { this->simdInternal_ = svdup_f64(d); }
++
++    SimdDouble(svfloat64_t simd) : simdInternal_(simd) {}
++
++    SimdDouble() {}
++} SimdDouble;
++
++typedef __sizeless_struct SimdDInt32
++{
++    svint64_t simdInternal_;
++
++    SimdDInt32(const int32_t i) { this->simdInternal_ = svdup_s64(i); }
++
++    SimdDInt32(svint64_t simd) : simdInternal_(simd) {}
++
++    SimdDInt32() {}
++} SimdDInt32;
++
++typedef __sizeless_struct SimdDBool
++{
++    svbool_t simdInternal_;
++
++    SimdDBool(const bool b)
++    {
++        if (b)
++        {
++            this->simdInternal_ = svptrue_b64();
++        }
++        else
++        {
++            this->simdInternal_ = svpfalse_b();
++        }
++    }
++
++    SimdDBool(svbool_t simd) : simdInternal_(simd) {}
++
++    SimdDBool() {}
++} SimdDBool;
++
++typedef __sizeless_struct SimdDIBool
++{
++    svbool_t simdInternal_;
++
++    SimdDIBool(svbool_t simd) : simdInternal_(simd) {}
++} SimdDIBool;
++
++#endif
+ static inline SimdDouble gmx_simdcall simdLoad(const double* m, SimdDoubleTag = {})
+ {
+     assert(0 == (std::size_t(m) % GMX_SIMD_ALIGNMENT));
+@@ -315,25 +377,25 @@ static inline SimdDouble gmx_simdcall rcpIter(SimdDouble lu, SimdDouble x)
+ 
+ static inline SimdDouble gmx_simdcall maskAdd(SimdDouble a, SimdDouble b, SimdDBool m)
+ {
+-    svbool_t pg = svcmpne_n_u64(svptrue_b64(), m.simdInternal_, 0);
++    svbool_t pg = getMask(m);
+     return { svadd_f64_m(pg, a.simdInternal_, b.simdInternal_) };
+ }
+ 
+ static inline SimdDouble gmx_simdcall maskzMul(SimdDouble a, SimdDouble b, SimdDBool m)
+ {
+-    svbool_t pg = svcmpne_n_u64(svptrue_b64(), m.simdInternal_, 0);
++    svbool_t pg = getMask(m);
+     return { svmul_f64_z(pg, a.simdInternal_, b.simdInternal_) };
+ }
+ 
+ static inline SimdDouble gmx_simdcall maskzFma(SimdDouble a, SimdDouble b, SimdDouble c, SimdDBool m)
+ {
+-    svbool_t pg = svcmpne_n_u64(svptrue_b64(), m.simdInternal_, 0);
++    svbool_t pg = getMask(m);
+     return { svmad_f64_z(pg, a.simdInternal_, b.simdInternal_, c.simdInternal_) };
+ }
+ 
+ static inline SimdDouble gmx_simdcall maskzRsqrt(SimdDouble x, SimdDBool m)
+ {
+-    svbool_t pg = svcmpne_n_u64(svptrue_b64(), m.simdInternal_, 0);
++    svbool_t pg = getMask(m);
+     // The result will always be correct since we mask the result with m, but
+     // for debug builds we also want to make sure not to generate FP exceptions
+ #ifndef NDEBUG
+@@ -345,7 +407,7 @@ static inline SimdDouble gmx_simdcall maskzRsqrt(SimdDouble x, SimdDBool m)
+ 
+ static inline SimdDouble gmx_simdcall maskzRcp(SimdDouble x, SimdDBool m)
+ {
+-    svbool_t pg = svcmpne_n_u64(svptrue_b64(), m.simdInternal_, 0);
++    svbool_t pg = getMask(m);
+     // The result will always be correct since we mask the result with m, but
+     // for debug builds we also want to make sure not to generate FP exceptions
+ #ifndef NDEBUG
+@@ -463,42 +525,59 @@ static inline SimdDBool gmx_simdcall testBits(SimdDouble a)
+ static inline SimdDBool gmx_simdcall operator&&(SimdDBool a, SimdDBool b)
+ {
+     svbool_t pg = svptrue_b64();
++#if GMX_SIMD_ARM_SVE_FIXED_VECTOR_LENGTH
+     return { svand_u64_x(pg, a.simdInternal_, b.simdInternal_) };
++#else
++    return { svand_z(pg, a.simdInternal_, b.simdInternal_) };
++#endif
+ }
+ 
+ static inline SimdDBool gmx_simdcall operator||(SimdDBool a, SimdDBool b)
+ {
+     svbool_t pg = svptrue_b64();
++#if GMX_SIMD_ARM_SVE_FIXED_VECTOR_LENGTH
+     return { svorr_u64_x(pg, a.simdInternal_, b.simdInternal_) };
++#else
++    return { svorr_b_z(pg, a.simdInternal_, b.simdInternal_) };
++#endif
+ }
+ 
+ static inline bool gmx_simdcall anyTrue(SimdDBool a)
+ {
+     svbool_t pg = svptrue_b64();
+-    return svptest_any(pg, svcmpne_n_u64(pg, a.simdInternal_, 0));
++    return svptest_any(pg, getMask(a));
+ }
+ 
+ static inline bool gmx_simdcall extractFirst(SimdDBool a)
+ {
+     svbool_t pg = svptrue_b64();
+-    return svptest_first(pg, svcmpne_n_u64(pg, a.simdInternal_, 0));
++    return svptest_first(pg, getMask(a));
+ }
+ 
+ static inline SimdDouble gmx_simdcall selectByMask(SimdDouble a, SimdDBool m)
+ {
++#if GMX_SIMD_ARM_SVE_FIXED_VECTOR_LENGTH
+     svbool_t pg = svptrue_b64();
+     return { svreinterpret_f64_u64(svand_u64_x(pg, svreinterpret_u64_f64(a.simdInternal_), m.simdInternal_)) };
++#else
++    return { svsel_f64(m.simdInternal_, a.simdInternal_, svdup_f64(0.0)) };
++#endif
+ }
+ 
+ static inline SimdDouble gmx_simdcall selectByNotMask(SimdDouble a, SimdDBool m)
+ {
++#if GMX_SIMD_ARM_SVE_FIXED_VECTOR_LENGTH
+     svbool_t pg = svcmpeq_n_u64(svptrue_b64(), m.simdInternal_, 0);
+     return { svsel_f64(pg, a.simdInternal_, svdup_f64(0.0f)) };
++#else
++    svbool_t pg = svptrue_b64();
++    return { svsel_f64(sveor_b_z(pg, m.simdInternal_, pg), a.simdInternal_, svdup_f64(0.0)) };
++#endif
+ }
+ 
+ static inline SimdDouble gmx_simdcall blend(SimdDouble a, SimdDouble b, SimdDBool sel)
+ {
+-    svbool_t pg = svcmpne_n_u64(svptrue_b64(), sel.simdInternal_, 0);
++    svbool_t pg = getMask(sel);
+     return { svsel_f64(pg, b.simdInternal_, a.simdInternal_) };
+ }
+ 
+@@ -565,36 +644,53 @@ static inline SimdDIBool gmx_simdcall operator<(SimdDInt32 a, SimdDInt32 b)
+ static inline SimdDIBool gmx_simdcall operator&&(SimdDIBool a, SimdDIBool b)
+ {
+     svbool_t pg = svptrue_b64();
++#if GMX_SIMD_ARM_SVE_FIXED_VECTOR_LENGTH
+     return { svand_u64_x(pg, a.simdInternal_, b.simdInternal_) };
++#else
++    return { svand_b_z(pg, a.simdInternal_, b.simdInternal_) };
++#endif
+ }
+ 
+ static inline SimdDIBool gmx_simdcall operator||(SimdDIBool a, SimdDIBool b)
+ {
+     svbool_t pg = svptrue_b64();
++#if GMX_SIMD_ARM_SVE_FIXED_VECTOR_LENGTH
+     return { svorr_u64_x(pg, a.simdInternal_, b.simdInternal_) };
++#else
++    return { svorr_b_z(pg, a.simdInternal_, b.simdInternal_) };
++#endif
+ }
+ 
+ static inline bool gmx_simdcall anyTrue(SimdDIBool a)
+ {
+     svbool_t pg = svptrue_b64();
+-    return svptest_any(pg, svcmpne_n_u64(pg, a.simdInternal_, 0));
++    return svptest_any(pg, getMask(a));
+ }
+ 
+ static inline SimdDInt32 gmx_simdcall selectByMask(SimdDInt32 a, SimdDIBool m)
+ {
++#if GMX_SIMD_ARM_SVE_FIXED_VECTOR_LENGTH
+     svbool_t pg = svptrue_b64();
+     return { svand_s64_x(pg, a.simdInternal_, svreinterpret_s64_u64(m.simdInternal_)) };
++#else
++    return { svadd_n_s64_z(getMask(m), a.simdInternal_, 0) };
++#endif
+ }
+ 
+ static inline SimdDInt32 gmx_simdcall selectByNotMask(SimdDInt32 a, SimdDIBool m)
+ {
++#if GMX_SIMD_ARM_SVE_FIXED_VECTOR_LENGTH
+     svbool_t pg = svcmpeq_n_u64(svptrue_b64(), m.simdInternal_, 0);
+     return { svadd_n_s64_z(pg, a.simdInternal_, 0) };
++#else
++    svbool_t pg = svptrue_b64();
++    return { svadd_n_s64_z(sveor_b_z(pg, getMask(m), pg), a.simdInternal_, 0) };
++#endif
+ }
+ 
+ static inline SimdDInt32 gmx_simdcall blend(SimdDInt32 a, SimdDInt32 b, SimdDIBool sel)
+ {
+-    svbool_t pg = svcmpne_n_u64(svptrue_b64(), sel.simdInternal_, 0);
++    svbool_t pg = getMask(sel);
+     return { svsel_s64(pg, b.simdInternal_, a.simdInternal_) };
+ }
+ 
+diff --git a/src/gromacs/simd/impl_arm_sve/impl_arm_sve_simd_float.h b/src/gromacs/simd/impl_arm_sve/impl_arm_sve_simd_float.h
+index 1171124..d476ba8 100644
+--- a/src/gromacs/simd/impl_arm_sve/impl_arm_sve_simd_float.h
++++ b/src/gromacs/simd/impl_arm_sve/impl_arm_sve_simd_float.h
+@@ -55,6 +55,7 @@
+ namespace gmx
+ {
+ 
++#if GMX_SIMD_ARM_SVE_FIXED_VECTOR_LENGTH
+ class SimdFloat
+ {
+ public:
+@@ -96,6 +97,10 @@ public:
+     uint32_t simdInternal_ __attribute__((vector_size(GMX_SIMD_ARM_SVE_LENGTH_VALUE / 8)));
+ };
+ 
++static inline svbool_t getMask(SimdFBool m)
++{
++    return svcmpne_n_u32(svptrue_b32(), m.simdInternal_, 0);
++}
+ class SimdFIBool
+ {
+ public:
+@@ -113,6 +118,64 @@ public:
+     uint32_t simdInternal_ __attribute__((vector_size(GMX_SIMD_ARM_SVE_LENGTH_VALUE / 8)));
+ };
+ 
++static inline svbool_t getMask(SimdFIBool m)
++{
++    return svcmpne_n_u32(svptrue_b32(), m.simdInternal_, 0);
++}
++#else
++typedef __sizeless_struct SimdFloat
++{
++    svfloat32_t simdInternal_;
++
++    SimdFloat(const float f) { this->simdInternal_ = svdup_f32(f); }
++
++    SimdFloat(svfloat32_t simd) : simdInternal_(simd) {}
++
++    SimdFloat() {}
++} SimdFloat;
++
++typedef __sizeless_struct SimdFInt32
++{
++    svint32_t simdInternal_;
++
++    SimdFInt32(const int32_t i) { this->simdInternal_ = svdup_s32(i); }
++
++    SimdFInt32(svint32_t simd) : simdInternal_(simd) {}
++
++    SimdFInt32() {}
++} SimdFInt32;
++
++typedef __sizeless_struct SimdFBool
++{
++    svbool_t simdInternal_;
++
++    SimdFBool(const bool b)
++    {
++        if (b)
++        {
++            this->simdInternal_ = svptrue_b32();
++        }
++        else
++        {
++            this->simdInternal_ = svpfalse_b();
++        }
++    }
++
++    SimdFBool(svbool_t simd) : simdInternal_(simd) {}
++
++    SimdFBool() {}
++} SimdFBool;
++
++typedef __sizeless_struct SimdFIBool
++{
++    svbool_t simdInternal_;
++
++    SimdFIBool(svbool_t simd) : simdInternal_(simd) {}
++} SimdFIBool;
++
++#define getMask(m) (m).simdInternal_
++#endif
++
+ static inline SimdFloat gmx_simdcall simdLoad(const float* m, SimdFloatTag = {})
+ {
+     assert(0 == (std::size_t(m) % GMX_SIMD_ALIGNMENT));
+@@ -318,25 +381,25 @@ static inline SimdFloat gmx_simdcall rcpIter(SimdFloat lu, SimdFloat x)
+ 
+ static inline SimdFloat gmx_simdcall maskAdd(SimdFloat a, SimdFloat b, SimdFBool m)
+ {
+-    svbool_t pg = svcmpne_n_u32(svptrue_b32(), m.simdInternal_, 0);
++    svbool_t pg = getMask(m);
+     return { svadd_f32_m(pg, a.simdInternal_, b.simdInternal_) };
+ }
+ 
+ static inline SimdFloat gmx_simdcall maskzMul(SimdFloat a, SimdFloat b, SimdFBool m)
+ {
+-    svbool_t pg = svcmpne_n_u32(svptrue_b32(), m.simdInternal_, 0);
++    svbool_t pg = getMask(m);
+     return { svmul_f32_z(pg, a.simdInternal_, b.simdInternal_) };
+ }
+ 
+ static inline SimdFloat gmx_simdcall maskzFma(SimdFloat a, SimdFloat b, SimdFloat c, SimdFBool m)
+ {
+-    svbool_t pg = svcmpne_n_u32(svptrue_b32(), m.simdInternal_, 0);
++    svbool_t pg = getMask(m);
+     return { svmad_f32_z(pg, a.simdInternal_, b.simdInternal_, c.simdInternal_) };
+ }
+ 
+ static inline SimdFloat gmx_simdcall maskzRsqrt(SimdFloat x, SimdFBool m)
+ {
+-    svbool_t pg = svcmpne_n_u32(svptrue_b32(), m.simdInternal_, 0);
++    svbool_t pg = getMask(m); 
+     // The result will always be correct since we mask the result with m, but
+     // for debug builds we also want to make sure not to generate FP exceptions
+ #ifndef NDEBUG
+@@ -348,7 +411,7 @@ static inline SimdFloat gmx_simdcall maskzRsqrt(SimdFloat x, SimdFBool m)
+ 
+ static inline SimdFloat gmx_simdcall maskzRcp(SimdFloat x, SimdFBool m)
+ {
+-    svbool_t pg = svcmpne_n_u32(svptrue_b32(), m.simdInternal_, 0);
++    svbool_t pg = getMask(m);
+     // The result will always be correct since we mask the result with m, but
+     // for debug builds we also want to make sure not to generate FP exceptions
+ #ifndef NDEBUG
+@@ -466,42 +529,59 @@ static inline SimdFBool gmx_simdcall testBits(SimdFloat a)
+ static inline SimdFBool gmx_simdcall operator&&(SimdFBool a, SimdFBool b)
+ {
+     svbool_t pg = svptrue_b32();
++#if GMX_SIMD_ARM_SVE_FIXED_VECTOR_LENGTH
+     return { svand_u32_x(pg, a.simdInternal_, b.simdInternal_) };
++#else
++    return { svand_b_z(pg, a.simdInternal_, b.simdInternal_) };
++#endif
+ }
+ 
+ static inline SimdFBool gmx_simdcall operator||(SimdFBool a, SimdFBool b)
+ {
+     svbool_t pg = svptrue_b32();
++#if GMX_SIMD_ARM_SVE_FIXED_VECTOR_LENGTH
+     return { svorr_u32_x(pg, a.simdInternal_, b.simdInternal_) };
++#else
++    return { svorr_b_z(pg, a.simdInternal_, b.simdInternal_) };
++#endif
+ }
+ 
+ static inline bool gmx_simdcall anyTrue(SimdFBool a)
+ {
+     svbool_t pg = svptrue_b32();
+-    return svptest_any(pg, svcmpne_n_u32(svptrue_b32(), a.simdInternal_, 0));
++    return svptest_any(pg, getMask(a));
+ }
+ 
+ static inline bool gmx_simdcall extractFirst(SimdFBool a)
+ {
+     svbool_t pg = svptrue_b32();
+-    return svptest_first(pg, svcmpne_n_u32(svptrue_b32(), a.simdInternal_, 0));
++    return svptest_first(pg, getMask(a));
+ }
+ 
+ static inline SimdFloat gmx_simdcall selectByMask(SimdFloat a, SimdFBool m)
+ {
++#if GMX_SIMD_ARM_SVE_FIXED_VECTOR_LENGTH
+     svbool_t pg = svptrue_b32();
+     return { svreinterpret_f32_u32(svand_u32_x(pg, svreinterpret_u32_f32(a.simdInternal_), m.simdInternal_)) };
++#else
++    return { svsel_f32(m.simdInternal_, a.simdInternal_, svdup_f32(0.0f)) };
++#endif
+ }
+ 
+ static inline SimdFloat gmx_simdcall selectByNotMask(SimdFloat a, SimdFBool m)
+ {
++#if GMX_SIMD_ARM_SVE_FIXED_VECTOR_LENGTH
+     svbool_t pg = svcmpeq_n_u32(svptrue_b32(), m.simdInternal_, 0);
+     return { svsel_f32(pg, a.simdInternal_, svdup_f32(0.0f)) };
++#else
++    svbool_t pg = svptrue_b32();
++    return { svsel_f32(sveor_b_z(pg, getMask(m), pg), a.simdInternal_, svdup_f32(0.0f)) };
++#endif
+ }
+ 
+ static inline SimdFloat gmx_simdcall blend(SimdFloat a, SimdFloat b, SimdFBool sel)
+ {
+-    svbool_t pg = svcmpne_n_u32(svptrue_b32(), sel.simdInternal_, 0);
++    svbool_t pg = getMask(sel);
+     return { svsel_f32(pg, b.simdInternal_, a.simdInternal_) };
+ }
+ 
+@@ -568,37 +648,62 @@ static inline SimdFIBool gmx_simdcall operator<(SimdFInt32 a, SimdFInt32 b)
+ static inline SimdFIBool gmx_simdcall operator&&(SimdFIBool a, SimdFIBool b)
+ {
+     svbool_t pg = svptrue_b32();
++#if GMX_SIMD_ARM_SVE_FIXED_VECTOR_LENGTH
+     return { svand_u32_x(pg, a.simdInternal_, b.simdInternal_) };
++#else
++    return { svand_z(pg, a.simdInternal_, b.simdInternal_) };
++#endif
+ }
+ 
+ static inline SimdFIBool gmx_simdcall operator||(SimdFIBool a, SimdFIBool b)
+ {
+     svbool_t pg = svptrue_b32();
++#if GMX_SIMD_ARM_SVE_FIXED_VECTOR_LENGTH
+     return { svorr_u32_x(pg, a.simdInternal_, b.simdInternal_) };
++#else
++    return { svorr_b_z(pg, a.simdInternal_, b.simdInternal_) };
++#endif
+ }
+ 
+ static inline bool gmx_simdcall anyTrue(SimdFIBool a)
+ {
+     svbool_t pg = svptrue_b32();
++#if GMX_SIMD_ARM_SVE_FIXED_VECTOR_LENGTH
+     return svptest_any(pg, svcmpne_n_u32(pg, a.simdInternal_, 0));
++#else
++    return svptest_any(pg, a.simdInternal_);
++#endif
+ }
+ 
+ static inline SimdFInt32 gmx_simdcall selectByMask(SimdFInt32 a, SimdFIBool m)
+ {
++#if GMX_SIMD_ARM_SVE_FIXED_VECTOR_LENGTH
+     svbool_t pg = svptrue_b32();
+     return { svand_s32_x(pg, a.simdInternal_, svreinterpret_s32_u32(m.simdInternal_)) };
++#else
++    return { svadd_n_s32_z(m.simdInternal_, a.simdInternal_, 0) };
++#endif
+ }
+ 
+ static inline SimdFInt32 gmx_simdcall selectByNotMask(SimdFInt32 a, SimdFIBool m)
+ {
++#if GMX_SIMD_ARM_SVE_FIXED_VECTOR_LENGTH
+     svbool_t pg = svcmpeq_n_u32(svptrue_b32(), m.simdInternal_, 0);
+     return { svadd_n_s32_z(pg, a.simdInternal_, 0) };
++#else
++    svbool_t pg = svptrue_b32();
++    return { svadd_n_s32_z(sveor_b_z(pg, m.simdInternal_, pg), a.simdInternal_, 0.0f) };
++#endif
+ }
+ 
+ static inline SimdFInt32 gmx_simdcall blend(SimdFInt32 a, SimdFInt32 b, SimdFIBool sel)
+ {
++#if GMX_SIMD_ARM_SVE_FIXED_VECTOR_LENGTH
+     svbool_t pg = svcmpne_n_u32(svptrue_b32(), sel.simdInternal_, 0);
+     return { svsel_s32(pg, b.simdInternal_, a.simdInternal_) };
++#else
++    return { svsel_s32(sel.simdInternal_, b.simdInternal_, a.simdInternal_) };
++#endif
+ }
+ 
+ static inline SimdFInt32 gmx_simdcall cvtR2I(SimdFloat a)
+-- 
+1.8.3.1
+
+From 85d33c1dd20b07c0a62ab3f8a7ebe93af31279b3 Mon Sep 17 00:00:00 2001
+From: Gilles Gouaillardet <gilles@rist.or.jp>
+Date: Tue, 25 Feb 2020 09:35:56 +0900
+Subject: [PATCH 5/5] do not inline copy_rvecn() on ARMv8+sve platforms
+
+to workaround a bug with clang based compilers on arm+sve
+---
+ src/gromacs/math/vec.h | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/src/gromacs/math/vec.h b/src/gromacs/math/vec.h
+index ec8b3e1..bc0befb 100644
+--- a/src/gromacs/math/vec.h
++++ b/src/gromacs/math/vec.h
+@@ -223,7 +223,15 @@ static inline void copy_dvec_to_rvec(const dvec a, rvec b)
+     b[ZZ] = static_cast<real>(a[ZZ]);
+ }
+ 
+-static inline void copy_rvecn(const rvec* a, rvec* b, int startn, int endn)
++#if defined(__ARM_FEATURE_SVE) && defined(__clang__)
++/* work around a bug in LLVM based compilers that causes bad code
++   to be generated when inlining this function on ARMv8+SVE arch */
++__attribute__((noinline))
++#else
++inline
++#endif
++static void
++copy_rvecn(const rvec* a, rvec* b, int startn, int endn)
+ {
+     int i;
+     for (i = startn; i < endn; i++)
+-- 
+1.8.3.1
+
