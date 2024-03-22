@@ -331,9 +331,9 @@ fi
 arch=$(arch)
 case $arch in
     "aarch64")
-        SPACK_PYTHON=/vol0003/rccs-sdt/a01036/data/Spack/v0.21/spack/opt/spack/linux-rhel8-a64fx/fj-4.10.0/python-3.11.6-qbmpmn2uxu4oe3qoawxbizp7awqlgkcq/bin/python;;
+        SPACK_PYTHON=/vol0004/apps/oss/spack-v0.21/opt/spack/linux-rhel8-a64fx/fj-4.10.0/python-3.11.6-qbmpmn2uxu4oe3qoawxbizp7awqlgkcq/bin/python;;
     "x86_64")
-        SPACK_PYTHON=/vol0003/rccs-sdt/a01036/data/Spack/v0.21/spack/opt/spack/linux-rhel8-cascadelake/gcc-13.2.0/python-3.11.6-yjlixq5gurvspzwveq6tfrqonplxu7m3/bin/python;;
+        SPACK_PYTHON=/vol0004/apps/oss/spack-v0.21/opt/spack/linux-rhel8-cascadelake/gcc-13.2.0/python-3.11.6-yjlixq5gurvspzwveq6tfrqonplxu7m3/bin/python;;
     *)
         SPACK_PYTHON=""
 esac
@@ -408,7 +408,6 @@ fi
 unset _sp_initializing
 export _sp_initializing
 
-
-export SPACK_USER_CONFIG_PATH=${SPACK_ROOT}/tmp/user_config
-export SPACK_USER_CACHE_PATH=${SPACK_ROOT}/tmp/user_cache
+# export SPACK_USER_CONFIG_PATH=${SPACK_ROOT}/tmp/user_config
+# export SPACK_USER_CACHE_PATH=${SPACK_ROOT}/tmp/user_cache
 
