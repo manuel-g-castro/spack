@@ -21,7 +21,8 @@ class Openfdtd(MakefilePackage):
     # version("2.6.3", sha256="1551cce7f96c1c53ad5d5e676bce2b26fd1593dd5f492a801e976a8a65a42a00")
     # version("2.6.0", sha256="92f7b92dc55ff6d8fc8c31eda77ca10fe25a5f54b002f2523a3d67f485d77e9f")
     # version("2.3.0", sha256="10ac70f2ed7160da87dd9222a5a17ca7b72365ee886235359afc48c4fb7b4be4")
-    version("3.1.1", sha256="e07128d99a2106e87c9e6d79fd8060960796ee8eb5621cab5d841bf36653069b")
+    version("3.1.1", sha256="e07128d99a2106e87c9e6d79fd8060960796ee8eb5621cab5d841bf36653069b",
+            url="http://emoss.starfree.jp/OpenFDTD/old/OpenFDTD_311.zip")
     version("3.1.0", sha256="a92140eae2e9f42e591bd700809610cafae8a45939275cd1b36047548783fc63",
             url="http://emoss.starfree.jp/OpenFDTD/old/OpenFDTD_310.zip")
     version("3.0.1", sha256="7914aa90e358824d7bb3b0d13c1f3e8468ed2eb5b045a206321906f0cec2dffe",
