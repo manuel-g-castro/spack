@@ -19,6 +19,9 @@ class Genesis(AutotoolsPackage, CudaPackage):
 
     version("master", branch="master")
     version(
+        "2.1.2",tag='v2.1.2',
+    )
+    version(
         "2.1.1",tag='v2.1.1',
     )
     version(
