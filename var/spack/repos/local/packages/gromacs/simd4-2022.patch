@@ -1,0 +1,31 @@
+diff -ruN orig/gromacs-2022/src/gromacs/simd/impl_arm_sve/impl_arm_sve_simd4_double.h spack-src/src/gromacs/simd/impl_arm_sve/impl_arm_sve_simd4_double.h
+--- orig/gromacs-2022/src/gromacs/simd/impl_arm_sve/impl_arm_sve_simd4_double.h	2024-01-22 16:31:24.024501373 +0900
++++ gromacs-2022/src/gromacs/simd/impl_arm_sve/impl_arm_sve_simd4_double.h	2024-01-22 16:34:01.794164514 +0900
+@@ -89,13 +89,6 @@
+ 
+     simdInternalType_ simdInternal_;
+ };
+-
+-static inline Simd4Double gmx_simdcall load4(const double* m)
+-{
+-    assert(std::size_t(m) % 32 == 0);
+-    svbool_t pg = SVE_SIMD4_DOUBLE_MASK;
+-    return { svld1_f64(pg, m) };
+-}
+ #else
+ typedef __sizeless_struct Simd4Double
+ {
+@@ -131,6 +124,13 @@
+ 
+ #endif
+ 
++static inline Simd4Double gmx_simdcall load4(const double* m)
++{
++    assert(std::size_t(m) % 32 == 0);
++    svbool_t pg = SVE_SIMD4_DOUBLE_MASK;
++    return { svld1_f64(pg, m) };
++}
++
+ static inline void gmx_simdcall store4(double* m, Simd4Double a)
+ {
+     assert(std::size_t(m) % 32 == 0);

@@ -28,6 +28,10 @@ class Gromacs(CMakePackage):
 
     version("main", branch="main")
     version("master", branch="main", deprecated=True)
+    version("2024.1", sha256="937d8f12a36fffbf2af7add71adbb5aa5c5537892d46c9a76afbecab1aa0aac7")
+    version("2024", sha256="04d226d52066a8bc3a42e00d6213de737b4ec292e26703065924ff01956801e2")
+    version("2023.4", sha256="e5d6c4d9e7ccacfaccb0888619bd21b5ea8911f82b410e68d6db5d40f695f231")
+    version("2023.3", sha256="4ec8f8d0c7af76b13f8fd16db8e2c120e749de439ae9554d9f653f812d78d1cb")
     version("2023.2", sha256="bce1480727e4b2bb900413b75d99a3266f3507877da4f5b2d491df798f9fcdae")
     version("2023.1", sha256="eef2bb4a6cb6314cf9da47f26df2a0d27af4bf7b3099723d43601073ab0a42f4")
     version("2022.4", sha256="c511be602ff29402065b50906841def98752639b92a95f1b0a1060d9b5e27297")
@@ -271,6 +275,7 @@ class Gromacs(CMakePackage):
     patch("pme_simd-2022.patch", when="@2022:2022.99")
     patch("pme_spread-2022.patch", when="@2022:2022.99")
     patch("pmswp-2022.patch", when="@2022:2022.99 +opts")
+    patch("simd4-2022.patch", when="@2022:2022.99 +opts")
     patch("tune_pme-2022.patch", when="@2022:2022.99 ^fujitsu-mpi")
 
     patch("sve-2023.patch", when="@2023:2023.99 +sve")
@@ -280,7 +285,17 @@ class Gromacs(CMakePackage):
     patch("tune_pme-2023.patch", when="@2023:2023.99 ^fujitsu-mpi")
     patch("tune_pme-2023.patch", when="@2023:2023.99 ^fj-mpi")
     patch("pmswp-2023.patch", when="@2023:2023.99")
-    patch("std_filesystem_equivalent.patch", when="@2023.2:2023.99")
+    patch("std_filesystem_equivalent.patch", when="@2023.2:2023.2")
+    patch("std_filesystem_equivalent-2.patch", when="@2023.3:2023.99")
+
+    patch("sve-2024.patch", when="@2024:2024.99 +sve")
+    patch("external-kernels-2024.patch", when="@2024:2024.99")
+    patch("pme_simd-2024.patch", when="@2024:2024.99")
+    patch("pme_spread-2024.patch", when="@2024:2024.99")
+    patch("tune_pme-2024.patch", when="@2024:2024.99 ^fujitsu-mpi")
+    patch("tune_pme-2024.patch", when="@2024:2024.99 ^fj-mpi")
+    patch("pmswp-2024.patch", when="@2024:2024.99")
+    patch("std_filesystem_equivalent-2024.patch", when="@2024:2024.99")
 
     filter_compiler_wrappers(
         "*.cmake", relative_root=os.path.join("share", "cmake", "gromacs_mpi")
@@ -559,6 +574,8 @@ class Gromacs(CMakePackage):
         if self.spec.variants["simd-kernels"].value != "builtin":
             options.append("-DGMX_2XMM_USER={0}".format(self.spec.variants["simd-kernels"].value+"/libsimd_2xmm"+suffix+".a"))
             options.append("-DGMX_4XM_USER={0}".format(self.spec.variants["simd-kernels"].value+"/libsimd_4xm"+suffix+".a"))
+            if self.spec.satisfies('@2024:'):
+                options.append("-DGMX_NBNXM_USER={0}".format(self.spec.variants["simd-kernels"].value+"/libsimd_nbnxm"+suffix+".a"))
 
         if self.spec.variants["fft-kernel"].value != "builtin":
             options.append("-DGMX_FFT_USER={0}".format(self.spec.variants["fft-kernel"].value+"/libfft"+suffix+".a"))
