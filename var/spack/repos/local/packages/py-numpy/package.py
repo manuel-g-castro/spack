@@ -86,8 +86,8 @@ class PyNumpy(PythonPackage):
     version("1.14.6", sha256="1250edf6f6c43e1d7823f0967416bc18258bb271dc536298eb0ea00a9e45b80a")
     version("1.14.5", sha256="a4a433b3a264dbc9aa9c7c241e87c0358a503ea6394f8737df1683c7c9a102ac")
 
-    variant("blas", default=True, description="Build with BLAS support")
-    variant("lapack", default=True, description="Build with LAPACK support")
+    # variant("blas", default=True, description="Build with BLAS support")
+    # variant("lapack", default=True, description="Build with LAPACK support")
 
     depends_on("python@3.9:3.12", when="@1.26:", type=("build", "link", "run"))
     depends_on("python@3.9:3.11", when="@1.25", type=("build", "link", "run"))
