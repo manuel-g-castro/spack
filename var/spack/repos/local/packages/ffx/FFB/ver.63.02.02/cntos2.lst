@@ -1,0 +1,656 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:53:32 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : cntos2.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "CNTOS2"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE CNTOS2(IPART,NPART,N2,NE,NP,MFRM,MBPDOM,MDOM,
+          2                          *                  MCOMM,
+          3                          *                  NPSET,LPSET1,LPSET4,
+          4                          *                  NESET,LESET1,LESET4,
+          5                          *                  X,Y,Z,NODE,
+          6                          *                  OMEGA,TIME,IPATTR,IEATTR,IFATTR,
+          7                          *                  NFRMS,LFRMS,NFRMR,LFRMR,
+          8                          *                  MMRF,OMGMRF,AMRF,BNDBOX,OSBOXG,
+          9                          *                  IUT6,IUT0,IERR)
+         10                           IMPLICIT NONE
+         11                     C
+         12                     C[INPUT]
+         13                           INTEGER*4 IPART,N2,NPART,NE,NP,MFRM,NODE(N2,NE),IUT6,IUT0
+         14                           INTEGER*4 MCOMM,MCOMMS,MCOMMR
+         15                           INTEGER*4 NPSET,LPSET1(NPSET),LPSET4(NPSET)
+         16                           INTEGER*4 NESET,LESET1(NESET),LESET4(NESET)
+         17                           INTEGER*4 IPATTR(NP),IEATTR(NE),IFATTR(*)
+         18                           INTEGER*4 NFRMS(NPART),LFRMS(MFRM,NPART),
+         19                          *          NFRMR(NPART),LFRMR(MFRM,NPART)
+         20                           REAL*4    X(NP),Y(NP),Z(NP),OMEGA,TIME,
+         21                          *          BNDBOX(6,NPART),OSBOXG(6,NPART)
+         22                           INTEGER*4 MMRF
+         23                           REAL*4    OMGMRF(MMRF),AMRF(3,MMRF)
+         24                     C
+         25                     C[OUTPUT]
+         26                           INTEGER*4 MBPDOM,MDOM,IERR
+         27                     C
+         28                     C[LOCAL]
+         29                           INTEGER*4 NDOMS,NDOMR
+         30                           INTEGER*4 LDOMS(NPART),LDOMR(NPART),LWRK(NPART)
+         31                           INTEGER*4 NBDOMS(NPART),NBDOMR(NPART)
+         32                           INTEGER*4 JPART,I,J,IFRM,JFRM,IP,IE,IBP,IBE,INEW
+         33                           INTEGER*4 NUM1,IERRA,ICHECK
+         34                           INTEGER*4 IP1,IP2,IP3,IP4,IP5,IP6,IP7,IP8
+         35                           DATA NUM1 /1/
+         36                           REAL*4    XBUF0,YBUF0,ZBUF0
+         37                           REAL*4    XBUF ,YBUF ,ZBUF
+         38                           REAL*4    TH,COSTH,SINTH
+         39                           REAL*4 O1,O2,C0,S0,C1,S1,C2,S2,AX,AY
+         40                           REAL*4 UBUF,VBUF,WBUF
+         41                           REAL*4 UR3,VR3,WR3
+         42                           REAL*4 XR1,YR1,ZR1
+         43                           REAL*4 XR2,YR2,ZR2
+         44                     C
+         45                     C
+         46                     C     VERSION 2011.07.15 WRITTEN BY Y.YAMADE
+         47                     C
+         48                     C     ARGUMENT LIST
+         49                     C
+         50                     C[INPUT]
+         51                     C IPART          : DOMAIN NUMBER (1 - NPART)
+         52                     C NPART          : NUMBER OF DOMAINS
+         53                     C NE             : NUMBER OF ELEMENTS
+         54                     C NP             : NUMBER OF NODES
+         55                     C MFRM           : MAX. NUMBER OF FRAMES
+         56                     C MBPDOM         : MAX. NUMBER OF O.S. NODES FOR A DOMAIN
+         57                     C MDOM           : MAX. NUMBER OF DOMAIN TO BE COMMUNICATED
+         58                     C NPSET          : NUMBER OF OVERSET NOUSES
+         59                     C LPSET1(IBP)    : OVERSET NODES LIST
+         60                     C NFRMS(  IPART) : NUMBER OF FRAMES FOR SENDING   IN THE DOMAIN OF IPART
+         61                     C LFRMS(I,IPART) : FRAME LIST       FOR SENDING   IN THE DOMAIN OF IPART
+         62                     C NFRMR(  IPART) : NUMBER OF FRAMES FOR RECEIVING IN THE DOMAIN OF IPART
+         63                     C LFRMR(I,IPART) : FRAME LST        FOR RECEIVING IN THE DOMAIN OF IPART
+         64                     C X(IP)      : X COORDINATE
+         65                     C Y(IP)      : Y COORDINATE
+         66                     C Z(IP)      : Z COORDINATE
+         67                     C
+         68                     C[OUTPUT]
+         69                     C MBPDOM         : MAX. NUMBER OF O.S. NODES FOR A DOMAIN
+         70                     C MDOM           : MAX. NUMBER OF DOMAIN TO BE COMMUNICATED
+         71                     C MCOMM          : SUMMATION OF COMUNICATION DATA
+         72                     C
+         73                     C
+         74                           IERR=0
+         75                           TH=OMEGA*TIME
+         76                           COSTH=COS(TH)
+         77                           SINTH=SIN(TH)
+         78                     C
+         79     1                     IF(IPART.EQ.0) THEN
+         80     1               C
+         81     1                         MBPDOM=NP
+         82     1                         MDOM  =1
+         83     1                         MBPDOM=NP
+         84     1                         MDOM  =1
+         85     2                         IF(NP.GT.NE) THEN
+         86     2                             MCOMM = NP
+         87     2                         ELSE
+         88     2                             MCOMM = NE
+         89     2                         ENDIF
+         90     1               C
+         91     1                         RETURN
+         92     1                     ENDIF
+         93                     CC
+         94                     CCYY
+         95                     CCYY[1] SEARCH DOMAIN FOR SENDING AND RECEIVING
+         96                     CCYY
+         97                           NDOMS=0
+         98                           NDOMR=0
+         99                           MBPDOM=0
+        100                           MDOM  =0
+        101                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1455
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NBDOMR, NBDOMS
+                              <<< Loop-information  End >>>
+        102     1  pp   2v            DO 500 I=1,NPART
+        103     1   p   2v                NBDOMS(I)=0
+        104     1   p   2v                NBDOMR(I)=0
+        105     1   p   2v        500 CONTINUE
+        106                     C
+        107     1                     DO 1000 JPART=1,NPART
+        108     1               CC
+        109     1               CC BOUNDING BOX FILTERING
+        110     1               CC
+        111     1                         ICHECK=1
+        112     1                         CALL CHKBOX(OSBOXG(1,IPART),BNDBOX(1,JPART),ICHECK)
+        113     1                         IF(ICHECK.EQ.0) GOTO 1000
+        114     1               CC
+        115     1               CC SEACH DOMAINS FOR SENDING
+        116     1               CC
+        117     1                        INEW=0
+        118     2                        DO 1100 I=1,NFRMS(IPART)
+        119     2                             IFRM=LFRMS(I,IPART)
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LFRMR
+                              <<< Loop-information  End >>>
+        120     3                             DO 1110 J=1,NFRMR(JPART)
+        121     3                                 JFRM=LFRMR(J,JPART)
+        122     3                                 IF(IFRM.NE.JFRM) GOTO 1110
+        123     4                                 IF(INEW.EQ.0) THEN
+        124     4                                     NDOMS=NDOMS+1
+        125     4                                     LDOMS(NDOMS)=JPART
+        126     4                                     INEW=1
+        127     4                                 ENDIF
+        128     3               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 12
+                              <<< Loop-information  End >>>
+        129     4  pp    s                        DO 1120 IBP=1,NPSET
+        130     4   p    v                            IP=LPSET1(IBP)
+        131     4   p    v                            IF(LPSET4(IBP).NE.IFRM) GOTO 1120
+        132     4               C
+        133     4               C
+        134     4   p    v                            XBUF=X(IP)
+        135     4   p    s                            YBUF=Y(IP)
+        136     4   p    m                            ZBUF=Z(IP)
+        137     4               C
+        138     4   p    m                            O1=OMEGA
+        139     5   p    m                            IF(IPATTR(IP).GE.0) THEN
+        140     5   p    m                                O2=0.0
+        141     5   p    m                                AX=1.0
+        142     5   p    m                                AY=0.0
+        143     5   p                                 ELSE
+        144     5   p    m                                O2=OMGMRF(-IPATTR(IP))
+        145     5   p    m                                AX=AMRF(1,-IPATTR(IP))
+        146     5   p    s                                AY=AMRF(2,-IPATTR(IP))
+        147     5   p                                 ENDIF
+        148     4   p    m                            C0=AX/SQRT(AX*AX+AY*AY)
+        149     4   p    s                            S0=AY/SQRT(AX*AX+AY*AY)
+        150     4   p    m                            C1  = COS(O1*TIME)
+        151     4   p    m                            S1  = SIN(O1*TIME)
+        152     4   p    m                            C2  = COS(O2*TIME)
+        153     4   p    s                            S2  = SIN(O2*TIME)
+        154     4               C
+        155     5   p    m                            IF(IPATTR(IP)         .GE. 0  .AND.
+        156     5                    *                   IFATTR(LPSET4(IBP)).EQ.-1       )THEN
+        157     5               CC                    [ROTATE COORDINATES AROUND Z-AXIS WITH THE ANGLE -A1]
+        158     5   p    m                               XBUF= C1*X(IP)+S1*Y(IP)
+        159     5   p    m                               YBUF=-S1*X(IP)+C1*Y(IP)
+        160     5   p                                 ENDIF
+        161     4               C
+        162     5   p    m                            IF(IPATTR(IP)         .EQ.-1  .AND.
+        163     5                    *                   IFATTR(LPSET4(IBP)).GE. 0       )THEN
+        164     5               CC                    [ROTATE COORDINATES AROUND Z-AXIS WITH THE ANGLE A1]
+        165     5   p    m                               XBUF=C1*X(IP)-S1*Y(IP)
+        166     5   p    m                               YBUF=S1*X(IP)+C1*Y(IP)
+        167     5   p                                 ENDIF
+        168     4               C
+        169     5   p    m                            IF(IPATTR(IP)         .LT.-1  .AND.
+        170     5                    *                   IFATTR(LPSET4(IBP)).EQ.-1       )THEN
+        171     5               CC                    [ROTATE COORDINATES AROUND Z-AXIS WITH THE ANGLE A0]
+        172     5   p    s                                XR1 = C0*X(IP)+S0*Y(IP)
+        173     5   p    m                                YR1 =-S0*X(IP)+C0*Y(IP)
+        174     5   p    s                                ZR1 =    Z(IP)
+        175     5               CC                    [ROTATE COORDINATES AROUND X-AXIS WITH THE ANGLE A2]
+        176     5   p    s                                XR2 = XR1
+        177     5   p    s                                YR2 = C2*YR1-S2*ZR1
+        178     5   p    s                                ZR2 = S2*YR1+C2*ZR1
+        179     5               CC                    [ROTATE COORDINATES AROUND Z-AXIS WITH THE ANGLE -A0]
+        180     5   p    s                                XBUF= C0*XR2-S0*YR2
+        181     5   p    s                                YBUF= S0*XR2+C0*YR2
+        182     5   p    m                                ZBUF=    ZR2
+        183     5   p                                 ENDIF
+        184     4               C
+        185     5   p    m                            IF(IPATTR(IP)         .EQ.-1  .AND.
+        186     5                    *                   IFATTR(LPSET4(IBP)).LT.-1       )THEN
+        187     5   p    m                                O2=OMGMRF(-IFATTR(LPSET4(IBP)))
+        188     5   p    v                                AX=AMRF(1,-IFATTR(LPSET4(IBP)))
+        189     5   p    v                                AY=AMRF(2,-IFATTR(LPSET4(IBP)))
+        190     5   p    v                                C0=AX/SQRT(AX*AX+AY*AY)
+        191     5   p    v                                S0=AY/SQRT(AX*AX+AY*AY)
+        192     5   p    v                                C1  = COS(O1*TIME)
+        193     5   p    v                                S1  = SIN(O1*TIME)
+        194     5   p    v                                C2  = COS(O2*TIME)
+        195     5   p    s                                S2  = SIN(O2*TIME)
+        196     5               C                    [ROTATE COORDINATES AROUND Z-AXIS WITH THE ANGLE A0]
+        197     5   p    s                                XR1 = C0*X(IP)+S0*Y(IP)
+        198     5   p    m                                YR1 =-S0*X(IP)+C0*Y(IP)
+        199     5   p    s                                ZR1 =    Z(IP)
+        200     5               C                    [ROTATE COORDINATES AROUND X-AXIS WITH THE ANGLE -A2]
+        201     5   p    s                                XR2 = XR1
+        202     5   p    s                                YR2 = C2*YR1+S2*ZR1
+        203     5   p    s                                ZR2 =-S2*YR1+C2*ZR1
+        204     5               C                    [ROTATE COORDINATES AROUND Z-AXIS WITH THE ANGLE -A0]
+        205     5   p    s                                XBUF= C0*XR2-S0*YR2
+        206     5   p    s                                YBUF= S0*XR2+C0*YR2
+        207     5   p    m                                ZBUF=    ZR2
+        208     5   p    v                            ENDIF
+        209     4               C
+        210     4   p    m                            IF(XBUF.LT.BNDBOX(1,JPART)) GOTO 1120
+        211     4   p    m                            IF(YBUF.LT.BNDBOX(2,JPART)) GOTO 1120
+        212     4   p    m                            IF(ZBUF.LT.BNDBOX(3,JPART)) GOTO 1120
+        213     4   p    m                            IF(XBUF.GT.BNDBOX(4,JPART)) GOTO 1120
+        214     4   p    m                            IF(YBUF.GT.BNDBOX(5,JPART)) GOTO 1120
+        215     4   p    m                            IF(ZBUF.GT.BNDBOX(6,JPART)) GOTO 1120
+        216     4               C
+        217     4   p    v                            NBDOMS(NDOMS)=NBDOMS(NDOMS)+1
+        218     4               C
+        219     4   p    v       1120             CONTINUE
+        220     3               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LESET1, LESET4
+                              <<< Loop-information  End >>>
+        221     4   s    s                        DO 1130 IBE=1,NESET
+        222     4   p    v                            IE=LESET1(IBE)
+        223     4   p    v                            IF(LESET4(IBE).NE.IFRM) GOTO 1130
+        224     4               C
+        225     4   p    v                            IP1=NODE(1,IE)
+        226     4   p    v                            IP2=NODE(2,IE)
+        227     4   p    v                            IP3=NODE(3,IE)
+        228     4   p    v                            IP4=NODE(4,IE)
+        229     4   p    v                            IP5=NODE(5,IE)
+        230     4   p    v                            IP6=NODE(6,IE)
+        231     4   p    v                            IP7=NODE(7,IE)
+        232     4   p    v                            IP8=NODE(8,IE)
+        233     5   p    v                            IF(IP8.NE.0) THEN
+        234     5   m    m                                XBUF0=( X(IP1)+X(IP2)+X(IP3)+X(IP4)
+        235     5                    *                           +X(IP5)+X(IP6)+X(IP7)+X(IP8))/8.0E0
+        236     5   m    m                                YBUF0=( Y(IP1)+Y(IP2)+Y(IP3)+Y(IP4)
+        237     5                    *                           +Y(IP5)+Y(IP6)+Y(IP7)+Y(IP8))/8.0E0
+        238     5   m    m                                ZBUF0=( Z(IP1)+Z(IP2)+Z(IP3)+Z(IP4)
+        239     5                    *                           +Z(IP5)+Z(IP6)+Z(IP7)+Z(IP8))/8.0E0
+        240     5   p    v                            ELSE IF(IP6.NE.0) THEN
+        241     5   m    m                                XBUF0=( X(IP1)+X(IP2)+X(IP3)+X(IP4)
+        242     5                    *                           +X(IP5)+X(IP6)              )/6.0E0
+        243     5   m    m                                YBUF0=( Y(IP1)+Y(IP2)+Y(IP3)+Y(IP4)
+        244     5                    *                           +Y(IP5)+Y(IP6)              )/6.0E0
+        245     5   m    m                                ZBUF0=( Z(IP1)+Z(IP2)+Z(IP3)+Z(IP4)
+        246     5                    *                           +Z(IP5)+Z(IP6)              )/6.0E0
+        247     5   p    v                            ELSE IF(IP5.NE.0) THEN
+        248     5   m    m                                XBUF0=( X(IP1)+X(IP2)+X(IP3)+X(IP4)
+        249     5                    *                           +X(IP5)                     )/5.0E0
+        250     5   m    m                                YBUF0=( Y(IP1)+Y(IP2)+Y(IP3)+Y(IP4)
+        251     5                    *                           +Y(IP5)                     )/5.0E0
+        252     5   m    m                                ZBUF0=( Z(IP1)+Z(IP2)+Z(IP3)+Z(IP4)
+        253     5                    *                           +Z(IP5)                     )/5.0E0
+        254     5   p    v                            ELSE IF(NODE(4,IE).NE.0) THEN
+        255     5   m    m                                XBUF0=( X(IP1)+X(IP2)+X(IP3)+X(IP4))/4.0E0
+        256     5   m    m                                YBUF0=( Y(IP1)+Y(IP2)+Y(IP3)+Y(IP4))/4.0E0
+        257     5   m    m                                ZBUF0=( Z(IP1)+Z(IP2)+Z(IP3)+Z(IP4))/4.0E0
+        258     5   p    v                            ENDIF
+        259     4               C
+        260     4   s    s                            XBUF=XBUF0
+        261     4   s    s                            YBUF=YBUF0
+        262     4   s    s                            ZBUF=ZBUF0
+        263     4               C
+        264     4   p    v                            O1=OMEGA
+        265     5   p    v                            IF(IEATTR(IE).GE.0) THEN
+        266     5   p    v                                O2=0.0
+        267     5   p    v                                AX=1.0
+        268     5   p    v                                AY=0.0
+        269     5   p    v                            ELSE
+        270     5   p    v                                O2=OMGMRF(-IEATTR(IE))
+        271     5   p    v                                AX=AMRF(1,-IEATTR(IE))
+        272     5   p    v                                AY=AMRF(2,-IEATTR(IE))
+        273     5   p    v                            ENDIF
+        274     4   p    v                            C0=AX/SQRT(AX*AX+AY*AY)
+        275     4   p    v                            S0=AY/SQRT(AX*AX+AY*AY)
+        276     4   p    v                            C1  = COS(O1*TIME)
+        277     4   p    v                            S1  = SIN(O1*TIME)
+        278     4   p    v                            C2  = COS(O2*TIME)
+        279     4   p    v                            S2  = SIN(O2*TIME)
+        280     4               C
+        281     5   p    v                            IF(IEATTR(IE)         .GE. 0  .AND.
+        282     5                    *                   IFATTR(LESET4(IBE)).EQ.-1       )THEN
+        283     5               CC                    [ROTATE COORDINATES AROUND Z-AXIS WITH THE ANGLE -A1]
+        284     5   m    m                               XBUF= C1*XBUF0+S1*YBUF0
+        285     5   m    m                               YBUF=-S1*XBUF0+C1*YBUF0
+        286     5   p    v                            ENDIF
+        287     4               C
+        288     5   p    v                            IF(IEATTR(IE)         .EQ.-1  .AND.
+        289     5                    *                   IFATTR(LESET4(IBE)).GE. 0       )THEN
+        290     5               CC                    [ROTATE COORDINATES AROUND Z-AXIS WITH THE ANGLE A1]
+        291     5   m    m                               XBUF=C1*XBUF0-S1*YBUF0
+        292     5   m    m                               YBUF=S1*XBUF0+C1*YBUF0
+        293     5   p    v                            ENDIF
+        294     4               C
+        295     5   p    v                            IF(IEATTR(IE)         .LT.-1  .AND.
+        296     5                    *                   IFATTR(LESET4(IBE)).EQ.-1       )THEN
+        297     5               CC                    [ROTATE COORDINATES AROUND Z-AXIS WITH THE ANGLE A0]
+        298     5   m    m                                XR1 = C0*XBUF0+S0*YBUF0
+        299     5   m    m                                YR1 =-S0*XBUF0+C0*YBUF0
+        300     5   p    v                                ZR1 =    ZBUF0
+        301     5               CC                    [ROTATE COORDINATES AROUND X-AXIS WITH THE ANGLE A2]
+        302     5   p    v                                XR2 = XR1
+        303     5   m    m                                YR2 = C2*YR1-S2*ZR1
+        304     5   m    m                                ZR2 = S2*YR1+C2*ZR1
+        305     5               CC                    [ROTATE COORDINATES AROUND Z-AXIS WITH THE ANGLE -A0]
+        306     5   p    v                                XBUF= C0*XR2-S0*YR2
+        307     5   p    v                                YBUF= S0*XR2+C0*YR2
+        308     5   p    v                                ZBUF=    ZR2
+        309     5   p    v                            ENDIF
+        310     4               C
+        311     5   p    v                            IF(IEATTR(IE)         .EQ.-1  .AND.
+        312     5                    *                   IFATTR(LESET4(IBE)).LT.-1       )THEN
+        313     5   p    v                                O2=OMGMRF(-IFATTR(LESET4(IBE)))
+        314     5   p    v                                AX=AMRF(1,-IFATTR(LESET4(IBE)))
+        315     5   p    v                                AY=AMRF(2,-IFATTR(LESET4(IBE)))
+        316     5   p    v                                C0=AX/SQRT(AX*AX+AY*AY)
+        317     5   p    v                                S0=AY/SQRT(AX*AX+AY*AY)
+        318     5   p    v                                C1  = COS(O1*TIME)
+        319     5   p    v                                S1  = SIN(O1*TIME)
+        320     5   p    v                                C2  = COS(O2*TIME)
+        321     5   s    s                                S2  = SIN(O2*TIME)
+        322     5               C                    [ROTATE COORDINATES AROUND Z-AXIS WITH THE ANGLE A0]
+        323     5   m    m                                XR1 = C0*XBUF0+S0*YBUF0
+        324     5   m    m                                YR1 =-S0*XBUF0+C0*YBUF0
+        325     5   p    v                                ZR1 =    ZBUF0
+        326     5               C                    [ROTATE COORDINATES AROUND X-AXIS WITH THE ANGLE -A2]
+        327     5   p    v                                XR2 = XR1
+        328     5   m    m                                YR2 = C2*YR1+S2*ZR1
+        329     5   m    m                                ZR2 =-S2*YR1+C2*ZR1
+        330     5               C                    [ROTATE COORDINATES AROUND Z-AXIS WITH THE ANGLE -A0]
+        331     5   p    v                                XBUF= C0*XR2-S0*YR2
+        332     5   p    v                                YBUF= S0*XR2+C0*YR2
+        333     5   p    v                                ZBUF=    ZR2
+        334     5   p    v                            ENDIF
+        335     4               C
+        336     4   p    v                            IF(XBUF.LT.BNDBOX(1,JPART)) GOTO 1130
+        337     4   p    v                            IF(YBUF.LT.BNDBOX(2,JPART)) GOTO 1130
+        338     4   p    v                            IF(ZBUF.LT.BNDBOX(3,JPART)) GOTO 1130
+        339     4   p    v                            IF(XBUF.GT.BNDBOX(4,JPART)) GOTO 1130
+        340     4   p    v                            IF(YBUF.GT.BNDBOX(5,JPART)) GOTO 1130
+        341     4   p    v                            IF(ZBUF.GT.BNDBOX(6,JPART)) GOTO 1130
+        342     4               C
+        343     4   p    v                            NBDOMS(NDOMS)=NBDOMS(NDOMS)+1
+        344     4               C
+        345     4   p    v       1130             CONTINUE
+        346     3               C
+        347     3                                 GOTO 1100
+        348     3               C
+        349     3                1110         CONTINUE
+        350     2                1100     CONTINUE
+        351     1                1000 CONTINUE
+        352                     C
+        353                     C
+        354                     CC
+        355                     CC SEACH DOMAINS FOR RECEIVING
+        356                     CC
+        357     1                     DO 2000 JPART=1,NPART
+        358     1               C
+        359     1               CC
+        360     1               CC BOUNDING BOX FILTERING
+        361     1               CC
+        362     1                         ICHECK=1
+        363     1                         CALL CHKBOX(OSBOXG(1,JPART),BNDBOX(1,IPART),ICHECK)
+        364     1                         IF(ICHECK.EQ.0) GOTO 2000
+        365     1               C
+        366     1                         INEW=0
+        367     2                         DO 2100 I=1,NFRMR(IPART)
+        368     2                             IFRM=LFRMR(I,IPART)
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LFRMS
+                              <<< Loop-information  End >>>
+        369     3                             DO 2110 J=1,NFRMS(JPART)
+        370     3                                 JFRM=LFRMS(J,JPART)
+        371     3                                 IF(IFRM.NE.JFRM) GOTO 2110
+        372     4                                 IF(INEW.EQ.0) THEN
+        373     4                                     NDOMR=NDOMR+1
+        374     4                                     LDOMR(NDOMR)=JPART
+        375     4                                     INEW=1
+        376     4                                 ENDIF
+        377     3                                 GOTO 2100
+        378     3                2110        CONTINUE
+        379     2                2100     CONTINUE
+        380     1               C
+        381     1                2000 CONTINUE
+        382                     C
+        383                      3000 CONTINUE
+        384                     C
+        385                     C
+        386                           CALL ERRCHK(IUT6,IPART,1,IERR,IERRA)
+        387     1                     IF(IERRA.NE.0) THEN
+        388     1                         IERR=1
+        389     1                         RETURN
+        390     1                     ENDIF
+        391                     CCYY
+        392                     CCYY[2] COMMUNICATE NUM. OF DATA ( NBDOMS --> NNDOMR )
+        393                     CCYY
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LWRK
+                              <<< Loop-information  End >>>
+        394     1  pp   4v            DO 4000 I=1,NPART
+        395     1   p   4v                LWRK(I)=1
+        396     1   p   4v       4000 CONTINUE
+        397                           CALL DDSET5(IPART,NUM1,
+        398                          *            NDOMS,LDOMS,LWRK,NBDOMS,
+        399                          *            NDOMR,LDOMR,LWRK,NBDOMR,IERR)
+        400                     C
+        401                     C
+        402     1                     IF(NDOMS.GT.NDOMR) THEN
+        403     1                         MDOM=NDOMS
+        404     1                     ELSE
+        405     1                         MDOM=NDOMR
+        406     1                     ENDIF
+        407                     C
+        408                           MBPDOM=0
+        409                     C
+        410                           MCOMMS=0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 762
+                              <<< Loop-information  End >>>
+        411     1  pp    s            DO 4100 I=1,NDOMS
+        412     1   p    m                IF(NBDOMS(I).GT.MBPDOM) MBPDOM=NBDOMS(I)
+        413     1   p    s                MCOMMS=MCOMMS+NBDOMS(I)
+        414     1   p    v       4100 CONTINUE
+        415                     C
+        416                           MCOMMR=0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 762
+                              <<< Loop-information  End >>>
+        417     1  pp    s            DO 4200 I=1,NDOMR
+        418     1   p    m                IF(NBDOMR(I).GT.MBPDOM) MBPDOM=NBDOMR(I)
+        419     1   p    s                MCOMMR=MCOMMR+NBDOMR(I)
+        420     1   p    v       4200 CONTINUE
+        421                     C
+        422     1                     IF(MCOMMS.GT.MCOMMR) THEN
+        423     1                         MCOMM=MCOMMS+1000
+        424     1                     ELSE
+        425     1                         MCOMM=MCOMMR+1000
+        426     1                     ENDIF
+        427                     C
+        428                     C     NOTE THAT  THIS IS FOR SELF-DOMAIN DATA
+        429                           MBPDOM=MBPDOM+1
+        430                     C
+        431                           WRITE(IUT6,*) ' '
+        432                           WRITE(IUT6,*) 'CNTOS2 MDOM,MBPDOM',MDOM,MBPDOM
+        433                     C
+        434                           RETURN
+        435                           END
+
+ Diagnostic messages: program name(CNTOS2)
+   jwd2008i-i  "cntos2.f", line 1: この仮引数'IUT0'は、副プログラム中で使用されていません。
+   jwd8220o-i  "cntos2.f", line 1: 副作用の可能性のある最適化を行いました。
+   jwd2006i-i  "cntos2.f", line 40: この名前'WBUF'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "cntos2.f", line 40: この名前'VBUF'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "cntos2.f", line 40: この名前'UBUF'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "cntos2.f", line 41: この名前'WR3'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "cntos2.f", line 41: この名前'VR3'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "cntos2.f", line 41: この名前'UR3'は、宣言だけされていて引用されていません。
+   jwd5001p-i  "cntos2.f", line 102: このDOループを並列化しました。(名前:I)
+   jwd6001s-i  "cntos2.f", line 102: このDOループをSIMD化しました。(名前:I)
+   jwd8663o-i  "cntos2.f", line 102: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "cntos2.f", line 102: ループを展開数2回でアンローリングしました。
+   jwd5122p-i  "cntos2.f", line 107: DOループ内に、自動並列化の制約となる手続引用が存在します。
+   jwd5202p-i  "cntos2.f", line 118: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:INEW)
+   jwd5202p-i  "cntos2.f", line 118: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:S2)
+   jwd5202p-i  "cntos2.f", line 118: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:C2)
+   jwd5202p-i  "cntos2.f", line 118: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:O2)
+   jwd5202p-i  "cntos2.f", line 118: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:ZBUF0)
+   jwd5202p-i  "cntos2.f", line 118: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:S1)
+   jwd5202p-i  "cntos2.f", line 118: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:C1)
+   jwd5202p-i  "cntos2.f", line 118: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:S0)
+   jwd5202p-i  "cntos2.f", line 118: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:C0)
+   jwd5202p-i  "cntos2.f", line 118: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:ZBUF)
+   jwd5202p-i  "cntos2.f", line 118: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:NDOMS)
+   jwd5202p-i  "cntos2.f", line 118: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:YBUF0)
+   jwd5202p-i  "cntos2.f", line 118: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:XBUF0)
+   jwd5202p-i  "cntos2.f", line 118: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:AY)
+   jwd5202p-i  "cntos2.f", line 118: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:AX)
+   jwd5202p-i  "cntos2.f", line 118: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:YBUF)
+   jwd5202p-i  "cntos2.f", line 118: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:XBUF)
+   jwd5208p-i  "cntos2.f", line 118: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:LDOMS)
+   jwd5208p-i  "cntos2.f", line 118: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:NBDOMS)
+   jwd5131p-i  "cntos2.f", line 120: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd6131s-i  "cntos2.f", line 120: ループ出口が2つ以上あるため、このDOループはSIMD化できません。
+   jwd8671o-i  "cntos2.f", line 120: ループの形状が最適化の対象外であるため、ソフトウェアパイプライニングを適用できません。
+   jwd5004p-i  "cntos2.f", line 129: リダクション演算を含むDOループを並列化しました。(名前:IBP)
+   jwd6229s-i  "cntos2.f", line 129: IF文が存在するため、このDOループのSIMD化を抑止しました。
+   jwd6228s-i  "cntos2.f", line 135: データの定義引用の順序が逐次実行と異なる可能性があるため、このDOループはSIMD化できません。
+   jwd6202s-i  "cntos2.f", line 136: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:YBUF)
+   jwd6202s-i  "cntos2.f", line 136: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:XBUF)
+   jwd6202s-i  "cntos2.f", line 136: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:ZBUF)
+   jwd6202s-i  "cntos2.f", line 140: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:O2)
+   jwd6202s-i  "cntos2.f", line 141: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:AX)
+   jwd6202s-i  "cntos2.f", line 142: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:AY)
+   jwd6202s-i  "cntos2.f", line 149: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:S0)
+   jwd6202s-i  "cntos2.f", line 149: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:C0)
+   jwd6202s-i  "cntos2.f", line 150: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:C1)
+   jwd6202s-i  "cntos2.f", line 151: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:S1)
+   jwd6202s-i  "cntos2.f", line 152: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:C2)
+   jwd6202s-i  "cntos2.f", line 153: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:S2)
+   jwd8209o-i  "cntos2.f", line 159: 多項式の演算順序を変更しました。
+   jwd8209o-i  "cntos2.f", line 173: 多項式の演算順序を変更しました。
+   jwd8209o-i  "cntos2.f", line 198: 多項式の演算順序を変更しました。
+   jwd8209o-i  "cntos2.f", line 203: 多項式の演算順序を変更しました。
+   jwd6229s-i  "cntos2.f", line 221: IF文が存在するため、このDOループのSIMD化を抑止しました。
+   jwd8670o-i  "cntos2.f", line 221: ループ内に分岐命令があるため、ソフトウェアパイプライニングを適用できません。
+   jwd8209o-i  "cntos2.f", line 234: 多項式の演算順序を変更しました。
+   jwd5202p-i  "cntos2.f", line 234: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:XBUF0)
+   jwd6202s-i  "cntos2.f", line 234: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:XBUF0)
+   jwd8209o-i  "cntos2.f", line 236: 多項式の演算順序を変更しました。
+   jwd5202p-i  "cntos2.f", line 236: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:YBUF0)
+   jwd6202s-i  "cntos2.f", line 236: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:YBUF0)
+   jwd8209o-i  "cntos2.f", line 238: 多項式の演算順序を変更しました。
+   jwd5202p-i  "cntos2.f", line 238: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:ZBUF0)
+   jwd6202s-i  "cntos2.f", line 238: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:ZBUF0)
+   jwd8206o-i  "cntos2.f", line 241: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "cntos2.f", line 241: 多項式の演算順序を変更しました。
+   jwd8206o-i  "cntos2.f", line 243: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "cntos2.f", line 243: 多項式の演算順序を変更しました。
+   jwd8206o-i  "cntos2.f", line 245: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "cntos2.f", line 245: 多項式の演算順序を変更しました。
+   jwd8206o-i  "cntos2.f", line 248: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "cntos2.f", line 248: 多項式の演算順序を変更しました。
+   jwd8206o-i  "cntos2.f", line 250: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "cntos2.f", line 250: 多項式の演算順序を変更しました。
+   jwd8206o-i  "cntos2.f", line 252: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "cntos2.f", line 252: 多項式の演算順序を変更しました。
+   jwd8209o-i  "cntos2.f", line 255: 多項式の演算順序を変更しました。
+   jwd8209o-i  "cntos2.f", line 256: 多項式の演算順序を変更しました。
+   jwd8209o-i  "cntos2.f", line 257: 多項式の演算順序を変更しました。
+   jwd8209o-i  "cntos2.f", line 285: 多項式の演算順序を変更しました。
+   jwd8209o-i  "cntos2.f", line 299: 多項式の演算順序を変更しました。
+   jwd8209o-i  "cntos2.f", line 324: 多項式の演算順序を変更しました。
+   jwd8209o-i  "cntos2.f", line 329: 多項式の演算順序を変更しました。
+   jwd5122p-i  "cntos2.f", line 357: DOループ内に、自動並列化の制約となる手続引用が存在します。
+   jwd5202p-i  "cntos2.f", line 367: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:INEW)
+   jwd5202p-i  "cntos2.f", line 367: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:NDOMR)
+   jwd5208p-i  "cntos2.f", line 367: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:LDOMR)
+   jwd5131p-i  "cntos2.f", line 369: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd6131s-i  "cntos2.f", line 369: ループ出口が2つ以上あるため、このDOループはSIMD化できません。
+   jwd8671o-i  "cntos2.f", line 369: ループの形状が最適化の対象外であるため、ソフトウェアパイプライニングを適用できません。
+   jwd5001p-i  "cntos2.f", line 394: このDOループを並列化しました。(名前:I)
+   jwd6001s-i  "cntos2.f", line 394: このDOループをSIMD化しました。(名前:I)
+   jwd8663o-i  "cntos2.f", line 394: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "cntos2.f", line 394: ループを展開数4回でアンローリングしました。
+   jwd5004p-i  "cntos2.f", line 411: リダクション演算を含むDOループを並列化しました。(名前:I)
+   jwd6229s-i  "cntos2.f", line 411: IF文が存在するため、このDOループのSIMD化を抑止しました。
+   jwd6228s-i  "cntos2.f", line 412: データの定義引用の順序が逐次実行と異なる可能性があるため、このDOループはSIMD化できません。
+   jwd5004p-i  "cntos2.f", line 417: リダクション演算を含むDOループを並列化しました。(名前:I)
+   jwd6229s-i  "cntos2.f", line 417: IF文が存在するため、このDOループのSIMD化を抑止しました。
+   jwd6228s-i  "cntos2.f", line 418: データの定義引用の順序が逐次実行と異なる可能性があるため、このDOループはSIMD化できません。
+
+ Procedure information
+   Lines      : 435
+   Statements : 288
+   Stack(byte): 69216
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 435
+   Total statements : 288
+   Total stack(byte): 69216
+   Total prefetch num: 0
+

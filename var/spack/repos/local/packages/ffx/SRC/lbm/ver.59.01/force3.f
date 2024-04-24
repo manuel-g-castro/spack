@@ -1,0 +1,24 @@
+      SUBROUTINE FORCE3(NC,LLEVEL,FXC,FYC,FZC,FX,FY,FZ)
+      IMPLICIT NONE
+      INTEGER*4 NC,LLEVEL(NC)
+      REAL*8    FXC(NC),FYC(NC),FZC(NC)
+      REAL*4    FX,FY,FZ
+C
+      INTEGER*4 IC
+      REAL*4    COEF
+C
+      FX=0.0E0
+      FY=0.0E0
+      FZ=0.0E0
+C
+      DO 1000 IC=1,NC
+          COEF=2.0**(LLEVEL(IC)-1)
+          COEF=COEF*COEF
+          FX=FX+FXC(IC)*COEF
+          FY=FY+FYC(IC)*COEF
+          FZ=FZ+FZC(IC)*COEF
+ 1000 CONTINUE
+C
+      RETURN
+      END
+

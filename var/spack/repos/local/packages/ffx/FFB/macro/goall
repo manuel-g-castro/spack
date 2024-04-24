@@ -1,0 +1,70 @@
+#!/usr/bin/perl -w
+###################################################
+##
+## perl script to support iteration
+## written by Y.Yamade 2006.01.19
+##
+###################################################
+
+options();
+
+## perform operations
+    for($i=$num1;$i<=$num2;$i++){
+        $num = sprintf(" %04d",$i);
+        $go = $PROG;
+        for($j=1;$j<=$num_of_arg;$j++){$go = $go . " " . $ARGV[$j]; }
+        $go = $go   . $num;
+        print("$go \n");
+	system($go);
+    }
+
+## Exit
+exit;
+
+###################################################
+sub options{
+##help
+    if($#ARGV+1 == 0) { error00(); exit;}
+    $_ = $ARGV[0];if(/-help/){ help(); exit;}
+
+## Check number of argumets
+    if($#ARGV+1 < 3)       { error00(); exit;}
+    if($ARGV[1] > $ARGV[2]){ error00(); exit;}
+
+## Set parameters
+    $PROG = $ARGV[0]; shift(@ARGV); 
+    $num1 = $ARGV[0]; shift(@ARGV); 
+    $num2 = $ARGV[0]; shift(@ARGV); 
+
+## additional option for $PROG
+    $num_of_arg = 0;
+    if($#ARGV+1 >=1){
+	$_ = $ARGV[0];
+	if(/-arg/){
+	    $num_of_arg=$#ARGV;
+	} else {
+	    error00(); exit;
+	}
+    }
+}
+
+###################################################
+sub error00{
+print("Invalid arguments. \n");
+print("See help by using -help option  \n");
+}
+
+
+###################################################
+sub help{
+print("Usage :: $0 prog num1 num2 [-arg argument-list]   \n");
+print("                                                  \n");
+print("prog , program to be done                         \n");
+print("num1 , number of the start                        \n");
+print("num2 , number of the end                          \n");
+print("                                                  \n");
+print("Note that a list of argument can be set after the   ");
+print("option -arg, if needed                            \n");
+}
+
+

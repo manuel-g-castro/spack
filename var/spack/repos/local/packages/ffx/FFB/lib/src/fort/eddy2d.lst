@@ -1,0 +1,205 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:53:50 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : eddy2d.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "EDDY2D"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    EDDY2D                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE EDDY2D(C,DELTA,AU,AV,DNXI,DNYI,NE,N,VISCT,
+         14                          *                  JDAMP,NDAMP,LDAMP,FACT)
+         15                           IMPLICIT REAL*8(A-H,O-Z)
+         16                           DIMENSION DELTA(NE),AU(N,NE),AV(N,NE),
+         17                          1          DNXI(N,NE),DNYI(N,NE),VISCT(NE),LDAMP(NDAMP),FACT(NDAMP)
+         18                     C
+         19                     C
+         20                     C      CALCULATE ELEMENT EDDY VISCOSITY ; SMAGORINSKY MODEL
+         21                     C         ( 2-D CALCULATION )
+         22                     C
+         23                     C
+         24                     C     ARGUMENT LISTINGS
+         25                     C       (1) INPUT
+         26                     C          C           ; SMAGORINSKY CONSTANT
+         27                     C          DELTA (IE)  ; ELEMENT CHARACTERISTIC DIMENSION
+         28                     C          AU  (I,IE)  ; ELEMENT VECTOR OF U(IP)
+         29                     C          AV  (I,IE)  ; ELEMENT VECTOR OF V(IP)
+         30                     C          DNXI(I,IE)  ; ELEMENT CENTER VALUE OF NX
+         31                     C          DNYI(I,IE)  ; ELEMENT CENTER VALUE OF NY
+         32                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+         33                     C          N           ; NUMBER OF NODE ASSIGNED TO ONE ELEMENT
+         34                     C          JDAMP       ; DAMP EDDY VISCOSITY IF THIS IS SET TO 1
+         35                     C          NDAMP       ; NUMBER OF ELEMENTS TO DAMP VISCOSITY  (JDAMP=1)
+         36                     C          LDAMP(IDAMP); ELEMENTS NUMBER    TO DAMP VISCOSITY  (JDAMP=1)
+         37                     C          FACT (IDAMP); DAMPING FACTOR     TO DAMP VISCOSITY  (JDAMP=1)
+         38                     C
+         39                     C       (2) OUTPUT
+         40                     C          VISCT (IE)  ; ELEMENT EDDY VISCOSITY
+         41                     C
+         42                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 145
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED(lines: 43,60)
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.44, ITR: 40, MVE: 2, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      VISCT
+                              <<< Loop-information  End >>>
+         43     1  pp    v            DO 100 IE = 1 , NE
+         44     1   p    v                DUX = DNXI(1,IE)*AU(1,IE)+DNXI(2,IE)*AU(2,IE)
+         45     1                    &         +DNXI(3,IE)*AU(3,IE)+DNXI(4,IE)*AU(4,IE)
+         46     1               C
+         47     1   p    v                DUY = DNYI(1,IE)*AU(1,IE)+DNYI(2,IE)*AU(2,IE)
+         48     1                    &         +DNYI(3,IE)*AU(3,IE)+DNYI(4,IE)*AU(4,IE)
+         49     1               C
+         50     1   p    v                DVX = DNXI(1,IE)*AV(1,IE)+DNXI(2,IE)*AV(2,IE)
+         51     1                    &         +DNXI(3,IE)*AV(3,IE)+DNXI(4,IE)*AV(4,IE)
+         52     1               C
+         53     1   p    v                DVY = DNYI(1,IE)*AV(1,IE)+DNYI(2,IE)*AV(2,IE)
+         54     1                    &         +DNYI(3,IE)*AV(3,IE)+DNYI(4,IE)*AV(4,IE)
+         55     1               C
+         56     1   p    v                VISCT(IE)=2.D0*DUX*DUX+2.D0*DVY*DVY
+         57     1                    &             +DUY*DUY+DVX*DVX+2.D0*DUY*DVX
+         58     1   p    v        100 CONTINUE
+         59                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED
+                              <<< Loop-information  End >>>
+         60     1                     DO 200 IE = 1 , NE
+         61     1                         VISCT(IE) = DSQRT(VISCT(IE))
+         62     1                 200 CONTINUE
+         63                     C
+         64                           C2 = C*C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 942
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.20, ITR: 208, MVE: 5, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      VISCT, DELTA
+                              <<< Loop-information  End >>>
+         65     1  pp   2v            DO 300 IE = 1 , NE
+         66     1   p   2v                VISCT(IE) = C2*DELTA(IE)*DELTA(IE)*VISCT(IE)
+         67     1   p   2v        300 CONTINUE
+         68                     C
+         69     1                     IF(JDAMP.EQ.1) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SOFTWARE PIPELINING(IPC: 0.39, ITR: 6, MVE: 2, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FACT, LDAMP
+                              <<< Loop-information  End >>>
+         70     2   s   2s                DO 400 IDAMP = 1 , NDAMP
+         71     2   m   2m                    VISCT(LDAMP(IDAMP)) = FACT(IDAMP)**2*VISCT(LDAMP(IDAMP))
+         72     2   p   2v        400     CONTINUE
+         73     1                     ENDIF
+         74                     C
+         75                     C
+         76                           RETURN
+         77                           END
+
+ Diagnostic messages: program name(EDDY2D)
+   jwd8220o-i  "eddy2d.f", line 13: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd8210o-i  "eddy2d.f", line 43: Loops fused at line 60.
+   jwd5001p-i  "eddy2d.f", line 43: DO loop with DO variable 'IE' is parallelized.
+   jwd6001s-i  "eddy2d.f", line 43: SIMD conversion is applied to DO loop with DO variable 'IE'.
+   jwd8204o-i  "eddy2d.f", line 43: This loop is software pipelined.
+   jwd8205o-i  "eddy2d.f", line 43: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 40.
+   jwd8209o-i  "eddy2d.f", line 44: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "eddy2d.f", line 47: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "eddy2d.f", line 50: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "eddy2d.f", line 53: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "eddy2d.f", line 56: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5001p-i  "eddy2d.f", line 65: DO loop with DO variable 'IE' is parallelized.
+   jwd6001s-i  "eddy2d.f", line 65: SIMD conversion is applied to DO loop with DO variable 'IE'.
+   jwd8204o-i  "eddy2d.f", line 65: This loop is software pipelined.
+   jwd8205o-i  "eddy2d.f", line 65: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 208.
+   jwd8209o-i  "eddy2d.f", line 66: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd6302s-i  "eddy2d.f", line 70: SIMD conversion is not applied to DO loop: the performance of a partial SIMD execution may not be improved.
+   jwd8204o-i  "eddy2d.f", line 70: This loop is software pipelined.
+   jwd8205o-i  "eddy2d.f", line 70: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 6.
+   jwd5228p-i  "eddy2d.f", line 71: DO loop is not parallelized: data dependency of variable may cause different results from serial execution for loop.
+   jwd6228s-i  "eddy2d.f", line 71: SIMD conversion cannot be applied to DO loop: an assign-refer order of data in a SIMD execution may differ from the assign-refer order in the serial execution.
+
+ Procedure information
+   Lines      : 77
+   Statements : 24
+   Stack(byte): 1200
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 77
+   Total statements : 24
+   Total stack(byte): 1200
+   Total prefetch num: 0
+

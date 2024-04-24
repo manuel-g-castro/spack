@@ -1,0 +1,391 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:53:38 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : multi_fld3x2.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "MULTI_FLD3X2"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE MULTI_FLD3X2
+          2                          *                 (NS,IMODE,ME,N,NE,NP,NEX,N1,N2,
+          3                          *                  FXYZ,FE,NODE,DNXI,DNYI,DNZI,
+          4                          *                  IUT0,IERR)
+          5                           IMPLICIT REAL*4(A-H,O-Z)
+          6                           DIMENSION NEX(8)
+          7                           DIMENSION FXYZ(3,NP,NS),FE(NE,NS)
+          8                           DIMENSION NODE(N2,NE),
+          9                          1          DNXI(N1,ME), DNYI(N1,ME), DNZI(N1,ME)
+         10                     C
+         11                     C
+         12                     C      CALCULATE VELOCITY FIELD CHARACTERISTICS
+         13                     C         ( 3-D CALCULATION : SINGLE WORD & MULTI ELEMENT VERSION )
+         14                     C                                           CODED BASED ON 'FIELD3'
+         15                     C                                              2009.01.13 Y.YAMADE
+         16                     C
+         17                     C
+         18                     C     ARGUMENT LISTINGS
+         19                     C       (1) INPUT
+         20                     C          IMODE       ; SPECIFIES THE TYPE OF FIELD DATA AS FOLLOWS
+         21                     C                   1 --- ELEMENT DIVERGENT
+         22                     C                   NOTE THAT CURRENTLLY ONLY IMODE=1 IS SUPPORTED.
+         23                     C
+         24                     C          ME          ; MAX. NUMBER OF TOTAL ELEMENTS
+         25                     C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT
+         26                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+         27                     C          NP          ; NUMBER OF TOTAL    NODES
+         28                     C          NEX(I)      ; INCLUDES NUMBER OF ELEMENTS AND NUMBER OF LOCAL NODES
+         29                     C                        AS FOLOOWS
+         30                     C          NEX(1)      ; NUMBER OF TET.    ELEMENTS
+         31                     C          NEX(2)      ; NUMBER OF PYRAMID ELEMENTS
+         32                     C          NEX(3)      ; NUMBER OF WEGDE   ELEMENTS
+         33                     C          NEX(4)      ; NUMBER OF HEX.    ELEMENTS
+         34                     C          NEX(5)      ; NUMBER OF LOCAL NODES IN A TET.    ELEMENT (=4)
+         35                     C          NEX(6)      ; NUMBER OF LOCAL NODES IN A PYRAMID ELEMENT (=5)
+         36                     C          NEX(7)      ; NUMBER OF LOCAL NODES IN A WEGDE   ELEMENT (=6)
+         37                     C          NEX(8)      ; NUMBER OF LOCAL NODES IN A HEX.    ELEMENT (=8)
+         38                     C
+         39                     C          U       (IP); X-DIR. VELOCITY COMPONENT
+         40                     C          V       (IP); Y-DIR. VELOCITY COMPONENT
+         41                     C          W       (IP); Z-DIR. VELOCITY COMPONENT
+         42                     C
+         43                     C          NODE(I,IE)  ; NODE NO. TABLE BASED ON ELEMENT
+         44                     C          DNXI(I,IE)  ; ELEMENT CENTER VALUE OF NX
+         45                     C          DNYI(I,IE)  ; ELEMENT CENTER VALUE OF NY
+         46                     C          DNZI(I,IE)  ; ELEMENT CENTER VALUE OF NZ
+         47                     C
+         48                     C      (2) OUTPUT
+         49                     C          FE    (IE)  ; FIELD DATA
+         50                     C
+         51                     C
+         52     1                     IF(IMODE.NE.1) THEN
+         53     1                         WRITE(IUT0,*) 'INVALID VALUE FOR IMODE: ERROR'
+         54     1                         IERR=1
+         55     1                         RETURN
+         56     1                     ENDIF
+         57                     C
+         58                           NETET=NEX(1)
+         59                           NEPRD=NEX(2)
+         60                           NEWED=NEX(3)
+         61                           NEHEX=NEX(4)
+         62                           NE   =NETET+NEPRD+NEWED+NEHEX
+         63                     C
+         64                     C   == TET. ==
+         65                           IES1=1
+         66                           IEE1=NETET
+         67                     C
+         68                     C   == PYRAMID ==
+         69                           IES2=NETET+1
+         70                           IEE2=NETET+NEPRD
+         71                     C
+         72                     C   == WEDGE ==
+         73                           IES3=NETET+NEPRD+1
+         74                           IEE3=NETET+NEPRD+NEWED
+         75                     C
+         76                     C   == HEX. ==
+         77                           IES4=NETET+NEPRD+NEWED+1
+         78                           IEE4=NETET+NEPRD+NEWED+NEHEX
+         79                     C
+         80                     C
+         81                     C     (1) CALCULATE DIVERGENT
+         82                     C
+         83                     CC==== TET. ====
+         84                     C
+         85                     C     OPERATION COUNTS:  23 FLOP /ELEMENT
+         86                     C     DATA LOADINGS   :  24 WORDS/ELEMENT
+         87                     C                      (  0 WORDS CONTIGUOUSLY,
+         88                     C                        12 WORDS BY STRIDE, AND
+         89                     C                        12 WORDS BY LIST )
+         90                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.51, ITR: 96, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FE
+                              <<< Loop-information  End >>>
+         91     1   p    v            DO 110 IE = IES1 , IEE1
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FE
+                              <<< Loop-information  End >>>
+         92     2  pp                 DO 111 IS = 1 , NS
+         93     2   p    v               FE(IE,IS)=
+         94     2                    &            DNXI(1,IE)*FXYZ(1,NODE(1,IE),IS)
+         95     2                    &           +DNXI(2,IE)*FXYZ(1,NODE(2,IE),IS)
+         96     2                    &           +DNXI(3,IE)*FXYZ(1,NODE(3,IE),IS)
+         97     2                    &           +DNXI(4,IE)*FXYZ(1,NODE(4,IE),IS)
+         98     2               C
+         99     2                    &           +DNYI(1,IE)*FXYZ(2,NODE(1,IE),IS)
+        100     2                    &           +DNYI(2,IE)*FXYZ(2,NODE(2,IE),IS)
+        101     2                    &           +DNYI(3,IE)*FXYZ(2,NODE(3,IE),IS)
+        102     2                    &           +DNYI(4,IE)*FXYZ(2,NODE(4,IE),IS)
+        103     2               C
+        104     2                    &           +DNZI(1,IE)*FXYZ(3,NODE(1,IE),IS)
+        105     2                    &           +DNZI(2,IE)*FXYZ(3,NODE(2,IE),IS)
+        106     2                    &           +DNZI(3,IE)*FXYZ(3,NODE(3,IE),IS)
+        107     2                    &           +DNZI(4,IE)*FXYZ(3,NODE(4,IE),IS)
+        108     2   p             111 CONTINUE
+        109     1   p    v        110 CONTINUE
+        110                     C
+        111                     CC==== PYRAMID ====
+        112                     C
+        113                     C     OPERATION COUNTS:  29 FLOP /ELEMENT
+        114                     C     DATA LOADINGS   :  30 WORDS/ELEMENT
+        115                     C                      (  0 WORDS CONTIGUOUSLY,
+        116                     C                        15 WORDS BY STRIDE, AND
+        117                     C                        15 WORDS BY LIST )
+        118                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.56, ITR: 64, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FE
+                              <<< Loop-information  End >>>
+        119     1   p    v            DO 120 IE = IES2 , IEE2
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FE
+                              <<< Loop-information  End >>>
+        120     2  pp                 DO 121 IS = 1 , NS
+        121     2   p    v               FE(IE,IS)=
+        122     2                    &            DNXI(1,IE)*FXYZ(1,NODE(1,IE),IS)
+        123     2                    &           +DNXI(2,IE)*FXYZ(1,NODE(2,IE),IS)
+        124     2                    &           +DNXI(3,IE)*FXYZ(1,NODE(3,IE),IS)
+        125     2                    &           +DNXI(4,IE)*FXYZ(1,NODE(4,IE),IS)
+        126     2                    &           +DNXI(5,IE)*FXYZ(1,NODE(5,IE),IS)
+        127     2               C
+        128     2                    &           +DNYI(1,IE)*FXYZ(2,NODE(1,IE),IS)
+        129     2                    &           +DNYI(2,IE)*FXYZ(2,NODE(2,IE),IS)
+        130     2                    &           +DNYI(3,IE)*FXYZ(2,NODE(3,IE),IS)
+        131     2                    &           +DNYI(4,IE)*FXYZ(2,NODE(4,IE),IS)
+        132     2                    &           +DNYI(5,IE)*FXYZ(2,NODE(5,IE),IS)
+        133     2               C
+        134     2                    &           +DNZI(1,IE)*FXYZ(3,NODE(1,IE),IS)
+        135     2                    &           +DNZI(2,IE)*FXYZ(3,NODE(2,IE),IS)
+        136     2                    &           +DNZI(3,IE)*FXYZ(3,NODE(3,IE),IS)
+        137     2                    &           +DNZI(4,IE)*FXYZ(3,NODE(4,IE),IS)
+        138     2                    &           +DNZI(5,IE)*FXYZ(3,NODE(5,IE),IS)
+        139     2   p             121 CONTINUE
+        140     1   p    v        120 CONTINUE
+        141                     C
+        142                     CC==== WEDGE ====
+        143                     C
+        144                     C     OPERATION COUNTS:  35 FLOP /ELEMENT
+        145                     C     DATA LOADINGS   :  36 WORDS/ELEMENT
+        146                     C                      (  0 WORDS CONTIGUOUSLY,
+        147                     C                        18 WORDS BY STRIDE, AND
+        148                     C                        18 WORDS BY LIST )
+        149                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.47, ITR: 64, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FE
+                              <<< Loop-information  End >>>
+        150     1   p    v            DO 130 IE = IES3 , IEE3
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FE
+                              <<< Loop-information  End >>>
+        151     2  pp                 DO 131 IS = 1 , NS
+        152     2   p    v               FE(IE,IS)=
+        153     2                    &            DNXI(1,IE)*FXYZ(1,NODE(1,IE),IS)
+        154     2                    &           +DNXI(2,IE)*FXYZ(1,NODE(2,IE),IS)
+        155     2                    &           +DNXI(3,IE)*FXYZ(1,NODE(3,IE),IS)
+        156     2                    &           +DNXI(4,IE)*FXYZ(1,NODE(4,IE),IS)
+        157     2                    &           +DNXI(5,IE)*FXYZ(1,NODE(5,IE),IS)
+        158     2                    &           +DNXI(6,IE)*FXYZ(1,NODE(6,IE),IS)
+        159     2               C
+        160     2                    &           +DNYI(1,IE)*FXYZ(2,NODE(1,IE),IS)
+        161     2                    &           +DNYI(2,IE)*FXYZ(2,NODE(2,IE),IS)
+        162     2                    &           +DNYI(3,IE)*FXYZ(2,NODE(3,IE),IS)
+        163     2                    &           +DNYI(4,IE)*FXYZ(2,NODE(4,IE),IS)
+        164     2                    &           +DNYI(5,IE)*FXYZ(2,NODE(5,IE),IS)
+        165     2                    &           +DNYI(6,IE)*FXYZ(2,NODE(6,IE),IS)
+        166     2               C
+        167     2                    &           +DNZI(1,IE)*FXYZ(3,NODE(1,IE),IS)
+        168     2                    &           +DNZI(2,IE)*FXYZ(3,NODE(2,IE),IS)
+        169     2                    &           +DNZI(3,IE)*FXYZ(3,NODE(3,IE),IS)
+        170     2                    &           +DNZI(4,IE)*FXYZ(3,NODE(4,IE),IS)
+        171     2                    &           +DNZI(5,IE)*FXYZ(3,NODE(5,IE),IS)
+        172     2                    &           +DNZI(6,IE)*FXYZ(3,NODE(6,IE),IS)
+        173     2   p             131 CONTINUE
+        174     1   p    v        130 CONTINUE
+        175                     C
+        176                     CC==== HEX. ====
+        177                     C
+        178                     C     OPERATION COUNTS:  47 FLOP /ELEMENT
+        179                     C     DATA LOADINGS   :  48 WORDS/ELEMENT
+        180                     C                      (  0 WORDS CONTIGUOUSLY,
+        181                     C                        24 WORDS BY STRIDE, AND
+        182                     C                        24 WORDS BY LIST )
+        183                     C
+        184                           CALL USTSTA(27)
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FE
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 10
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        185     1   p    v            DO 140 IE = IES4 , IEE4
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<< Loop-information  End >>>
+        186     2  pp                 DO 141 IS = 1 , NS
+        187     2   p    v               FE(IE,IS)=
+        188     2                    &            DNXI(1,IE)*FXYZ(1,NODE(1,IE),IS)
+        189     2                    &           +DNXI(2,IE)*FXYZ(1,NODE(2,IE),IS)
+        190     2                    &           +DNXI(3,IE)*FXYZ(1,NODE(3,IE),IS)
+        191     2                    &           +DNXI(4,IE)*FXYZ(1,NODE(4,IE),IS)
+        192     2                    &           +DNXI(5,IE)*FXYZ(1,NODE(5,IE),IS)
+        193     2                    &           +DNXI(6,IE)*FXYZ(1,NODE(6,IE),IS)
+        194     2                    &           +DNXI(7,IE)*FXYZ(1,NODE(7,IE),IS)
+        195     2                    &           +DNXI(8,IE)*FXYZ(1,NODE(8,IE),IS)
+        196     2               C
+        197     2                    &           +DNYI(1,IE)*FXYZ(2,NODE(1,IE),IS)
+        198     2                    &           +DNYI(2,IE)*FXYZ(2,NODE(2,IE),IS)
+        199     2                    &           +DNYI(3,IE)*FXYZ(2,NODE(3,IE),IS)
+        200     2                    &           +DNYI(4,IE)*FXYZ(2,NODE(4,IE),IS)
+        201     2                    &           +DNYI(5,IE)*FXYZ(2,NODE(5,IE),IS)
+        202     2                    &           +DNYI(6,IE)*FXYZ(2,NODE(6,IE),IS)
+        203     2                    &           +DNYI(7,IE)*FXYZ(2,NODE(7,IE),IS)
+        204     2                    &           +DNYI(8,IE)*FXYZ(2,NODE(8,IE),IS)
+        205     2               C
+        206     2                    &           +DNZI(1,IE)*FXYZ(3,NODE(1,IE),IS)
+        207     2                    &           +DNZI(2,IE)*FXYZ(3,NODE(2,IE),IS)
+        208     2                    &           +DNZI(3,IE)*FXYZ(3,NODE(3,IE),IS)
+        209     2                    &           +DNZI(4,IE)*FXYZ(3,NODE(4,IE),IS)
+        210     2                    &           +DNZI(5,IE)*FXYZ(3,NODE(5,IE),IS)
+        211     2                    &           +DNZI(6,IE)*FXYZ(3,NODE(6,IE),IS)
+        212     2                    &           +DNZI(7,IE)*FXYZ(3,NODE(7,IE),IS)
+        213     2                    &           +DNZI(8,IE)*FXYZ(3,NODE(8,IE),IS)
+        214     2   p             141 CONTINUE
+        215     1   p    v        140 CONTINUE
+        216                           CALL USTEND(27)
+        217                     C
+        218                           RETURN
+        219                           END
+
+ Diagnostic messages: program name(MULTI_FLD3X2)
+   jwd2008i-i  "multi_fld3x2.f", line 1: この仮引数'N'は、副プログラム中で使用されていません。
+   jwd8220o-i  "multi_fld3x2.f", line 1: 副作用の可能性のある最適化を行いました。
+   jwd8211o-i  "multi_fld3x2.f", line 91: ループを入れ換えました。(行:92)
+   jwd6001s-i  "multi_fld3x2.f", line 91: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "multi_fld3x2.f", line 91: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "multi_fld3x2.f", line 91: ループの繰返し数が96回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8211o-i  "multi_fld3x2.f", line 92: ループを入れ換えました。(行:91)
+   jwd5001p-i  "multi_fld3x2.f", line 92: このDOループを並列化しました。(名前:IS)
+   jwd8209o-i  "multi_fld3x2.f", line 93: 多項式の演算順序を変更しました。
+   jwd8211o-i  "multi_fld3x2.f", line 119: ループを入れ換えました。(行:120)
+   jwd6001s-i  "multi_fld3x2.f", line 119: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "multi_fld3x2.f", line 119: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "multi_fld3x2.f", line 119: ループの繰返し数が64回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8211o-i  "multi_fld3x2.f", line 120: ループを入れ換えました。(行:119)
+   jwd5001p-i  "multi_fld3x2.f", line 120: このDOループを並列化しました。(名前:IS)
+   jwd8209o-i  "multi_fld3x2.f", line 121: 多項式の演算順序を変更しました。
+   jwd8211o-i  "multi_fld3x2.f", line 150: ループを入れ換えました。(行:151)
+   jwd6001s-i  "multi_fld3x2.f", line 150: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "multi_fld3x2.f", line 150: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "multi_fld3x2.f", line 150: ループの繰返し数が64回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8211o-i  "multi_fld3x2.f", line 151: ループを入れ換えました。(行:150)
+   jwd5001p-i  "multi_fld3x2.f", line 151: このDOループを並列化しました。(名前:IS)
+   jwd8209o-i  "multi_fld3x2.f", line 152: 多項式の演算順序を変更しました。
+   jwd8211o-i  "multi_fld3x2.f", line 185: ループを入れ換えました。(行:186)
+   jwd6001s-i  "multi_fld3x2.f", line 185: このDOループをSIMD化しました。(名前:IE)
+   jwd8666o-i  "multi_fld3x2.f", line 185: 浮動小数点レジスタが不足しているため、ソフトウェアパイプライニングを適用できません。
+   jwd8211o-i  "multi_fld3x2.f", line 186: ループを入れ換えました。(行:185)
+   jwd5001p-i  "multi_fld3x2.f", line 186: このDOループを並列化しました。(名前:IS)
+   jwd8209o-i  "multi_fld3x2.f", line 187: 多項式の演算順序を変更しました。
+
+ Procedure information
+   Lines      : 219
+   Statements : 47
+   Stack(byte): 1744
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 219
+   Total statements : 47
+   Total stack(byte): 1744
+   Total prefetch num: 0
+

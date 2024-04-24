@@ -1,0 +1,325 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:53:45 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : axisge.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "AXISGE"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    AXISGE                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE AXISGE(JPSOUT,IUTPS,SXMIN,SXMAX,SYMIN,SYMAX,
+         14                          *                  NDIVX,NDIVY,TITLEX,TITLEY,ORGX,ORGY,RNGX,RNGY,
+         15                          *                  ICLAXS,CSZAXS,SCLX,SCLY)
+         16                           IMPLICIT REAL*4(A-H,O-Z)
+         17                           CHARACTER*20 TITLEX,TITLEY
+         18                     C
+         19                     #ifdef VOS
+         20                           INCLUDE (GN)
+         21                     #else
+         22                           INCLUDE 'gn.h'
+         23                     #endif
+         24                     C
+         25                           DATA  NTITLE / 20 /
+         26                     C
+         27                           CHARACTER* 9 SCALE
+         28                           DATA NSCALE / 9 /
+         29                           CHARACTER* 8 FORMAT
+         30                           DATA FORMAT / '(1PE9.2)' /
+         31                     C
+         32                           DIMENSION XBUF(2), YBUF(2)
+         33                     C
+         34                           D = 2.0
+         35                           DSCLXX = 0.5*NSCALE*CSZAXS
+         36                           DSCLXY = CSZAXS+D
+         37                           DSCLYX = NSCALE*CSZAXS+D
+         38                           DSCLYY = 0.5*CSZAXS
+         39                     C
+         40                           DTTLXX = NTITLE*CSZAXS
+         41                           DTTLXY = 2.0*(CSZAXS+D)
+         42                           DTTLYX = 0.0
+         43                           DTTLYY = D
+         44                     C
+         45                           ZERO = 0.E0
+         46                           CUTOFF = 1.E-3
+         47                     C
+         48                     C
+         49                     C      DRAW AXES AND WRITE SCALES IN THE E-FORMAT
+         50                     C         ( 2-D GRAPHICS )
+         51                     C
+         52                     C
+         53                     C     NOTE 1 ; CALLING GENERIC GRAPHIC AND POSTSCRIPT INTERFACES.
+         54                     C
+         55                     C
+         56                     C     ARGUMENT LISTINGS
+         57                     C       (1) INPUT
+         58                     C          JPSOUT      ; POSTSCRIPT FILE WILL BE OUTPUT IF SET TO 1 OR 2
+         59                     C          IUTPS       ; FILE NUMBER TO ACCESS POSTSCRIPT FILE
+         60                     C          SXMIN       ; X-DIR. MIN. SCALE
+         61                     C          SXMAX       ; X-DIR. MAX. SCALE
+         62                     C          SYMIN       ; Y-DIR. MIN. SCALE
+         63                     C          SYMAX       ; Y-DIR. MAX. SCALE
+         64                     C          NDIVX       ; X-DIR. DIVIDING NUMBER
+         65                     C          NDIVY       ; Y-DIR. DIVIDING NUMBER
+         66                     C
+         67                     C          TITLEX      ; THE TITLE FOR THE X-AXIS
+         68                     C          TITLEY      ; THE TITLE FOR THE Y-AXIS
+         69                     C
+         70                     C          ORGX        ; X-DIR. GRAPHIC ORIGIN
+         71                     C          ORGY        ; Y-DIR. GRAPHIC ORIGIN
+         72                     C          RNGX        ; X-DIR. GRAPHIC RANGE
+         73                     C          RNGY        ; Y-DIR. GRAPHIC RANGE
+         74                     C
+         75                     C          ICLAXS      ; COLOR INDEX    FOR WRITING SCALES AND TITLES
+         76                     C          CSZAXS      ; CHARACTER SIZE FOR WRITING SCALES AND TITLES
+         77                     C          THEAXS      ; TILTED ANGLE   FOR WRITING SCALES AND TITLES
+         78                     C
+         79                     C       (2) OUTPUT
+         80                     C          SCLX        ; X-DIR. SCALING FACTOR
+         81                     C          SCLY        ; Y-DIR. SCALING FACTOR
+         82                     C
+         83                     C
+         84                           CALL GNCSET(ICLAXS)
+         85                           IF(JPSOUT.EQ.1) CALL PSGRAY(IUTPS,ICLAXS)
+         86                           IF(JPSOUT.EQ.2) CALL PSCSET(IUTPS,ICLAXS)
+         87                     C
+         88                           LNTYPE = GLSOLD
+         89                           PLTYPE = GLSOLD
+         90                     C
+         91                           LNWDTH = GLNORM
+         92                           PLWDTH = GLNORM
+         93                     C
+         94                     C
+         95                     C      (1) DRAW AXES
+         96                     C
+         97                     C
+         98                     C VERTICAL   AXES
+         99                     C
+        100     1   s   2s            DO 10 IDIV = 0 , NDIVX
+        101     1   p   2v                RATIO  = FLOAT(IDIV)/FLOAT(NDIVX)
+        102     1   p   2v                POINTX = ORGX+RATIO*RNGX
+        103     1   s   2s                XBUF(1) = POINTX
+        104     1   s   2s                YBUF(1) = ORGY
+        105     1   s   2s                XBUF(2) = POINTX
+        106     1   s   2s                YBUF(2) = ORGY+RNGY
+        107     1   s   2s                CALL GNLINE(XBUF,YBUF,2)
+        108     1   p   2s                IF(JPSOUT.GE.1) CALL PSLINE(IUTPS,XBUF,YBUF,2)
+        109     1   p   2v         10 CONTINUE
+        110                     C
+        111                     C HORIZONTAL AXES
+        112                     C
+        113     1   s   2s            DO 20 IDIV = 0 , NDIVY
+        114     1   p   2v                RATIO  = FLOAT(IDIV)/FLOAT(NDIVY)
+        115     1   p   2v                POINTY = ORGY+RATIO*RNGY
+        116     1   s   2s                XBUF(1) = ORGX
+        117     1   s   2s                YBUF(1) = POINTY
+        118     1   s   2s                XBUF(2) = ORGX+RNGX
+        119     1   s   2s                YBUF(2) = POINTY
+        120     1   s   2s                CALL GNLINE(XBUF,YBUF,2)
+        121     1   p   2s                IF(JPSOUT.GE.1) CALL PSLINE(IUTPS,XBUF,YBUF,2)
+        122     1   p   2v         20 CONTINUE
+        123                     C
+        124                     C
+        125                     C      (2) WRITE SCALES ON THE AXES
+        126                     C
+        127                     C
+        128                     C ON THE HORIZONTAL AXIS
+        129                     C
+        130                     C
+        131                           TXSIZE = CSZAXS
+        132                           PTSIZE = CSZAXS
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 1  FILL 6
+                              <<<      SIMD&FP   : SPILL 0  FILL 3
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        133     1                     DO 30 IDIV = 0 , NDIVX
+        134     1                         RATIO  = FLOAT(IDIV)/FLOAT(NDIVX)
+        135     1                         POINTX = ORGX+RATIO*RNGX-DSCLXX
+        136     1                         POINTY = ORGY           -DSCLXY
+        137     1                         VALUE = SXMIN+RATIO*(SXMAX-SXMIN)
+        138     1                         IF(ABS(VALUE/(SXMAX-SXMIN)).LT.CUTOFF) VALUE = ZERO
+        139     1                         WRITE(SCALE,FORMAT) VALUE
+        140     1                         CALL GNTEXT(POINTX,POINTY,SCALE,NSCALE)
+        141     1                         IF(JPSOUT.GE.1) CALL PSTEXT(IUTPS,POINTX,POINTY,SCALE,NSCALE)
+        142     1                  30 CONTINUE
+        143                     C
+        144                     C ON THE VERTICAL   AXIS
+        145                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 5
+                              <<<      SIMD&FP   : SPILL 0  FILL 2
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        146     1                     DO 40 IDIV = 0 , NDIVY
+        147     1                         RATIO  = FLOAT(IDIV)/FLOAT(NDIVY)
+        148     1                         POINTX = ORGX           -DSCLYX
+        149     1                         POINTY = ORGY+RATIO*RNGY-DSCLYY
+        150     1                         VALUE = SYMIN+RATIO*(SYMAX-SYMIN)
+        151     1                         IF(ABS(VALUE/(SYMAX-SYMIN)).LT.CUTOFF) VALUE = ZERO
+        152     1                         WRITE(SCALE,FORMAT) VALUE
+        153     1                         CALL GNTEXT(POINTX,POINTY,SCALE,NSCALE)
+        154     1                         IF(JPSOUT.GE.1) CALL PSTEXT(IUTPS,POINTX,POINTY,SCALE,NSCALE)
+        155     1                  40 CONTINUE
+        156                     C
+        157                     C
+        158                     C      (3) WRITE TITLES FOR THE AXES
+        159                     C
+        160                     C
+        161                     C FOR THE HORIZONTAL AXIS
+        162                     C
+        163                           POINTX = ORGX+RNGX-DTTLXX
+        164                           POINTY = ORGY     -DTTLXY
+        165                           CALL GNTEXT(POINTX,POINTY,TITLEX,NTITLE)
+        166                           IF(JPSOUT.GE.1) CALL PSTEXT(IUTPS,POINTX,POINTY,TITLEX,NTITLE)
+        167                     C
+        168                     C FOR THE VERTICAL   AXIS
+        169                     C
+        170                           POINTX = ORGX     +DTTLYX
+        171                           POINTY = ORGY+RNGY+DTTLYY
+        172                           CALL GNTEXT(POINTX,POINTY,TITLEY,NTITLE)
+        173                           IF(JPSOUT.GE.1) CALL PSTEXT(IUTPS,POINTX,POINTY,TITLEY,NTITLE)
+        174                     C
+        175                     C
+        176                     C      (4) CALCULATE SCALING FACTORS FOR X AND Y DIRECTIONS
+        177                     C
+        178                     C
+        179                           SCLX = RNGX/(SXMAX-SXMIN)
+        180                           SCLY = RNGY/(SYMAX-SYMIN)
+        181                     C
+        182                     C
+        183                           RETURN
+        184                           END
+
+ Diagnostic messages: program name(AXISGE)
+   jwd8220o-i  "axisge.f", line 13: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd8209o-i  "axisge.f", line 35: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd6229s-i  "axisge.f", line 100: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8664o-i  "axisge.f", line 100: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd8202o-i  "axisge.f", line 100: Loop unrolled 2 times.
+   jwd8209o-i  "axisge.f", line 102: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5208p-i  "axisge.f", line 103: DO loop is not parallelized: the assign-refer order of 'XBUF' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "axisge.f", line 103: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'XBUF' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "axisge.f", line 104: DO loop is not parallelized: the assign-refer order of 'YBUF' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "axisge.f", line 104: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'YBUF' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "axisge.f", line 105: DO loop is not parallelized: the assign-refer order of 'XBUF' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "axisge.f", line 106: DO loop is not parallelized: the assign-refer order of 'YBUF' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "axisge.f", line 107: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6122s-i  "axisge.f", line 107: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "axisge.f", line 108: DO loop is not parallelized: the assign-refer order of 'IUTPS' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "axisge.f", line 108: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "axisge.f", line 108: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'IUTPS' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "axisge.f", line 108: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd6229s-i  "axisge.f", line 113: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8664o-i  "axisge.f", line 113: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd8202o-i  "axisge.f", line 113: Loop unrolled 2 times.
+   jwd8209o-i  "axisge.f", line 115: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5208p-i  "axisge.f", line 116: DO loop is not parallelized: the assign-refer order of 'XBUF' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "axisge.f", line 116: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'XBUF' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "axisge.f", line 117: DO loop is not parallelized: the assign-refer order of 'YBUF' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "axisge.f", line 117: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'YBUF' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "axisge.f", line 118: DO loop is not parallelized: the assign-refer order of 'XBUF' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "axisge.f", line 119: DO loop is not parallelized: the assign-refer order of 'YBUF' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "axisge.f", line 120: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6122s-i  "axisge.f", line 120: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "axisge.f", line 121: DO loop is not parallelized: the assign-refer order of 'IUTPS' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "axisge.f", line 121: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "axisge.f", line 121: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'IUTPS' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "axisge.f", line 121: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5123p-i  "axisge.f", line 133: DO loop is not parallelized: a character or structure type data was found in the loop.
+   jwd6165s-i  "axisge.f", line 133: SIMD conversion cannot be applied to DO loop: one or more data with character type or derived type were found in the DO loop.
+   jwd8664o-i  "axisge.f", line 133: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd8206o-i  "axisge.f", line 134: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "axisge.f", line 135: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "axisge.f", line 138: Division is changed to multiplication by reciprocal.
+   jwd5123p-i  "axisge.f", line 146: DO loop is not parallelized: a character or structure type data was found in the loop.
+   jwd6165s-i  "axisge.f", line 146: SIMD conversion cannot be applied to DO loop: one or more data with character type or derived type were found in the DO loop.
+   jwd8664o-i  "axisge.f", line 146: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd8206o-i  "axisge.f", line 147: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "axisge.f", line 149: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "axisge.f", line 151: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "axisge.f", line 171: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+
+ Procedure information
+   Lines      : 372
+   Statements : 151
+   Stack(byte): 928
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 372
+   Total statements : 151
+   Total stack(byte): 928
+   Total prefetch num: 0
+

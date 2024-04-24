@@ -1,0 +1,596 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:53:46 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : contor.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "CONTOR"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    CONTOR                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE CONTOR(JPSOUT,IUTPS,IMODE,IRES,IOPT,X,Y,SR,NODE,NE,NP,
+         14                          *                  N,SRMIN,SRMAX,NCNT,XMIN,YMIN,SFC,LCL,NCL,ICLCNT)
+         15                           IMPLICIT REAL*4(A-H,O-Z)
+         16                           DIMENSION X(NP),Y(NP),SR(NP),NODE(N,NE),LCL(NCL)
+         17                     C
+         18                     #ifdef VOS
+         19                           INCLUDE (GN)
+         20                     #else
+         21                           INCLUDE 'gn.h'
+         22                     #endif
+         23                     C
+         24                           REAL   *4 XVRTX(3),YVRTX(3),SVRTX(3),XP(2),YP(2),GPNT(4)
+         25                           INTEGER*4 MAPV (3)
+         26                           INTEGER*4 LOCAL(3,2),LOCALS(3,4),LPAIR(2,2)
+         27                           DATA LOCAL  / 1 , 2 , 3 ,
+         28                          &              3 , 4 , 1 /
+         29                           DATA LOCALS / 1 , 2 , 0 ,
+         30                          &              2 , 3 , 0 ,
+         31                          &              3 , 4 , 0 ,
+         32                          &              4 , 1 , 0 /
+         33                     C
+         34                           DATA EPS / 1.0E-30 /
+         35                     C
+         36                     C
+         37                     C      DRAW CONTOUR LINES BY MARCHING CELL ALGORITHM
+         38                     C         ( 2-D GRAPHICS )
+         39                     C
+         40                     C
+         41                     C     NOTE 1 ; CALLING GENERIC GRAPHIC AND POSTSCRIPT INTERFACES
+         42                     C
+         43                     C     NOTE 2 ; THIS SUBROUTINE CAN BE APPLIED TO CONTOUR DRAWING FOR
+         44                     C             TRIANGLE MESH, QUADRATIC MESH, AS WELL AS COMBINATION
+         45                     C             OF THOSE TWO. FOR DRAWING CONTOUR LINES ON A TRIANGLE
+         46                     C             ELEMENT, THE 4TH ENTRY OF THE NODE TABLE FOR THAT
+         47                     C             PARTICULAR ELEMENT SHOULD BE SET TO 0, EXCEPT FOR THE
+         48                     C             CASE WHERE ALL THE ELEMENTS ARE TRIANGLE AND ARGUMENT
+         49                     C             'N' IS PASSED WITH A VALUE OF 3.
+         50                     C
+         51                     C
+         52                     C     ARGUMENT LISTINGS
+         53                     C       (1) INPUT
+         54                     C          JPSOUT      ; POSTSCRIPT FILE WILL BE OUTPUT IF SET TO 1 OR 2
+         55                     C          IUTPS       ; FILE NUMBER TO ACCESS POSTSCRIPT FILE
+         56                     C          IMODE       ; SPECIFIES COLOR OF CONTOUR LINES AS FOLLOWS
+         57                     C                   1 --- MONOCROME COLOR SPECIFIED BY 'ICLCNT' ARGUMENT
+         58                     C                   2 --- COLOR CORRESPONDING TO THE LOCAL VALUE OF THE
+         59                     C                        SCALAR FIELD
+         60                     C          IRES        ; SPECIFIES LOCAL CONTOUR DRAWING ALGORITHM FOR
+         61                     C                       QUADRATIC MESH AS FOLLOWS
+         62                     C                   1 --- DIVIDE A QUADRATIC MESH INTO TWO TRIANGLE
+         63                     C                        SEGMENTS. DRAW CONTOUR LINE SEGMENTS USING
+         64                     C                        LINEAR INTERPOLATION IN EACH TRIANGLE SEGMENT
+         65                     C                   2 --- DIVIDE A QUADRATIC MESH INTO FOUR TRIANGLE
+         66                     C                        SEGMENTS. DRAW CONTOUR LINE SEGMENTS USING
+         67                     C                        LINEAR INTERPOLATION IN EACH TRIANGLE SEGMENT
+         68                     C                   3 --- DRAW 'IRES' CONTINUEOUS LINE SEGMENTS IN THE
+         69                     C                OR OVER QUADRATIC MESH USING BI-LINEAR INTERPOLATION
+         70                     C
+         71                     C           NOTES ; ARGUMENT 'IRES' HAS NO EFFECTS ON CONTOUR LINE
+         72                     C                  DRAWING FOR TRIANGLE MESHES, FOR WHICH SIMPLE LINEAR
+         73                     C                  INTERPOLATION WILL BE USED.
+         74                     C
+         75                     C          IOPT        ; SPECIFIES LINE OPTIONS AS FOLLOWS
+         76                     C                   0 --- NORMAL DRAWING
+         77                     C                  -1 --- CONTOUR LINES CORRESPONDING TO A NAGATIVE
+         78                     C                        VALUE WILL BE DRAWN AS DASHED LINE
+         79                     C            POSITIVE --- CONTOUR LINES WILL BE DRAWN AS BOLD LINE EVERY
+         80                     C                        IOPT LINES
+         81                     C          X       (IP); X-COORDINATE OF NODES
+         82                     C          Y       (IP); Y-COORDINATE OF NODES
+         83                     C          SR      (IP); SCALAR VALUE DEFINED AT NODES
+         84                     C          NODE  (I,IE); NODE TABLE
+         85                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+         86                     C          NP          ; NUMBER OF TOTAL NODES
+         87                     C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT
+         88                     C          SRMIN       ; MIN. SCALAR VALUE SPECIFIED
+         89                     C          SRMAX       ; MAX. SCALAR VALUE SPECIFIED
+         90                     C          NCNT        ; NUMBER OF CONTOUR LINES TO BE DRAWN
+         91                     C          XMIN        ; MIN. X OF GRAPHIC RANGE SPECIFIED
+         92                     C          YMIN        ; MIN. Y OF GRAPHIC RANGE SPECIFIED
+         93                     C          SFC         ; GRAPHIC SCALING FACTOR
+         94                     C          LCL    (ICL); COLOR INDICES USED TO DRAW CONTOUR LINES
+         95                     C          NCL         ; NUMBER OF COLOR INDICES DEFINED
+         96                     C          ICLCNT      ; COLOR INDEX   USED TO DRAW CONTOUR LINES
+         97                     C
+         98                     C       (2) OUTPUT
+         99                     C          NONE
+        100                     C
+        101                     C
+        102                     C
+        103                     C SET DEFAULT LINE COLOR
+        104                     C
+        105                     C
+        106                           CALL GNCSET(ICLCNT)
+        107                           IF(JPSOUT.EQ.1) CALL PSGRAY(IUTPS,ICLCNT)
+        108                           IF(JPSOUT.EQ.2) CALL PSCSET(IUTPS,ICLCNT)
+        109                     C
+        110                     C
+        111                     C SCALE FIELD DATA
+        112                     C
+        113                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 762
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.33, ITR: 416, MVE: 7, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      Y, X
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 0
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 1  FILL 13
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        114     1  pp   2v            DO 10 IP = 1 , NP
+        115     1   p   2v                X(IP) = SFC*(X(IP)-XMIN)
+        116     1   p   2v                Y(IP) = SFC*(Y(IP)-YMIN)
+        117     1   p   2v         10 CONTINUE
+        118                     C
+        119                     C
+        120                     C DRAW CONTOUR LINES; (1) TRIANGLE SEGMENTATION METHOD
+        121                     C
+        122                     C
+        123     1                     IF(IRES.LE.2) THEN
+        124     2                         DO 140 IE = 1 , NE
+        125     3                             IF(IRES.EQ.2) THEN
+        126     3                                 XG = 0.25*(X (NODE(1,IE))+X(NODE (2,IE))
+        127     3                    &                      +X (NODE(3,IE))+X(NODE (4,IE)))
+        128     3                                 YG = 0.25*(Y (NODE(1,IE))+Y(NODE (2,IE))
+        129     3                    &                      +Y (NODE(3,IE))+Y(NODE (4,IE)))
+        130     3                                 SG = 0.25*(SR(NODE(1,IE))+SR(NODE(2,IE))
+        131     3                    &                      +SR(NODE(3,IE))+SR(NODE(4,IE)))
+        132     3                             ENDIF
+        133     2               C
+        134     3                             IF(IRES.EQ.1) THEN
+        135     3                                 NTRI = 2
+        136     3                             ELSE
+        137     3                                 NTRI = 4
+        138     3                             ENDIF
+        139     2                             IF(N.EQ.3 .OR. NODE(4,IE).EQ.0) NTRI = 1
+        140     2               C
+        141     3                             DO 130 ITRI = 1 , NTRI
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 130
+                              <<<  [OPTIMIZATION]
+                              <<<    UNSWITCHING
+                              <<<    FULL UNROLLING
+                              <<< Loop-information  End >>>
+        142     4   s   fs                        DO 100 I = 1 , 3
+        143     5   p   fm                            IF(IRES.EQ.1 .OR. NTRI.EQ.1) THEN
+        144     5       f                                 IP = NODE(LOCAL(I,ITRI),IE)
+        145     5       f                                 XVRTX(I) = X (IP)
+        146     5       f                                 YVRTX(I) = Y (IP)
+        147     5       f                                 SVRTX(I) = SR(IP)
+        148     5       f                                 MAPV (I) = NCNT*(SR(IP)-SRMIN)/(SRMAX-SRMIN)+1
+        149     5   p   fs                            ELSE
+        150     6   p   fs                                IF(I.LE.2) THEN
+        151     6   p   fs                                    IP = NODE(LOCALS(I,ITRI),IE)
+        152     6   p   fs                                    XVRTX(I) = X (IP)
+        153     6   p   fs                                    YVRTX(I) = Y (IP)
+        154     6   p   fs                                    SVRTX(I) = SR(IP)
+        155     6   p   fs                                    MAPV (I) = NCNT*(SR(IP)-SRMIN)
+        156     6                    &                                   /(SRMAX-SRMIN)+1
+        157     6   p   fs                                ELSE
+        158     6   p   fs                                    XVRTX(I) = XG
+        159     6   p   fs                                    YVRTX(I) = YG
+        160     6   p   fs                                    SVRTX(I) = SG
+        161     6   p   fs                                    MAPV (I) = NCNT*(SG-SRMIN)/(SRMAX-SRMIN)+1
+        162     6       f                                 ENDIF
+        163     5   p   fv                            ENDIF
+        164     4               C
+        165     4   p   fv                            MAPV(I) = MAX(MAPV(I),     0)
+        166     4   p   fv                            MAPV(I) = MIN(MAPV(I),NCNT+1)
+        167     4   p   fv        100             CONTINUE
+        168     3               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 2  FILL 12
+                              <<<      SIMD&FP   : SPILL 0  FILL 18
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        169     4                                 DO 120 ICNT = MIN(MAPV(1),MAPV(2),MAPV(3)),
+        170     4                    &                          MAX(MAPV(1),MAPV(2),MAPV(3))-1
+        171     4               C
+        172     4                                     SRCNT= SRMIN+FLOAT(ICNT)/FLOAT(NCNT)*(SRMAX-SRMIN)
+        173     4               C
+        174     4               C SET LINE COLOR
+        175     4               C
+        176     5                                     IF(IMODE.EQ.2) THEN
+        177     5                                         ICL = NCL*FLOAT(ICNT)/FLOAT(NCNT)+1
+        178     5                                         ICL = MIN(ICL,NCL)
+        179     5                                         CALL GNCSET(LCL(ICL))
+        180     5                                         IF(JPSOUT.EQ.1) CALL PSGRAY(IUTPS,LCL(ICL))
+        181     5                                         IF(JPSOUT.EQ.2) CALL PSCSET(IUTPS,LCL(ICL))
+        182     5                                     ENDIF
+        183     4               C
+        184     4               C SET LINE ATTRIBUTES
+        185     4               C
+        186     4                                     LNTYPE = GLSOLD
+        187     4                                     PLTYPE = GLSOLD
+        188     4               C
+        189     4                                     LNWDTH = GLNORM
+        190     4                                     PLWDTH = GLNORM
+        191     4               C
+        192     4                                     IF(IOPT.EQ.-1.AND.SRCNT.LT.0.E0) LNTYPE = GLDASH
+        193     4                                     IF(IOPT.EQ.-1.AND.SRCNT.LT.0.E0) PLTYPE = GLDASH
+        194     4               C
+        195     4                                     IF(IOPT.GE.1.AND.MOD(ICNT,IOPT).EQ.0)LNWDTH=GLBOLD
+        196     4                                     IF(IOPT.GE.1.AND.MOD(ICNT,IOPT).EQ.0)PLWDTH=GLBOLD
+        197     4               C
+        198     4               C FIND TWO INTERSECT POINTS
+        199     4               C
+        200     4                                     NPOINT = 0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FULL UNROLLING
+                              <<< Loop-information  End >>>
+        201     5       fs                            DO 110 ILINE = 1 , 3
+        202     5       fm                                IF(NPOINT.EQ.2) GO TO 110
+        203     5               C
+        204     5       fs                                IVRTX1 = ILINE
+        205     5       fs                                IVRTX2 = MOD(ILINE,3)+1
+        206     5               C
+        207     6       fs                                IF(MAPV(IVRTX1).LE.ICNT .AND.
+        208     6                    &                       MAPV(IVRTX2).GT.ICNT
+        209     6                    &           .OR.        MAPV(IVRTX2).LE.ICNT .AND.
+        210     6                    &                       MAPV(IVRTX1).GT.ICNT)
+        211     6                    &                    THEN
+        212     6       fs                                    NPOINT = NPOINT+1
+        213     6       fs                                    ALF    = (SRCNT-SVRTX(IVRTX1))
+        214     6                    &                                /(SVRTX(IVRTX2)-SVRTX(IVRTX1))
+        215     6       fs                                    XP(NPOINT) = XVRTX(IVRTX1)
+        216     6                    &                               +ALF*(XVRTX(IVRTX2)-XVRTX(IVRTX1))
+        217     6       fs                                    YP(NPOINT) = YVRTX(IVRTX1)
+        218     6                    &                               +ALF*(YVRTX(IVRTX2)-YVRTX(IVRTX1))
+        219     6       fs                                ENDIF
+        220     5       fv        110                 CONTINUE
+        221     4               C
+        222     4               C DRAW LINE SEGMENT
+        223     4               C
+        224     4                                     CALL GNLINE(XP,YP,2)
+        225     4                                     IF(JPSOUT.GE.1) CALL PSLINE(IUTPS,XP,YP,2)
+        226     4                 120             CONTINUE
+        227     3                 130         CONTINUE
+        228     2                 140     CONTINUE
+        229     1               C
+        230     1               C
+        231     1               C DRAW CONTOUR LINES; (2) BI-LINEAR INTERPOLATION METHOD
+        232     1               C
+        233     1               C
+        234     1                     ELSE
+        235     2                         DO 240 ICNT = 0 , NCNT
+        236     2                             SRCNT = SRMIN+FLOAT(ICNT)/FLOAT(NCNT)*(SRMAX-SRMIN)
+        237     2               C
+        238     2               C SET LINE COLOR
+        239     2               C
+        240     3                             IF(IMODE.EQ.2) THEN
+        241     3                                 ICL = NCL*FLOAT(ICNT)/FLOAT(NCNT)+1
+        242     3                                 ICL = MIN(ICL,NCL)
+        243     3                                 CALL GNCSET(LCL(ICL))
+        244     3                                 IF(JPSOUT.EQ.1) CALL PSGRAY(IUTPS,LCL(ICL))
+        245     3                                 IF(JPSOUT.EQ.2) CALL PSCSET(IUTPS,LCL(ICL))
+        246     3                             ENDIF
+        247     2               C
+        248     2               C SET LINE ATTRIBUTES
+        249     2               C
+        250     2                             LNTYPE = GLSOLD
+        251     2                             PLTYPE = GLSOLD
+        252     2               C
+        253     2                             LNWDTH = GLNORM
+        254     2                             PLWDTH = GLNORM
+        255     2               C
+        256     2                             IF(IOPT.EQ.-1.AND.SRCNT.LT.0.E0) LNTYPE = GLDASH
+        257     2                             IF(IOPT.EQ.-1.AND.SRCNT.LT.0.E0) PLTYPE = GLDASH
+        258     2               C
+        259     2                             IF(IOPT.GE.1.AND.MOD(ICNT,IOPT).EQ.0)LNWDTH=GLBOLD
+        260     2                             IF(IOPT.GE.1.AND.MOD(ICNT,IOPT).EQ.0)PLWDTH=GLBOLD
+        261     2               C
+        262     2               C ENTER CELL MARCH
+        263     2               C
+        264     3                             DO 230 IE = 1 , NE
+        265     3                                 SR1 = SR(NODE(1,IE))
+        266     3                                 SR2 = SR(NODE(2,IE))
+        267     3                                 SR3 = SR(NODE(3,IE))
+        268     3                                 SR4 = SR(NODE(4,IE))
+        269     3               C
+        270     3                                 IF(SR1.LT.SRCNT .AND. SR2.LT.SRCNT .AND.
+        271     3                    &               SR3.LT.SRCNT .AND. SR4.LT.SRCNT
+        272     3                    &          .OR. SR1.GT.SRCNT .AND. SR2.GT.SRCNT .AND.
+        273     3                    &               SR3.GT.SRCNT .AND. SR4.GT.SRCNT) GO TO 230
+        274     3               C
+        275     3                                 X1 = X(NODE(1,IE))
+        276     3                                 X2 = X(NODE(2,IE))
+        277     3                                 X3 = X(NODE(3,IE))
+        278     3                                 X4 = X(NODE(4,IE))
+        279     3               C
+        280     3                                 Y1 = Y(NODE(1,IE))
+        281     3                                 Y2 = Y(NODE(2,IE))
+        282     3                                 Y3 = Y(NODE(3,IE))
+        283     3                                 Y4 = Y(NODE(4,IE))
+        284     3               C
+        285     3               C FIND INTERSECT POINTS BETWEEN ISO-VALUE LINES AND ELEMENT BORDER LINES
+        286     3               C
+        287     3                                 C0 = SR1+SR3-SR2-SR4
+        288     3                                 C0 = C0+SIGN(EPS,C0)
+        289     3                                 C1 = SR2-SR1
+        290     3                                 C2 = SR4-SR1
+        291     3                                 C3 = SR1
+        292     3               C
+        293     3                                 GA = -C2/C0
+        294     3                                 GA = GA+SIGN(EPS,GA)
+        295     3                                 EA = -C1/C0
+        296     3                                 EA = EA+SIGN(EPS,EA)
+        297     3                                 C  = (C1*C2-C0*C3+C0*SRCNT)/C0**2
+        298     3               C
+        299     3                                 NPNT = 0
+        300     3               C
+        301     3                                 E = EA+C/(-GA)
+        302     4                                 IF(E .GE. 0.E0 .AND. E .LE. 1.E0) THEN
+        303     4                                     NPNT = NPNT+1
+        304     4                                     GPNT(NPNT) = 0.E0
+        305     4                                 ENDIF
+        306     3               C
+        307     3                                 E = EA+C/(1.E0-GA)
+        308     4                                 IF(E .GE. 0.E0 .AND. E .LE. 1.E0) THEN
+        309     4                                     NPNT = NPNT+1
+        310     4                                     GPNT(NPNT) = 1.E0
+        311     4                                 ENDIF
+        312     3               C
+        313     3                                 G = GA+C/(-EA)
+        314     4                                 IF(G .GE. 0.E0 .AND. G .LE. 1.E0) THEN
+        315     4                                     NPNT = NPNT+1
+        316     4                                     GPNT(NPNT) = G
+        317     4                                 ENDIF
+        318     3               C
+        319     3                                 G = GA+C/(1.E0-EA)
+        320     4                                 IF(G .GE. 0.E0 .AND. G .LE. 1.E0) THEN
+        321     4                                     NPNT = NPNT+1
+        322     4                                     GPNT(NPNT) = G
+        323     4                                 ENDIF
+        324     3               C
+        325     3               C DETERMINE PAIR(S) OF INTERSECT POINTS
+        326     3               C
+        327     4                                 IF(NPNT.LE.2) THEN
+        328     4                                     NPAIR = 1
+        329     4                                     LPAIR(1,1) = 1
+        330     4                                     LPAIR(2,1) = 2
+        331     4                                 ELSE
+        332     4                                     NPAIR = 2
+        333     5                                     IF((GPNT(1)-GA)*(GPNT(2)-GA) .GE. 0.E0) THEN
+        334     5                                         LPAIR(1,1) = 1
+        335     5                                         LPAIR(2,1) = 2
+        336     5                                         LPAIR(1,2) = 3
+        337     5                                         LPAIR(2,2) = 4
+        338     5                                     ELSE IF((GPNT(1)-GA)*(GPNT(3)-GA) .GE. 0.E0) THEN
+        339     5                                         LPAIR(1,1) = 1
+        340     5                                         LPAIR(2,1) = 3
+        341     5                                         LPAIR(1,2) = 2
+        342     5                                         LPAIR(2,2) = 4
+        343     5                                     ELSE
+        344     5                                         LPAIR(1,1) = 1
+        345     5                                         LPAIR(2,1) = 4
+        346     5                                         LPAIR(1,2) = 2
+        347     5                                         LPAIR(2,2) = 3
+        348     5                                     ENDIF
+        349     4                                 ENDIF
+        350     3               C
+        351     3               C DRAW LINE SEGMENT
+        352     3               C
+        353     4                                 DO 220 IPAIR = 1 , NPAIR
+        354     4                                     GSTART = GPNT(LPAIR(1,IPAIR))
+        355     4                                     GEND   = GPNT(LPAIR(2,IPAIR))
+        356     4                                     DELG   = (GEND-GSTART)/FLOAT(IRES)
+        357     4               C
+        358     4                                     GS = GSTART-DELG
+        359     4                                     GE = GSTART
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 0
+                              <<<      SIMD&FP   : SPILL 0  FILL 13
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        360     5   s    s                            DO 210 I = 1 , IRES
+        361     5   s    s                                GS = GS+DELG
+        362     5   s    s                                GE = GE+DELG
+        363     5   s    s                                ES = EA+C/(GS-GA)
+        364     5   s    s                                EE = EA+C/(GE-GA)
+        365     5   m    m                                XP(1) = (1.E0-GS)*(1.E0-ES)*X1
+        366     5                    &                           +(1.E0-GS)*      ES *X4
+        367     5                    &                           +      GS *(1.E0-ES)*X2
+        368     5                    &                           +      GS *      ES *X3
+        369     5   m    m                                YP(1) = (1.E0-GS)*(1.E0-ES)*Y1
+        370     5                    &                           +(1.E0-GS)*      ES *Y4
+        371     5                    &                           +      GS *(1.E0-ES)*Y2
+        372     5                    &                           +      GS *      ES *Y3
+        373     5   m    m                                XP(2) = (1.E0-GE)*(1.E0-EE)*X1
+        374     5                    &                           +(1.E0-GE)*      EE *X4
+        375     5                    &                           +      GE *(1.E0-EE)*X2
+        376     5                    &                           +      GE *      EE *X3
+        377     5   m    m                                YP(2) = (1.E0-GE)*(1.E0-EE)*Y1
+        378     5                    &                           +(1.E0-GE)*      EE *Y4
+        379     5                    &                           +      GE *(1.E0-EE)*Y2
+        380     5                    &                           +      GE *      EE *Y3
+        381     5               C
+        382     5   s    s                                CALL GNLINE(XP,YP,2)
+        383     5   p    s                                IF(JPSOUT.GE.1) CALL PSLINE(IUTPS,XP,YP,2)
+        384     5   p    v        210                 CONTINUE
+        385     4                 220             CONTINUE
+        386     3                 230         CONTINUE
+        387     2                 240     CONTINUE
+        388     1                     ENDIF
+        389                     C
+        390                     C
+        391                     C RESCALE FIELD DATA
+        392                     C
+        393                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 762
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.66, ITR: 288, MVE: 5, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      X, Y
+                              <<< Loop-information  End >>>
+        394     1  pp   2v            DO 300 IP = 1 , NP
+        395     1   p   2v                X(IP) = X(IP)/SFC+XMIN
+        396     1   p   2v                Y(IP) = Y(IP)/SFC+YMIN
+        397     1   p   2v        300 CONTINUE
+        398                     C
+        399                     C
+        400                           RETURN
+        401                           END
+
+ Diagnostic messages: program name(CONTOR)
+   jwd8220o-i  "contor.f", line 13: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd5001p-i  "contor.f", line 114: DO loop with DO variable 'IP' is parallelized.
+   jwd6001s-i  "contor.f", line 114: SIMD conversion is applied to DO loop with DO variable 'IP'.
+   jwd8204o-i  "contor.f", line 114: This loop is software pipelined.
+   jwd8205o-i  "contor.f", line 114: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 416.
+   jwd5122p-i  "contor.f", line 124: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd8209o-i  "contor.f", line 126: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "contor.f", line 128: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "contor.f", line 130: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5122p-i  "contor.f", line 141: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd8321o-i  "contor.f", line 142: Loop unswitched.
+   jwd5143p-i  "contor.f", line 142: DO loop is not parallelized: the value of its iteration count is insufficient to make parallelization worthwhile.
+   jwd6229s-i  "contor.f", line 142: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8203o-i  "contor.f", line 142: Loop unrolled fully.
+   jwd8209o-i  "contor.f", line 148: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "contor.f", line 155: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "contor.f", line 161: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5122p-i  "contor.f", line 169: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd8664o-i  "contor.f", line 169: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd8209o-i  "contor.f", line 172: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "contor.f", line 172: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "contor.f", line 177: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5228p-i  "contor.f", line 201: DO loop is not parallelized: data dependency of variable may cause different results from serial execution for loop.
+   jwd5208p-i  "contor.f", line 201: DO loop is not parallelized: the assign-refer order of 'NPOINT' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6229s-i  "contor.f", line 201: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8203o-i  "contor.f", line 201: Loop unrolled fully.
+   jwd6202s-i  "contor.f", line 202: SIMD conversion cannot be applied to DO loop: data dependency of variable 'NPOINT' may cause different results from serial execution for loop.
+   jwd6228s-i  "contor.f", line 212: SIMD conversion cannot be applied to DO loop: an assign-refer order of data in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "contor.f", line 235: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd8209o-i  "contor.f", line 236: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "contor.f", line 236: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "contor.f", line 241: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5122p-i  "contor.f", line 264: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd8209o-i  "contor.f", line 287: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "contor.f", line 297: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "contor.f", line 301: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "contor.f", line 313: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5122p-i  "contor.f", line 353: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd8206o-i  "contor.f", line 356: Division is changed to multiplication by reciprocal.
+   jwd6229s-i  "contor.f", line 360: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8664o-i  "contor.f", line 360: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5202p-i  "contor.f", line 361: DO loop is not parallelized: data dependency of variable 'GS' may cause different results from serial execution for loop.
+   jwd6202s-i  "contor.f", line 361: SIMD conversion cannot be applied to DO loop: data dependency of variable 'GS' may cause different results from serial execution for loop.
+   jwd5202p-i  "contor.f", line 362: DO loop is not parallelized: data dependency of variable 'GE' may cause different results from serial execution for loop.
+   jwd6202s-i  "contor.f", line 362: SIMD conversion cannot be applied to DO loop: data dependency of variable 'GE' may cause different results from serial execution for loop.
+   jwd8209o-i  "contor.f", line 365: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5208p-i  "contor.f", line 365: DO loop is not parallelized: the assign-refer order of 'XP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "contor.f", line 365: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'XP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd8209o-i  "contor.f", line 369: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5208p-i  "contor.f", line 369: DO loop is not parallelized: the assign-refer order of 'YP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "contor.f", line 369: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'YP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd8209o-i  "contor.f", line 373: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5208p-i  "contor.f", line 373: DO loop is not parallelized: the assign-refer order of 'XP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd8209o-i  "contor.f", line 377: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5208p-i  "contor.f", line 377: DO loop is not parallelized: the assign-refer order of 'YP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "contor.f", line 382: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6122s-i  "contor.f", line 382: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "contor.f", line 383: DO loop is not parallelized: the assign-refer order of 'IUTPS' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "contor.f", line 383: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "contor.f", line 383: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'IUTPS' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "contor.f", line 383: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5001p-i  "contor.f", line 394: DO loop with DO variable 'IP' is parallelized.
+   jwd6001s-i  "contor.f", line 394: SIMD conversion is applied to DO loop with DO variable 'IP'.
+   jwd8204o-i  "contor.f", line 394: This loop is software pipelined.
+   jwd8205o-i  "contor.f", line 394: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 288.
+   jwd8206o-i  "contor.f", line 395: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "contor.f", line 396: Division is changed to multiplication by reciprocal.
+
+ Procedure information
+   Lines      : 589
+   Statements : 272
+   Stack(byte): 1680
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 589
+   Total statements : 272
+   Total stack(byte): 1680
+   Total prefetch num: 0
+

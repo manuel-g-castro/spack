@@ -1,0 +1,83 @@
+      SUBROUTINE PICSRF(MSURFD,MSURFS,NSURFD,NSURFS,
+     *     XSURFD,YSURFD,ZSURFD,
+     *     XMINSF,YMINSF,ZMINSF,XMAXSF,YMAXSF,ZMAXSF,
+     *     NP,NE,N2,NODE,X,Y,Z,NPBODY,LPBODY,
+     *     MPTGT,NPTGT,LPTGT,
+     *     LWRK1,WRK,IUT0,IUT6,IERR)
+C
+      REAL*4 EPS
+      PARAMETER(EPS=1.0E-4)
+C
+      INTEGER*4 MSURFD,MSURFS,NSURFS,NP,NE,N2,NPBODY,MPTGT,NPTGT
+      INTEGER*4 IUT0,IUT6,IERR
+      INTEGER*4 NODE(N2,NE),LPBODY(NPBODY),LPTGT(MPTGT),LWRK1(NP),
+     *     NSURFD(MSURFS)
+      REAL*4 XSURFD(MSURFD,MSURFS),YSURFD(MSURFD,MSURFS),
+     *     ZSURFD(MSURFD,MSURFS),
+     *     XMINSF(MSURFS),YMINSF(MSURFS),ZMINSF(MSURFS),
+     *     XMAXSF(MSURFS),YMAXSF(MSURFS),ZMAXSF(MSURFS),
+     *     X(NP),Y(NP),Z(NP),
+     *     WRK(NP)
+C
+      WRITE(IUT6,*) "   INITIALIZE"
+      WRITE(IUT6,*) "   MPTGT: ", MPTGT
+      NPTGT=0
+      DO 10 IPTGT=1, MPTGT
+         LPTGT(IPTGT)=0
+ 10   CONTINUE
+C
+      WRITE(IUT6,*) "  MATCHING"
+      DO 100 IPBODY=1, NPBODY
+         IF(MOD(IPBODY,1000).EQ.0) 
+     *        WRITE(IUT6,*) "MATCHING FOR", IPBODY, " / ", NPBODY
+         IP=LPBODY(IPBODY)
+         XP=X(IP)
+         YP=Y(IP)
+         ZP=Z(IP)
+         DO 200 ISURFS=1, NSURFS
+            XMIN=XMINSF(ISURFS)-EPS
+            YMIN=YMINSF(ISURFS)-EPS
+            ZMIN=ZMINSF(ISURFS)-EPS
+            XMAX=XMAXSF(ISURFS)+EPS
+            YMAX=YMAXSF(ISURFS)+EPS
+            ZMAX=ZMAXSF(ISURFS)+EPS
+            NSD=NSURFD(ISURFS)
+            IF(XP.GE.XMIN.AND.XP.LE.XMAX.AND.
+     *         YP.GE.YMIN.AND.YP.LE.YMAX.AND.
+     *         ZP.GE.ZMIN.AND.ZP.LE.ZMAX)
+     *           GOTO 210
+            GOTO 200
+ 210        CONTINUE
+            DO 300 ISURFD=1, NSD               
+               XSP=XSURFD(ISURFD,ISURFS)
+               YSP=YSURFD(ISURFD,ISURFS)
+               ZSP=ZSURFD(ISURFD,ISURFS)
+C
+               XMAX=XSP+EPS
+               YMAX=YSP+EPS
+               ZMAX=ZSP+EPS
+C
+               XMIN=XSP-EPS
+               YMIN=YSP-EPS
+               ZMIN=ZSP-EPS
+               IF(XP.GE.XMIN.AND.XP.LE.XMAX.AND.
+     *            YP.GE.YMIN.AND.YP.LE.YMAX.AND.
+     *            ZP.GE.ZMIN.AND.ZP.LE.ZMAX) THEN
+                  NPTGT=NPTGT+1
+                  IF(NPTGT.GT.MPTGT) GOTO 9000
+                  LPTGT(NPTGT)=IP
+                  GOTO 100
+               ENDIF
+ 300        CONTINUE
+ 200     CONTINUE
+ 100  CONTINUE
+C
+      WRITE(IUT6,*) "NPTGT", NPTGT
+      RETURN
+C
+ 9000 CONTINUE
+      WRITE(IUT0,*) "PICSRF: NPTGT EXCEEDS LIMIT MPTGT"
+      IERR=1
+      RETURN
+C
+      END

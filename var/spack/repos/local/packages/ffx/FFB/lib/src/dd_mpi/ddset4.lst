@@ -1,0 +1,384 @@
+
+ Fujitsu Fortran Version 4.7.0  Tue Dec 21 10:39:30 2021
+
+ Compilation information
+   Current directory : /vol0005/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/dd_mpi
+   Source file       : ddset4.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0005/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -Nlst=t -Cpp -Cfpp -c -I/opt/FJSVxtclanga/.common/MELI026/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI026/lib64 -Knointentopt
+   Cpp options          : -I/vol0005/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -I/opt/FJSVxtclanga/.common/MELI026/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI026/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=7 -D__FRT_patchlevel__=0 -D__FRT_version__="4.7.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Knoarray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nlibomp -Nline -Nlst -Nlst=p -Nlst=t
+                          -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "DDMAXI"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE DDMAXI(IBUF,IMAX,IERR)
+          2                           IMPLICIT NONE
+          3                     C
+          4                           INCLUDE 'mpif.h'
+          5                     C
+          6                           INTEGER*4 IBUF,IMAX,IERR
+          7                     C
+          8                           CALL MPI_ALLREDUCE(IBUF,IMAX,1,MPI_INTEGER,MPI_MAX,
+          9                          *                   MPI_COMM_WORLD,IERR)
+         10                     C
+         11                           RETURN
+         12                           END
+
+ Procedure information
+   Lines      : 4041
+   Statements : 3263
+   Stack(byte): 352
+   Prefetch num: 0
+
+ External subroutine subprogram "DDSET4"
+  (line-no.)(nest)(optimize)
+         13                     C
+         14                           SUBROUTINE DDSET4(IPART,NPART,NUM,LDATA,IERR)
+         15                           IMPLICIT NONE
+         16                           INTEGER*4 IPART,NPART,NUM,LDATA(NUM,NPART),IERR
+         17                           INTEGER*4 LBUF(NUM),I
+         18                     C
+         19                           INCLUDE 'mpif.h'
+         20                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1231
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.00, ITR: 288, MVE: 5, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LDATA, LBUF
+                              <<< Loop-information  End >>>
+         21     1  pp   2v            DO 1000 I=1,NUM
+         22     1   p   2v                LBUF(I)=LDATA(I,IPART)
+         23     1   p   2v       1000 CONTINUE
+         24                     C
+         25                           CALL MPI_ALLGATHER(LBUF, NUM,MPI_INTEGER,
+         26                          *                   LDATA,NUM,MPI_INTEGER,
+         27                          *                   MPI_COMM_WORLD,IERR)
+         28                     C
+         29                           RETURN
+         30                           END
+
+ Diagnostic messages: program name(DDSET4)
+   jwd5001p-i  "ddset4.f", line 21: DO loop with DO variable 'I' is parallelized.
+   jwd6001s-i  "ddset4.f", line 21: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8204o-i  "ddset4.f", line 21: This loop is software pipelined.
+   jwd8205o-i  "ddset4.f", line 21: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 288.
+
+ Procedure information
+   Lines      : 4047
+   Statements : 3267
+   Stack(byte): 768
+   Prefetch num: 0
+
+ External subroutine subprogram "DDSET5"
+  (line-no.)(nest)(optimize)
+         31                     C
+         32                           SUBROUTINE DDSET5(IPART,MBPDOM,
+         33                          *                  NDOMS,LDOMS,NBDOMS,LBUFS,
+         34                          *                  NDOMR,LDOMR,NBDOMR,LBUFR,IERR)
+         35                           IMPLICIT NONE
+         36                           INTEGER*4 IPART,MBPDOM,IERR,
+         37                          *          NDOMS               ,NDOMR               ,
+         38                          *          LDOMS (       NDOMS),LDOMR (       NDOMR),
+         39                          *          NBDOMS(       NDOMS),NBDOMR(       NDOMR),
+         40                          *          LBUFS (MBPDOM,NDOMS),LBUFR (MBPDOM,NDOMR)
+         41                     C
+         42                           INTEGER*4 NCOM,ISLFR,ISLFS,IDOMR,IDOMS,I
+         43                           DATA NCOM  /0/
+         44                           DATA ISLFR /0/
+         45                           DATA ISLFS /0/
+         46                     C
+         47                           INCLUDE 'mpif.h'
+         48                     C
+         49                           INTEGER*4 MAXDOM,MSGTYP,MSGLEN,IRECV,ISEND
+         50                           PARAMETER (MAXDOM=30000)
+         51                           INTEGER*4 MSGIDS(MAXDOM),MSGSTS(MPI_STATUS_SIZE,MAXDOM)
+         52                           DATA MSGTYP /1/
+         53                     C
+         54                           NCOM=0
+         55                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LDOMR
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 7
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+         56     1       2s            DO 1000 IDOMR=1,NDOMR
+         57     2       2m                IF(IPART.EQ.LDOMR(IDOMR)) THEN
+         58     2       2v                    ISLFR=IDOMR
+         59     2       2v                    GOTO 1000
+         60     2       2s                ENDIF
+         61     1       2s                MSGLEN=NBDOMR(IDOMR)
+         62     1       2s                IRECV =LDOMR(IDOMR)-1
+         63     1       2s                NCOM=NCOM+1
+         64     1       2s                CALL MPI_IRECV(LBUFR(1,IDOMR),MSGLEN,MPI_REAL,IRECV,MSGTYP,
+         65     1                    *                   MPI_COMM_WORLD,MSGIDS(NCOM),IERR)
+         66     1       2v       1000 CONTINUE
+         67                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LDOMS
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 7
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+         68     1       2s            DO 1100 IDOMS=1,NDOMS
+         69     2       2m                IF(IPART.EQ.LDOMS(IDOMS)) THEN
+         70     2       2v                    ISLFS=IDOMS
+         71     2       2v                    GOTO 1100
+         72     2       2s                ENDIF
+         73     1       2s                MSGLEN=NBDOMS(IDOMS)
+         74     1       2s                ISEND =LDOMS(IDOMS)-1
+         75     1       2s                NCOM=NCOM+1
+         76     1       2s                CALL MPI_ISEND(LBUFS(1,IDOMS),MSGLEN,MPI_REAL,ISEND,MSGTYP,
+         77     1                    *                   MPI_COMM_WORLD,MSGIDS(NCOM),IERR)
+         78     1       2v       1100 CONTINUE
+         79                     C
+         80                           CALL MPI_WAITALL(NCOM,MSGIDS,MSGSTS,IERR)
+         81                     C
+         82                           IF(ISLFR.EQ.0) RETURN
+         83                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1143
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.00, ITR: 288, MVE: 5, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LBUFS, LBUFR
+                              <<< Loop-information  End >>>
+         84     1  pp   2v            DO 2000 I=1,NBDOMS(ISLFS)
+         85     1   p   2v                LBUFR(I,ISLFR)=LBUFS(I,ISLFS)
+         86     1   p   2v       2000 CONTINUE
+         87                     C
+         88                           RETURN
+         89                           END
+
+ Diagnostic messages: program name(DDSET5)
+   jwd5228p-i  "ddset4.f", line 56: DO loop is not parallelized: data dependency of variable may cause different results from serial execution for loop.
+   jwd6229s-i  "ddset4.f", line 56: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8664o-i  "ddset4.f", line 56: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd8202o-i  "ddset4.f", line 56: Loop unrolled 2 times.
+   jwd6208s-i  "ddset4.f", line 57: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'LDOMR' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "ddset4.f", line 61: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NBDOMR' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "ddset4.f", line 61: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'MSGLEN' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "ddset4.f", line 62: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'IRECV' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6228s-i  "ddset4.f", line 63: SIMD conversion cannot be applied to DO loop: an assign-refer order of data in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6202s-i  "ddset4.f", line 63: SIMD conversion cannot be applied to DO loop: data dependency of variable 'NCOM' may cause different results from serial execution for loop.
+   jwd5122p-i  "ddset4.f", line 64: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6122s-i  "ddset4.f", line 64: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5228p-i  "ddset4.f", line 68: DO loop is not parallelized: data dependency of variable may cause different results from serial execution for loop.
+   jwd6229s-i  "ddset4.f", line 68: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8664o-i  "ddset4.f", line 68: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd8202o-i  "ddset4.f", line 68: Loop unrolled 2 times.
+   jwd6208s-i  "ddset4.f", line 69: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'LDOMS' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "ddset4.f", line 73: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NBDOMS' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "ddset4.f", line 73: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'MSGLEN' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "ddset4.f", line 74: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'ISEND' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6228s-i  "ddset4.f", line 75: SIMD conversion cannot be applied to DO loop: an assign-refer order of data in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6202s-i  "ddset4.f", line 75: SIMD conversion cannot be applied to DO loop: data dependency of variable 'NCOM' may cause different results from serial execution for loop.
+   jwd5122p-i  "ddset4.f", line 76: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6122s-i  "ddset4.f", line 76: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5001p-i  "ddset4.f", line 84: DO loop with DO variable 'I' is parallelized.
+   jwd6001s-i  "ddset4.f", line 84: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8204o-i  "ddset4.f", line 84: This loop is software pipelined.
+   jwd8205o-i  "ddset4.f", line 84: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 288.
+
+ Procedure information
+   Lines      : 4088
+   Statements : 3296
+   Stack(byte): 840944
+   Prefetch num: 0
+
+ External subroutine subprogram "DDSET6"
+  (line-no.)(nest)(optimize)
+         90                           SUBROUTINE DDSET6(IPART,MCOMM,
+         91                          *                  NDOMS,LDOMS,NBDOMS,LISTS,LBUFS,
+         92                          *                  NDOMR,LDOMR,NBDOMR,LISTR,LBUFR,IERR)
+         93                           IMPLICIT NONE
+         94                           INTEGER*4 IPART,MBPDOM,IERR,
+         95                          *          MCOMM,NDOMS,NDOMR,
+         96                          *          LDOMS (NDOMS),LDOMR (NDOMR),
+         97                          *          NBDOMS(NDOMS),NBDOMR(NDOMR),
+         98                          *          LISTS (NDOMS),LISTR (NDOMR),
+         99                          *          LBUFS (MCOMM),LBUFR (MCOMM)
+        100                     C
+        101                           INTEGER*4 NCOM,ISLFR,ISLFS,IDOMR,IDOMS,I
+        102                           DATA NCOM  /0/
+        103                           DATA ISLFR /0/
+        104                           DATA ISLFS /0/
+        105                     C
+        106                           INCLUDE 'mpif.h'
+        107                     C
+        108                           INTEGER*4 MAXDOM,MSGTYP,MSGLEN,IRECV,ISEND
+        109                           PARAMETER (MAXDOM=30000)
+        110                           INTEGER*4 MSGIDS(MAXDOM),MSGSTS(MPI_STATUS_SIZE,MAXDOM)
+        111                           DATA MSGTYP /1/
+        112                     C
+        113                           NCOM=0
+        114                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LDOMR
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 5
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        115     1       2s            DO 1000 IDOMR=1,NDOMR
+        116     2       2m                IF(IPART.EQ.LDOMR(IDOMR)) THEN
+        117     2       2v                    ISLFR=IDOMR
+        118     2       2v                    GOTO 1000
+        119     2       2s                ENDIF
+        120     1       2s                MSGLEN=NBDOMR(IDOMR)
+        121     1       2s                IRECV =LDOMR(IDOMR)-1
+        122     1       2s                NCOM=NCOM+1
+        123     1       2s                CALL MPI_IRECV(LBUFR(LISTR(IDOMR)),MSGLEN,MPI_REAL,IRECV,
+        124     1                    *                   MSGTYP,MPI_COMM_WORLD,MSGIDS(NCOM),IERR)
+        125     1       2v       1000 CONTINUE
+        126                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LDOMS
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 5
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        127     1       2s            DO 1100 IDOMS=1,NDOMS
+        128     2       2m                IF(IPART.EQ.LDOMS(IDOMS)) THEN
+        129     2       2v                    ISLFS=IDOMS
+        130     2       2v                    GOTO 1100
+        131     2       2s                ENDIF
+        132     1       2s                MSGLEN=NBDOMS(IDOMS)
+        133     1       2s                ISEND =LDOMS(IDOMS)-1
+        134     1       2s                NCOM=NCOM+1
+        135     1       2s                CALL MPI_ISEND(LBUFS(LISTS(IDOMS)),MSGLEN,MPI_REAL,ISEND,
+        136     1                    *                   MSGTYP,MPI_COMM_WORLD,MSGIDS(NCOM),IERR)
+        137     1       2v       1100 CONTINUE
+        138                     C
+        139                           CALL MPI_WAITALL(NCOM,MSGIDS,MSGSTS,IERR)
+        140                     C
+        141                           IF(ISLFR.EQ.0) RETURN
+        142                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.00, ITR: 288, MVE: 5, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LBUFS, LBUFR
+                              <<< Loop-information  End >>>
+        143     1   s   2v            DO 2000 I=1,NBDOMS(ISLFS)
+        144     1   s   2v                LBUFR(LISTR(ISLFR)+I-1)=LBUFS(LISTS(ISLFS)+I-1)
+        145     1   s   2v       2000 CONTINUE
+        146                     C
+        147                           RETURN
+        148                           END
+        149                     C
+
+ Diagnostic messages: program name(DDSET6)
+   jwd2006i-i  "ddset4.f", line 94: 'MBPDOM' is declared but never referenced.
+   jwd5228p-i  "ddset4.f", line 115: DO loop is not parallelized: data dependency of variable may cause different results from serial execution for loop.
+   jwd6229s-i  "ddset4.f", line 115: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8664o-i  "ddset4.f", line 115: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd8202o-i  "ddset4.f", line 115: Loop unrolled 2 times.
+   jwd6208s-i  "ddset4.f", line 116: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'LDOMR' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "ddset4.f", line 120: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NBDOMR' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "ddset4.f", line 120: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'MSGLEN' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "ddset4.f", line 121: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'IRECV' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6228s-i  "ddset4.f", line 122: SIMD conversion cannot be applied to DO loop: an assign-refer order of data in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6202s-i  "ddset4.f", line 122: SIMD conversion cannot be applied to DO loop: data dependency of variable 'NCOM' may cause different results from serial execution for loop.
+   jwd5122p-i  "ddset4.f", line 123: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6122s-i  "ddset4.f", line 123: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5228p-i  "ddset4.f", line 127: DO loop is not parallelized: data dependency of variable may cause different results from serial execution for loop.
+   jwd6229s-i  "ddset4.f", line 127: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8664o-i  "ddset4.f", line 127: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd8202o-i  "ddset4.f", line 127: Loop unrolled 2 times.
+   jwd6208s-i  "ddset4.f", line 128: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'LDOMS' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "ddset4.f", line 132: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NBDOMS' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "ddset4.f", line 132: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'MSGLEN' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "ddset4.f", line 133: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'ISEND' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6228s-i  "ddset4.f", line 134: SIMD conversion cannot be applied to DO loop: an assign-refer order of data in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6202s-i  "ddset4.f", line 134: SIMD conversion cannot be applied to DO loop: data dependency of variable 'NCOM' may cause different results from serial execution for loop.
+   jwd5122p-i  "ddset4.f", line 135: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6122s-i  "ddset4.f", line 135: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd6001s-i  "ddset4.f", line 143: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8204o-i  "ddset4.f", line 143: This loop is software pipelined.
+   jwd8205o-i  "ddset4.f", line 143: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 288.
+   jwd5228p-i  "ddset4.f", line 144: DO loop is not parallelized: data dependency of variable may cause different results from serial execution for loop.
+
+ Procedure information
+   Lines      : 4089
+   Statements : 3296
+   Stack(byte): 840528
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 4
+   Total lines      : 16265
+   Total statements : 13122
+   Total stack(byte): 1682592
+   Total prefetch num: 0
+

@@ -1,0 +1,426 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:54:38 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : zone3e.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "ZONE3E"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    ZONE3E                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE ZONE3E(X,Y,Z,NODE,NE,NP,N,NDIVX,NDIVY,NDIVZ,EPS,MAX,MZ,
+         14                          *                  IELIST,ISTART,NEZ,NEZMAX,NEZAVR,NZEFF,NZ,
+         15                          *                  XMIN,YMIN,ZMIN,XMAX,YMAX,ZMAX,IEBUF,IUT0,IERR)
+         16                           IMPLICIT REAL*4(A-H,O-Z)
+         17                           DIMENSION X(NP),Y(NP),Z(NP),NODE(N,NE),IELIST(MAX),ISTART(MZ),
+         18                          1          NEZ(MZ),IEBUF(MAX)
+         19                     C
+         20                     C
+         21                           CHARACTER*60 ERMSGB
+         22                          & / ' ## SUBROUTINE ZONE3E: FATAL      ERROR OCCURENCE; RETURNED' /
+         23                     C
+         24                           CHARACTER*60 EREXP1
+         25                          & / ' NUMBER OF ZONES TO BE GENERATED HAS EXCEEDED THE LIMIT OF ' /
+         26                           CHARACTER*60 EREXP2
+         27                          & / ' NUMBER OF ARRAY ELEMENTS HAS EXCEEDED THE LIMIT OF        ' /
+         28                     C
+         29                     C
+         30                     C      GENERATE ZONAL ELEMENT LIST IN ONE-DIMENSIONAL ARRAY
+         31                     C
+         32                     C
+         33                     C     ARGUMENT LISTINGS
+         34                     C       (1) INPUT
+         35                     C          X       (IP); X-DIR. COORDINATE OF NODE
+         36                     C          Y       (IP); Y-DIR. COORDINATE OF NODE
+         37                     C          Z       (IP); Z-DIR. COORDINATE OF NODE
+         38                     C          NODE  (I,IE); NODE TABLE
+         39                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+         40                     C          NP          ; NUMBER OF TOTAL    NODES
+         41                     C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT
+         42                     C
+         43                     C          NDIVX       ; NUMBER OF ZONE DIVISIONS IN X-DIRECTION
+         44                     C          NDIVY       ; NUMBER OF ZONE DIVISIONS IN Y-DIRECTION
+         45                     C          NDIVZ       ; NUMBER OF ZONE DIVISIONS IN Z-DIRECTION
+         46                     C          EPS         ; OVERLAPING MARGIN OF TWO ADJACENT ZONES
+         47                     C
+         48                     C          MAX         ; DIMENSION LIMIT FOR ARRAYS 'IELIST' AND 'IEBUF'
+         49                     C          MZ          ; MAXIMUM NUMBER OF ZONES TO BE GENERATED
+         50                     C
+         51                     C       (2) OUTPUT
+         52                     C          IELIST(IBUF); ELEMENT NUMBERS INCLUDED IN EACH ZONE
+         53                     C          ISTART  (IZ); ENTRY POINT IN ZONE LIST ARRAY 'IELIST'
+         54                     C          NEZ     (IZ); NUMBER OF ELEMENTS INCLUDED IN ZONE 'IZ'
+         55                     C          NEZMAX      ; MAXIMUM NUMBER OF ELEMENTS IN A ZONE
+         56                     C          NEZAVR      ; AVERAGE NUMBER OF ELEMENTS IN AN EFFECTIVE ZONE
+         57                     C          NZEFF       ; NUMBER OF EFFECTIVE ZONES
+         58                     C          NZ          ; NUMBER OF ZONES GENERATED (=NDIVX*NDIVY*NDIVZ)
+         59                     C
+         60                     C          XMIN        ; X-DIRECTION LOWER BOUND OF THE GIVEN MESH
+         61                     C          YMIN        ; Y-DIRECTION LOWER BOUND OF THE GIVEN MESH
+         62                     C          ZMIN        ; Z-DIRECTION LOWER BOUND OF THE GIVEN MESH
+         63                     C
+         64                     C          XMAX        ; X-DIRECTION UPPER BOUND OF THE GIVEN MESH
+         65                     C          YMAX        ; Y-DIRECTION UPPER BOUND OF THE GIVEN MESH
+         66                     C          ZMAX        ; Z-DIRECTION UPPER BOUND OF THE GIVEN MESH
+         67                     C
+         68                     C          IERR        ; RETURN CODE WHOSE VALUE WILL BE EITHER
+         69                     C                   0 --- INDICATING SUCCESSFUL TERMINATION
+         70                     C                OR 1 --- INDICATING OCCURRENCE OF SOME ERROR CONDITIONS
+         71                     C
+         72                     C       (4) WORK
+         73                     C          IEBUF (IBUF); TEMPORARILY STORES ZONE NUMBERS FOR ELEMENTS
+         74                     C
+         75                     C
+         76                           IERR = 0
+         77                     C
+         78                     C
+         79                     C
+         80                     C CHECK NUMBER OF ZONES TO BE GENERATED
+         81                     C
+         82                     C
+         83                     C
+         84                           NZ = NDIVX*NDIVY*NDIVZ
+         85     1                     IF(NZ.GT.MZ) THEN
+         86     1                         WRITE(IUT0,*) ERMSGB
+         87     1                         WRITE(IUT0,*) EREXP1, MZ
+         88     1                         IERR = 1
+         89     1                         RETURN
+         90     1                     ENDIF
+         91                     C
+         92                     C
+         93                     C
+         94                     C FIND COMPUTAIONAL MESH BOUNDS AND SET OVERLAPPING MARGINS
+         95                     C
+         96                     C
+         97                     C
+         98                           XMIN = X(1)
+         99                           YMIN = Y(1)
+        100                           ZMIN = Z(1)
+        101                     C
+        102                           XMAX = X(1)
+        103                           YMAX = Y(1)
+        104                           ZMAX = Z(1)
+        105                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 187
+                              <<< Loop-information  End >>>
+        106     1  pp    s            DO 100 IP = 2 , NP
+        107     1   p    v                IF(X(IP).LE.XMIN) XMIN = X(IP)
+        108     1   p    v                IF(Y(IP).LE.YMIN) YMIN = Y(IP)
+        109     1   p    v                IF(Z(IP).LE.ZMIN) ZMIN = Z(IP)
+        110     1               C
+        111     1   p    v                IF(X(IP).GE.XMAX) XMAX = X(IP)
+        112     1   p    v                IF(Y(IP).GE.YMAX) YMAX = Y(IP)
+        113     1   p    v                IF(Z(IP).GE.ZMAX) ZMAX = Z(IP)
+        114     1   p    s        100 CONTINUE
+        115                           DELX = EPS*(XMAX-XMIN)/NDIVX
+        116                           DELY = EPS*(YMAX-YMIN)/NDIVY
+        117                           DELZ = EPS*(ZMAX-ZMIN)/NDIVZ
+        118                     C
+        119                     C
+        120                     C
+        121                     C FIRST, SCATTER EACH ELEMENTS TO APPROPRIATE ZONE(S)
+        122                     C
+        123                     C
+        124                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NEZ
+                              <<< Loop-information  End >>>
+        125     1  pp   4v            DO 200 IZ = 1 , NZ
+        126     1   p   4v                NEZ(IZ) = 0
+        127     1   p   4v        200 CONTINUE
+        128                     C
+        129                           IBUF = 0
+        130     1                     DO 250 IE = 1 , NE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE
+                              <<< Loop-information  End >>>
+        131     2   s    s                DO 210 I = 1 , N
+        132     2   p    v                    IP = NODE(I,IE)
+        133     2   m    m                    IF(I.EQ.1 .OR. X(IP).LE.XEMIN) XEMIN = X(IP)
+        134     2   m    m                    IF(I.EQ.1 .OR. Y(IP).LE.YEMIN) YEMIN = Y(IP)
+        135     2   m    m                    IF(I.EQ.1 .OR. Z(IP).LE.ZEMIN) ZEMIN = Z(IP)
+        136     2               C
+        137     2   m    m                    IF(I.EQ.1 .OR. X(IP).GE.XEMAX) XEMAX = X(IP)
+        138     2   m    m                    IF(I.EQ.1 .OR. Y(IP).GE.YEMAX) YEMAX = Y(IP)
+        139     2   m    m                    IF(I.EQ.1 .OR. Z(IP).GE.ZEMAX) ZEMAX = Z(IP)
+        140     2   p    v        210     CONTINUE
+        141     1               C
+        142     1                         INXMIN = NDIVX*(XEMIN-XMIN-DELX)/(XMAX-XMIN)+1
+        143     1                         INYMIN = NDIVY*(YEMIN-YMIN-DELY)/(YMAX-YMIN)+1
+        144     1                         INZMIN = NDIVZ*(ZEMIN-ZMIN-DELZ)/(ZMAX-ZMIN)+1
+        145     1               C
+        146     1                         INXMAX = NDIVX*(XEMAX-XMIN+DELX)/(XMAX-XMIN)+1
+        147     1                         INYMAX = NDIVY*(YEMAX-YMIN+DELY)/(YMAX-YMIN)+1
+        148     1                         INZMAX = NDIVZ*(ZEMAX-ZMIN+DELZ)/(ZMAX-ZMIN)+1
+        149     1               C
+        150     1                         IF(INXMIN.LT.1) INXMIN = 1
+        151     1                         IF(INYMIN.LT.1) INYMIN = 1
+        152     1                         IF(INZMIN.LT.1) INZMIN = 1
+        153     1               C
+        154     1                         IF(INXMAX.GT.NDIVX) INXMAX = NDIVX
+        155     1                         IF(INYMAX.GT.NDIVY) INYMAX = NDIVY
+        156     1                         IF(INZMAX.GT.NDIVZ) INZMAX = NDIVZ
+        157     1               C
+        158     2                         DO 240 INZ = INZMIN , INZMAX
+        159     3                             DO 230 INY = INYMIN , INYMAX
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NEZ
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 1
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        160     4                                 DO 220 INX = INXMIN , INXMAX
+        161     4                                     IZ = (INZ-1)*(NDIVX*NDIVY)+(INY-1)*NDIVX+INX
+        162     4                                     NEZ(IZ) = NEZ(IZ)+1
+        163     4               C
+        164     4                                     IBUF = IBUF+1
+        165     4               C
+        166     5                                     IF(IBUF.GT.MAX) THEN
+        167     5                                         WRITE(IUT0,*) ERMSGB
+        168     5                                         WRITE(IUT0,*) EREXP2, MAX
+        169     5                                         WRITE(IUT0,*) '    IE=', IE, '    NE=', NE
+        170     5                                         IERR = 1
+        171     5                                         RETURN
+        172     5                                     ENDIF
+        173     4               C
+        174     4                                     IEBUF(IBUF) = IZ
+        175     4                 220             CONTINUE
+        176     3                 230         CONTINUE
+        177     2                 240     CONTINUE
+        178     1               C
+        179     1                         IBUF = IBUF+1
+        180     2                         IF(IBUF.GT.MAX) THEN
+        181     2                             WRITE(IUT0,*) ERMSGB
+        182     2                             WRITE(IUT0,*) EREXP2, MAX
+        183     2                             WRITE(IUT0,*) '    IE=', IE, '    NE=', NE
+        184     2                             IERR = 1
+        185     2                             RETURN
+        186     2                         ENDIF
+        187     1                         IEBUF(IBUF) = 0
+        188     1                 250 CONTINUE
+        189                           NBUF = IBUF
+        190                     C
+        191                           NEZAVR = 0
+        192                           NEZMAX = 0
+        193                           NZEFF  = 0
+        194                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 500
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        195     1   m    v            DO 260 IZ = 1 , NZ
+        196     1   p    v                IF(NEZ(IZ).EQ.0) GO TO 260
+        197     1   p    v                NZEFF = NZEFF+1
+        198     1   p    v                NEZAVR = NEZAVR+NEZ(IZ)
+        199     1   s    m                IF(NEZ(IZ).GE.NEZMAX) NEZMAX = NEZ(IZ)
+        200     1   p    v        260 CONTINUE
+        201                           NEZAVR = NEZAVR/NZEFF
+        202                     C
+        203                     C
+        204                     C
+        205                     C THEN, COMPUTE POINTERS TO EACH ZONE ENTRY ADDRESS (IN WORDS)
+        206                     C
+        207                     C
+        208                     C
+        209                           ISTART(1) = 1
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SOFTWARE PIPELINING(IPC: 3.33, ITR: 12, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      ISTART, NEZ
+                              <<< Loop-information  End >>>
+        210     1   s   2s            DO 310 IZ = 2 , NZ
+        211     1   s   2s                ISTART(IZ) = ISTART(IZ-1)+NEZ(IZ-1)
+        212     1   s   2s        310 CONTINUE
+        213                     C
+        214                     C
+        215                     C
+        216                     C FINALLY, SCAN SCATTERED LIST 'IEBUF(IBUF)' TO GENERATE ZONE LIST
+        217                     C
+        218                     C
+        219                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NEZ
+                              <<< Loop-information  End >>>
+        220     1  pp   4v            DO 400 IZ = 1 , NZ
+        221     1   p   4v                NEZ(IZ) = 0
+        222     1   p   4v        400 CONTINUE
+        223                     C
+        224                           IE = 1
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IEBUF
+                              <<< Loop-information  End >>>
+        225     1       2s            DO 410 IBUF = 1 , NBUF
+        226     2       2m                IF(IEBUF(IBUF).EQ.0) THEN
+        227     2       2s                    IE = IE+1
+        228     2       2s                    GO TO 410
+        229     2       2s                ENDIF
+        230     1               C
+        231     1       2s                IZ = IEBUF(IBUF)
+        232     1       2s                NEZ(IZ) = NEZ(IZ)+1
+        233     1       2s                IELIST(ISTART(IZ)+NEZ(IZ)-1) = IE
+        234     1       2v        410 CONTINUE
+        235                     C
+        236                     C
+        237                           RETURN
+        238                           END
+
+ Diagnostic messages: program name(ZONE3E)
+   jwd8220o-i  "zone3e.f", line 13: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd5004p-i  "zone3e.f", line 106: DO loop with DO variable 'IP' is parallelized. The DO loop contains the reduction operation.
+   jwd6229s-i  "zone3e.f", line 106: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd6228s-i  "zone3e.f", line 107: SIMD conversion cannot be applied to DO loop: an assign-refer order of data in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd8209o-i  "zone3e.f", line 115: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "zone3e.f", line 116: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "zone3e.f", line 117: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5001p-i  "zone3e.f", line 125: DO loop with DO variable 'IZ' is parallelized.
+   jwd6001s-i  "zone3e.f", line 125: SIMD conversion is applied to DO loop with DO variable 'IZ'.
+   jwd8663o-i  "zone3e.f", line 125: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "zone3e.f", line 125: Loop unrolled 4 times.
+   jwd5131p-i  "zone3e.f", line 130: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6229s-i  "zone3e.f", line 131: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8670o-i  "zone3e.f", line 131: This loop cannot be software pipelined because the loop contains a branch instruction.
+   jwd5202p-i  "zone3e.f", line 133: DO loop is not parallelized: data dependency of variable 'XEMIN' may cause different results from serial execution for loop.
+   jwd6202s-i  "zone3e.f", line 133: SIMD conversion cannot be applied to DO loop: data dependency of variable 'XEMIN' may cause different results from serial execution for loop.
+   jwd5202p-i  "zone3e.f", line 134: DO loop is not parallelized: data dependency of variable 'YEMIN' may cause different results from serial execution for loop.
+   jwd6202s-i  "zone3e.f", line 134: SIMD conversion cannot be applied to DO loop: data dependency of variable 'YEMIN' may cause different results from serial execution for loop.
+   jwd5202p-i  "zone3e.f", line 135: DO loop is not parallelized: data dependency of variable 'ZEMIN' may cause different results from serial execution for loop.
+   jwd6202s-i  "zone3e.f", line 135: SIMD conversion cannot be applied to DO loop: data dependency of variable 'ZEMIN' may cause different results from serial execution for loop.
+   jwd5202p-i  "zone3e.f", line 137: DO loop is not parallelized: data dependency of variable 'XEMAX' may cause different results from serial execution for loop.
+   jwd6202s-i  "zone3e.f", line 137: SIMD conversion cannot be applied to DO loop: data dependency of variable 'XEMAX' may cause different results from serial execution for loop.
+   jwd5202p-i  "zone3e.f", line 138: DO loop is not parallelized: data dependency of variable 'YEMAX' may cause different results from serial execution for loop.
+   jwd6202s-i  "zone3e.f", line 138: SIMD conversion cannot be applied to DO loop: data dependency of variable 'YEMAX' may cause different results from serial execution for loop.
+   jwd5202p-i  "zone3e.f", line 139: DO loop is not parallelized: data dependency of variable 'ZEMAX' may cause different results from serial execution for loop.
+   jwd6202s-i  "zone3e.f", line 139: SIMD conversion cannot be applied to DO loop: data dependency of variable 'ZEMAX' may cause different results from serial execution for loop.
+   jwd8209o-i  "zone3e.f", line 142: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "zone3e.f", line 143: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "zone3e.f", line 144: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "zone3e.f", line 146: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "zone3e.f", line 147: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "zone3e.f", line 148: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5131p-i  "zone3e.f", line 158: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "zone3e.f", line 159: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "zone3e.f", line 160: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "zone3e.f", line 160: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "zone3e.f", line 160: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+   jwd5005p-i  "zone3e.f", line 195: DO loop with DO variable 'IZ' is partially parallelized.
+   jwd5004p-i  "zone3e.f", line 195: DO loop with DO variable 'IZ' is parallelized. The DO loop contains the reduction operation.
+   jwd6004s-i  "zone3e.f", line 195: SIMD conversion is applied to DO loop with DO variable 'IZ'. The DO loop contains a reduction operation.
+   jwd6302s-i  "zone3e.f", line 195: SIMD conversion is not applied to DO loop: the performance of a partial SIMD execution may not be improved.
+   jwd6229s-i  "zone3e.f", line 195: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd5202p-i  "zone3e.f", line 199: DO loop is not parallelized: data dependency of variable 'NEZMAX' may cause different results from serial execution for loop.
+   jwd6202s-i  "zone3e.f", line 199: SIMD conversion cannot be applied to DO loop: data dependency of variable 'NEZMAX' may cause different results from serial execution for loop.
+   jwd8204o-i  "zone3e.f", line 210: This loop is software pipelined.
+   jwd8205o-i  "zone3e.f", line 210: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 12.
+   jwd5202p-i  "zone3e.f", line 211: DO loop is not parallelized: data dependency of variable 'ISTART' may cause different results from serial execution for loop.
+   jwd6202s-i  "zone3e.f", line 211: SIMD conversion cannot be applied to DO loop: data dependency of variable 'ISTART' may cause different results from serial execution for loop.
+   jwd5001p-i  "zone3e.f", line 220: DO loop with DO variable 'IZ' is parallelized.
+   jwd6001s-i  "zone3e.f", line 220: SIMD conversion is applied to DO loop with DO variable 'IZ'.
+   jwd8663o-i  "zone3e.f", line 220: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "zone3e.f", line 220: Loop unrolled 4 times.
+   jwd5208p-i  "zone3e.f", line 225: DO loop is not parallelized: the assign-refer order of 'IE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6229s-i  "zone3e.f", line 225: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8670o-i  "zone3e.f", line 225: This loop cannot be software pipelined because the loop contains a branch instruction.
+   jwd8202o-i  "zone3e.f", line 225: Loop unrolled 2 times.
+   jwd6202s-i  "zone3e.f", line 227: SIMD conversion cannot be applied to DO loop: data dependency of variable 'IE' may cause different results from serial execution for loop.
+   jwd6228s-i  "zone3e.f", line 232: SIMD conversion cannot be applied to DO loop: an assign-refer order of data in a SIMD execution may differ from the assign-refer order in the serial execution.
+
+ Procedure information
+   Lines      : 238
+   Statements : 114
+   Stack(byte): 109632
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 238
+   Total statements : 114
+   Total stack(byte): 109632
+   Total prefetch num: 0
+

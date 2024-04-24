@@ -1,0 +1,188 @@
+
+ Fujitsu Fortran Version 4.8.1  Thu Nov 24 16:46:05 2022
+
+ Compilation information
+   Current directory : /vol0005/mdt2/home/u10588/SRC/lbm/ver.59.01
+   Source file       : mkbc02.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -Nlst=t -Cpp -Cfpp -c -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Knointentopt
+   Cpp options          : -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Dcputime -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=8 -D__FRT_patchlevel__=1 -D__FRT_version__="4.8.1" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Knoarray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nlibomp -Nline -Nlst -Nlst=p -Nlst=t
+                          -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "MKBC02"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE MKBC02(NP,NG,NC,M1,MBC,LLEVEL,LPOSI,DSCALE,
+          2                          *                  NTRIG,XTRIG,YTRIG,ZTRIG,
+          3                          *                  MPBOUN,NPBOUN,LPBOUN,QBOUN,
+          4                          *                  QCELL,LWORK,IMODQ,EPSTRG,IUT6,IUT0,IERR)
+          5                           IMPLICIT NONE
+          6                     C
+          7                     C     FUNCTION: MAKE INTERSECT DATA IN EACH CUBE
+          8                     C
+          9                     C
+         10                     C[INPUT]
+         11                           INTEGER*4 NP,NG,NC,M1,MBC,LLEVEL(NC),LPOSI(3,NC),MPBOUN
+         12                           REAL*8    DSCALE
+         13                           INTEGER*4 NTRIG
+         14                           REAL*4    XTRIG(NTRIG),YTRIG(NTRIG),ZTRIG(NTRIG)
+         15                           INTEGER*4 IMODQ
+         16                           REAL*8    EPSTRG
+         17                           INTEGER*4 IUT6,IUT0
+         18                     C
+         19                     C[INPUT-OUTPUT]
+         20                           INTEGER*4 NPBOUN(NC),LPBOUN(5,MPBOUN,NC)
+         21                           REAL*4    QBOUN(MPBOUN,NC)
+         22                     C
+         23                     C[OUTPUT]
+         24                           INTEGER*4 IERR
+         25                     C
+         26                     C[WORK]
+         27                           INTEGER*4 LWORK(NP,NG+1,NG+1,NG+1)
+         28                           REAL*4    QCELL(M1,0:NG+1,0:NG+1,0:NG+1)
+         29                     C
+         30                     C[LOCAL]
+         31                           INTEGER*4 IC,NDUM
+         32                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NPBOUN
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 2  FILL 24
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+         33     1   s    s            DO 1000 IC=1,NC
+         34     1   s    s                NDUM=NPBOUN(IC)
+         35     1   s    s                CALL USTSTA(24)
+         36     1   s    s                CALL MKINTR(NP,NG,MBC,M1,LLEVEL(IC),LPOSI(1,IC),DSCALE,
+         37     1                    *                NTRIG,XTRIG,YTRIG,ZTRIG,
+         38     1                    *                MPBOUN,NPBOUN(IC),LPBOUN(1,1,IC),QBOUN(1,IC),
+         39     1                    *                LWORK,QCELL,IMODQ,EPSTRG,IUT6,IUT0,IERR)
+         40     1   s    s                CALL USTEND(24)
+         41     1   m    m                WRITE(IUT6,'(A12,2I8)') 'MKBC02: ', IC,NPBOUN(IC)-NDUM
+         42     1   p    v       1000 CONTINUE
+         43                     C
+         44                     C
+         45                           RETURN
+         46                           END
+
+ Diagnostic messages: program name(MKBC02)
+   jwd5302p-i  "mkbc02.f", line 33: This loop is not parallelized: the performance of a partial parallelization execution may not be improved.
+   jwd6302s-i  "mkbc02.f", line 33: SIMD conversion is not applied to DO loop: the performance of a partial SIMD execution may not be improved.
+   jwd8664o-i  "mkbc02.f", line 33: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5208p-i  "mkbc02.f", line 34: DO loop is not parallelized: the assign-refer order of 'NPBOUN' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "mkbc02.f", line 34: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NPBOUN' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "mkbc02.f", line 35: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6122s-i  "mkbc02.f", line 35: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "mkbc02.f", line 36: DO loop is not parallelized: the assign-refer order of 'NPBOUN' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "mkbc02.f", line 36: DO loop is not parallelized: the assign-refer order of 'DSCALE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "mkbc02.f", line 36: DO loop is not parallelized: the assign-refer order of 'XTRIG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "mkbc02.f", line 36: DO loop is not parallelized: the assign-refer order of 'YTRIG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "mkbc02.f", line 36: DO loop is not parallelized: the assign-refer order of 'ZTRIG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "mkbc02.f", line 36: DO loop is not parallelized: the assign-refer order of 'QBOUN' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "mkbc02.f", line 36: DO loop is not parallelized: the assign-refer order of 'QCELL' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "mkbc02.f", line 36: DO loop is not parallelized: the assign-refer order of 'EPSTRG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "mkbc02.f", line 36: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "mkbc02.f", line 36: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "mkbc02.f", line 36: DO loop is not parallelized: the assign-refer order of 'MBC' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "mkbc02.f", line 36: DO loop is not parallelized: the assign-refer order of 'M1' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "mkbc02.f", line 36: DO loop is not parallelized: the assign-refer order of 'LLEVEL' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "mkbc02.f", line 36: DO loop is not parallelized: the assign-refer order of 'LPOSI' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "mkbc02.f", line 36: DO loop is not parallelized: the assign-refer order of 'NTRIG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "mkbc02.f", line 36: DO loop is not parallelized: the assign-refer order of 'LPBOUN' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "mkbc02.f", line 36: DO loop is not parallelized: the assign-refer order of 'LWORK' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "mkbc02.f", line 36: DO loop is not parallelized: the assign-refer order of 'IMODQ' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "mkbc02.f", line 36: DO loop is not parallelized: the assign-refer order of 'IUT0' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "mkbc02.f", line 36: DO loop is not parallelized: the assign-refer order of 'IERR' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "mkbc02.f", line 36: DO loop is not parallelized: the assign-refer order of 'MPBOUN' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "mkbc02.f", line 36: DO loop is not parallelized: the assign-refer order of 'IUT6' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "mkbc02.f", line 36: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "mkbc02.f", line 36: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "mkbc02.f", line 36: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NG' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "mkbc02.f", line 36: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'MBC' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "mkbc02.f", line 36: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'M1' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "mkbc02.f", line 36: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'LLEVEL' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "mkbc02.f", line 36: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'LPOSI' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "mkbc02.f", line 36: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NTRIG' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "mkbc02.f", line 36: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'MPBOUN' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "mkbc02.f", line 36: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NPBOUN' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "mkbc02.f", line 36: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'LPBOUN' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "mkbc02.f", line 36: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'LWORK' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "mkbc02.f", line 36: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'IMODQ' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "mkbc02.f", line 36: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'IUT0' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "mkbc02.f", line 36: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'IERR' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "mkbc02.f", line 36: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'IUT6' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "mkbc02.f", line 36: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5122p-i  "mkbc02.f", line 40: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6122s-i  "mkbc02.f", line 40: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "mkbc02.f", line 41: DO loop is not parallelized: the assign-refer order of 'IUT6' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "mkbc02.f", line 41: DO loop is not parallelized: the assign-refer order of 'NPBOUN' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5121p-i  "mkbc02.f", line 41: DO loop is not parallelized: an input/output statement was found in the loop.
+   jwd6208s-i  "mkbc02.f", line 41: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'IUT6' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "mkbc02.f", line 41: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NPBOUN' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6121s-i  "mkbc02.f", line 41: SIMD conversion cannot be applied to DO loop: an input/output statement was found in the loop.
+
+ Procedure information
+   Lines      : 46
+   Statements : 24
+   Stack(byte): 688
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 46
+   Total statements : 24
+   Total stack(byte): 688
+   Total prefetch num: 0
+

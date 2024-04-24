@@ -1,0 +1,1465 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:53:06 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : idrbcg.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "IDRBCG"
+  (line-no.)(nest)(optimize)
+          1                     !======================================================================!
+          2                     !                                                                      !
+          3                     ! Software Name : FFB ver. 7.2                                         !
+          4                     !                                                                      !
+          5                     ! Module Name : IDR Solver                                             !
+          6                     !                                                                      !
+          7                     ! Written by Yoshihisa SHIZAWA (RIST)                                  !
+          8                     !                                                                      !
+          9                     ! Contact address : RIST                                               !
+         10                     !                                                                      !
+         11                     ! Copyright 2010, 2011 by Research Organization                        !
+         12                     ! for Information Science & Technology (RIST)                          !
+         13                     !                                                                      !
+         14                     !======================================================================!
+         15                           SUBROUTINE IDRBCG(ME,N2,NE,NP,NS,NL,NMAX,EPS,RES,RESR,NITR,
+         16                          *                  NCRS,NPP,ACRS,IPCRS,B,S,NUMIP,
+         17                          *                  IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+         18                          *                  JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS,
+         19                          *                  IUT0,IUT6,IERR)
+         20                           IMPLICIT NONE
+         21                     CC[INPUT]
+         22                           INTEGER*4 ME,N2,NE,NP,NS,NL,NMAX,NCRS,IUT0,IUT6,
+         23                          *          NPP(NP),IPCRS(NCRS),NUMIP(NP),
+         24                          *          IPART,NDOM,MBPDOM,LDOM(NDOM),NBPDOM(NDOM),
+         25                          *          IPSLF(MBPDOM,NDOM),IPSND(MBPDOM,NDOM)
+         26                           REAL*4    EPS,ACRS(NCRS),B(NP)
+         27                     C
+         28                     CC[IN-OUT]
+         29                           REAL*4    S(NP)
+         30                     C
+         31                     CC[OUT]
+         32                           INTEGER*4 NITR,IERR
+         33                           REAL*4    RES,RESR
+         34                     C
+         35                     CC[LOCAL]
+         36                           INTEGER*4 IWORKS(NS)
+         37                           INTEGER*4 MAXBUF,IP,IL,IIL,JL,IS,JS,JJS,IR,I,J,K
+         38                           REAL*4    WEIGHT(NP),RESV(NP,0:NL+1),UMAT(NP,NS,0:NL+1),
+         39                          *          TR0T(NS,NP),WRKS01(NP,NS),WRKS02(NP,NS),WRK01(NP),
+         40                          *          RX(0:N2,ME),RY(0:N2,ME)
+         41                           REAL*4    GAM0(NL),GAM1(NL),GAM2(NL),TAU(NL,NL),
+         42                          *          MMAT(NS,NS),WKSMAT(NS,NS),MVEC(NS),BETA(NS),
+         43                          *          BNRM,R0NRM,SIGIJ,SIGII,SIGJJ,SIGJ0,BUF
+         44                     C
+         45                     C     [FULL UNROOL]
+         46                           INTEGER*4 JUNROL
+         47                           INTEGER*4 NPPMAX,NCRS2,ITPCRS(NCRS2)
+         48                           REAL*4    TS(0:NP),TACRS(NCRS2)
+         49                     C
+         50                           INTEGER*4 NUM1
+         51                           DATA NUM1  /1/
+         52                           REAL*4    OMEGA
+         53                           DATA OMEGA  /-1.0E0/
+         54                     C
+         55                     C     SOLVE A MATRIX EQUATION BY IDR-BCG METHOD
+         56                     C
+         57                     C     ARGUMENTS LISTINGS
+         58                     C
+         59                     C     (1) INPUT
+         60                     C         INTEGER ME         ; MAX. NUMBER OF ELEMENTS
+         61                     C         INTEGER N          ; MAXIMUM NUMBER OF NODES ASSIGNED TO AN ELEMENT (=8)
+         62                     C         INTEGER NE         ; NUMBER OF ELEMENTS
+         63                     C         INTEGER NP         ; NUMBER OF NODES
+         64                     C         INTEGER NS         ; IDR-LEVEL INDEX
+         65                     C         INTEGER NL         ; IDR-LEVEL INDEX
+         66                     C         INTEGER NMAX       ; MAXIMUM NUMBER OF ITERATION
+         67                     C         REAL    EPS        ; CONVERGENCE CRITERIA (I,L2-NORM RESIDUAL,J)
+         68                     C         REAL    ACRS(NCRS) ; CRS-MATRIX
+         69                     C         INTEGER NPP(NP+1)  ; INDEX FOR FIRST NON-ZERO ELEMENT OF i-th ROW OF A
+         70                     C         INTEGER IPCRS(NCRS); COLUMN ADDRESSING OF i-th ELEMENT OF ACRS
+         71                     C         REAL    B(NP)      ; RIGHT-HAND SIDE VECTOR OF AS=B
+         72                     C         INTEGER NUMIP(NX)  ; COUNTING OF INTER-CONNECT BOUNDARY NODES SHARED
+         73                     C
+         74                     C         INTEGER IPART           ; SUB-DOMAIN INDEX OF THE TASK
+         75                     C                                   (IF PROGRAM IS RUN IN SERIAL-MODE, IPART=0)
+         76                     C         INTEGER LDOM(NDOM)      ; NEIGHBOURING SUB-DOMAIN NUMBER
+         77                     C         INTEGER NBPDOM(NDOM)    ; NUMBER OF INTER-CONNECT BOUNDARY NODES SHARING WITH
+         78                     C                                   THE i-th NEIGHBOURING SUB-DOMAIN LDOM(i)
+         79                     C         INTEGER NDOM            ; NUMBER OF NEIGHBOURING SUB-DOMAINS
+         80                     C         INTEGER IPSLF(NBP,NDOM) ; INTER-CONNECT BOUNDARY NODE-NUMBER
+         81                     C                                   IN THE CALLING TASK'S SUB-DOMAIN,
+         82                     C                                   FOR THE i-th NEIGHBOURING SUB-DOMAIN, LDOM(i)
+         83                     C         INTEGER IPSND(NBP,NDOM) ; INTER-CONNECT BOUNDARY NODE-NUMBER IN THE
+         84                     C                                   SUB-DOMAIN THE IS RECIEVING THE CALLING TASK'S RESIDUALS
+         85                     C         INTEGER MBPDOM          ; THE MAXIMUM NUMBER OF THE INTER-CONNECT BOUNDARY NODES
+         86                     C
+         87                     C     (2) INPUT-OUTPUT
+         88                     C         REAL    S(NP)      ; (INPUT)  / INITIAL GUESS OF SOLUTION VECTOR
+         89                     C                              (OUTPUT) / GLOBAL SOLUTION VECTOR
+         90                     C     (3) OUTPUT
+         91                     C         REAL    RES        ; ABSOLUTE L2-NORM RESIDUAL OF THE FINAL SOLUTION VECTOR
+         92                     C         REAL    RESR       ; RELATIVE L2-NORM RESIDUAL OF THE FINAL SOLUTION VECTOR
+         93                     C         INTEGER NITR       ; NUMBER OF ITERATIONS DONE
+         94                     C         INTEGER IERR       ; RETURN CODE TO REPORT ERROR OCCURENCE
+         95                     C
+         96                     C
+         97                           IERR=0
+         98                     C
+         99                     CC      WRITE(IUT6,*) "SOLVER: IDRBCG"
+        100                     CC      WRITE(IUT6,*) "SOLVER PARAMETERS: "
+        101                     CC      WRITE(IUT6,*) "       NS: ", NS
+        102                     CC      WRITE(IUT6,*) "       NL: ", NL
+        103                     C
+        104                           MAXBUF = 4*ME
+        105                           IF(NMAX.EQ.0) RETURN
+        106                     C
+        107                     C     // PREPARE WEIGHT FACTOR
+        108     1                     IF(IPART.EQ.0) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WEIGHT
+                              <<< Loop-information  End >>>
+        109     2  pp   4v                DO 100 IP=1, NP
+        110     2   p   4v                    WEIGHT(IP) = 1.0E0
+        111     2   p   4v       100      CONTINUE
+        112     1                     ELSE
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 552
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.85, ITR: 384, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NUMIP, WEIGHT
+                              <<< Loop-information  End >>>
+        113     2  pp   2v                DO 110 IP=1, NP
+        114     2   p   2v                    WEIGHT(IP) = 1.E0 / FLOAT(NUMIP(IP) + 1)
+        115     2   p   2v       110      CONTINUE
+        116     1                     ENDIF
+        117                     C
+        118                     C
+        119                     C     // INITIAL RESIDUAL (NORM OF B-VECTOR)
+        120                     C     NOTE THAT DDCOM2 IS CALLED IN 'DOTWVC'
+        121                           CALL DOTWVC (NP,B,B,WEIGHT,BNRM)
+        122                     C
+        123                     C  // INITIALZIE COEFFICIENTS GAMMA AND TAU
+        124                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1143
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<<    COLLAPSED
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      GAM2, GAM1, GAM0
+                              <<< Loop-information  End >>>
+        125     1  pp   2v            DO 120 IL=1, NL
+        126     1   p   2v                GAM0(IL) = 0.0E0
+        127     1   p   2v                GAM1(IL) = 0.0E0
+        128     1   p   2v                GAM2(IL) = 0.0E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1455
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<<    COLLAPSED
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      TAU
+                              <<< Loop-information  End >>>
+        129     2  pp   4v                DO 121 JL=1, NL
+        130     2   p   4v                    TAU(IL,JL) = 0.0E0
+        131     2   p   4v       121      CONTINUE
+        132     1   p   4v       120  CONTINUE
+        133                     C
+        134                     C      WRITE(IUT6,*) "STEP 1"
+        135                     C  // STEP 1: PREPARE MATRIX TR0T
+        136                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED
+                              <<<    COLLAPSED
+                              <<< Loop-information  End >>>
+        137     1   p                 DO 200 IS=1, NS
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1455
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<<    COLLAPSED
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      TR0T
+                              <<< Loop-information  End >>>
+        138     2  pp   4v                DO 210 IP=1, NP
+        139     2   p   4v                    TR0T(IS,IP) = 0.0E0
+        140     2   p   4v       210      CONTINUE
+        141     1   p   4v       200  CONTINUE
+        142                     C
+        143                     C     // SEED OF RANDOM VALUE
+        144                           IR = 12345 + IPART
+        145                     C
+        146                     C     // PREPARE TR0T by (PSEUDO) RANDOM MATRIX
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WRKS01, WEIGHT
+                              <<< Loop-information  End >>>
+        147     1                     DO 300 IS=1, NS
+        148     1                         CALL URAND1(NP,WRKS01(1,IS),IR)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 889
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.75, ITR: 544, MVE: 9)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WRKS01, WEIGHT
+                              <<< Loop-information  End >>>
+        149     2  pp   2v                DO 310 IP=1, NP
+        150     2   p   2v                    WRKS01(IP,IS) = (WRKS01(IP,IS)-0.5E0)*WEIGHT(IP)
+        151     2   p   2v        310     CONTINUE
+        152     1                         CALL DDCOMX(IPART,NUM1,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        153     1                    *                WRKS01(1,IS),WRK01,WRK01,NP,
+        154     1                    *                IUT0,IERR,RX,RY,MAXBUF)
+        155     1                 300 CONTINUE
+        156                     C
+        157                           CALL MGS1GV(NP,NS,WRKS01,TR0T,WEIGHT)
+        158                     C
+        159                     C  // CALCULATE AS
+        160                     C
+        161                           CALL CALAX0(ACRS,S,WRK01,NP,NE,NCRS,IPCRS,NPP,
+        162                          *            N2,ME,IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        163                          *            RX,RY,JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS,
+        164                          *            IUT0,IERR)
+        165                     C
+        166                     C      WRITE(IUT6,*) "STEP 2a,3"
+        167                     C  // STEP 2a,3: INITIAL RESIDUAL AND U_i0
+        168                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 889
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.66, ITR: 224, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      UMAT, B, RESV, WRK01
+                              <<< Loop-information  End >>>
+        169     1  pp   2v            DO 400 IP=1, NP
+        170     1   p   2v                BUF  = B(IP) - WRK01(IP)
+        171     1   p   2v                RESV(IP  ,0) = BUF
+        172     1   p   2v                UMAT(IP,1,0) = BUF
+        173     1   p   2v       400  CONTINUE
+        174                     C
+        175                     C      WRITE(IUT6,*) "STEP 2b"
+        176                     C  // STEP 2b: U_0 = [r, Ar, A^2r, ..., A^(S-1)r]
+        177                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 23
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        178     1   s    s            DO 410 JS=2, NS
+        179     1   s    s                CALL CALAX0(ACRS,UMAT(1,JS-1,0),UMAT(1,JS,0),
+        180     1                    *                NP,NE,NCRS,IPCRS,NPP,
+        181     1                    *                N2,ME,IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        182     1                    *                RX,RY,JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS,
+        183     1                    *                IUT0,IERR)
+        184     1   s    s       410  CONTINUE
+        185                     C
+        186                     C      WRITE(IUT6,*) "STEP 2c"
+        187                     C  // STEP 2c: TRANSFORM U_0
+        188                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 4
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      UMAT, WRKS01
+                              <<< Loop-information  End >>>
+        189     1  pp                 DO 430 IS=1, NS
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.00, ITR: 320, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      UMAT, WRKS01
+                              <<< Loop-information  End >>>
+        190     2   p   4v                DO 431 IP=1, NP
+        191     2   p   4v                    WRKS01(IP,IS) = UMAT(IP,IS,0)
+        192     2   p   4v       431      CONTINUE
+        193     1   p            430  CONTINUE
+        194                           CALL MGSGVC(NP,NS,WRKS01,WRKS02,WEIGHT)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 4
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WRKS02, UMAT
+                              <<< Loop-information  End >>>
+        195     1  pp                 DO 440 IS=1, NS
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.00, ITR: 320, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WRKS02, UMAT
+                              <<< Loop-information  End >>>
+        196     2   p   4v                DO 441 IP=1, NP
+        197     2   p   4v                    UMAT(IP,IS,0) = WRKS02(IP,IS)
+        198     2   p   4v       441      CONTINUE
+        199     1   p            440  CONTINUE
+        200                     C
+        201                     C      WRITE(IUT6,*) "STEP 2d"
+        202                     C  // STEP 2d: CALCULATE U_1: U_1 = A U_0
+        203                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 23
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        204     1   s    s            DO 450 JS=1, NS
+        205     1   s    s                CALL CALAX0(ACRS,UMAT(1,JS,0),UMAT(1,JS,1),
+        206     1                    *                NP,NE,NCRS,IPCRS,NPP,
+        207     1                    *                N2,ME,IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        208     1                    *                RX,RY,JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS,
+        209     1                    *                IUT0,IERR)
+        210     1   s    s       450  CONTINUE
+        211                     C
+        212                     C      WRITE(IUT6,*) "STEP 4a"
+        213                     C  // STEP 4a: CALCULATE M: M = TR0T^* U_1
+        214                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 2
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        215     1   s    s            DO 500 JS=1, NS
+        216     1   s    s                CALL MATMLW (NP,NS,TR0T,UMAT(1,JS,1),WRK01,WEIGHT)
+        217     1   s    s                CALL DDCOM2V(WRK01,MMAT(1,JS),NS)
+        218     1   s    s       500  CONTINUE
+        219                     C
+        220                     C      WRITE(IUT6,*) "STEP 4b"
+        221                     C  // STEP 4b: CALCULATE m: m = TR0T^* r_0
+        222                     C
+        223                           CALL MATMLW (NP,NS,TR0T,RESV(1,0),WRK01,WEIGHT)
+        224                           CALL DDCOM2V(WRK01,BETA,NS)
+        225                     C
+        226                     C      WRITE(IUT6,*) "STEP 5"
+        227                     C  // STEP 5: SOLVE EQUATION: M beta = m for beta
+        228                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 4
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      MMAT
+                              <<< Loop-information  End >>>
+        229     1  pp                 DO 520 JS=1, NS
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.60, ITR: 160, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      MMAT
+                              <<< Loop-information  End >>>
+        230     2   p   2v                DO 521 IS=1, NS
+        231     2   p   2v                    WKSMAT(JS,IS) = MMAT(IS,JS)
+        232     2   p   2v       521      CONTINUE
+        233     1   p                     WRK01(JS)=BETA(JS)
+        234     1   p            520  CONTINUE
+        235                     C
+        236                           CALL MATGAU(NS,NS,WKSMAT,BETA,WRK01,IWORKS,IUT0,IERR)
+        237                     C
+        238                           IF(IERR.NE.0) RETURN
+        239                     C
+        240                     C
+        241                     C
+        242                     C      WRITE(IUT6,*) "STEP 6a"
+        243                     C  // STEP 6a: CALCULATE RESIDUAL r_0: r_0 = r_0 - U_1 beta
+        244                     C
+        245                           CALL MATMLS(NP,NS,UMAT(1,1,1),BETA,WRK01)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1067
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.00, ITR: 384, MVE: 7)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WRK01, RESV
+                              <<< Loop-information  End >>>
+        246     1  pp   2v            DO 542 IP=1, NP
+        247     1   p   2v                RESV(IP,0) = RESV(IP,0) - WRK01(IP)
+        248     1   p   2v       542  CONTINUE
+        249                     C
+        250                     C      WRITE(IUT6,*) "STEP 6b"
+        251                     C  // STEP 6b: UPDATE SOLUTION VECTOR: x_0 = x_0 + U_0 beta
+        252                     C
+        253                           CALL MATMLS(NP,NS,UMAT(1,1,0),BETA,WRK01)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1067
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.00, ITR: 384, MVE: 7)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WRK01, S
+                              <<< Loop-information  End >>>
+        254     1  pp   2v            DO 552 IP=1, NP
+        255     1   p   2v                S(IP) = S(IP) + WRK01(IP)
+        256     1   p   2v       552  CONTINUE
+        257                     C
+        258                     C      WRITE(IUT6,*) "STEP 7a"
+        259                     C  // STEP 7a: RESIDUAL r_1: r_1 = A r_0
+        260                     C
+        261                           CALL CALAX0(ACRS,RESV(1,0),RESV(1,1),
+        262                          *            NP,NE,NCRS,IPCRS,NPP,
+        263                          *            N2,ME,IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        264                          *            RX,RY,JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS,
+        265                          *            IUT0,IERR)
+        266                     C
+        267                     C      WRITE(IUT6,*) "STEP 7b"
+        268                     C  // STEP 7b: Nitr = 0, omega = -1
+        269                     C
+        270                           NITR  = 0
+        271                           OMEGA = -1.0E0
+        272                     C
+        273                     C      WRITE(IUT6,*) "STEP 8"
+        274                     C  // STEP 8: ITERATION LOOP
+        275                     C
+        276                      8000 CONTINUE
+        277                     C
+        278                     C      WRITE(IUT6,*) "STEP 8a"
+        279                     C  // STEP 8a: CALCULATE ||r_0||
+        280                     C
+        281                           CALL DOTWVC (NP,RESV(1,0),RESV(1,0),WEIGHT,R0NRM)
+        282                           RES  = SQRT(R0NRM)
+        283                           RESR = SQRT(R0NRM/BNRM)
+        284                     C
+        285                     C      WRITE(IUT6,*) "STEP 8b"
+        286                     C  // STEP 8b: CONVERGENCE CHECK
+        287                     C
+        288                     CC    WRITE(IUT6,*)
+        289                     CC   * "     NITR =", NITR, "  RES =", RESR
+        290                     CCYYDEB---
+        291     1                     IF(IPART.LE.1) THEN
+        292     1                         WRITE(90,'(I8,E13.5)') NITR,RESR
+        293     1                     ENDIF
+        294                     CCYYDEB---
+        295                     C
+        296                           IF(RESR.LT.EPS.OR.NITR.GT.NMAX) GOTO 9000
+        297                     C
+        298                     C
+        299                     C      WRITE(IUT6,*) "STEP 9"
+        300                     C  // STEP 9: M  = -omega M
+        301                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.66, ITR: 672, MVE: 11)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      MMAT
+                              <<< Loop-information  End >>>
+        302     1   p   2v            DO 600 IS = 1, NS
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 4
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      MMAT
+                              <<< Loop-information  End >>>
+        303     2  pp   2                 DO 601 JS = 1, NS
+        304     2   p   2v                    MMAT(IS,JS) = - OMEGA * MMAT(IS,JS)
+        305     2   p   2         601     CONTINUE
+        306     1   p             600 CONTINUE
+        307                     C
+        308                     C      WRITE(IUT6,*) "STEP 10"
+        309                     C  // STEP 10: FOR i = 0, 1, ..., L-1
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WRK01, S
+                              <<< Loop-information  End >>>
+        310     1                     DO 8100 IL = 0, NL-1
+        311     1               C
+        312     1               C      WRITE(IUT6,*) "STEP 11"
+        313     1               C  // STEP 11: IF(Nitr = 0), SKIP i=0 LOOP
+        314     2                         IF(NITR.EQ.0.AND.IL.EQ.0) THEN
+        315     2                             IIL = 1
+        316     2                         ELSE
+        317     2                             IIL = IL
+        318     2                         ENDIF
+        319     1               C
+        320     1               C      WRITE(IUT6,*) "STEP 12"
+        321     1               C  // STEP 12: CALCULATE m: m = TR0T^* r_i
+        322     1               C
+        323     1                         CALL MATMLW (NP,NS,TR0T,RESV(1,IIL),WRK01,WEIGHT)
+        324     1                         CALL DDCOM2V(WRK01,MVEC,NS)
+        325     1               C
+        326     1               C      WRITE(IUT6,*) "STEP 13"
+        327     1               C  // STEP 13: FOR j=1, ..., S
+        328     1               C
+        329     2                         DO 8200 JJS = 1, NS
+        330     2               C
+        331     2               C      WRITE(IUT6,*) "STEP 14"
+        332     2               C  // STEP 14: IF(j=1)
+        333     2               C
+        334     3                             IF(JJS.EQ.1) THEN
+        335     3               C
+        336     3               C      WRITE(IUT6,*) "STEP 15"
+        337     3               C  // STEP 15: SOLVE EQUATION: M beta = m for beta
+        338     3               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 4
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WKSMAT
+                              <<< Loop-information  End >>>
+        339     4  pp                             DO 800 IS=1, NS
+        340     4   p                                 BETA(IS)=MVEC(IS)
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.55, ITR: 384, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WKSMAT
+                              <<< Loop-information  End >>>
+        341     5   p   4v                            DO 801 JS=1, NS
+        342     5   p   4v                                WKSMAT(JS,IS) = MMAT(IS,JS)
+        343     5   p   4v       801                  CONTINUE
+        344     4   p            800              CONTINUE
+        345     3                                 CALL  MATGAU(NS,NS,WKSMAT,BETA,
+        346     3                    *                         WRK01,IWORKS,IUT0,IERR)
+        347     3                                 IF(IERR.NE.0) RETURN
+        348     3               C
+        349     3               C      WRITE(IUT6,*) "STEP 16"
+        350     3               C  // STEP 16: CALCULATE U_k e_j = r_k - sum_{q=1}^s U_k e_q beta(q)
+        351     3               C              FOR K=0, ..., i
+        352     3               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      RESV, WRK01, UMAT
+                              <<< Loop-information  End >>>
+        353     4                                 DO 900 K=0, IIL
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1231
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.00, ITR: 288, MVE: 5)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      RESV, WRK01
+                              <<< Loop-information  End >>>
+        354     5  pp   2v                            DO 910 IP=1, NP
+        355     5   p   2v                                WRK01(IP) = RESV(IP,K)
+        356     5   p   2v       910                  CONTINUE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      UMAT, WRK01
+                              <<< Loop-information  End >>>
+        357     5                                     DO 920 JS=1, NS
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 889
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.25, ITR: 384, MVE: 7)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      UMAT, WRK01
+                              <<< Loop-information  End >>>
+        358     6  pp   2v                                DO 921 IP=1, NP
+        359     6   p   2v                                    WRK01(IP) = WRK01(IP)
+        360     6                    *                                    - UMAT(IP,JS,K) * BETA(JS)
+        361     6   p   2v       921                      CONTINUE
+        362     5                920                  CONTINUE
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1231
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.00, ITR: 288, MVE: 5)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WRK01, UMAT
+                              <<< Loop-information  End >>>
+        363     5  pp   2v                            DO 930 IP=1, NP
+        364     5   p   2v                                UMAT(IP,JJS,K) = WRK01(IP)
+        365     5   p   2v       930                  CONTINUE
+        366     4                900              CONTINUE
+        367     3               C
+        368     3               C      WRITE(IUT6,*) "STEP 17"
+        369     3               C  // STEP 17: ELSE (FOR IF IN STEP 14)
+        370     3               C
+        371     3                             ELSE
+        372     3               C
+        373     3               C      WRITE(IUT6,*) "STEP 18a"
+        374     3               C  // STEP 18a: MAKE MATRIX M' = [m, Me_1, ..., Me_{j-2}, Me_{j}, ..., Me_s]
+        375     3               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1334
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.75, ITR: 224, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      MVEC
+                              <<< Loop-information  End >>>
+        376     4  pp   2v                        DO 1000 IS = 1, NS
+        377     4   p   2v                            WKSMAT(1,IS) = MVEC(IS)
+        378     4   p   2v       1000             CONTINUE
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 4
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      MMAT
+                              <<< Loop-information  End >>>
+        379     4  pp                             DO 1010 JS = 2, JJS-1
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.60, ITR: 160, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      MMAT
+                              <<< Loop-information  End >>>
+        380     5   p   2v                            DO 1011 IS=1, NS
+        381     5   p   2v                                WKSMAT(JS,IS) = MMAT(IS,JS-1)
+        382     5   p   2v       1011                 CONTINUE
+        383     4   p            1010             CONTINUE
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 4
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      MMAT
+                              <<< Loop-information  End >>>
+        384     4  pp                             DO 1020 JS = JJS, NS
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.60, ITR: 160, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      MMAT
+                              <<< Loop-information  End >>>
+        385     5   p   2v                            DO 1021 IS=1, NS
+        386     5   p   2v                                WKSMAT(JS,IS) = MMAT(IS,JS)
+        387     5   p   2v       1021                 CONTINUE
+        388     4   p            1020             CONTINUE
+        389     3               C
+        390     3               C      WRITE(IUT6,*) "STEP 18b"
+        391     3               C  // STEP 18b: RHS
+        392     3               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1231
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.00, ITR: 288, MVE: 5)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      MMAT, BETA
+                              <<< Loop-information  End >>>
+        393     4  pp   2v                        DO 1030 IS=1, NS
+        394     4   p   2v                            BETA(IS) = MMAT(IS, JJS-1)
+        395     4   p   2v       1030             CONTINUE
+        396     3               C
+        397     3                                 CALL  MATGAU(NS,NS,WKSMAT,BETA,
+        398     3                    *                         WRK01,IWORKS,IUT0,IERR)
+        399     3                                 IF(IERR.NE.0) RETURN
+        400     3               C
+        401     3               C      WRITE(IUT6,*) "STEP 19"
+        402     3               C  // STEP 19: CALCULATE
+        403     3               C                  U_k e_j = U_{k+1}e_{j-1} - r_k beta(1)
+        404     3               C                               - sum_{q=1}^{j-2} U_{k+1} e_q beta(q+1)
+        405     3               C                               - sum_{q=j}^s U_k e_q beta(q)
+        406     3               C              FOR K=0, ..., i
+        407     3               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      RESV, UMAT, WRK01
+                              <<< Loop-information  End >>>
+        408     4                                 DO 1100 K = 0, IIL
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 843
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.75, ITR: 352, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      UMAT, WRK01, RESV
+                              <<< Loop-information  End >>>
+        409     5  pp   2v                            DO 1110 IP = 1, NP
+        410     5   p   2v                                WRK01(IP) = UMAT(IP,JJS-1,K+1)
+        411     5                    *                                  - RESV(IP,K) * BETA(1)
+        412     5   p   2v       1110                 CONTINUE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      UMAT, WRK01
+                              <<< Loop-information  End >>>
+        413     5                                     DO 1120 JS = 1, JJS-2
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 889
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.25, ITR: 384, MVE: 7)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      UMAT, WRK01
+                              <<< Loop-information  End >>>
+        414     6  pp   2v                                DO 1121 IP= 1, NP
+        415     6   p   2v                                    WRK01(IP) = WRK01(IP)
+        416     6                    *                                  - UMAT(IP,JS,K+1) * BETA(JS+1)
+        417     6   p   2v       1121                     CONTINUE
+        418     5                1120                 CONTINUE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      UMAT, WRK01
+                              <<< Loop-information  End >>>
+        419     5                                     DO 1130 JS = JJS, NS
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 889
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.25, ITR: 384, MVE: 7)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      UMAT, WRK01
+                              <<< Loop-information  End >>>
+        420     6  pp   2v                                DO 1131 IP = 1, NP
+        421     6   p   2v                                    WRK01(IP) = WRK01(IP)
+        422     6                    *                                  - UMAT(IP,JS,K) * BETA(JS)
+        423     6   p   2v       1131                     CONTINUE
+        424     5                1130                 CONTINUE
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1231
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.00, ITR: 288, MVE: 5)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WRK01, UMAT
+                              <<< Loop-information  End >>>
+        425     5  pp   2v                            DO 1140 IP = 1, NP
+        426     5   p   2v                                UMAT(IP,JJS,K) = WRK01(IP)
+        427     5   p   2v       1140                 CONTINUE
+        428     4                1100             CONTINUE
+        429     3               C
+        430     3               C      WRITE(IUT6,*) "STEP 20"
+        431     3               C  // STEP 20: ENDIF (FOR IF IN STEP 14)
+        432     3               C
+        433     3                             ENDIF
+        434     2               C
+        435     2               C      WRITE(IUT6,*) "STEP 21"
+        436     2               C  // STEP 21: CALCULATE U_{i+1} e_j = A U_i e_j
+        437     2               C
+        438     2                     CALL CALAX0(ACRS,UMAT(1,JJS,IIL),UMAT(1,JJS,IIL+1),
+        439     2                    *            NP,NE,NCRS,IPCRS,NPP,
+        440     2                    *            N2,ME,IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        441     2                    *            RX,RY,JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS,
+        442     2                    *            IUT0,IERR)
+        443     2               C
+        444     2               C
+        445     2               C      WRITE(IUT6,*) "STEP 22"
+        446     2               C  // STEP 22: CALCULATE M e_j = TR0T^* U_{i+1} e_j
+        447     2                             CALL MATMLW (NP,NS,TR0T,UMAT(1,JJS,IIL+1),WRK01,WEIGHT)
+        448     2                             CALL DDCOM2V(WRK01,MMAT(1,JJS),NS)
+        449     2               C
+        450     2               C      WRITE(IUT6,*) "STEP 23"
+        451     2               C  // STEP 23: END FOR IN STEP 13
+        452     2               C
+        453     2                8200     CONTINUE
+        454     1               C
+        455     1               C      WRITE(IUT6,*) "STEP 24"
+        456     1               C  // STEP 24: SOLVE EQUATION M beta = m for beta
+        457     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 4
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WKSMAT
+                              <<< Loop-information  End >>>
+        458     2  pp                     DO 1400 IS=1, NS
+        459     2   p                         BETA(IS) = MVEC(IS)
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.55, ITR: 384, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WKSMAT
+                              <<< Loop-information  End >>>
+        460     3   p   4v                    DO 1401 JS=1, NS
+        461     3   p   4v                        WKSMAT(JS,IS) = MMAT(IS,JS)
+        462     3   p   4v       1401         CONTINUE
+        463     2   p            1400     CONTINUE
+        464     1                         CALL  MATGAU(NS,NS,WKSMAT,BETA,WRK01,IWORKS,IUT0,IERR)
+        465     1                         IF(IERR.NE.0) RETURN
+        466     1               C
+        467     1               C      WRITE(IUT6,*) "STEP 25"
+        468     1               C  // STEP 25: CALCULATE r_k = r_k - U_{k+1} beta (k = 0, ..., i)
+        469     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WRK01, RESV
+                              <<< Loop-information  End >>>
+        470     2                         DO 1500 K = 0, IIL
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 3
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      UMAT, WRKS01
+                              <<< Loop-information  End >>>
+        471     3  pp                         DO 1501 IS=1, NS
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.00, ITR: 288, MVE: 5)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      UMAT, WRKS01
+                              <<< Loop-information  End >>>
+        472     4   p   2v                        DO 1502 IP=1, NP
+        473     4   p   2v                            WRKS01(IP,IS) = UMAT(IP,IS,K+1)
+        474     4   p   2v       1502             CONTINUE
+        475     3   p            1501         CONTINUE
+        476     2                             CALL MATMLS(NP,NS,WRKS01,BETA,WRK01)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 942
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.25, ITR: 384, MVE: 7)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WRK01, RESV
+                              <<< Loop-information  End >>>
+        477     3  pp   2v                    DO 1510 IP=1, NP
+        478     3   p   2v                        RESV(IP,K) = RESV(IP,K) - WRK01(IP)
+        479     3   p   2v       1510         CONTINUE
+        480     2                1500     CONTINUE
+        481     1               C
+        482     1               C      WRITE(IUT6,*) "STEP 26"
+        483     1               C  // STEP 26: CALCULATE x_0 = x_0 + U_0 beta
+        484     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 4
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      UMAT, WRKS01
+                              <<< Loop-information  End >>>
+        485     2  pp                     DO 1600 IS=1, NS
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.00, ITR: 320, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      UMAT, WRKS01
+                              <<< Loop-information  End >>>
+        486     3   p   4v                    DO 1601 IP=1, NP
+        487     3   p   4v                        WRKS01(IP,IS) = UMAT(IP,IS,0)
+        488     3   p   4v       1601         CONTINUE
+        489     2   p            1600     CONTINUE
+        490     1                         CALL MATMLS(NP,NS,WRKS01,BETA,WRK01)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1067
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.00, ITR: 384, MVE: 7)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WRK01, S
+                              <<< Loop-information  End >>>
+        491     2  pp   2v                DO 1602 IP=1, NP
+        492     2   p   2v                    S(IP) = S(IP) + WRK01(IP)
+        493     2   p   2v       1602     CONTINUE
+        494     1               C
+        495     1               C      WRITE(IUT6,*) "STEP 27"
+        496     1               C  // STEP 27: CALCULATE r_{i+1} = A r_i
+        497     1               C
+        498     1                         CALL CALAX0(ACRS,RESV(1,IIL),RESV(1,IIL+1),
+        499     1                    *                NP,NE,NCRS,IPCRS,NPP,
+        500     1                    *                N2,ME,IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        501     1                    *                RX,RY,JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS,
+        502     1                    *                IUT0,IERR)
+        503     1               C
+        504     1               C      WRITE(IUT6,*) "STEP 28"
+        505     1               C  // STEP 28: END FOR IN STEP 10
+        506     1               C
+        507     1                8100 CONTINUE
+        508                     C
+        509                     C      WRITE(IUT6,*) "STEP 29"
+        510                     C  // STEP 29: FOR JL = 1, ..., L
+        511                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      RESV, WRK01
+                              <<< Loop-information  End >>>
+        512     1                     DO 2000 JL=1, NL
+        513     1               C
+        514     1               C      WRITE(IUT6,*) "STEP 30"
+        515     1               C  // STEP 30: CALCULATE TAU: TAU_IJ = SIG_IJ / SIG_II,
+        516     1               C                                SIG_IJ = (r_i, r_j)
+        517     1               C                                r_j = r_j - tau_ij r_i
+        518     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1231
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.00, ITR: 288, MVE: 5)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      RESV, WRK01
+                              <<< Loop-information  End >>>
+        519     2  pp   2v                DO 2010 IP=1, NP
+        520     2   p   2v                    WRK01(IP)=RESV(IP,JL)
+        521     2   p   2v       2010     CONTINUE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      RESV, WRK01
+                              <<< Loop-information  End >>>
+        522     2                         DO 2020 IL=1, JL-1
+        523     2                             CALL DOTWVC(NP,RESV(1,IL),RESV(1,JL),WEIGHT,SIGIJ)
+        524     2                             CALL DOTWVC(NP,RESV(1,IL),RESV(1,IL),WEIGHT,SIGII)
+        525     2                             TAU(IL,JL) = SIGIJ / SIGII
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 889
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.25, ITR: 384, MVE: 7)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      RESV, WRK01
+                              <<< Loop-information  End >>>
+        526     3  pp   2v                    DO 2040 IP=1, NP
+        527     3   p   2v                        WRK01(IP) = WRK01(IP) - TAU(IL,JL) * RESV(IP,IL)
+        528     3   p   2v       2040         CONTINUE
+        529     2                2020     CONTINUE
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1231
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.00, ITR: 288, MVE: 5)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WRK01, RESV
+                              <<< Loop-information  End >>>
+        530     2  pp   2v                DO 2050 IP=1, NP
+        531     2   p   2v                    RESV(IP,JL) = WRK01(IP)
+        532     2   p   2v       2050     CONTINUE
+        533     1               C
+        534     1               C      WRITE(IUT6,*) "STEP 31"
+        535     1               C  // STEP 31: CALCULATE GAMMA: GAMMA_j = SIG_J0 / SIG_JJ
+        536     1               C
+        537     1                         CALL DOTWVC(NP,RESV(1,JL),RESV(1,JL),WEIGHT,SIGJJ)
+        538     1                         CALL DOTWVC(NP,RESV(1,JL),RESV(1, 0),WEIGHT,SIGJ0)
+        539     1                         GAM1(JL) = SIGJ0 / SIGJJ
+        540     1               C
+        541     1               C      WRITE(IUT6,*) "STEP 32"
+        542     1               C  // STEP 32: END FOR IN STEP 29
+        543     1               C
+        544     1                2000 CONTINUE
+        545                     C
+        546                     C      WRITE(IUT6,*) "STEP 33"
+        547                     C  // STEP 33:
+        548                     C
+        549                           GAM0(NL)= GAM1(NL)
+        550                           OMEGA   = GAM0(NL)
+        551                     C
+        552                     C
+        553                     C      WRITE(IUT6,*) "STEP 34"
+        554                     C  // STEP 34:
+        555                     C
+        556     1                     DO 2100 J = 1, NL-1
+        557     1                         JL = NL - J
+        558     1                         BUF = GAM1(JL)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1143
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        559     2  pp    v                DO 2110 IL = JL+1, NL
+        560     2   p    v                    BUF = BUF - TAU(JL,IL) * GAM0(IL)
+        561     2   p    v       2110     CONTINUE
+        562     1                         GAM0(JL) = BUF
+        563     1                2100 CONTINUE
+        564                     C
+        565                     C      WRITE(IUT6,*) "STEP 35"
+        566                     C  // STEP 35:
+        567                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 4
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      GAM0
+                              <<< Loop-information  End >>>
+        568     1  pp                 DO 2200 JL=1, NL-1
+        569     1   p                     BUF = GAM0(JL+1)
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.68, ITR: 384, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      GAM0
+                              <<< Loop-information  End >>>
+        570     2   p   8v                DO 2210 IL = JL+1, NL-1
+        571     2   p   8v                    BUF = BUF + TAU(JL,IL) * GAM0(IL+1)
+        572     2   p   8v       2210     CONTINUE
+        573     1   p                     GAM2(JL) = BUF
+        574     1   p            2200 CONTINUE
+        575                     C
+        576                     C      WRITE(IUT6,*) "STEP 36"
+        577                     C  // STEP 36:
+        578                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 616
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      RESV, S, UMAT
+                              <<< Loop-information  End >>>
+        579     1  pp   2v            DO 2300 IP=1, NP
+        580     1   p   2v                S(IP) = S(IP) + GAM0(1) * RESV(IP,0)
+        581     1   p   2v                RESV(IP,0) = RESV(IP,0) - GAM1(NL) * RESV(IP,NL)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 3
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<< Loop-information  End >>>
+        582     2  pp   2                 DO 2310 IS=1, NS
+        583     2   p   2v                    UMAT(IP,IS,0) = UMAT(IP,IS,0) - GAM0(NL) * UMAT(IP,IS,NL)
+        584     2   p   2        2310     CONTINUE
+        585     1   p   2v       2300 CONTINUE
+        586                     C
+        587                     C      WRITE(IUT6,*) "STEP 37"
+        588                     C  // STEP 37:
+        589                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      UMAT
+                              <<< Loop-information  End >>>
+        590     1   p                 DO 2400 JL=1, NL-1
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<< Loop-information  End >>>
+        591     2  pp                     DO 2410 IS=1, NS
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.25, ITR: 384, MVE: 7)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      UMAT
+                              <<< Loop-information  End >>>
+        592     3   p   2v                    DO 2411 IP=1, NP
+        593     3   p   2v                        UMAT(IP,IS,0) = UMAT(IP,IS,0)
+        594     3                    *                            - GAM0(JL) * UMAT(IP,IS,JL)
+        595     3   p   2v       2411         CONTINUE
+        596     2   p            2410     CONTINUE
+        597     1   p            2400 CONTINUE
+        598                     C
+        599                     C      WRITE(IUT6,*) "STEP 38"
+        600                     C  // STEP 38:
+        601                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      RESV, S
+                              <<< Loop-information  End >>>
+        602     1                     DO 2500 JL=1, NL-1
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 616
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.85, ITR: 256, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      RESV, S
+                              <<< Loop-information  End >>>
+        603     2  pp   2v                DO 2510 IP=1, NP
+        604     2   p   2v                    S(IP) = S(IP) + GAM2(JL) * RESV(IP,JL)
+        605     2   p   2v                    RESV(IP,0) = RESV(IP,0) - GAM1(JL) * RESV(IP,JL)
+        606     2   p   2v       2510     CONTINUE
+        607     1                2500 CONTINUE
+        608                     C
+        609                     C      WRITE(IUT6,*) "STEP 39"
+        610                     C  // STEP 39:
+        611                     C
+        612                           NITR = NITR + (NS+1)*NL
+        613                     C
+        614                     C      WRITE(IUT6,*) "STEP 40"
+        615                     C  // STEP 40: END REPEAT
+        616                     C
+        617                           GOTO 8000
+        618                     C
+        619                      9000 CONTINUE
+        620                     C
+        621                           RETURN
+        622                           END
+
+ Diagnostic messages: program name(IDRBCG)
+   jwd2008i-i  "idrbcg.f", line 15: この仮引数'IUT6'は、副プログラム中で使用されていません。
+   jwd8220o-i  "idrbcg.f", line 15: 副作用の可能性のある最適化を行いました。
+   jwd2006i-i  "idrbcg.f", line 37: この名前'I'は、宣言だけされていて引用されていません。
+   jwd5001p-i  "idrbcg.f", line 109: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "idrbcg.f", line 109: このDOループをSIMD化しました。(名前:IP)
+   jwd8663o-i  "idrbcg.f", line 109: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "idrbcg.f", line 109: ループを展開数4回でアンローリングしました。
+   jwd5001p-i  "idrbcg.f", line 113: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "idrbcg.f", line 113: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "idrbcg.f", line 113: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "idrbcg.f", line 113: ループの繰返し数が384回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5002p-i  "idrbcg.f", line 125: このDOループを並列化しました。
+   jwd5001p-i  "idrbcg.f", line 125: このDOループを並列化しました。(名前:IL)
+   jwd8215o-i  "idrbcg.f", line 125: 不完全多重ループを分割して、完全多重ループにしました。
+   jwd6001s-i  "idrbcg.f", line 125: このDOループをSIMD化しました。(名前:IL)
+   jwd8663o-i  "idrbcg.f", line 125: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "idrbcg.f", line 125: ループを展開数2回でアンローリングしました。
+   jwd6002s-i  "idrbcg.f", line 129: このDOループをSIMD化しました。
+   jwd8663o-i  "idrbcg.f", line 129: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "idrbcg.f", line 129: ループを展開数4回でアンローリングしました。
+   jwd8330o-i  "idrbcg.f", line 130: 多重DOループをDO変数IL,...,JLで1重化しました。
+   jwd5002p-i  "idrbcg.f", line 137: このDOループを並列化しました。
+   jwd6002s-i  "idrbcg.f", line 138: このDOループをSIMD化しました。
+   jwd8663o-i  "idrbcg.f", line 138: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "idrbcg.f", line 138: ループを展開数4回でアンローリングしました。
+   jwd8330o-i  "idrbcg.f", line 139: 多重DOループをDO変数IP,...,ISで1重化しました。
+   jwd5122p-i  "idrbcg.f", line 147: DOループ内に、自動並列化の制約となる手続引用が存在します。
+   jwd8211o-i  "idrbcg.f", line 149: ループを入れ換えました。(行:129)
+   jwd8211o-i  "idrbcg.f", line 149: ループを入れ換えました。(行:138)
+   jwd5001p-i  "idrbcg.f", line 149: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "idrbcg.f", line 149: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "idrbcg.f", line 149: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "idrbcg.f", line 149: ループの繰返し数が544回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "idrbcg.f", line 169: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "idrbcg.f", line 169: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "idrbcg.f", line 169: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "idrbcg.f", line 169: ループの繰返し数が224回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8664o-i  "idrbcg.f", line 178: ループ内に関数呼出しなどの最適化対象外の命令があるため、ソフトウェアパイプライニングを適用できません。
+   jwd5208p-i  "idrbcg.f", line 179: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:TACRS)
+   jwd5208p-i  "idrbcg.f", line 179: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:TS)
+   jwd5208p-i  "idrbcg.f", line 179: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:ACRS)
+   jwd5208p-i  "idrbcg.f", line 179: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:ITPCRS)
+   jwd5208p-i  "idrbcg.f", line 179: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:NCRS2)
+   jwd5208p-i  "idrbcg.f", line 179: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:NPPMAX)
+   jwd5208p-i  "idrbcg.f", line 179: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:JUNROL)
+   jwd5208p-i  "idrbcg.f", line 179: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:IPCRS)
+   jwd5208p-i  "idrbcg.f", line 179: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:NPP)
+   jwd5208p-i  "idrbcg.f", line 179: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:NCRS)
+   jwd5208p-i  "idrbcg.f", line 179: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:NE)
+   jwd5208p-i  "idrbcg.f", line 179: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:N2)
+   jwd5208p-i  "idrbcg.f", line 179: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:RY)
+   jwd5208p-i  "idrbcg.f", line 179: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:RX)
+   jwd5208p-i  "idrbcg.f", line 179: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:MBPDOM)
+   jwd5208p-i  "idrbcg.f", line 179: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:IPSND)
+   jwd5208p-i  "idrbcg.f", line 179: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:IPSLF)
+   jwd5208p-i  "idrbcg.f", line 179: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:NDOM)
+   jwd5208p-i  "idrbcg.f", line 179: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:NBPDOM)
+   jwd5208p-i  "idrbcg.f", line 179: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:LDOM)
+   jwd5208p-i  "idrbcg.f", line 179: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:ME)
+   jwd5208p-i  "idrbcg.f", line 179: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:IPART)
+   jwd5208p-i  "idrbcg.f", line 179: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:IUT0)
+   jwd5208p-i  "idrbcg.f", line 179: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:IERR)
+   jwd5208p-i  "idrbcg.f", line 179: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:NP)
+   jwd5208p-i  "idrbcg.f", line 179: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:UMAT)
+   jwd5122p-i  "idrbcg.f", line 179: DOループ内に、自動並列化の制約となる手続引用が存在します。
+   jwd6208s-i  "idrbcg.f", line 179: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループはSIMD化できません。(名前:UMAT)
+   jwd6122s-i  "idrbcg.f", line 179: DOループ内に、SIMD化の制約となる手続引用が存在します。
+   jwd6202s-i  "idrbcg.f", line 184: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:JS)
+   jwd5001p-i  "idrbcg.f", line 189: このDOループを並列化しました。(名前:IS)
+   jwd6001s-i  "idrbcg.f", line 190: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "idrbcg.f", line 190: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "idrbcg.f", line 190: ループの繰返し数が320回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "idrbcg.f", line 195: このDOループを並列化しました。(名前:IS)
+   jwd6001s-i  "idrbcg.f", line 196: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "idrbcg.f", line 196: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "idrbcg.f", line 196: ループの繰返し数が320回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8664o-i  "idrbcg.f", line 204: ループ内に関数呼出しなどの最適化対象外の命令があるため、ソフトウェアパイプライニングを適用できません。
+   jwd5208p-i  "idrbcg.f", line 205: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:TACRS)
+   jwd5208p-i  "idrbcg.f", line 205: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:TS)
+   jwd5208p-i  "idrbcg.f", line 205: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:ACRS)
+   jwd5208p-i  "idrbcg.f", line 205: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:ITPCRS)
+   jwd5208p-i  "idrbcg.f", line 205: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:NCRS2)
+   jwd5208p-i  "idrbcg.f", line 205: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:NPPMAX)
+   jwd5208p-i  "idrbcg.f", line 205: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:JUNROL)
+   jwd5208p-i  "idrbcg.f", line 205: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:IPCRS)
+   jwd5208p-i  "idrbcg.f", line 205: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:NPP)
+   jwd5208p-i  "idrbcg.f", line 205: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:NCRS)
+   jwd5208p-i  "idrbcg.f", line 205: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:NE)
+   jwd5208p-i  "idrbcg.f", line 205: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:N2)
+   jwd5208p-i  "idrbcg.f", line 205: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:RY)
+   jwd5208p-i  "idrbcg.f", line 205: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:RX)
+   jwd5208p-i  "idrbcg.f", line 205: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:MBPDOM)
+   jwd5208p-i  "idrbcg.f", line 205: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:IPSND)
+   jwd5208p-i  "idrbcg.f", line 205: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:IPSLF)
+   jwd5208p-i  "idrbcg.f", line 205: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:NDOM)
+   jwd5208p-i  "idrbcg.f", line 205: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:NBPDOM)
+   jwd5208p-i  "idrbcg.f", line 205: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:LDOM)
+   jwd5208p-i  "idrbcg.f", line 205: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:ME)
+   jwd5208p-i  "idrbcg.f", line 205: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:IPART)
+   jwd5208p-i  "idrbcg.f", line 205: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:IUT0)
+   jwd5208p-i  "idrbcg.f", line 205: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:IERR)
+   jwd5208p-i  "idrbcg.f", line 205: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:NP)
+   jwd5208p-i  "idrbcg.f", line 205: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:UMAT)
+   jwd5122p-i  "idrbcg.f", line 205: DOループ内に、自動並列化の制約となる手続引用が存在します。
+   jwd6208s-i  "idrbcg.f", line 205: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループはSIMD化できません。(名前:UMAT)
+   jwd6122s-i  "idrbcg.f", line 205: DOループ内に、SIMD化の制約となる手続引用が存在します。
+   jwd6202s-i  "idrbcg.f", line 210: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:JS)
+   jwd8664o-i  "idrbcg.f", line 215: ループ内に関数呼出しなどの最適化対象外の命令があるため、ソフトウェアパイプライニングを適用できません。
+   jwd8209o-i  "idrbcg.f", line 216: 多項式の演算順序を変更しました。
+   jwd5208p-i  "idrbcg.f", line 216: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:TR0T)
+   jwd5208p-i  "idrbcg.f", line 216: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:WEIGHT)
+   jwd5208p-i  "idrbcg.f", line 216: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:NS)
+   jwd5208p-i  "idrbcg.f", line 216: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:NP)
+   jwd5208p-i  "idrbcg.f", line 216: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:UMAT)
+   jwd5208p-i  "idrbcg.f", line 216: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:WRK01)
+   jwd5122p-i  "idrbcg.f", line 216: DOループ内に、自動並列化の制約となる手続引用が存在します。
+   jwd6208s-i  "idrbcg.f", line 216: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループはSIMD化できません。(名前:NP)
+   jwd6208s-i  "idrbcg.f", line 216: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループはSIMD化できません。(名前:NS)
+   jwd6208s-i  "idrbcg.f", line 216: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループはSIMD化できません。(名前:WRK01)
+   jwd6122s-i  "idrbcg.f", line 216: DOループ内に、SIMD化の制約となる手続引用が存在します。
+   jwd5208p-i  "idrbcg.f", line 217: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:NS)
+   jwd5208p-i  "idrbcg.f", line 217: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:MMAT)
+   jwd5122p-i  "idrbcg.f", line 217: DOループ内に、自動並列化の制約となる手続引用が存在します。
+   jwd6208s-i  "idrbcg.f", line 217: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループはSIMD化できません。(名前:NS)
+   jwd6122s-i  "idrbcg.f", line 217: DOループ内に、SIMD化の制約となる手続引用が存在します。
+   jwd6202s-i  "idrbcg.f", line 218: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:JS)
+   jwd5001p-i  "idrbcg.f", line 229: このDOループを並列化しました。(名前:JS)
+   jwd6001s-i  "idrbcg.f", line 230: このDOループをSIMD化しました。(名前:IS)
+   jwd8204o-i  "idrbcg.f", line 230: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "idrbcg.f", line 230: ループの繰返し数が160回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "idrbcg.f", line 246: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "idrbcg.f", line 246: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "idrbcg.f", line 246: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "idrbcg.f", line 246: ループの繰返し数が384回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "idrbcg.f", line 254: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "idrbcg.f", line 254: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "idrbcg.f", line 254: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "idrbcg.f", line 254: ループの繰返し数が384回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5132p-i  "idrbcg.f", line 276: DO WHILE文、DO UNTIL文、およびIF/GO TO文によるループは並列化できません。
+   jwd8211o-i  "idrbcg.f", line 302: ループを入れ換えました。(行:303)
+   jwd6001s-i  "idrbcg.f", line 302: このDOループをSIMD化しました。(名前:IS)
+   jwd8204o-i  "idrbcg.f", line 302: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "idrbcg.f", line 302: ループの繰返し数が672回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8211o-i  "idrbcg.f", line 303: ループを入れ換えました。(行:302)
+   jwd5001p-i  "idrbcg.f", line 303: このDOループを並列化しました。(名前:JS)
+   jwd5131p-i  "idrbcg.f", line 310: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd5131p-i  "idrbcg.f", line 329: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd5001p-i  "idrbcg.f", line 339: このDOループを並列化しました。(名前:IS)
+   jwd6001s-i  "idrbcg.f", line 341: このDOループをSIMD化しました。(名前:JS)
+   jwd8204o-i  "idrbcg.f", line 341: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "idrbcg.f", line 341: ループの繰返し数が384回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5208p-i  "idrbcg.f", line 353: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:UMAT)
+   jwd5208p-i  "idrbcg.f", line 353: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:WRK01)
+   jwd5001p-i  "idrbcg.f", line 354: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "idrbcg.f", line 354: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "idrbcg.f", line 354: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "idrbcg.f", line 354: ループの繰返し数が288回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5208p-i  "idrbcg.f", line 357: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:WRK01)
+   jwd5001p-i  "idrbcg.f", line 358: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "idrbcg.f", line 358: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "idrbcg.f", line 358: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "idrbcg.f", line 358: ループの繰返し数が384回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "idrbcg.f", line 363: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "idrbcg.f", line 363: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "idrbcg.f", line 363: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "idrbcg.f", line 363: ループの繰返し数が288回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "idrbcg.f", line 376: このDOループを並列化しました。(名前:IS)
+   jwd6001s-i  "idrbcg.f", line 376: このDOループをSIMD化しました。(名前:IS)
+   jwd8204o-i  "idrbcg.f", line 376: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "idrbcg.f", line 376: ループの繰返し数が224回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "idrbcg.f", line 379: このDOループを並列化しました。(名前:JS)
+   jwd6001s-i  "idrbcg.f", line 380: このDOループをSIMD化しました。(名前:IS)
+   jwd8204o-i  "idrbcg.f", line 380: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "idrbcg.f", line 380: ループの繰返し数が160回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "idrbcg.f", line 384: このDOループを並列化しました。(名前:JS)
+   jwd6001s-i  "idrbcg.f", line 385: このDOループをSIMD化しました。(名前:IS)
+   jwd8204o-i  "idrbcg.f", line 385: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "idrbcg.f", line 385: ループの繰返し数が160回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "idrbcg.f", line 393: このDOループを並列化しました。(名前:IS)
+   jwd6001s-i  "idrbcg.f", line 393: このDOループをSIMD化しました。(名前:IS)
+   jwd8204o-i  "idrbcg.f", line 393: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "idrbcg.f", line 393: ループの繰返し数が288回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5208p-i  "idrbcg.f", line 408: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:UMAT)
+   jwd5208p-i  "idrbcg.f", line 408: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:WRK01)
+   jwd5201p-i  "idrbcg.f", line 408: データの引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:UMAT)
+   jwd5001p-i  "idrbcg.f", line 409: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "idrbcg.f", line 409: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "idrbcg.f", line 409: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "idrbcg.f", line 409: ループの繰返し数が352回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5208p-i  "idrbcg.f", line 413: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:WRK01)
+   jwd5001p-i  "idrbcg.f", line 414: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "idrbcg.f", line 414: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "idrbcg.f", line 414: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "idrbcg.f", line 414: ループの繰返し数が384回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "idrbcg.f", line 415: 多項式の演算順序を変更しました。
+   jwd5208p-i  "idrbcg.f", line 419: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:WRK01)
+   jwd5001p-i  "idrbcg.f", line 420: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "idrbcg.f", line 420: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "idrbcg.f", line 420: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "idrbcg.f", line 420: ループの繰返し数が384回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "idrbcg.f", line 425: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "idrbcg.f", line 425: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "idrbcg.f", line 425: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "idrbcg.f", line 425: ループの繰返し数が288回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "idrbcg.f", line 458: このDOループを並列化しました。(名前:IS)
+   jwd6001s-i  "idrbcg.f", line 460: このDOループをSIMD化しました。(名前:JS)
+   jwd8204o-i  "idrbcg.f", line 460: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "idrbcg.f", line 460: ループの繰返し数が384回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5122p-i  "idrbcg.f", line 470: DOループ内に、自動並列化の制約となる手続引用が存在します。
+   jwd5001p-i  "idrbcg.f", line 471: このDOループを並列化しました。(名前:IS)
+   jwd6001s-i  "idrbcg.f", line 472: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "idrbcg.f", line 472: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "idrbcg.f", line 472: ループの繰返し数が288回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "idrbcg.f", line 473: 多項式の演算順序を変更しました。
+   jwd5001p-i  "idrbcg.f", line 477: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "idrbcg.f", line 477: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "idrbcg.f", line 477: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "idrbcg.f", line 477: ループの繰返し数が384回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "idrbcg.f", line 485: このDOループを並列化しました。(名前:IS)
+   jwd6001s-i  "idrbcg.f", line 486: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "idrbcg.f", line 486: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "idrbcg.f", line 486: ループの繰返し数が320回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "idrbcg.f", line 491: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "idrbcg.f", line 491: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "idrbcg.f", line 491: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "idrbcg.f", line 491: ループの繰返し数が384回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5122p-i  "idrbcg.f", line 512: DOループ内に、自動並列化の制約となる手続引用が存在します。
+   jwd5001p-i  "idrbcg.f", line 519: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "idrbcg.f", line 519: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "idrbcg.f", line 519: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "idrbcg.f", line 519: ループの繰返し数が288回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5122p-i  "idrbcg.f", line 522: DOループ内に、自動並列化の制約となる手続引用が存在します。
+   jwd5001p-i  "idrbcg.f", line 526: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "idrbcg.f", line 526: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "idrbcg.f", line 526: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "idrbcg.f", line 526: ループの繰返し数が384回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "idrbcg.f", line 530: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "idrbcg.f", line 530: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "idrbcg.f", line 530: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "idrbcg.f", line 530: ループの繰返し数が288回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5208p-i  "idrbcg.f", line 556: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:GAM0)
+   jwd5004p-i  "idrbcg.f", line 559: リダクション演算を含むDOループを並列化しました。(名前:IL)
+   jwd6004s-i  "idrbcg.f", line 559: リダクション演算を含むDOループをSIMD化しました。(名前:IL)
+   jwd5001p-i  "idrbcg.f", line 568: このDOループを並列化しました。(名前:JL)
+   jwd6004s-i  "idrbcg.f", line 570: リダクション演算を含むDOループをSIMD化しました。(名前:IL)
+   jwd8204o-i  "idrbcg.f", line 570: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "idrbcg.f", line 570: ループの繰返し数が384回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8208o-i  "idrbcg.f", line 571: ループ内の総和または乗積演算の計算方法を変更しました。
+   jwd8211o-i  "idrbcg.f", line 579: ループを入れ換えました。(行:582)
+   jwd5001p-i  "idrbcg.f", line 579: このDOループを並列化しました。(名前:IP)
+   jwd8215o-i  "idrbcg.f", line 579: 不完全多重ループを分割して、完全多重ループにしました。
+   jwd6001s-i  "idrbcg.f", line 579: このDOループをSIMD化しました。(名前:IP)
+   jwd8663o-i  "idrbcg.f", line 579: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "idrbcg.f", line 579: ループを展開数2回でアンローリングしました。
+   jwd8211o-i  "idrbcg.f", line 582: ループを入れ換えました。(行:579)
+   jwd5001p-i  "idrbcg.f", line 582: このDOループを並列化しました。(名前:IS)
+   jwd8211o-i  "idrbcg.f", line 590: ループを入れ換えました。(行:591)
+   jwd8211o-i  "idrbcg.f", line 591: ループを入れ換えました。(行:590)
+   jwd5001p-i  "idrbcg.f", line 591: このDOループを並列化しました。(名前:IS)
+   jwd6001s-i  "idrbcg.f", line 592: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "idrbcg.f", line 592: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "idrbcg.f", line 592: ループの繰返し数が384回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5208p-i  "idrbcg.f", line 602: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:S)
+   jwd5208p-i  "idrbcg.f", line 602: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:RESV)
+   jwd5001p-i  "idrbcg.f", line 603: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "idrbcg.f", line 603: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "idrbcg.f", line 603: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "idrbcg.f", line 603: ループの繰返し数が256回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+
+ Procedure information
+   Lines      : 622
+   Statements : 278
+   Stack(byte): 26192
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 622
+   Total statements : 278
+   Total stack(byte): 26192
+   Total prefetch num: 0
+

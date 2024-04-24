@@ -1,0 +1,375 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:53:38 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : multi_grad3x.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "MULTI_GRAD3X"
+  (line-no.)(nest)(optimize)
+          1                           Subroutine MULTI_GRAD3X
+          2                          *                 (NS,ME,N1,N,NE,NP,NODE,MEP,NEP,IENP,
+          3                          *                  S,DNXYZP,CM,FXYZ,RX,RY,MWRK,WRKN,
+          4                          *                  NPFIX,LPFIX,LEFIX,NPFREE,LPFREE,
+          5                          *                  NPSYMT,LPSYMT,XPSYMT,YPSYMT,ZPSYMT,
+          6                          *                  IPART,NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,
+          7                          *                  IUT0,IERR)
+          8                           IMPLICIT NONE
+          9                     C
+         10                     CCCC  [INPUT]
+         11                           INTEGER*4 NS,ME,N1,N,NE,NP,NODE(N1,NE),IUT0
+         12                           INTEGER*4 MEP,NEP(NP),IENP(MEP,NP)
+         13                           REAL*4    S(NE,NS),DNXYZP(MEP,3,NP),CM(NP)
+         14                     C
+         15                     CCC [INPUT:B.C. NODES]
+         16                           INTEGER*4 NPFIX,LPFIX(NPFIX),LEFIX(NE),NPFREE,LPFREE(NPFREE),
+         17                          *          NPSYMT,LPSYMT(NPSYMT)
+         18                           REAL*4    XPSYMT(NPSYMT),YPSYMT(NPSYMT),ZPSYMT(NPSYMT)
+         19                     C
+         20                     CCC [INPUT:INTER CONNECT NODES]
+         21                           INTEGER*4 IPART,NDOM,MBPDOM,
+         22                          *          LDOM(NDOM),NBPDOM(NDOM),
+         23                          *          IPSLF(MBPDOM,NDOM),IPSND(MBPDOM,NDOM)
+         24                     C
+         25                     CCC [OUTPUT]
+         26                           INTEGER*4 IERR
+         27                           REAL*4    FXYZ(3,NP,NS)
+         28                     C
+         29                     CCC [WORK]
+         30                           REAL*4    RX(0:N,ME),RY(0:N,ME)
+         31                           INTEGER*4 MWRK
+         32                           REAL*4    WRKN(MWRK,3)
+         33                     C
+         34                     CCC [LOCAL]
+         35                           INTEGER*4 MAXBUF,IP,IE,IBP,I,J,IS
+         36                           REAL*4    SWRK(NS),FXBUF(NS),FYBUF(NS),FZBUF(NS)
+         37                           REAL*4    COEF,COEFX,COEFY,COEFZ
+         38                     C
+         39                           INTEGER*4 IDIM
+         40                           DATA IDIM    / 3 /
+         41                     C
+         42                           CHARACTER*60 ERMSGC
+         43                          & /' ## SUBROUTINE GRAD3X: FATAL      ERROR REPORT   ; RETURNED' /
+         44                     C
+         45                           IERR=0
+         46                           MAXBUF = NE*(N+1)
+         47                     C
+         48                     #ifndef __AIX__
+         49                     !ocl CACHE_SECTOR_SIZE(1,11)
+         50                     !ocl CACHE_SUBSECTOR_ASSIGN(S)
+         51                     #endif
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FYBUF, FZBUF, FXBUF
+                              <<< Loop-information  End >>>
+         52     1                     DO 1000 IP = 1 , NP
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1231
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FZBUF, FYBUF, FXBUF
+                              <<< Loop-information  End >>>
+         53     1  pp   2v                FXBUF=0.0E0
+         54     1   p   2v                FYBUF=0.0E0
+         55     1   p   2v                FZBUF=0.0E0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FYBUF, FXBUF, FZBUF, SWRK
+                              <<< Loop-information  End >>>
+         56     2                         DO 1100 I = 1 , 8
+         57     2                             IE=IENP(I,IP)
+         58     2                             IF(IE.LT.0 .OR. IE.GT.NE) GOTO 1100
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 433
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.16, ITR: 208, MVE: 6)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FZBUF, FYBUF, SWRK, FXBUF
+                              <<< Loop-information  End >>>
+         59     3  pp    v                    DO 1101 IS= 1 , NS
+         60     3   p    v                        SWRK(IS) = S(IE,IS)
+         61     3   p    v                        FXBUF(IS)=FXBUF(IS)-SWRK(IS)*DNXYZP(I,1,IP)
+         62     3   p    v                        FYBUF(IS)=FYBUF(IS)-SWRK(IS)*DNXYZP(I,2,IP)
+         63     3   p    v                        FZBUF(IS)=FZBUF(IS)-SWRK(IS)*DNXYZP(I,3,IP)
+         64     3   p    v       1101         CONTINUE
+         65     2                1100     CONTINUE
+         66     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 640
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.58, ITR: 96, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FXBUF, FZBUF, FYBUF
+                              <<< Loop-information  End >>>
+         67     2  pp   2v                DO 1102 IS= 1 , NS
+         68     2   p   2v                    FXYZ(1,IP,IS)=FXBUF(IS)
+         69     2   p   2v                    FXYZ(2,IP,IS)=FYBUF(IS)
+         70     2   p   2v                    FXYZ(3,IP,IS)=FZBUF(IS)
+         71     2   p   2v       1102     CONTINUE
+         72     1                1000 CONTINUE
+         73                     C
+         74                     C
+         75                     C
+         76                     CC
+         77                     CC NOTE THAT
+         78                     CC INPUT DATA WITH NEP(IP)>=9 IS NOT SUPPORTED IN THIS CODE
+         79                     CC                                     2020.03.06 Y.YAMADE
+         80                     CC
+         81                     CC      DO 1200 IP = 1 , NP
+         82                     CC          FXBUF=0.0E0
+         83                     CC          FYBUF=0.0E0
+         84                     CC          FZBUF=0.0E0
+         85                     CC          IF(NEP(IP).GT.8) THEN
+         86                     CC              DO 1300 I = 9 , NEP(IP)
+         87                     CC                  IE=IENP(I,IP)
+         88                     CC                  SWRK = S(IE)
+         89                     CC                  FXBUF=FXBUF-SWRK*DNXYZP(1,I,IP)
+         90                     CC                  FYBUF=FYBUF-SWRK*DNXYZP(2,I,IP)
+         91                     CC                  FZBUF=FZBUF-SWRK*DNXYZP(3,I,IP)
+         92                     CC 1300         CONTINUE
+         93                     CC              FXYZ(1,IP)=FXYZ(1,IP)+FXBUF
+         94                     CC              FXYZ(2,IP)=FXYZ(2,IP)+FYBUF
+         95                     CC              FXYZ(3,IP)=FXYZ(3,IP)+FZBUF
+         96                     CC          ENDIF
+         97                     CC 1200 CONTINUE
+         98                     C
+         99                     C
+        100                     C
+        101                     C
+        102                     C SUPERIMPOSE NEIBERING ELEMENT CONTRIBUTIONS
+        103                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 8
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        104     1   s    s            DO 1500 IS=1,NS
+        105     1   s    s                CALL DDCOMY(IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        106     1                    *                FXYZ(1,1,IS),NP,IUT0,IERR,RX,RY,MAXBUF)
+        107     1   s    s       1500 CONTINUE
+        108     1                     IF(IERR.NE.0) THEN
+        109     1                         WRITE(IUT0,*)
+        110     1                         WRITE(IUT0,*) ERMSGC
+        111     1                         RETURN
+        112     1                     ENDIF
+        113                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.40, ITR: 192, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FXYZ, CM
+                              <<< Loop-information  End >>>
+        114     1   p   2v            DO 2100 IP=1,NP
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 3
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      CM, FXYZ
+                              <<< Loop-information  End >>>
+        115     2  pp   2                 DO 2101 IS = 1 , NS
+        116     2   p   2v                    FXYZ(1,IP,IS)=FXYZ(1,IP,IS)*CM(IP)
+        117     2   p   2v                    FXYZ(2,IP,IS)=FXYZ(2,IP,IS)*CM(IP)
+        118     2   p   2v                    FXYZ(3,IP,IS)=FXYZ(3,IP,IS)*CM(IP)
+        119     2   p   2        2101     CONTINUE
+        120     1   p            2100 CONTINUE
+        121                     C
+        122                     !ocl norecurrence(FXYZ)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 4
+                              <<< Loop-information  End >>>
+        123     1  pp                 DO 3000 IBP=1,NPFIX
+        124     1   p                     IP=LPFIX(IBP)
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.75, ITR: 96, MVE: 2)
+                              <<< Loop-information  End >>>
+        125     2   p   2v                DO 3001 IS = 1 , NS
+        126     2   p   2v                    FXYZ(1,IP,IS)=0.0E0
+        127     2   p   2v                    FXYZ(2,IP,IS)=0.0E0
+        128     2   p   2v                    FXYZ(3,IP,IS)=0.0E0
+        129     2   p   2v       3001     CONTINUE
+        130     1   p            3000 CONTINUE
+        131                     C
+        132                     !ocl norecurrence(FXYZ)
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.57, ITR: 160, MVE: 5)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      ZPSYMT, LPSYMT, XPSYMT, YPSYMT
+                              <<< Loop-information  End >>>
+        133     1   p    v            DO 3100 IBP = 1 , NPSYMT
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPSYMT, XPSYMT, ZPSYMT, YPSYMT
+                              <<< Loop-information  End >>>
+        134     2  pp                     DO 3101 IS = 1 , NS
+        135     2   p    v                    COEF= XPSYMT(IBP)*FXYZ(1,LPSYMT(IBP),IS)
+        136     2                    *             +YPSYMT(IBP)*FXYZ(2,LPSYMT(IBP),IS)
+        137     2                    *             +ZPSYMT(IBP)*FXYZ(3,LPSYMT(IBP),IS)
+        138     2   p    v                    COEFX=COEF*XPSYMT(IBP)
+        139     2   p    v                    COEFY=COEF*XPSYMT(IBP)
+        140     2   p    v                    COEFZ=COEF*XPSYMT(IBP)
+        141     2   p    v                    FXYZ(1,LPSYMT(IBP),IS) = FXYZ(1,LPSYMT(IBP),IS)-COEFX
+        142     2   p    v                    FXYZ(2,LPSYMT(IBP),IS) = FXYZ(2,LPSYMT(IBP),IS)-COEFY
+        143     2   p    v                    FXYZ(3,LPSYMT(IBP),IS) = FXYZ(3,LPSYMT(IBP),IS)-COEFZ
+        144     2   p            3101     CONTINUE
+        145     1   p            3100 CONTINUE
+        146                     C
+        147                           RETURN
+        148                           END
+
+ Diagnostic messages: program name(MULTI_GRAD3X)
+   jwd8220o-i  "multi_grad3x.f", line 1: 副作用の可能性のある最適化を行いました。
+   jwd2008i-i  "multi_grad3x.f", line 11: この仮引数'NODE'は、副プログラム中で使用されていません。
+   jwd2008i-i  "multi_grad3x.f", line 12: この仮引数'NEP'は、副プログラム中で使用されていません。
+   jwd2008i-i  "multi_grad3x.f", line 16: この仮引数'LPFREE'は、副プログラム中で使用されていません。
+   jwd2008i-i  "multi_grad3x.f", line 16: この仮引数'LEFIX'は、副プログラム中で使用されていません。
+   jwd2008i-i  "multi_grad3x.f", line 32: この仮引数'WRKN'は、副プログラム中で使用されていません。
+   jwd2006i-i  "multi_grad3x.f", line 35: この名前'J'は、宣言だけされていて引用されていません。
+   jwd1202i-i  "multi_grad3x.f", line 49: 最適化制御行において最適化指示子の指定が正しくありません。
+   jwd1202i-i  "multi_grad3x.f", line 50: 最適化制御行において最適化指示子の指定が正しくありません。
+   jwd5208p-i  "multi_grad3x.f", line 52: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:SWRK)
+   jwd5208p-i  "multi_grad3x.f", line 52: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:FZBUF)
+   jwd5208p-i  "multi_grad3x.f", line 52: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:FYBUF)
+   jwd5208p-i  "multi_grad3x.f", line 52: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:FXBUF)
+   jwd5208p-i  "multi_grad3x.f", line 52: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:FXYZ)
+   jwd5003p-i  "multi_grad3x.f", line 53: この配列記述を並列化しました。
+   jwd6003s-i  "multi_grad3x.f", line 53: この配列記述をSIMD化しました。
+   jwd8663o-i  "multi_grad3x.f", line 53: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "multi_grad3x.f", line 53: ループを展開数2回でアンローリングしました。
+   jwd5208p-i  "multi_grad3x.f", line 56: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:SWRK)
+   jwd5208p-i  "multi_grad3x.f", line 56: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:FZBUF)
+   jwd5208p-i  "multi_grad3x.f", line 56: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:FYBUF)
+   jwd5208p-i  "multi_grad3x.f", line 56: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:FXBUF)
+   jwd5001p-i  "multi_grad3x.f", line 59: このDOループを並列化しました。(名前:IS)
+   jwd6001s-i  "multi_grad3x.f", line 59: このDOループをSIMD化しました。(名前:IS)
+   jwd8204o-i  "multi_grad3x.f", line 59: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "multi_grad3x.f", line 59: ループの繰返し数が208回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "multi_grad3x.f", line 67: このDOループを並列化しました。(名前:IS)
+   jwd6001s-i  "multi_grad3x.f", line 67: このDOループをSIMD化しました。(名前:IS)
+   jwd8204o-i  "multi_grad3x.f", line 67: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "multi_grad3x.f", line 67: ループの繰返し数が96回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8664o-i  "multi_grad3x.f", line 104: ループ内に関数呼出しなどの最適化対象外の命令があるため、ソフトウェアパイプライニングを適用できません。
+   jwd5208p-i  "multi_grad3x.f", line 105: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:RX)
+   jwd5208p-i  "multi_grad3x.f", line 105: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:RY)
+   jwd5208p-i  "multi_grad3x.f", line 105: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:IPART)
+   jwd5208p-i  "multi_grad3x.f", line 105: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:LDOM)
+   jwd5208p-i  "multi_grad3x.f", line 105: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:NBPDOM)
+   jwd5208p-i  "multi_grad3x.f", line 105: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:NDOM)
+   jwd5208p-i  "multi_grad3x.f", line 105: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:IPSLF)
+   jwd5208p-i  "multi_grad3x.f", line 105: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:IPSND)
+   jwd5208p-i  "multi_grad3x.f", line 105: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:MBPDOM)
+   jwd5208p-i  "multi_grad3x.f", line 105: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:MAXBUF)
+   jwd5208p-i  "multi_grad3x.f", line 105: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:IUT0)
+   jwd5208p-i  "multi_grad3x.f", line 105: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:IERR)
+   jwd5208p-i  "multi_grad3x.f", line 105: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:NP)
+   jwd5208p-i  "multi_grad3x.f", line 105: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:FXYZ)
+   jwd5122p-i  "multi_grad3x.f", line 105: DOループ内に、自動並列化の制約となる手続引用が存在します。
+   jwd6122s-i  "multi_grad3x.f", line 105: DOループ内に、SIMD化の制約となる手続引用が存在します。
+   jwd6202s-i  "multi_grad3x.f", line 107: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:IS)
+   jwd8211o-i  "multi_grad3x.f", line 114: ループを入れ換えました。(行:115)
+   jwd6001s-i  "multi_grad3x.f", line 114: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "multi_grad3x.f", line 114: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "multi_grad3x.f", line 114: ループの繰返し数が192回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8211o-i  "multi_grad3x.f", line 115: ループを入れ換えました。(行:114)
+   jwd5001p-i  "multi_grad3x.f", line 115: このDOループを並列化しました。(名前:IS)
+   jwd5001p-i  "multi_grad3x.f", line 123: このDOループを並列化しました。(名前:IBP)
+   jwd6001s-i  "multi_grad3x.f", line 125: このDOループをSIMD化しました。(名前:IS)
+   jwd8204o-i  "multi_grad3x.f", line 125: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "multi_grad3x.f", line 125: ループの繰返し数が96回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8211o-i  "multi_grad3x.f", line 133: ループを入れ換えました。(行:134)
+   jwd6001s-i  "multi_grad3x.f", line 133: このDOループをSIMD化しました。(名前:IBP)
+   jwd8204o-i  "multi_grad3x.f", line 133: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "multi_grad3x.f", line 133: ループの繰返し数が160回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8211o-i  "multi_grad3x.f", line 134: ループを入れ換えました。(行:133)
+   jwd5001p-i  "multi_grad3x.f", line 134: このDOループを並列化しました。(名前:IS)
+   jwd8209o-i  "multi_grad3x.f", line 135: 多項式の演算順序を変更しました。
+
+ Procedure information
+   Lines      : 148
+   Statements : 77
+   Stack(byte): 2464
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 148
+   Total statements : 77
+   Total stack(byte): 2464
+   Total prefetch num: 0
+

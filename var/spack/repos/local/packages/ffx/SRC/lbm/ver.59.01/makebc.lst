@@ -1,0 +1,213 @@
+
+ Fujitsu Fortran Version 4.8.1  Thu Nov 24 16:46:04 2022
+
+ Compilation information
+   Current directory : /vol0005/mdt2/home/u10588/SRC/lbm/ver.59.01
+   Source file       : makebc.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -Nlst=t -Cpp -Cfpp -c -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Knointentopt
+   Cpp options          : -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Dcputime -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=8 -D__FRT_patchlevel__=1 -D__FRT_version__="4.8.1" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Knoarray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nlibomp -Nline -Nlst -Nlst=p -Nlst=t
+                          -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "MAKEBC"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE MAKEBC(JGEOM,NP,NG,NC,M1,LBTYPE,LVEL,LREV,
+          2                          *                  MBC,LLEVEL,LPOSI,NBC,LBC,
+          3                          *                  MPBOUN,NPBOUN,LPBOUN,QBOUN,
+          4                          *                  LWORK1,LWORK2,LWORK,
+          5                          *                  NPG,DSCALE,XP,YP,ZP,QCELL,
+          6                          *                  NTRIG,XTRIG,YTRIG,ZTRIG,IMODQ,EPSTRG,
+          7                          *                  IUT6,IUT0,IERR)
+          8                           IMPLICIT NONE
+          9                           INTEGER*4 JGEOM,NP,NG,NC,M1,LBTYPE(6),MBC,LLEVEL(NC),LPOSI(3,NC)
+         10                           INTEGER*4 LVEL(3,NP),LREV(NP)
+         11                           INTEGER*4 NBC(NC),LBC(5,MBC,NC)
+         12                           INTEGER*4 MPBOUN,NPBOUN(NC),LPBOUN(5,MPBOUN,NC)
+         13                           REAL*4    QBOUN(MPBOUN,NC)
+         14                           INTEGER*4 LWORK1(0:NG+2,0:NG+2,0:NG+2),
+         15                          *          LWORK2(  NG+1,  NG+1,  NG+1),
+         16                          *          LWORK(NP,NG+1,NG+1,NG+1)
+         17                     C
+         18                           INTEGER*4 NPG,NTRIG
+         19                           REAL*4    XP(NPG),YP(NPG),ZP(NPG),
+         20                          *          XTRIG(NTRIG),YTRIG(NTRIG),ZTRIG(NTRIG),
+         21                          *          QCELL(M1,0:NG+1,0:NG+1,0:NG+1)
+         22                           REAL*8    DSCALE
+         23                     C
+         24                           INTEGER*4 IMODQ
+         25                           REAL*8    EPSTRG
+         26                     C
+         27                           INTEGER*4 IUT6,IUT0,IERR
+         28                     C
+         29                     C
+         30                     C     ====FUNCTION====
+         31                     C     MAKE BOUNDARY CONDITION DATA
+         32                     C
+         33                     C     ====VARIABLES LIST====
+         34                     C[IN]
+         35                     C     NP             :NUMBER OF PARTICLES
+         36                     C     NG             :CUBE SIZE (=2^N)
+         37                     C     NC             :NUMBER OF CUBES IN SUB-DOMAIN
+         38                     C     LBTYPE(6)      :BOUNDARY TYPE AT -X,+X,-Y,+Y,-Z,+Z BOUNDARY FACE
+         39                     C     LLEVEL(IC)     :LEVEL OF CUBES, WHICH INDICATE THE GRID RESOLUTION.
+         40                     C                    :LEVEL=1 CORRESPONTDS THE FINEST GRID SIZE. A GRID SIZE
+         41                     C                    :WILL BE TWICE WITH ONE INCREMENT OF THE LEVEL.
+         42                     C     LPOSI(3,IC)    :INDICATES THE POSITIONS OF CUBES, WHICH ARE NORMALIZED
+         43                     C                    :BY THE MINIMUM CUBE SIZE.
+         44                     C     NBC(IC)        :NUMBER OF B.C. GROUPS IN CUBES
+         45                     C     LLEVEL(IC)     :LEVEL OF CUBES, WHICH INDICATE THE GRID RESOLUTION.
+         46                     C                     LEVEL=1 CORRESPONTDS THE FINEST GRID SIZE. A GRID SIZE
+         47                     C                     WILL BE TWICE WITH ONE INCREMENT OF THE LEVEL.
+         48                     C     LBC(II,IBC,IC) :ATTRIBUTE DATA OF B.C. GROUPS
+         49                     C                      II=1 B.C. GROUP ID (1-26) IN AN ADJACENT CUBE
+         50                     C                      II=2 SUB-DOMAIN NUMBER OF AN ADJACENT CUBE
+         51                     C                      II=3 CUBE NUMBER OF AN ADJACENT CUBE IN A DOMAIN
+         52                     C                      II=4 RELATIVE LEVEL OF AN ADJACENT CUBE
+         53                     C                       (-1: FINE, 0:SAME, 1:COARSE)
+         54                     C                      II=5 POSITION IN COARSER CUBE
+         55                     C     MPBOUN         :MAX. NUMBER OF BOUNDARY GRUID
+         56                     C
+         57                     C[OUT]
+         58                     C     NPBOUN(IC)      :NUMBER OF BOUNDARY GRID
+         59                     C     LPBOUN(I,IPB,IC):BOUNDARY GRID LIST
+         60                     C                      1: POSITION OF BOUNDRY GRID IN I-DIRECTION
+         61                     C                      2: POSITION OF BOUNDRY GRID IN J-DIRECTION
+         62                     C                      3: POSITION OF BOUNDRY GRID IN K-DIRECTION
+         63                     C                      4: DIRECTION TO INNER GRID (2-15)
+         64                     C                      5: BOUNDARY TYPE (ITYPE)
+         65                     C                         ITYPE=1: WALL
+         66                     C                         ITYPE=2: INLET
+         67                     C                         ITYPE=3: MOVING-WALL
+         68                     C                         ITYPE=4: FREE
+         69                     C                         ITYPE=5: SYMMETRIC
+         70                     C    QBOUN(IPB,IC)    :NON-DIMENSIONAL DISTANCE TO INNER GRIDS
+         71                     C
+         72                     C
+         73                           INTEGER*4 I,IPB,IC
+         74                     C
+         75                           WRITE(IUT6,*)
+         76                           WRITE(IUT6,*)
+         77                          * ' [1] MAKEBC: MAKE B.C. DATA BOUNDING BOX '
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NPBOUN
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 16
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+         78     1   s    s            DO 1000 IC=1,NC
+         79     1   s    s                CALL MKBC01(NP,LVEL,LREV,NG,NBC(IC),LBC(1,1,IC),LBTYPE,
+         80     1                    *                MPBOUN,NPBOUN(IC),LPBOUN(1,1,IC),QBOUN(1,IC),
+         81     1                    *                LWORK1,LWORK2,IERR)
+         82     1   m    m                WRITE(IUT6,'(A12,2I8)') 'MKBC01: ', IC,NPBOUN(IC)
+         83     1   p    v       1000  CONTINUE
+         84                     C
+         85                           IF(JGEOM.EQ.0) RETURN
+         86                     C
+         87                           WRITE(IUT6,*)
+         88                           WRITE(IUT6,*)
+         89                          * ' [2] MAKEBC: MAKE INTERSECT DATA '
+         90                           CALL MKBC02(NP,NG,NC,M1,MBC,LLEVEL,LPOSI,DSCALE,
+         91                          *            NTRIG,XTRIG,YTRIG,ZTRIG,
+         92                          *            MPBOUN,NPBOUN,LPBOUN,QBOUN,
+         93                          *            QCELL,LWORK,IMODQ,EPSTRG,IUT6,IUT0,IERR)
+         94                     C
+         95                           RETURN
+         96                           END
+
+ Diagnostic messages: program name(MAKEBC)
+   jwd2008i-i  "makebc.f", line 19: Dummy argument 'ZP' not used in this subprogram.
+   jwd2008i-i  "makebc.f", line 19: Dummy argument 'YP' not used in this subprogram.
+   jwd2008i-i  "makebc.f", line 19: Dummy argument 'XP' not used in this subprogram.
+   jwd2006i-i  "makebc.f", line 73: 'IPB' is declared but never referenced.
+   jwd2006i-i  "makebc.f", line 73: 'I' is declared but never referenced.
+   jwd5302p-i  "makebc.f", line 78: This loop is not parallelized: the performance of a partial parallelization execution may not be improved.
+   jwd6302s-i  "makebc.f", line 78: SIMD conversion is not applied to DO loop: the performance of a partial SIMD execution may not be improved.
+   jwd8664o-i  "makebc.f", line 78: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5208p-i  "makebc.f", line 79: DO loop is not parallelized: the assign-refer order of 'LVEL' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "makebc.f", line 79: DO loop is not parallelized: the assign-refer order of 'LREV' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "makebc.f", line 79: DO loop is not parallelized: the assign-refer order of 'NBC' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "makebc.f", line 79: DO loop is not parallelized: the assign-refer order of 'LBC' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "makebc.f", line 79: DO loop is not parallelized: the assign-refer order of 'LBTYPE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "makebc.f", line 79: DO loop is not parallelized: the assign-refer order of 'LWORK1' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "makebc.f", line 79: DO loop is not parallelized: the assign-refer order of 'LWORK2' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "makebc.f", line 79: DO loop is not parallelized: the assign-refer order of 'QBOUN' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "makebc.f", line 79: DO loop is not parallelized: the assign-refer order of 'IERR' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "makebc.f", line 79: DO loop is not parallelized: the assign-refer order of 'LPBOUN' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "makebc.f", line 79: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "makebc.f", line 79: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "makebc.f", line 79: DO loop is not parallelized: the assign-refer order of 'MPBOUN' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "makebc.f", line 79: DO loop is not parallelized: the assign-refer order of 'NPBOUN' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "makebc.f", line 79: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "makebc.f", line 79: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NPBOUN' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "makebc.f", line 79: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "makebc.f", line 82: DO loop is not parallelized: the assign-refer order of 'NPBOUN' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5121p-i  "makebc.f", line 82: DO loop is not parallelized: an input/output statement was found in the loop.
+   jwd6208s-i  "makebc.f", line 82: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NPBOUN' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6121s-i  "makebc.f", line 82: SIMD conversion cannot be applied to DO loop: an input/output statement was found in the loop.
+
+ Procedure information
+   Lines      : 96
+   Statements : 27
+   Stack(byte): 1216
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 96
+   Total statements : 27
+   Total stack(byte): 1216
+   Total prefetch num: 0
+

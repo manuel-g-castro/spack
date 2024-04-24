@@ -1,0 +1,46 @@
+      SUBROUTINE CHKBB(IMATCH,BB1,BB2)
+      IMPLICIT NONE
+      INTEGER*4 IMATCH
+      REAL*8    BB1(6),BB2(6)
+      REAL*8    X1MIN,X1MAX,Y1MIN,Y1MAX,Z1MIN,Z1MAX
+      REAL*8    X2MIN,X2MAX,Y2MIN,Y2MAX,Z2MIN,Z2MAX
+      INTEGER*4 IX1,IY1,IZ1 
+      INTEGER*4 IX2,IY2,IZ2 
+      INTEGER*4 IX,IY,IZ 
+C
+      X1MIN=BB1(1)     
+      Y1MIN=BB1(2)     
+      Z1MIN=BB1(3)     
+      X1MAX=BB1(4)     
+      Y1MAX=BB1(5)     
+      Z1MAX=BB1(6)     
+C
+      X2MIN=BB2(1)     
+      Y2MIN=BB2(2)     
+      Z2MIN=BB2(3)     
+      X2MAX=BB2(4)     
+      Y2MAX=BB2(5)     
+      Z2MAX=BB2(6)     
+C
+      IX1=0
+      IY1=0
+      IZ1=0
+      IX2=0
+      IY2=0
+      IZ2=0
+C
+      IF(X2MIN.LE.X1MIN .AND. X1MIN.LE.X2MAX) IX1=1
+      IF(X2MIN.LE.X1MAX .AND. X1MAX.LE.X2MAX) IX2=1
+      IF(Y2MIN.LE.Y1MIN .AND. Y1MIN.LE.Y2MAX) IY1=1
+      IF(Y2MIN.LE.Y1MAX .AND. Y1MAX.LE.Y2MAX) IY2=1
+      IF(Z2MIN.LE.Z1MIN .AND. Z1MIN.LE.Z2MAX) IZ1=1
+      IF(Z2MIN.LE.Z1MAX .AND. Z1MAX.LE.Z2MAX) IZ2=1
+C
+      IX=MAX(IX1,IX2) 
+      IY=MAX(IY1,IY2) 
+      IZ=MAX(IZ1,IZ2) 
+C
+      IMATCH=IX*IY*IZ
+C
+      RETURN
+      END

@@ -1,0 +1,202 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:53:48 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : deriv2.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "DERIV2"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    DERIV2                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE DERIV2(G,E,X,Y,NODE,NE,N,SNI,DNXI,DNYI,DET,
+         14                          *                  DXG,DYG,DXE,DYE)
+         15                           IMPLICIT REAL*8(A-H,O-Z)
+         16                           DIMENSION X(*),Y(*),NODE(N,NE),SNI(N,NE),DNXI(N,NE),DNYI(N,NE),
+         17                          1          DET(NE),DXG(NE),DYG(NE),DXE(NE),DYE(NE)
+         18                     C
+         19                           DIMENSION DN(4),DNG(4),DNE(4)
+         20                     C
+         21                     C
+         22                     C      CALCULATE X,Y DERIVERTIVES OF SHAPE FUNCTION AND DETERMINANT
+         23                     C         ( 2-D CALCULATION )
+         24                     C
+         25                     C
+         26                     C     NOTE ; 1. CALCULATION IS CARRIED OUT AT A GIVEN LOCATION(G,E)
+         27                     C              IN ALL THE ELEMENTS.
+         28                     C
+         29                     C
+         30                     C     ARGUMENT LISTINGS
+         31                     C       (1) INPUT
+         32                     C          G,E         ; GZAI, EATA COORDINATE WHERE CALCULATION DONE
+         33                     C          X     (IP)  ; X-COORDINATE OF NODE
+         34                     C          Y     (IP)  ; Y-COORDINATE OF NODE
+         35                     C          NODE(I,IE)  ; NODE NO. TABLE
+         36                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+         37                     C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT
+         38                     C
+         39                     C       (2) OUTPUT
+         40                     C          SNI (I,IE)  ; SHAPE FUNCTION
+         41                     C          DNXI(I,IE)  ; X-DERIVERTIVES OF SHAPE FUNCTION N(I)
+         42                     C          DNYI(I,IE)  ; Y-DERIVERTIVES OF SHAPE FUNCTION N(I)
+         43                     C          DET   (IE)  ; DETERMINANT
+         44                     C
+         45                     C       (3) WORK
+         46                     C          DXG   (IE)  ; DX/DG OF ELEMENT
+         47                     C          DYG   (IE)  ; DY/DG OF ELEMENT
+         48                     C          DXE   (IE)  ; DX/DE OF ELEMENT
+         49                     C          DYE   (IE)  ; DY/DE OF ELEMENT
+         50                     C
+         51                     C
+         52                     C
+         53     1                     DO 10 I = 1 , N
+         54     1                           DN (I) = SHAPE2(I,G,E,1)
+         55     1                           DNG(I) = SHAPE2(I,G,E,2)
+         56     1                           DNE(I) = SHAPE2(I,G,E,3)
+         57     1                  10 CONTINUE
+         58                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED(lines: 59,70,75)
+                              <<< Loop-information  End >>>
+         59     1                     DO 100 IE = 1 , NE
+         60     1   p                     DXG(IE) = DNG(1)*X(NODE(1,IE))+DNG(2)*X(NODE(2,IE))
+         61     1                    &             +DNG(3)*X(NODE(3,IE))+DNG(4)*X(NODE(4,IE))
+         62     1   p                     DYG(IE) = DNG(1)*Y(NODE(1,IE))+DNG(2)*Y(NODE(2,IE))
+         63     1                    &             +DNG(3)*Y(NODE(3,IE))+DNG(4)*Y(NODE(4,IE))
+         64     1   p                     DXE(IE) = DNE(1)*X(NODE(1,IE))+DNE(2)*X(NODE(2,IE))
+         65     1                    &             +DNE(3)*X(NODE(3,IE))+DNE(4)*X(NODE(4,IE))
+         66     1   p                     DYE(IE) = DNE(1)*Y(NODE(1,IE))+DNE(2)*Y(NODE(2,IE))
+         67     1                    &             +DNE(3)*Y(NODE(3,IE))+DNE(4)*Y(NODE(4,IE))
+         68     1                 100 CONTINUE
+         69                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED
+                              <<< Loop-information  End >>>
+         70     1                     DO 200 IE = 1 , NE
+         71     1   p                     DET(IE) = DXG(IE)*DYE(IE)-DYG(IE)*DXE(IE)
+         72     1                 200 CONTINUE
+         73                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    SIMD(VL: 8)
+                              <<< Loop-information  End >>>
+         74     1   p    v            DO 310 I = 1 , N
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<<    FUSED
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      DXG, DYG, DXE, DYE, DET
+                              <<< Loop-information  End >>>
+         75     2  pp                     DO 300 IE = 1 , NE
+         76     2   p    v                    SNI (I,IE) = DN(I)
+         77     2   p    v                    DNXI(I,IE) = ( DYE(IE)*DNG(I)-DYG(IE)*DNE(I))/DET(IE)
+         78     2   p    v                    DNYI(I,IE) = (-DXE(IE)*DNG(I)+DXG(IE)*DNE(I))/DET(IE)
+         79     2   p             300     CONTINUE
+         80     1   p             310 CONTINUE
+         81                     C
+         82                     C
+         83                           RETURN
+         84                           END
+
+ Diagnostic messages: program name(DERIV2)
+   jwd8220o-i  "deriv2.f", line 13: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd5138p-i  "deriv2.f", line 53: DO loop is not parallelized: the DO variable might be redefined in the loop.
+   jwd6138s-i  "deriv2.f", line 53: SIMD conversion cannot be applied to DO loop: the DO variable might be redefined in the loop.
+   jwd8664o-i  "deriv2.f", line 53: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd8210o-i  "deriv2.f", line 59: Loops fused at line 70.
+   jwd8210o-i  "deriv2.f", line 59: Loops fused at line 75.
+   jwd8209o-i  "deriv2.f", line 62: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "deriv2.f", line 64: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "deriv2.f", line 66: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8211o-i  "deriv2.f", line 74: Loops interchanged at line 75.
+   jwd8325o-i  "deriv2.f", line 74: Assume that the maximum number of iterations for this loop is 4 from the array declaration.
+   jwd6001s-i  "deriv2.f", line 74: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8211o-i  "deriv2.f", line 75: Loops interchanged at line 74.
+   jwd5001p-i  "deriv2.f", line 75: DO loop with DO variable 'IE' is parallelized.
+   jwd8670o-i  "deriv2.f", line 75: This loop cannot be software pipelined because the loop contains a branch instruction.
+   jwd8206o-i  "deriv2.f", line 77: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "deriv2.f", line 78: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "deriv2.f", line 78: Division is changed to multiplication by reciprocal.
+
+ Procedure information
+   Lines      : 84
+   Statements : 27
+   Stack(byte): 976
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 84
+   Total statements : 27
+   Total stack(byte): 976
+   Total prefetch num: 0
+

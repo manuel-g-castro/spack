@@ -1,0 +1,178 @@
+      SUBROUTINE NDLEX2
+     *   (MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+     *    NODE,ME,MP,NE,NP,N1,N2,NEX,SN,
+     *    IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+     *    VALELM,VALNOD,CM,IUT0,IERR,BUFSND,BUFRCV,MAXBUF,LEFIX)
+C
+      IMPLICIT NONE
+CCCC  [INPUT:LOOP]
+      INTEGER*4 MCOLOR,MCPART
+      INTEGER*4 NCOLOR(4),NCPART(MCOLOR,4),LLOOP(MCPART,MCOLOR,4)
+C
+      INTEGER*4 ME,MP,NE,NP,N1,N2
+      INTEGER*4 NODE(N2,NE),NEX(8)
+      REAL*4 SN (N1,ME)
+      INTEGER*4 IPART,NDOM,MBPDOM
+      INTEGER*4 LDOM(NDOM),NBPDOM(NDOM)
+      INTEGER*4 IPSLF(MBPDOM,NDOM),IPSND(MBPDOM,NDOM)
+      REAL*4 VALELM(ME),VALNOD(NP),CM(NP)
+      INTEGER*4 IUT0,IERR,MAXBUF
+      REAL*4 BUFSND(MAXBUF),BUFRCV(MAXBUF)
+      INTEGER*4 LEFIX(NE)
+C
+      CHARACTER*60 ERMSGC
+     & /' ## SUBROUTINE NODLEX: FATAL      ERROR REPORT   ; RETURNED' /
+C
+      INTEGER*4 NETET,NEPRD,NEWED,NEHEX
+      INTEGER*4 NTET, NPRD, NWED, NHEX
+C
+      INTEGER*4 I,IE,IP,IDUM,
+     *          ICOLOR,ICPART,IEE,IES,
+     *          IP1,IP2,IP3,IP4,IP5,IP6,IP7,IP8
+C
+C     * START *
+C
+      NETET=NEX(1)
+      NEPRD=NEX(2)
+      NEWED=NEX(3)
+      NEHEX=NEX(4)
+      NE   =NETET+NEPRD+NEWED+NEHEX
+C
+      NTET =NEX(5)
+      NPRD =NEX(6)
+      NWED =NEX(7)
+      NHEX =NEX(8)
+C
+      DO 300 IP=1,NP
+         VALNOD(IP)=0.0E0
+ 300  CONTINUE
+C
+C     
+C     *** VALNOD = N * VALELM ***
+C
+C     * TET *
+      DO 1111 ICOLOR=1,NCOLOR(1)
+!ocl norecurrence(VALNOD)
+      DO 1110 ICPART=1,NCPART(ICOLOR,1)
+          IES=LLOOP(ICPART  ,ICOLOR,1)
+          IEE=LLOOP(ICPART+1,ICOLOR,1)-1
+!ocl nosimd
+!ocl noswp
+         DO 1100 IE=IES,IEE
+            IF (LEFIX(IE).EQ.1) GOTO 1100
+            IP1 = NODE(1,IE)
+            IP2 = NODE(2,IE)
+            IP3 = NODE(3,IE)
+            IP4 = NODE(4,IE)
+            VALNOD(IP1) = VALNOD(IP1) + SN(1,IE)*VALELM(IE)
+            VALNOD(IP2) = VALNOD(IP2) + SN(2,IE)*VALELM(IE)
+            VALNOD(IP3) = VALNOD(IP3) + SN(3,IE)*VALELM(IE)
+            VALNOD(IP4) = VALNOD(IP4) + SN(4,IE)*VALELM(IE)
+ 1100    CONTINUE
+ 1110 CONTINUE
+ 1111 CONTINUE
+C
+C     * PYRAMID *
+      DO 1211 ICOLOR=1,NCOLOR(2)
+!ocl norecurrence(VALNOD)
+      DO 1210 ICPART=1,NCPART(ICOLOR,2)
+          IES=LLOOP(ICPART  ,ICOLOR,2)
+          IEE=LLOOP(ICPART+1,ICOLOR,2)-1
+!ocl nosimd
+!ocl noswp
+         DO 1200 IE=IES,IEE
+            IF (LEFIX(IE).EQ.1) GOTO 1200
+            IP1 = NODE(1,IE)
+            IP2 = NODE(2,IE)
+            IP3 = NODE(3,IE)
+            IP4 = NODE(4,IE)
+            IP5 = NODE(5,IE)
+            VALNOD(IP1) = VALNOD(IP1) + SN(1,IE)*VALELM(IE)
+            VALNOD(IP2) = VALNOD(IP2) + SN(2,IE)*VALELM(IE)
+            VALNOD(IP3) = VALNOD(IP3) + SN(3,IE)*VALELM(IE)
+            VALNOD(IP4) = VALNOD(IP4) + SN(4,IE)*VALELM(IE)
+            VALNOD(IP5) = VALNOD(IP5) + SN(5,IE)*VALELM(IE)
+ 1200    CONTINUE
+ 1210 CONTINUE
+ 1211 CONTINUE
+C
+C     * WEDGE *
+      DO 1311 ICOLOR=1,NCOLOR(3)
+!ocl norecurrence(VALNOD)
+      DO 1310 ICPART=1,NCPART(ICOLOR,3)
+          IES=LLOOP(ICPART  ,ICOLOR,3)
+          IEE=LLOOP(ICPART+1,ICOLOR,3)-1
+!ocl nosimd
+!ocl noswp
+         DO 1300 IE=IES,IEE
+            IF (LEFIX(IE).EQ.1) GOTO 1300
+            IP1 = NODE(1,IE)
+            IP2 = NODE(2,IE)
+            IP3 = NODE(3,IE)
+            IP4 = NODE(4,IE)
+            IP5 = NODE(5,IE)
+            IP6 = NODE(6,IE)
+            VALNOD(IP1) = VALNOD(IP1) + SN(1,IE)*VALELM(IE)
+            VALNOD(IP2) = VALNOD(IP2) + SN(2,IE)*VALELM(IE)
+            VALNOD(IP3) = VALNOD(IP3) + SN(3,IE)*VALELM(IE)
+            VALNOD(IP4) = VALNOD(IP4) + SN(4,IE)*VALELM(IE)
+            VALNOD(IP5) = VALNOD(IP5) + SN(5,IE)*VALELM(IE)
+            VALNOD(IP6) = VALNOD(IP6) + SN(6,IE)*VALELM(IE)
+ 1300    CONTINUE
+ 1310 CONTINUE
+ 1311 CONTINUE
+C
+C     * HEX *
+      DO 1411 ICOLOR=1,NCOLOR(4)
+!ocl norecurrence(VALNOD)
+      DO 1410 ICPART=1,NCPART(ICOLOR,4)
+          IES=LLOOP(ICPART  ,ICOLOR,4)
+          IEE=LLOOP(ICPART+1,ICOLOR,4)-1
+!ocl nosimd
+!ocl noswp
+         DO 1400 IE=IES,IEE
+            IF (LEFIX(IE).EQ.1) GOTO 1400
+            IP1 = NODE(1,IE)
+            IP2 = NODE(2,IE)
+            IP3 = NODE(3,IE)
+            IP4 = NODE(4,IE)
+            IP5 = NODE(5,IE)
+            IP6 = NODE(6,IE)
+            IP7 = NODE(7,IE)
+            IP8 = NODE(8,IE)
+            VALNOD(IP1) = VALNOD(IP1) + SN(1,IE)*VALELM(IE)
+            VALNOD(IP2) = VALNOD(IP2) + SN(2,IE)*VALELM(IE)
+            VALNOD(IP3) = VALNOD(IP3) + SN(3,IE)*VALELM(IE)
+            VALNOD(IP4) = VALNOD(IP4) + SN(4,IE)*VALELM(IE)
+            VALNOD(IP5) = VALNOD(IP5) + SN(5,IE)*VALELM(IE)
+            VALNOD(IP6) = VALNOD(IP6) + SN(6,IE)*VALELM(IE)
+            VALNOD(IP7) = VALNOD(IP7) + SN(7,IE)*VALELM(IE)
+            VALNOD(IP8) = VALNOD(IP8) + SN(8,IE)*VALELM(IE)
+ 1400    CONTINUE
+ 1410 CONTINUE
+ 1411 CONTINUE
+C
+C
+C     *** DATA COMMUNICATION ***
+C
+C
+      IDUM=1
+      CALL DDCOMX(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+     &            VALNOD,VALNOD,VALNOD,NP,IUT0,IERR,
+     &            BUFSND,BUFRCV,MAXBUF)
+      IF(IERR.NE.0) THEN
+         WRITE(IUT0,*)
+         WRITE(IUT0,*) ERMSGC
+         RETURN
+      END IF   
+C
+C
+C     *** INVERSE MASS MATRIX ***
+C
+C
+      DO 2000 IP=1,NP
+         VALNOD(IP)=VALNOD(IP)*CM(IP)
+ 2000 CONTINUE
+C
+      RETURN
+      END

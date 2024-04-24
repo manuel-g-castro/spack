@@ -1,0 +1,1604 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:53:18 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : pres3x.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "PRES3X"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE PRES3X(MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+          2                          *                  IPRESS,JSET,JFSPRS,
+          3                          *                  PLIMIT,ALPHAP,DT,FSMACH,PSFREE,NMAX,EPS,EPSRE,
+          4                          *                  NRN,RES,
+          5                          *                  ME,MP,N1,N2,NE,NP,NEX,NITRI,
+          6                          *                  U,V,W,P,PN,DP,DPE,DT3D,NODE,IEMEDA,
+          7                          *                  DNXI,DNYI,DNZI,SN,MELM,CM,
+          8                          *                  APRS,AAA,NPP,NCRS,IPCRS,AAAPC,LTAB,APRS0,
+          9                          *                  NPFREE,LPFREE,NPSLD2,LPSLD2,NUMIP,
+         10                          *                  IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+         11                          *                  NPSET,LPSET1,LPSET2,LPSET3,COVER1,COVER2,COVER3,
+         12                          *                  NPSND,LPSND,NPTSND,IPSET,IPSRC,
+         13                          *                  NPRCV,LPRCV,NPTRCV,
+         14                          *                  LPFIX,LWORK,B,DIV,UG,VG,WG,WRK1,WRK2,WRK3,WRK4,
+         15                          *                  WRK5,RX,RY,MWRK,WRKN,
+         16                          *                  JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS,
+         17                          *                  IUT0,IERR,ICRS_T,
+         18                          *                  EAP1,EAP2,NODP,IENP,JENP,NEP,MEP)
+         19                           IMPLICIT NONE
+         20                     C
+         21                           INTEGER*4 MCOLOR,MCPART
+         22                           INTEGER*4 NCOLOR(4),NCPART(MCOLOR,4),LLOOP(MCPART,MCOLOR,4)
+         23                     C
+         24                           INTEGER*4 IPRESS,JSET,JFSPRS,NMAX,NRN,
+         25                          *          ME,MP,N1,N2,NE,NP,NEX,MELM,
+         26                          *          NITRI,NODE,NPP,NCRS,IPCRS,LTAB,
+         27                          *          LPFIX,NPFREE,LPFREE,NPSLD2,LPSLD2,NUMIP,
+         28                          *          LPSET1,LPSET2,LPSET3,NPSET,
+         29                          *          NPSND ,LPSND ,NPTSND,IPSET,IPSRC,
+         30                          *          NPRCV ,LPRCV ,NPTRCV,
+         31                          *          IPART ,LDOM,NBPDOM,NDOM,
+         32                          *          IPSLF,IPSND,MBPDOM,LWORK,IUT0,IERR
+         33                           REAL*4    DT,FSMACH,PSFREE,PLIMIT,ALPHAP,
+         34                          *          EPS,EPSRE,RES,U,V,W,P,PN,
+         35                          *          DNXI,DNYI,DNZI,SN,E,
+         36                          *          APRS,AAA,AAAPC,APRS0,CM,
+         37                          *          COVER1,COVER2,COVER3,
+         38                          *          RX,RY,B,DIV,UG,VG,WG,WRK1,WRK2,WRK3,WRK4,WRK5
+         39                     C
+         40                           REAL*4 DP(NP),DPE(NE),DT3D(NE)
+         41                           INTEGER*4 IEMEDA(NE)
+         42                     C
+         43                           DIMENSION NEX(12)
+         44                           DIMENSION U(NP),V(NP),W(NP),P(NE),PN(NP+1)
+         45                           DIMENSION NODE(N2,NE),
+         46                          *          DNXI(N1,NE), DNYI(N1,NE),DNZI(N1,NE),CM(MP),
+         47                          *          LPFIX(MP),
+         48                          *          SN(N1,NE),
+         49                          *          APRS(N1,N2,ME),APRS0(NP)
+         50                           DIMENSION AAA(N1,N2,ME)
+         51                           DIMENSION NPP(NP)
+         52                           DIMENSION IPCRS(NCRS),AAAPC(NCRS),LTAB(N1,N2,NE)
+         53                           DIMENSION LPFREE(NPFREE),LPSLD2(NPSLD2),NUMIP(NP),
+         54                          1          LDOM(NDOM),NBPDOM(NDOM),
+         55                          2          IPSLF(MBPDOM,NDOM),IPSND(MBPDOM,NDOM)
+         56                           DIMENSION LPSET1(NPSET),LPSET2(NPSET),LPSET3(NPSET),
+         57                          1          COVER1(NPSET),COVER2(NPSET),COVER3(NPSET),
+         58                          2          LPSND (NDOM),NPTSND(NDOM) ,LPRCV (NDOM) ,NPTRCV(NDOM),
+         59                          3          IPSET (MBPDOM,NDOM),IPSRC (MBPDOM,NDOM)
+         60                           DIMENSION RX(0:N2,ME),RY(0:N2,ME),
+         61                          1          B(NP),DIV(NE),UG(*),VG(*),WG(*),
+         62                          2          WRK1(NP),WRK2(NP),WRK3(NP),WRK4(NP),WRK5(NP),LWORK(NP)
+         63                           INTEGER*4 MWRK
+         64                           REAL*4    WRKN(MWRK,4)
+         65                     C
+         66                           REAL*4    EAP1(N2,MEP,NP),EAP2(3,N2,MEP,NP)
+         67                           INTEGER*4 NODP(N2,MEP,NP),IENP(MEP,MP),JENP(MEP,MP),NEP(MP)
+         68                           INTEGER*4 MEP,IPE,NN,K,IPI
+         69                     C
+         70                     C     [FULL UNROOL]
+         71                           INTEGER*4 JUNROL
+         72                           INTEGER*4 NPPMAX,NCRS2,ITPCRS(NCRS2)
+         73                           REAL*4    TS(0:NP),TACRS(NCRS2)
+         74                     C
+         75                           INTEGER*4 ICRS_T(NP)
+         76                     
+         77                     C
+         78                           REAL*4 DIJ(8,8)
+         79                           DATA DIJ / 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+         80                          &           0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+         81                          &           0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+         82                          &           0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0,
+         83                          &           0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0,
+         84                          &           0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0,
+         85                          &           0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
+         86                          &           0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 /
+         87                     C
+         88                           INTEGER*4 IDIMP,IMODE
+         89                           DATA IDIMP  / 1 /
+         90                           DATA IMODE  / 1 /
+         91                           INTEGER*4 IBCGS
+         92                           DATA IBCGS  / 1 /
+         93                     C
+         94                           INTEGER*4 NETET,NEPRD,NEWED,NEHEX,
+         95                          *          NTET,NPRD,NWED,NHEX,
+         96                          *          NSKIP1,NSKIP2,NSKIP3,NSKIP4,IEE,IES,
+         97                          *          IES1,IEE1,IES2,IEE2,IES3,IEE3,IES4,IEE4,
+         98                          *          IELM0,
+         99                          *          IELM1,IELM2,IELM3,IELM4,
+        100                          *          IELM5,IELM6,IELM7,IELM8,
+        101                          *          MAXBUF,IP,IE,IB,IBP,ISEND,NPFIX,
+        102                          *          IP1,IP2,IP3,IP4,IP5,IP6,IP7,IP8,I,J,
+        103                          *          IITRE,NITRE,NMAXD,NRND,NB,IRES,IDIM,ICOLOR,ICPART
+        104                           REAL*4    COEF0,COEF1,AT,
+        105                          *          AT1,AT2,AT3,AT4,AT5,AT6,AT7,AT8,
+        106                          *          AC1,AC2,AC3,AC4,AC5,AC6,AC7,AC8,
+        107                          *          T1,T2,T3,T4,T5,T6,T7,T8,
+        108                          *          CRHS1,CRHS2,CRHS3,CRHS4,CRHS5,CRHS6,CRHS7,CRHS8,
+        109                          *          UU,VV,WW,COEF,COEF2,GP,EP,TP,BUF,
+        110                          *          ATI,ACI,CRHSI
+        111                     C
+        112                           CHARACTER*60 ERMSGC
+        113                     
+        114                          & / ' ## SUBROUTINE PRES3X: FATAL      ERROR REPORT   ; RETURNED' /
+        115                     C
+        116                     C
+        117                     C      COMPUTE PRESSURE FIELD BY THE FRACTIONAL STEP METHOD
+        118                     C         ( 3-D CALCULATION : SINGLE WORD & MULTI ELEMENT VERSION )
+        119                     C                                           CODED BASED ON 'RELX3T'
+        120                     C                                              2009.01.30 Y.YAMADE
+        121                     C
+        122                     C       COMPUTATIONAL COSTS FOR THE OPERATION EXCEPT SOLIVING MATRIX
+        123                     C      EQUATION ARE AS FOLLOWS;
+        124                     C
+        125                     C ************ COMPUTATIONAL COST EXCEPT FOR MATRIX SOLVER *******
+        126                     C ************ (1) WITHOUT LOW MACH ASSUMPTIONCOMPUTATIONAL COST**
+        127                     C =============================TET======================================
+        128                     C          OPERATION COUNTS:     71 FLOP /ELEMENT
+        129                     C          DATA LOADINGS   :      1 WORDS/ELEMENT
+        130                     C                           (    52 WORDS CONTIGUOUSLY,
+        131                     C                                20 WORDS BY STRIDE, AND
+        132                     C                                73 WORDS BY LIST )
+        133                     C
+        134                     C =============================WED======================================
+        135                     C          OPERATION COUNTS:    131 FLOP /ELEMENT
+        136                     C          DATA LOADINGS   :    133 WORDS/ELEMENT
+        137                     C                           (     1 WORDS CONTIGUOUSLY,
+        138                     C                               102 WORDS BY STRIDE, AND
+        139                     C                                30 WORDS BY LIST )
+        140                     C
+        141                     C =============================HEX======================================
+        142                     C          OPERATION COUNTS:    207 FLOP /ELEMENT
+        143                     C          DATA LOADINGS   :    205 WORDS/ELEMENT
+        144                     C                           (     1 WORDS CONTIGUOUSLY,
+        145                     C                               168 WORDS BY STRIDE, AND
+        146                     C                                36 WORDS BY LIST )
+        147                     C
+        148                     C ************ (2) WITH    LOW MACH ASSUMPTIONCOMPUTATIONAL COST**
+        149                     C =============================TET======================================
+        150                     C          OPERATION COUNTS:    307 FLOP /ELEMENT
+        151                     C          DATA LOADINGS   :    205 WORDS/ELEMENT
+        152                     C                           (    13 WORDS CONTIGUOUSLY,
+        153                     C                               136 WORDS BY STRIDE, AND
+        154                     C                                56 WORDS BY LIST )
+        155                     C
+        156                     C =============================WED======================================
+        157                     C          OPERATION COUNTS:    653 FLOP /ELEMENT
+        158                     C          DATA LOADINGS   :    403 WORDS/ELEMENT
+        159                     C                           (    19 WORDS CONTIGUOUSLY,
+        160                     C                               288 WORDS BY STRIDE, AND
+        161                     C                                96 WORDS BY LIST )
+        162                     C
+        163                     C =============================HEX======================================
+        164                     C          OPERATION COUNTS:   1127 FLOP /ELEMENT
+        165                     C          DATA LOADINGS   :    660 WORDS/ELEMENT
+        166                     C                           (    24 WORDS CONTIGUOUSLY,
+        167                     C                               496 WORDS BY STRIDE, AND
+        168                     C                               140 WORDS BY LIST )
+        169                     C
+        170                     C     ARGUMENT LISTINGS
+        171                     C       (1) INPUT
+        172                     C          NLOOP       ;NUMBER OF LOOPS
+        173                     C          LLOOP       ;POINTER FOR SPLITTED ELEMENT LIST
+        174                     C          IPRESS      ; FLAG FOR PRESSURE EQUATION
+        175                     C                        1---- FRACTIONAL STEP
+        176                     C                        2---- FRACTIONAL STEP WITH LOW MACH-ASSUMPTION
+        177                     C          FSMACH      ; MACH NUMBER OF FREE STREAM
+        178                     C          DT          ; TIME INCREMENT
+        179                     C          NMAX        ; MAXIMUM ITERATION NUMBER
+        180                     C          EPS         ; MAXIMUM ALLOWABLE ERROR
+        181                     C
+        182                     C          ME          ; MAX. NUMBER OF TOTAL ELEMENTS
+        183                     C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT
+        184                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+        185                     C          NP          ; NUMBER OF TOTAL    NODES
+        186                     C          NEX(I)      ; INCLUDES NUMBER OF ELEMENTS AND NUMBER OF LOCAL NODES
+        187                     C                        AS FOLOOWS
+        188                     C          NEX(1)      ; NUMBER OF TET.    ELEMENTS
+        189                     C          NEX(2)      ; NUMBER OF PYRAMID ELEMENTS
+        190                     C          NEX(3)      ; NUMBER OF WEGDE   ELEMENTS
+        191                     C          NEX(4)      ; NUMBER OF HEX.    ELEMENTS
+        192                     C          NEX(5)      ; NUMBER OF LOCAL NODES IN A TET.    ELEMENT (=4)
+        193                     C          NEX(6)      ; NUMBER OF LOCAL NODES IN A PYRAMID ELEMENT (=5)
+        194                     C          NEX(7)      ; NUMBER OF LOCAL NODES IN A WEGDE   ELEMENT (=6)
+        195                     C          NEX(8)      ; NUMBER OF LOCAL NODES IN A HEX.    ELEMENT (=8)
+        196                     C
+        197                     C          U       (IP); X-DIR. VELOCITY COMPONENT
+        198                     C          V       (IP); Y-DIR. VELOCITY COMPONENT
+        199                     C          W       (IP); Z-DIR. VELOCITY COMPONENT
+        200                     C
+        201                     C          NODE  (I,IE); NODE TABLE
+        202                     C          NUMIP   (IP); NUMBER OF NEIGHBORING DOMAINS THAT NODE
+        203                     C                        'IP' BELONG TO
+        204                     C          DNXI  (I,IE); ELEMENT CENTER VALUE OF NX
+        205                     C          DNYI  (I,IE); ELEMENT CENTER VALUE OF NY
+        206                     C          DNZI  (I,IE); ELEMENT CENTER VALUE OF NZ
+        207                     C          SN    (I,IE); ELEMENT INTEGRATED VECTOR OF N
+        208                     C          E   (I,J,IE); INTEGRATED ELEMENT MATRIX OF N*NT
+        209                     C
+        210                     C          A   (I,J,IE); ELEMENT-WISE MATRIX COEFFICIENT FOR
+        211                     C                        PRESSURE EQUATION (ONLY POISSON OPERATER)
+        212                     C          A0      (IP); DIAGONAL TERM OF MATRIX 'A'
+        213                     C
+        214                     C        A. FREE BOUNDARY
+        215                     C          NPFREE      ; NUMBER OF FREE BOUNDARY NODES
+        216                     C          LPFREE (IBP); FREE BOUNDARY NODES
+        217                     C
+        218                     C        B. INTER-CONNECT BOUNDARY
+        219                     C          IPART       ; SUB-DOMAIN NUMBER THAT THIS TASK SHOULD TAKE/IS
+        220                     C                       TAKING CARE OF. IPART BEING SET ZERO MEANS THAT
+        221                     C                       THE PROGRAM SHOULD RUN/IS RUNNING IN SERIAL
+        222                     C                       MODE.
+        223                     C
+        224                     C          LDOM  (IDOM); NEIBERING SUB-DOMAIN NUMBER
+        225                     C          NBPDOM(IDOM); NUMBER OF INTER-CONNECT BOUNDARY NODES
+        226                     C                       SHARING WITH THE IDOM'TH NEIBERING SUB-DOMAIN,
+        227                     C                       LDOM(IDOM)
+        228                     C          NDOM        ; NUMBER OF THE NERIBERING SUB-DOMAINS
+        229                     C          IPSLF (IBP,IDOM); INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+        230                     C                           CALLING TASK'S SUB-DOMAIN, FOR THE IDOM'TH
+        231                     C                           NEIBERING SUB-DOMAIN, LDOM(IDOM)
+        232                     C          IPSND (IBP,IDOM); INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+        233                     C                           SUB-DOMAIN THAT IS RECEIVING THE CALLING
+        234                     C                           TASK'S RESIDUALS.
+        235                     C          MBPDOM      ; THE MAXIMUM NUMBER OF THE INTER-CONNECT
+        236                     C                       BOUNDARY NODES FOR ONE NEIBERING SUB-DOMAIN
+        237                     C
+        238                     C        C. OVERSET BOUNDARY NODES
+        239                     C          NPSET       ; NUMBER OF OVERSET BOUNDARY NODES
+        240                     C          LPSET1 (IBP); OVERSET BOUNDARY NODES
+        241                     C          LPSET2 (IBP); ELEMENT NUMBER TO CALCULATE OVERSET VALUES
+        242                     C          LPSET3 (IBP); DOMAIN NUMBER TO SEND/RECEIVE OVERSET VALUES
+        243                     C                   0 --- CALCULATE AND SET OVERSET VALUE WITHIN THE
+        244                     C                         SELF-DOMAIN
+        245                     C          (POS. INT.)--- SEND    OVERSET VALUE TO   DOMAIN  LPSET3(IB)
+        246                     C                         AFTER CALCULATING IT WITHIN THE SELF-DOMAIN
+        247                     C          (NEG. INT.)--- RECEIVE OVERSET VALUE FROM DOMAIN -LPSET3(IB)
+        248                     C
+        249                     C          COVER1 (IBP); LOCAL COORDINATE IN INTERPOLATING ELEMENT
+        250                     C          COVER2 (IBP); LOCAL COORDINATE IN INTERPOLATING ELEMENT
+        251                     C          COVER3 (IBP); LOCAL COORDINATE IN INTERPOLATING ELEMENT
+        252                     C
+        253                     C          NPSND       ; NUMBER OF DOMAINS TO SEND OVERSET NODE VALUE
+        254                     C          LPSND (IDOM); DOMAIN NUMBER     TO SEND OVERSET NODE VALUE
+        255                     C          NPTSND(IDOM); NUMBER OF OVERSET NODE POINTS TO SEND TO
+        256                     C                        DOMAIN 'LPSND(IDOM)'
+        257                     C          IPSET(IPT,IDOM); OVERSET NODE NUMBER IN THE DOMAIN RECEIVING
+        258                     C                           THE OVERSET VALUES.
+        259                     C          IPSRC(IPT,IDOM); INDICATES POSITION IN THE OVERSET-VALUES
+        260                     C                           PASSING ARRAYS WHEN OVERSET NODE DATA
+        261                     C                           ARE COMPILED SEQUENTIALLY
+        262                     C
+        263                     C          NPRCV       ; NUMBER OF DOMAINS TO RECEIVE OVERSET NODE VALUE
+        264                     C          LPRCV (IDOM); DOMAIN NUMBER     TO RECEIVE OVERSET NODE VALUE
+        265                     C          NPTRCV(IDOM); NUMBER OF OVERSET POINTS TO RECEIVE FROM
+        266                     C                       DOMAIN 'LPRCV(IDOM)'
+        267                     C
+        268                     C          NPP      (IP); NUMBER OF ADJACENT NODES    TO NODE    IP
+        269                     C          NCRS    ; NUMBER OF NONZERO ELEMENTS IN MATRIX OF CRS FORMAT
+        270                     C          IPCRS  (ICRS); NODE NO. TABLE BASED ON CRS FORMAT
+        271                     C          LTAB(J1,J2,IE); CRS INDEX TABLE FOR NODE-BASE MATRIX
+        272                     C                          COEFFICIENT
+        273                     C
+        274                     C          IUT0        ; FILE NUMBER TO REPORT ERROR OCCURENCE
+        275                     C
+        276                     C       (2) OUTPUT
+        277                     C          P       (IE); PRESSURE AT ELEMENTS
+        278                     C          NRN         ; CALCULATION ITERATED NUMBER
+        279                     C          RES         ; RESIDUAL OF MATRIX SOLVER
+        280                     C          IERR        ; RETURN CODE TO REPORT ERROR OCCURENCE
+        281                     C                   0 --- NORMAL TERMINATION
+        282                     C                   1 --- A FATAL ERROR HAS OCCURED
+        283                     C
+        284                     C       (3) INPUT-OUTPUT
+        285                     C          PN      (IP); PRESSURE AT NODES
+        286                     C
+        287                     C       (4) WORK
+        288                     C          AAA (I,J,IE); ELEMENT-WISE MATRIX COEFFICIENT FOR
+        289                     C                        PRESSURE EQUATION INCLUDING NON-LINEAR TERM
+        290                     C          AAAPC (ICRS); NODE-BASE MATRIX COEFFICIENT FOR
+        291                     C                        PRESSURE EQUATION INCLUDING NON-LINEAR TERM
+        292                     C          RX    (I,IE); X-DIR. ELEMENT RESIDUAL
+        293                     C          RY    (I,IE); Y-DIR. ELEMENT RESIDUAL
+        294                     C          DIV     (IE); ELEMENT DIVERGENT
+        295                     C          B       (IP); R.H.S OF PRESSURE EQUATION
+        296                     C          UG      (IE); WORK
+        297                     C          VG      (IE); WORK
+        298                     C          WG      (IE); WORK
+        299                     C          WRK1    (IP); WORK
+        300                     C          WRK2    (IP); WORK
+        301                     C          WRK3    (IP); WORK
+        302                     C          WRK4    (IP); WORK
+        303                     C          WRK5    (IP); WORK
+        304                     C
+        305                     C
+        306                           IERR=0
+        307                     C
+        308                     CLES3X [1.] CHECK CONTROL PARAMETER
+        309                     C
+        310                           NETET=NEX(1)
+        311                           NEPRD=NEX(2)
+        312                           NEWED=NEX(3)
+        313                           NEHEX=NEX(4)
+        314                           NE   =NETET+NEPRD+NEWED+NEHEX
+        315                     C
+        316                           NTET=NEX(5)
+        317                           NPRD=NEX(6)
+        318                           NWED=NEX(7)
+        319                           NHEX=NEX(8)
+        320                     C
+        321                     C   == TET. ==
+        322                           IES1=1
+        323                           IEE1=NETET
+        324                     C
+        325                     C   == PYRAMID ==
+        326                           IES2=NETET+1
+        327                           IEE2=NETET+NEPRD
+        328                     C
+        329                     C   == WEDGE ==
+        330                           IES3=NETET+NEPRD+1
+        331                           IEE3=NETET+NEPRD+NEWED
+        332                     C
+        333                     C   == HEX. ==
+        334                           IES4=NETET+NEPRD+NEWED+1
+        335                           IEE4=NETET+NEPRD+NEWED+NEHEX
+        336                     C
+        337     1                     IF (IPRESS.NE.1 .AND. IPRESS.NE.2 )THEN
+        338     1                         WRITE(IUT0,*) "INVALID VALUE FOR IPRESS"
+        339     1                         WRITE(IUT0,*) ERMSGC
+        340     1                         IERR=1
+        341     1                         RETURN
+        342     1                     ENDIF
+        343                     C
+        344                           MAXBUF = NE*(N2+1)
+        345                     C
+        346                     C
+        347                     C     MAKE FIX BOUNDARY NODES LIST (LPFIX)
+        348                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1143
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPFIX, LWORK, WRK1
+                              <<< Loop-information  End >>>
+        349     1  pp   2v            DO 100 IP = 1 , NP
+        350     1   p   2v                WRK1(IP) = 1.0E0
+        351     1   p   2v                LWORK(IP)=0
+        352     1   p   2v                LPFIX(IP)=0
+        353     1   p   2v        100 CONTINUE
+        354                     C
+        355                     *POPTION INDEP(LWORK)
+        356                     C*$*ASSERT PERMUTATION ( LPFREE )
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.83, ITR: 320, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPFREE
+                              <<< Loop-information  End >>>
+        357     1   s   4v            DO 110 IB = 1 , NPFREE
+        358     1   m   4v                LWORK(LPFREE(IB))=1
+        359     1   p   4v        110 CONTINUE
+        360                     C
+        361                     *POPTION INDEP(LWORK)
+        362                     C*$*ASSERT PERMUTATION ( LPFREE )
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.83, ITR: 320, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPSLD2
+                              <<< Loop-information  End >>>
+        363     1   s   4v            DO 115 IB = 1 , NPSLD2
+        364     1   m   4v                LWORK(LPSLD2(IB))=1
+        365     1   p   4v        115 CONTINUE
+        366                     C
+        367                     *POPTION INDEP(LWORK)
+        368                     C*$*ASSERT PERMUTATION ( LPSET1 )
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.71, ITR: 224, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPSET1, LPSET3
+                              <<< Loop-information  End >>>
+        369     1   s   2v            DO 120 IB = 1 , NPSET
+        370     1   p   2v                ISEND = LPSET3(IB)
+        371     1   p   2v                IF(ISEND.GT.0) GO TO 120
+        372     1   m   2v                LWORK(LPSET1(IB))=1
+        373     1   p   2v        120 CONTINUE
+        374                     C
+        375                     *POPTION INDEP(LPFIX)
+        376                     C*$*ASSERT PERMUTATION ( LWORK )
+        377                           NPFIX=0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LWORK
+                              <<< Loop-information  End >>>
+        378     1       2s            DO 130 IP = 1 , NP
+        379     1       2v                IF(LWORK(IP).EQ.0) GO TO 130
+        380     1       2m                NPFIX=NPFIX+1
+        381     1       2v                WRK1(IP) = 0.0E0
+        382     1       2s                LPFIX(NPFIX) = IP
+        383     1       2v        130 CONTINUE
+        384                     C
+        385     1                     IF(IPRESS.EQ.1)THEN
+        386     1                         COEF0 = 0.0E0
+        387     1                         COEF1 = 0.0E0
+        388     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      B
+                              <<< Loop-information  End >>>
+        389     2  pp   4v                DO IP=1,NP
+        390     2   p   4v                    B(IP)=0.0E0
+        391     2   p   4v                ENDDO
+        392     1               C
+        393     1                         GOTO 6000
+        394     1                     ELSE
+        395     1                         COEF0 = FSMACH*FSMACH/DT/DT
+        396     1                         COEF1 = FSMACH*FSMACH/DT/2.0E0
+        397     1                     ENDIF
+        398                     C
+        399                     CLES3X [2.] CAL. VELOCITIES AT ELEMENTS (UG,VG,WG)
+        400                     C
+        401                     C     OPERATION COUNTS:   12 FLOP /ELEMENT
+        402                     C     DATA LOADINGS   :   16 WORDS/ELEMENT
+        403                     C                      (   0 WORDS CONTIGUOUSLY,
+        404                     C                          4 WORDS BY STRIDE, AND
+        405                     C                         12 WORDS BY LIST )
+        406                     C
+        407                           COEF=1.0E0/4.0E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 184
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.48, ITR: 80, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WG, VG, UG
+                              <<< Loop-information  End >>>
+        408     1  pp    v            DO 210 IE = IES1 , IEE1
+        409     1   p    v                IP1=NODE(1,IE)
+        410     1   p    v                IP2=NODE(2,IE)
+        411     1   p    v                IP3=NODE(3,IE)
+        412     1   p    v                IP4=NODE(4,IE)
+        413     1   p    v                UG(IE) = COEF*(U(IP1)+U(IP2)+U(IP3)+U(IP4))
+        414     1   p    v                VG(IE) = COEF*(V(IP1)+V(IP2)+V(IP3)+V(IP4))
+        415     1   p    v                WG(IE) = COEF*(W(IP1)+W(IP2)+W(IP3)+W(IP4))
+        416     1   p    v        210 CONTINUE
+        417                     C
+        418                     C     OPERATION COUNTS:   15 FLOP /ELEMENT
+        419                     C     DATA LOADINGS   :   20 WORDS/ELEMENT
+        420                     C                      (   0 WORDS CONTIGUOUSLY,
+        421                     C                          5 WORDS BY STRIDE, AND
+        422                     C                         15 WORDS BY LIST )
+        423                     C
+        424                           COEF=1.0E0/5.0E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 153
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.79, ITR: 80, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WG, VG, UG
+                              <<< Loop-information  End >>>
+        425     1  pp    v            DO 220 IE = IES2 , IEE2
+        426     1   p    v                IP1=NODE(1,IE)
+        427     1   p    v                IP2=NODE(2,IE)
+        428     1   p    v                IP3=NODE(3,IE)
+        429     1   p    v                IP4=NODE(4,IE)
+        430     1   p    v                IP5=NODE(5,IE)
+        431     1   p    v                UG(IE) = COEF*(U(IP1)+U(IP2)+U(IP3)+U(IP4)
+        432     1                    *                  +U(IP5))
+        433     1   p    v                VG(IE) = COEF*(V(IP1)+V(IP2)+V(IP3)+V(IP4)
+        434     1                    *                  +V(IP5))
+        435     1   p    v                WG(IE) = COEF*(W(IP1)+W(IP2)+W(IP3)+W(IP4)
+        436     1                    *                  +W(IP5))
+        437     1   p    v        220 CONTINUE
+        438                     C
+        439                     C     OPERATION COUNTS:   18 FLOP /ELEMENT
+        440                     C     DATA LOADINGS   :   24 WORDS/ELEMENT
+        441                     C                      (   0 WORDS CONTIGUOUSLY,
+        442                     C                          6 WORDS BY STRIDE, AND
+        443                     C                         18 WORDS BY LIST )
+        444                     C
+        445                           COEF=1.0E0/6.0E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 131
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.60, ITR: 64, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WG, VG, UG
+                              <<< Loop-information  End >>>
+        446     1  pp    v            DO 230 IE = IES3 , IEE3
+        447     1   p    v                IP1=NODE(1,IE)
+        448     1   p    v                IP2=NODE(2,IE)
+        449     1   p    v                IP3=NODE(3,IE)
+        450     1   p    v                IP4=NODE(4,IE)
+        451     1   p    v                IP5=NODE(5,IE)
+        452     1   p    v                IP6=NODE(6,IE)
+        453     1   p    v                UG(IE) = COEF*(U(IP1)+U(IP2)+U(IP3)+U(IP4)
+        454     1                    *                  +U(IP5)+U(IP6))
+        455     1   p    v                VG(IE) = COEF*(V(IP1)+V(IP2)+V(IP3)+V(IP4)
+        456     1                    *                  +V(IP5)+V(IP6))
+        457     1   p    v                WG(IE) = COEF*(W(IP1)+W(IP2)+W(IP3)+W(IP4)
+        458     1                    *                  +W(IP5)+W(IP6))
+        459     1   p    v        230 CONTINUE
+        460                     C
+        461                     C     OPERATION COUNTS:   24 FLOP /ELEMENT
+        462                     C     DATA LOADINGS   :   32 WORDS/ELEMENT
+        463                     C                      (   0 WORDS CONTIGUOUSLY,
+        464                     C                          8 WORDS BY STRIDE, AND
+        465                     C                         24 WORDS BY LIST )
+        466                     C
+        467                           COEF=1.0E0/8.0E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 101
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.43, ITR: 64, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WG, VG, UG
+                              <<< Loop-information  End >>>
+        468     1  pp    v            DO 240 IE = IES4 , IEE4
+        469     1   p    v                IP1=NODE(1,IE)
+        470     1   p    v                IP2=NODE(2,IE)
+        471     1   p    v                IP3=NODE(3,IE)
+        472     1   p    v                IP4=NODE(4,IE)
+        473     1   p    v                IP5=NODE(5,IE)
+        474     1   p    v                IP6=NODE(6,IE)
+        475     1   p    v                IP7=NODE(7,IE)
+        476     1   p    v                IP8=NODE(8,IE)
+        477     1   p    v                UG(IE) = COEF*(U(IP1)+U(IP2)+U(IP3)+U(IP4)
+        478     1                    *                  +U(IP5)+U(IP6)+U(IP7)+U(IP8))
+        479     1   p    v                VG(IE) = COEF*(V(IP1)+V(IP2)+V(IP3)+V(IP4)
+        480     1                    *                  +V(IP5)+V(IP6)+V(IP7)+V(IP8))
+        481     1   p    v                WG(IE) = COEF*(W(IP1)+W(IP2)+W(IP3)+W(IP4)
+        482     1                    *                  +W(IP5)+W(IP6)+W(IP7)+W(IP8))
+        483     1   p    v        240 CONTINUE
+        484                     C
+        485                     CLES3X [3.] CAL. TIME AND CONVECTION TERM
+        486                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      B
+                              <<< Loop-information  End >>>
+        487     1  pp   4v            DO 300 IP=1,NP
+        488     1   p   4v                B(IP)=0.0E0
+        489     1   p   4v        300 CONTINUE
+        490                     C
+        491                     C     OPERATION COUNTS:  224 FLOP /ELEMENT
+        492                     C     DATA LOADINGS   :  116 WORDS/ELEMENT
+        493                     C                      (  12 WORDS CONTIGUOUSLY,
+        494                     C                         80 WORDS BY STRIDE, AND
+        495                     C                         24 WORDS BY LIST )
+        496                     C
+        497                           CALL USTSTA(92)
+        498                           PN(NP+1)=0.0E0
+        499                     !ocl norecurrence(AAA,WRK1,B)
+        500                     !$omp parallel do  private(IPE,IE,I,K,IP1,UU,VV,WW,
+        501                     !$omp+ AT,COEF2,CRHSI,AT1,AC1,CRHS1)
+        502                     !$omp+ schedule(static, 4600)
+        503     1   p                 DO 310 IP=1,NP
+        504     1   p                     COEF2=WRK1(IP)
+        505     1   p                     CRHSI=0.0E0
+        506     1               !ocl noswp
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      JENP, IENP
+                              <<< Loop-information  End >>>
+        507     2   p                     DO 320 IPE=1,NEP(IP)
+        508     2   p                         IE =IENP(IPE,IP)
+        509     2   p                         I  =JENP(IPE,IP)
+        510     2   p                         UU=UG(IE)
+        511     2   p                         VV=VG(IE)
+        512     2   p                         WW=WG(IE)
+        513     2               C
+        514     2   p                         AT =EAP1(1,IPE,IP)+EAP1(2,IPE,IP)+EAP1(3,IPE,IP)
+        515     2                    *           +EAP1(4,IPE,IP)+EAP1(5,IPE,IP)+EAP1(6,IPE,IP)
+        516     2                    *           +EAP1(7,IPE,IP)+EAP1(8,IPE,IP)
+        517     2               C
+        518     2               C NOTE THAT;
+        519     2               C MATRIX COEFFICINTS AT DIRECLET BOUNDARY NODES ARE 0 IN THIS LOOP
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<< Loop-information  End >>>
+        520     3   p    v                    DO 330 K=1,8
+        521     3   p    v                        ATI=DIJ(I,K)*AT*COEF0
+        522     3   p    v                        ACI=(UU*EAP2(1,K,IPE,IP)+VV*EAP2(2,K,IPE,IP)
+        523     3                    *                +WW*EAP2(3,K,IPE,IP))*COEF1
+        524     3   p    v                        AAA(I,K,IE)=(ATI+ACI)*COEF2
+        525     3   p    v                        IPI=NODP(K,IPE,IP)
+        526     3   p    v                        CRHSI=CRHSI+(ATI-ACI)*PN(IPI)
+        527     3   p    v        330         CONTINUE
+        528     2   p             320     CONTINUE
+        529     1               C
+        530     1   p                     B(IP)=CRHSI
+        531     1   p             310 CONTINUE
+        532                           CALL USTEND(92)
+        533                     C
+        534                     C
+        535                     CLES3X [4.] CAL MATRIX COEFFICIENTS
+        536                     CCCC   DIAGONAL SCALING OF LOW-MACH ASSUMPTION PART IN PRESSURE EQUATION
+        537                     CCCC  MATIRIX COEFFICIENT AND SUMMATION OF TWO PARTS.
+        538                     CCC
+        539                     C
+        540                     C     OPERATION COUNTS:   36 FLOP /ELEMENT
+        541                     C     DATA LOADINGS   :   36 WORDS/ELEMENT
+        542                     C                      (   0 WORDS CONTIGUOUSLY,
+        543                     C                         32 WORDS BY STRIDE, AND
+        544                     C                          4 WORDS BY LIST )
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.20, ITR: 176, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE, APRS, AAA
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 0
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 2  FILL 2
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        545     1   p    v            DO 511 I=1,NTET
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE, AAA, APRS
+                              <<< Loop-information  End >>>
+        546     2  pp                     DO 510 IE=IES1,IEE1
+        547     2   p    v                    IP=NODE(I,IE)
+        548     2   p    v                    COEF=1.0E0/APRS0(IP)
+        549     2   p    v                    AAA(I,1,IE)=AAA(I,1,IE)*COEF+APRS(I,1,IE)
+        550     2   p    v                    AAA(I,2,IE)=AAA(I,2,IE)*COEF+APRS(I,2,IE)
+        551     2   p    v                    AAA(I,3,IE)=AAA(I,3,IE)*COEF+APRS(I,3,IE)
+        552     2   p    v                    AAA(I,4,IE)=AAA(I,4,IE)*COEF+APRS(I,4,IE)
+        553     2   p             510     CONTINUE
+        554     1   p    v        511 CONTINUE
+        555                     C
+        556                     C     OPERATION COUNTS:   55 FLOP /ELEMENT
+        557                     C     DATA LOADINGS   :   55 WORDS/ELEMENT
+        558                     C                      (   0 WORDS CONTIGUOUSLY,
+        559                     C                         50 WORDS BY STRIDE, AND
+        560                     C                          5 WORDS BY LIST )
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.92, ITR: 160, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      AAA, APRS, NODE
+                              <<< Loop-information  End >>>
+        561     1   p    v            DO 521 I=1,NPRD
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE, APRS, AAA
+                              <<< Loop-information  End >>>
+        562     2  pp                     DO 520 IE=IES2,IEE2
+        563     2   p    v                    IP=NODE(I,IE)
+        564     2   p    v                    COEF=1.0E0/APRS0(IP)
+        565     2   p    v                    AAA(I,1,IE)=AAA(I,1,IE)*COEF+APRS(I,1,IE)
+        566     2   p    v                    AAA(I,2,IE)=AAA(I,2,IE)*COEF+APRS(I,2,IE)
+        567     2   p    v                    AAA(I,3,IE)=AAA(I,3,IE)*COEF+APRS(I,3,IE)
+        568     2   p    v                    AAA(I,4,IE)=AAA(I,4,IE)*COEF+APRS(I,4,IE)
+        569     2   p    v                    AAA(I,5,IE)=AAA(I,5,IE)*COEF+APRS(I,5,IE)
+        570     2   p             520     CONTINUE
+        571     1   p             521 CONTINUE
+        572                     C
+        573                     C     OPERATION COUNTS:   78 FLOP /ELEMENT
+        574                     C     DATA LOADINGS   :   78 WORDS/ELEMENT
+        575                     C                      (   0 WORDS CONTIGUOUSLY,
+        576                     C                         72 WORDS BY STRIDE, AND
+        577                     C                          6 WORDS BY LIST )
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.00, ITR: 96, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      AAA, APRS, NODE
+                              <<< Loop-information  End >>>
+        578     1   p    v            DO 531 I=1,NWED
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE, AAA, APRS
+                              <<< Loop-information  End >>>
+        579     2  pp                     DO 530 IE=IES3,IEE3
+        580     2   p    v                    IP=NODE(I,IE)
+        581     2   p    v                    COEF=1.0E0/APRS0(IP)
+        582     2   p    v                    AAA(I,1,IE)=AAA(I,1,IE)*COEF+APRS(I,1,IE)
+        583     2   p    v                    AAA(I,2,IE)=AAA(I,2,IE)*COEF+APRS(I,2,IE)
+        584     2   p    v                    AAA(I,3,IE)=AAA(I,3,IE)*COEF+APRS(I,3,IE)
+        585     2   p    v                    AAA(I,4,IE)=AAA(I,4,IE)*COEF+APRS(I,4,IE)
+        586     2   p    v                    AAA(I,5,IE)=AAA(I,5,IE)*COEF+APRS(I,5,IE)
+        587     2   p    v                    AAA(I,6,IE)=AAA(I,6,IE)*COEF+APRS(I,6,IE)
+        588     2   p             530     CONTINUE
+        589     1   p             531 CONTINUE
+        590                     C
+        591                     C     OPERATION COUNTS:  136 FLOP /ELEMENT
+        592                     C     DATA LOADINGS   :  136 WORDS/ELEMENT
+        593                     C                      (   0 WORDS CONTIGUOUSLY,
+        594                     C                        128 WORDS BY STRIDE, AND
+        595                     C                          8 WORDS BY LIST )
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE, AAA, APRS
+                              <<<    PREFETCH(SOFT) : 2
+                              <<<     SEQUENTIAL : 2
+                              <<<      APRS: 2
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 7
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        596     1   p    v            DO 541 I=1,NHEX
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<< Loop-information  End >>>
+        597     2  pp                     DO 540 IE=IES4,IEE4
+        598     2   p    v                    IP=NODE(I,IE)
+        599     2   p    v                    COEF=1.0E0/APRS0(IP)
+        600     2   p    v                    AAA(I,1,IE)=AAA(I,1,IE)*COEF+APRS(I,1,IE)
+        601     2   p    v                    AAA(I,2,IE)=AAA(I,2,IE)*COEF+APRS(I,2,IE)
+        602     2   p    v                    AAA(I,3,IE)=AAA(I,3,IE)*COEF+APRS(I,3,IE)
+        603     2   p    v                    AAA(I,4,IE)=AAA(I,4,IE)*COEF+APRS(I,4,IE)
+        604     2   p    v                    AAA(I,5,IE)=AAA(I,5,IE)*COEF+APRS(I,5,IE)
+        605     2   p    v                    AAA(I,6,IE)=AAA(I,6,IE)*COEF+APRS(I,6,IE)
+        606     2   p    v                    AAA(I,7,IE)=AAA(I,7,IE)*COEF+APRS(I,7,IE)
+        607     2   p    v                    AAA(I,8,IE)=AAA(I,8,IE)*COEF+APRS(I,8,IE)
+        608     2   p             540     CONTINUE
+        609     1   p             541 CONTINUE
+        610                     C
+        611                     C
+        612                     CLES3X [4.] COMPUTE ELEMENT-WISE FORCE VECTOR
+        613                     C
+        614                     C  ************[TET]****************************
+        615                     C          OPERATION COUNTS:    23 FLOP /ELEMENT
+        616                     C          DATA LOADINGS   :    24 WORDS/ELEMENT
+        617                     C                           (    0 WORDS CONTIGUOUSLY,
+        618                     C                               12 WORDS BY STRIDE, AND
+        619                     C                               12 WORDS BY LIST )
+        620                     C
+        621                     C  ************[WED]****************************
+        622                     C          OPERATION COUNTS:    35 FLOP /ELEMENT
+        623                     C          DATA LOADINGS   :    36 WORDS/ELEMENT
+        624                     C                           (    0 WORDS CONTIGUOUSLY,
+        625                     C                               18 WORDS BY STRIDE, AND
+        626                     C                               18 WORDS BY LIST )
+        627                     C
+        628                     C  ************[HEX]****************************
+        629                     C          OPERATION COUNTS:    47 FLOP /ELEMENT
+        630                     C          DATA LOADINGS   :    48 WORDS/ELEMENT
+        631                     C                           (    0 WORDS CONTIGUOUSLY,
+        632                     C                               24 WORDS BY STRIDE, AND
+        633                     C                               24 WORDS BY LIST )
+        634                     C
+        635                      6000 CONTINUE
+        636                     C
+        637                           CALL FILD3X(IMODE,ME,NE,NP,NEX,N1,N2,
+        638                          &            U,V,W,DIV,NODE,DNXI,DNYI,DNZI,IUT0,IERR)
+        639                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1231
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.50, ITR: 288, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      DIV, IEMEDA
+                              <<< Loop-information  End >>>
+        640     1  pp   2v            DO 600 IE=1,NE
+        641     1   p   2v                IF(IEMEDA(IE).NE.0) DIV(IE)=0.0E0
+        642     1   p   2v        600 CONTINUE
+        643                     C
+        644                     C
+        645                     C     OPERATION COUNTS:    12 FLOP /ELEMENT
+        646                     C     DATA LOADINGS   :    13 WORDS/ELEMENT
+        647                     C                      (    1 WORDS CONTIGUOUSLY,
+        648                     C                           8 WORDS BY STRIDE, AND
+        649                     C                           4 WORDS BY LIST )
+        650                     C
+        651                     C
+        652                           COEF=1.0E0/DT
+        653                     C
+        654     1                     DO 612 ICOLOR=1,NCOLOR(1)
+        655     1               !ocl norecurrence(B)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<< Loop-information  End >>>
+        656     2  pp                    DO 611 ICPART=1,NCPART(ICOLOR,1)
+        657     2   p                       IES=LLOOP(ICPART  ,ICOLOR,1)
+        658     2   p                       IEE=LLOOP(ICPART+1,ICOLOR,1)-1
+        659     2               !ocl nosimd
+        660     2               !ocl noswp
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      DIV
+                              <<< Loop-information  End >>>
+        661     3   p                       DO 610 IE=IES,IEE
+        662     3               C
+        663     3   p                          IP1=NODE(1,IE)
+        664     3   p                          IP2=NODE(2,IE)
+        665     3   p                          IP3=NODE(3,IE)
+        666     3   p                          IP4=NODE(4,IE)
+        667     3               C
+        668     3   p                          B(IP1)=B(IP1)-COEF*DIV(IE)*SN(1,IE)
+        669     3   p                          B(IP2)=B(IP2)-COEF*DIV(IE)*SN(2,IE)
+        670     3   p                          B(IP3)=B(IP3)-COEF*DIV(IE)*SN(3,IE)
+        671     3   p                          B(IP4)=B(IP4)-COEF*DIV(IE)*SN(4,IE)
+        672     3   p            610        CONTINUE
+        673     2   p            611     CONTINUE
+        674     1                612  CONTINUE
+        675                     C
+        676                     C     OPERATION COUNTS:    15 FLOP /ELEMENT
+        677                     C     DATA LOADINGS   :    16 WORDS/ELEMENT
+        678                     C                      (    1 WORDS CONTIGUOUSLY,
+        679                     C                          10 WORDS BY STRIDE, AND
+        680                     C                           5 WORDS BY LIST )
+        681                     C
+        682     1                     DO 622 ICOLOR=1,NCOLOR(2)
+        683     1               !ocl norecurrence(B)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<< Loop-information  End >>>
+        684     2  pp                    DO 621 ICPART=1,NCPART(ICOLOR,2)
+        685     2   p                       IES=LLOOP(ICPART  ,ICOLOR,2)
+        686     2   p                       IEE=LLOOP(ICPART+1,ICOLOR,2)-1
+        687     2               !ocl nosimd
+        688     2               !ocl noswp
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      DIV
+                              <<< Loop-information  End >>>
+        689     3   p                       DO 620 IE=IES,IEE
+        690     3               C
+        691     3   p                          IP1=NODE(1,IE)
+        692     3   p                          IP2=NODE(2,IE)
+        693     3   p                          IP3=NODE(3,IE)
+        694     3   p                          IP4=NODE(4,IE)
+        695     3   p                          IP5=NODE(5,IE)
+        696     3               C
+        697     3   p                          B(IP1)=B(IP1)-COEF*DIV(IE)*SN(1,IE)
+        698     3   p                          B(IP2)=B(IP2)-COEF*DIV(IE)*SN(2,IE)
+        699     3   p                          B(IP3)=B(IP3)-COEF*DIV(IE)*SN(3,IE)
+        700     3   p                          B(IP4)=B(IP4)-COEF*DIV(IE)*SN(4,IE)
+        701     3   p                          B(IP5)=B(IP5)-COEF*DIV(IE)*SN(5,IE)
+        702     3   p            620        CONTINUE
+        703     2   p            621     CONTINUE
+        704     1                622  CONTINUE
+        705                     C
+        706                     C     OPERATION COUNTS:    18 FLOP /ELEMENT
+        707                     C     DATA LOADINGS   :    19 WORDS/ELEMENT
+        708                     C                      (    1 WORDS CONTIGUOUSLY,
+        709                     C                          12 WORDS BY STRIDE, AND
+        710                     C                          21 WORDS BY LIST )
+        711                     C
+        712     1                     DO 632 ICOLOR=1,NCOLOR(3)
+        713     1               !ocl norecurrence(B)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<< Loop-information  End >>>
+        714     2  pp                    DO 631 ICPART=1,NCPART(ICOLOR,3)
+        715     2   p                       IES=LLOOP(ICPART  ,ICOLOR,3)
+        716     2   p                       IEE=LLOOP(ICPART+1,ICOLOR,3)-1
+        717     2               !ocl nosimd
+        718     2               !ocl noswp
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      DIV
+                              <<< Loop-information  End >>>
+        719     3   p                       DO 630 IE=IES,IEE
+        720     3               C
+        721     3   p                          IP1=NODE(1,IE)
+        722     3   p                          IP2=NODE(2,IE)
+        723     3   p                          IP3=NODE(3,IE)
+        724     3   p                          IP4=NODE(4,IE)
+        725     3   p                          IP5=NODE(5,IE)
+        726     3   p                          IP6=NODE(6,IE)
+        727     3               C
+        728     3   p                          B(IP1)=B(IP1)-COEF*DIV(IE)*SN(1,IE)
+        729     3   p                          B(IP2)=B(IP2)-COEF*DIV(IE)*SN(2,IE)
+        730     3   p                          B(IP3)=B(IP3)-COEF*DIV(IE)*SN(3,IE)
+        731     3   p                          B(IP4)=B(IP4)-COEF*DIV(IE)*SN(4,IE)
+        732     3   p                          B(IP5)=B(IP5)-COEF*DIV(IE)*SN(5,IE)
+        733     3   p                          B(IP6)=B(IP6)-COEF*DIV(IE)*SN(6,IE)
+        734     3   p            630        CONTINUE
+        735     2   p            631     CONTINUE
+        736     1                632  CONTINUE
+        737                     C
+        738                     C     OPERATION COUNTS:    24 FLOP /ELEMENT
+        739                     C     DATA LOADINGS   :    21 WORDS/ELEMENT
+        740                     C                      (    1 WORDS CONTIGUOUSLY,
+        741                     C                          16 WORDS BY STRIDE, AND
+        742                     C                           4 WORDS BY LIST )
+        743                     C
+        744     1                     DO 642 ICOLOR=1,NCOLOR(4)
+        745     1               !ocl norecurrence(B)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<< Loop-information  End >>>
+        746     2  pp                    DO 641 ICPART=1,NCPART(ICOLOR,4)
+        747     2   p                       IES=LLOOP(ICPART  ,ICOLOR,4)
+        748     2   p                       IEE=LLOOP(ICPART+1,ICOLOR,4)-1
+        749     2               !ocl nosimd
+        750     2               !ocl noswp
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      DIV
+                              <<< Loop-information  End >>>
+        751     3   p                       DO 640 IE=IES,IEE
+        752     3               C
+        753     3   p                          IP1=NODE(1,IE)
+        754     3   p                          IP2=NODE(2,IE)
+        755     3   p                          IP3=NODE(3,IE)
+        756     3   p                          IP4=NODE(4,IE)
+        757     3   p                          IP5=NODE(5,IE)
+        758     3   p                          IP6=NODE(6,IE)
+        759     3   p                          IP7=NODE(7,IE)
+        760     3   p                          IP8=NODE(8,IE)
+        761     3               C
+        762     3   p                          B(IP1)=B(IP1)-COEF*DIV(IE)*SN(1,IE)
+        763     3   p                          B(IP2)=B(IP2)-COEF*DIV(IE)*SN(2,IE)
+        764     3   p                          B(IP3)=B(IP3)-COEF*DIV(IE)*SN(3,IE)
+        765     3   p                          B(IP4)=B(IP4)-COEF*DIV(IE)*SN(4,IE)
+        766     3   p                          B(IP5)=B(IP5)-COEF*DIV(IE)*SN(5,IE)
+        767     3   p                          B(IP6)=B(IP6)-COEF*DIV(IE)*SN(6,IE)
+        768     3   p                          B(IP7)=B(IP7)-COEF*DIV(IE)*SN(7,IE)
+        769     3   p                          B(IP8)=B(IP8)-COEF*DIV(IE)*SN(8,IE)
+        770     3   p            640        CONTINUE
+        771     2   p            641     CONTINUE
+        772     1                642  CONTINUE
+        773                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 696
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.85, ITR: 416, MVE: 6)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      B, APRS0
+                              <<< Loop-information  End >>>
+        774     1  pp   2v            DO 700 IP = 1 , NP
+        775     1   p   2v                B(IP) = B(IP)/APRS0(IP)
+        776     1   p   2v        700 CONTINUE
+        777                     C
+        778                     C
+        779                           CALL DDCOMX(IPART,IDIMP,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        780                          *            B,B,B,NP,IUT0,IERR,RX,RY,MAXBUF)
+        781     1                     IF(IERR.NE.0) THEN
+        782     1                         WRITE(IUT0,*)
+        783     1                         WRITE(IUT0,*) ERMSGC
+        784     1                         RETURN
+        785     1                     ENDIF
+        786                     C
+        787                     CLES3X [5.] STARTING A  LOOP OF B.C. SETS AND MATRIX SOLVER
+        788                     C
+        789     1                     IF (JSET.EQ.0) THEN
+        790     1                         NITRE=1
+        791     1                         NMAXD =NMAX
+        792     1                     ELSE
+        793     1                         NITRE=MAX(NMAX/NITRI,1)
+        794     1                         NMAXD =NITRI
+        795     1                     ENDIF
+        796                     C
+        797                           NRN =0
+        798                           IRES=0
+        799                     C
+        800                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPFREE, LPSLD2, PN, DP
+                              <<< Loop-information  End >>>
+        801     1                     DO 3000 IITRE = 0, NITRE
+        802     1               C
+        803     1                         IF (IITRE.EQ.0) GOTO 3100
+        804     1               C
+        805     1               CLES3X [5.1] SOLVE P-EQUATION
+        806     1               C
+        807     2                     IF(IPRESS.EQ.1) THEN
+        808     2                         CALL BCFIX2 (ME,MP,NE,NP,N1,N2,NEX,NODE,
+        809     2                    *                 NPFIX,LPFIX,LWORK,
+        810     2                    *                 APRS,B,PN,SN,CM,IUT0,IERR)
+        811     2                         CALL E2PMAT(MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+        812     2                    *                N2,N1,NE,NEX,NCRS,APRS,AAAPC,LTAB,IUT0,IERR)
+        813     2                     ELSE IF(IPRESS.EQ.2) THEN
+        814     2                         CALL BCFIX2 (ME,MP,NE,NP,N1,N2,NEX,NODE,
+        815     2                    *                 NPFIX,LPFIX,LWORK,
+        816     2                    *                 AAA,B,PN,SN,CM,IUT0,IERR)
+        817     2                         CALL E2PMAT(MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+        818     2                    *                N2,N1,NE,NEX,NCRS,AAA,AAAPC,LTAB,IUT0,IERR)
+        819     2                     ENDIF
+        820     2                     IF (IERR.NE.0) THEN
+        821     2                         WRITE(IUT0,*)
+        822     2                         WRITE(IUT0,*) ERMSGC
+        823     2                         RETURN
+        824     2                     ENDIF
+        825     1               C
+        826     1               C          OPERATION COUNTS:   4  FLOP /NODE/NPPAVE/ITERATION
+        827     1               C          DATA LOADINGS   :   6  WORDS/NODE/NPPAVE/ITERATION
+        828     1               C                           (  4  WORDS CONTIGUOUSLY,
+        829     1               C                              0  WORDS BY 4-WORD STRIDE, AND
+        830     1               C                              2  WORDS BY LIST )
+        831     1               C           NPPAVE: AVE. NUMBER OF ADJACENT NODES AT A NODE
+        832     1               C           --> 15 (TET), 20 (PRD,WED), 27(HEX.)
+        833     1               C
+        834     2                         IF(JFSPRS.EQ.0) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1455
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.00, ITR: 320, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      PN, DP
+                              <<< Loop-information  End >>>
+        835     3  pp   4v                    DO 801 IP=1,NP
+        836     3   p   4v                        DP(IP)=PN(IP)
+        837     3   p   4v       801          CONTINUE
+        838     2                         ELSE IF(JFSPRS.EQ.1) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      DP
+                              <<< Loop-information  End >>>
+        839     3  pp   4v                    DO 802 IP=1,NP
+        840     3   p   4v                        DP(IP)=0.0E0
+        841     3   p   4v       802           CONTINUE
+        842     2                         ELSE
+        843     2                             IERR=51
+        844     2                             RETURN
+        845     2                         ENDIF
+        846     1               C
+        847     1                         IF(JUNROL.EQ.1)
+        848     1                    *    CALL CRSCVA(NP,NPPMAX,NCRS,NCRS2,NPP,AAAPC,TACRS,ICRS_T)
+        849     1               C
+        850     1                     CALL USTSTA(93)
+        851     1                         CALL BCGS2X(IBCGS,IPART,NMAXD,EPS,EPSRE,ME,N2,NE,NEX,
+        852     1                    *                NP,NPP,NCRS,IPCRS,AAAPC,NODE,B,DP,NRND,RES,
+        853     1                    *                NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,NUMIP,
+        854     1                    *                UG,VG,WG,DIV,WRK1,WRK2,WRK3,LWORK,RX,RY,MWRK,WRKN,
+        855     1                    *                JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS,
+        856     1                    *                IUT0,IERR)
+        857     1                     CALL USTEND(93)
+        858     1               C
+        859     1                         CALL AVEPRT(NP,DP,
+        860     1                    *                IPART,IDIMP,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        861     1                    *                IUT0,IERR,RX,RY,MAXBUF,NUMIP,UG)
+        862     1               C
+        863     2                         IF(JFSPRS.EQ.0) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1455
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.00, ITR: 320, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      DP, PN
+                              <<< Loop-information  End >>>
+        864     3  pp   4v                    DO 820 IP=1,NP
+        865     3   p   4v                        PN(IP)=DP(IP)
+        866     3   p   4v       820          CONTINUE
+        867     2                         ELSE IF(JFSPRS.EQ.1) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1067
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.00, ITR: 384, MVE: 7)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      DP, PN
+                              <<< Loop-information  End >>>
+        868     3  pp   2v                    DO 821 IP=1,NP
+        869     3   p   2v                        PN(IP)=PN(IP)+DP(IP)
+        870     3   p   2v       821          CONTINUE
+        871     2                         ELSE
+        872     2                             IERR=101
+        873     2                             RETURN
+        874     2                         ENDIF
+        875     1               C
+        876     1                         NRN=NRN+NRND
+        877     1                         IF(NRND.LT.NMAXD)IRES=1
+        878     1               C
+        879     1                3100     CONTINUE
+        880     1               C
+        881     1               CLES3X [5.2] SET B.C.
+        882     1               C
+        883     1               C
+        884     1               CCYY   A. FREE BOUNDARY CONDITIONS
+        885     1               C
+        886     1               C
+        887     1               *POPTION INDEP(PN)
+        888     1               C*$*ASSERT PERMUTATION ( LPFREE )
+        889     1               *POPTION INDEP(PN)
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.83, ITR: 320, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPFREE
+                              <<< Loop-information  End >>>
+        890     2   s   4v                DO 3200 IB = 1 , NPFREE
+        891     2   p   4v                    IP     = LPFREE(IB)
+        892     2   m   4v                    PN(IP) = PSFREE
+        893     2   p   4v       3200     CONTINUE
+        894     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.83, ITR: 320, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPSLD2
+                              <<< Loop-information  End >>>
+        895     2   s   4v                DO 3250 IB = 1 , NPSLD2
+        896     2   p   4v                    IP     = LPSLD2(IB)
+        897     2   m   4v                    PN(IP) = 0.0E0
+        898     2   p   4v       3250     CONTINUE
+        899     1               C
+        900     2                         IF (JSET.GE.1) THEN
+        901     2                             CALL OVRST1(IPART,NPSET,N1,N2,ME,NE,NP,NEX,NODE,PN,
+        902     2                    *                    LPSET1,LPSET2,LPSET3,
+        903     2                    *                    COVER1,COVER2,COVER3,
+        904     2                    *                    NDOM,MBPDOM,NPSND,NPRCV,
+        905     2                    *                    LPSND,NPTSND,LPRCV,NPTRCV,IPSET,IPSRC,
+        906     2                    *                    WRK1,WRK2,RX,RY,IUT0,IERR)
+        907     2                         ENDIF
+        908     1               C
+        909     1                     IF(IRES.EQ.1) GOTO 4000
+        910     1               C
+        911     1                3000 CONTINUE
+        912                     C
+        913                      4000 CONTINUE
+        914                     C
+        915                     C
+        916                     C
+        917                     CLES3X [6.] CAL. PESSURE AT ELEMENTS
+        918                     C
+        919                     C     OPERATION COUNTS:      4 FLOP /ELEMENT
+        920                     C     DATA LOADINGS   :      8 WORDS/ELEMENT
+        921                     C                      (     0 WORDS CONTIGUOUSLY,
+        922                     C                            4 WORDS BY STRIDE, AND
+        923                     C                            4 WORDS BY LIST )
+        924                     C
+        925                           COEF=1.0E0/4.0E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 236
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.94, ITR: 128, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      DPE, P
+                              <<< Loop-information  End >>>
+        926     1  pp    v            DO 910 IE = IES1 , IEE1
+        927     1   p    v                IP1=NODE(1,IE)
+        928     1   p    v                IP2=NODE(2,IE)
+        929     1   p    v                IP3=NODE(3,IE)
+        930     1   p    v                IP4=NODE(4,IE)
+        931     1   p    v                P(IE) = COEF*(PN(IP1)+PN(IP2)+PN(IP3)+PN(IP4))
+        932     1   p    v                DPE(IE)=COEF*(DP(IP1)+DP(IP2)+DP(IP3)+DP(IP4))
+        933     1   p    v        910 CONTINUE
+        934                     C
+        935                     C     OPERATION COUNTS:      5 FLOP /ELEMENT
+        936                     C     DATA LOADINGS   :     10 WORDS/ELEMENT
+        937                     C                      (     0 WORDS CONTIGUOUSLY,
+        938                     C                            5 WORDS BY STRIDE, AND
+        939                     C                            5 WORDS BY LIST )
+        940                           COEF=1.0E0/5.0E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 196
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.81, ITR: 96, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      DPE, P
+                              <<< Loop-information  End >>>
+        941     1  pp    v            DO 920 IE = IES2 , IEE2
+        942     1   p    v                IP1=NODE(1,IE)
+        943     1   p    v                IP2=NODE(2,IE)
+        944     1   p    v                IP3=NODE(3,IE)
+        945     1   p    v                IP4=NODE(4,IE)
+        946     1   p    v                IP5=NODE(5,IE)
+        947     1   p    v                P(IE) = COEF*(PN(IP1)+PN(IP2)+PN(IP3)+PN(IP4)
+        948     1                    *                 +PN(IP5))
+        949     1   p    v                DPE(IE)=COEF*(DP(IP1)+DP(IP2)+DP(IP3)+DP(IP4)
+        950     1                    *                 +DP(IP5))
+        951     1   p    v        920 CONTINUE
+        952                     C
+        953                     C     OPERATION COUNTS:      6 FLOP /ELEMENT
+        954                     C     DATA LOADINGS   :     12 WORDS/ELEMENT
+        955                     C                      (     0 WORDS CONTIGUOUSLY,
+        956                     C                            6 WORDS BY STRIDE, AND
+        957                     C                            6 WORDS BY LIST )
+        958                     C
+        959                           COEF=1.0E0/6.0E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 167
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.80, ITR: 96, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      DPE, P
+                              <<< Loop-information  End >>>
+        960     1  pp    v            DO 930 IE = IES3 , IEE3
+        961     1   p    v                IP1=NODE(1,IE)
+        962     1   p    v                IP2=NODE(2,IE)
+        963     1   p    v                IP3=NODE(3,IE)
+        964     1   p    v                IP4=NODE(4,IE)
+        965     1   p    v                IP5=NODE(5,IE)
+        966     1   p    v                IP6=NODE(6,IE)
+        967     1   p    v                P(IE) = COEF*(PN(IP1)+PN(IP2)+PN(IP3)+PN(IP4)
+        968     1                    *                 +PN(IP5)+PN(IP6))
+        969     1   p    v                DPE(IE)=COEF*(DP(IP1)+DP(IP2)+DP(IP3)+DP(IP4)
+        970     1                    *                 +DP(IP5)+DP(IP6))
+        971     1   p    v        930 CONTINUE
+        972                     C
+        973                     C     OPERATION COUNTS:      8 FLOP /ELEMENT
+        974                     C     DATA LOADINGS   :     16 WORDS/ELEMENT
+        975                     C                      (     0 WORDS CONTIGUOUSLY,
+        976                     C                            8 WORDS BY STRIDE, AND
+        977                     C                            8 WORDS BY LIST )
+        978                     C
+        979                           COEF=1.0E0/8.0E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 130
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.56, ITR: 64, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      DPE, P
+                              <<< Loop-information  End >>>
+        980     1  pp    v            DO 940 IE = IES4 , IEE4
+        981     1   p    v                IP1=NODE(1,IE)
+        982     1   p    v                IP2=NODE(2,IE)
+        983     1   p    v                IP3=NODE(3,IE)
+        984     1   p    v                IP4=NODE(4,IE)
+        985     1   p    v                IP5=NODE(5,IE)
+        986     1   p    v                IP6=NODE(6,IE)
+        987     1   p    v                IP7=NODE(7,IE)
+        988     1   p    v                IP8=NODE(8,IE)
+        989     1   p    v                P(IE) = COEF*(PN(IP1)+PN(IP2)+PN(IP3)+PN(IP4)
+        990     1                    *                 +PN(IP5)+PN(IP6)+PN(IP7)+PN(IP8))
+        991     1   p    v                DPE(IE)=COEF*(DP(IP1)+DP(IP2)+DP(IP3)+DP(IP4)
+        992     1                    *                 +DP(IP5)+DP(IP6)+DP(IP7)+DP(IP8))
+        993     1   p    v        940 CONTINUE
+        994                     C
+        995                           RETURN
+        996                           END
+
+ Diagnostic messages: program name(PRES3X)
+   jwd2008i-i  "pres3x.f", line 1: この仮引数'MELM'は、副プログラム中で使用されていません。
+   jwd2008i-i  "pres3x.f", line 1: この仮引数'ALPHAP'は、副プログラム中で使用されていません。
+   jwd2008i-i  "pres3x.f", line 1: この仮引数'PLIMIT'は、副プログラム中で使用されていません。
+   jwd8220o-i  "pres3x.f", line 1: 副作用の可能性のある最適化を行いました。
+   jwd2006i-i  "pres3x.f", line 33: この名前'E'は、宣言だけされていて引用されていません。
+   jwd2008i-i  "pres3x.f", line 40: この仮引数'DT3D'は、副プログラム中で使用されていません。
+   jwd2008i-i  "pres3x.f", line 60: この仮引数'WRK5'は、副プログラム中で使用されていません。
+   jwd2008i-i  "pres3x.f", line 60: この仮引数'WRK4'は、副プログラム中で使用されていません。
+   jwd2006i-i  "pres3x.f", line 68: この名前'NN'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 94: この名前'IDIM'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 94: この名前'NB'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 94: この名前'J'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 94: この名前'IBP'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 94: この名前'IELM8'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 94: この名前'IELM7'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 94: この名前'IELM6'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 94: この名前'IELM5'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 94: この名前'IELM4'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 94: この名前'IELM3'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 94: この名前'IELM2'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 94: この名前'IELM1'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 94: この名前'IELM0'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 94: この名前'NSKIP4'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 94: この名前'NSKIP3'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 94: この名前'NSKIP2'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 94: この名前'NSKIP1'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 104: この名前'BUF'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 104: この名前'TP'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 104: この名前'EP'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 104: この名前'GP'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 104: この名前'CRHS8'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 104: この名前'CRHS7'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 104: この名前'CRHS6'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 104: この名前'CRHS5'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 104: この名前'CRHS4'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 104: この名前'CRHS3'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 104: この名前'CRHS2'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 104: この名前'T8'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 104: この名前'T7'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 104: この名前'T6'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 104: この名前'T5'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 104: この名前'T4'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 104: この名前'T3'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 104: この名前'T2'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 104: この名前'T1'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 104: この名前'AC8'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 104: この名前'AC7'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 104: この名前'AC6'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 104: この名前'AC5'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 104: この名前'AC4'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 104: この名前'AC3'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 104: この名前'AC2'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 104: この名前'AT8'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 104: この名前'AT7'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 104: この名前'AT6'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 104: この名前'AT5'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 104: この名前'AT4'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 104: この名前'AT3'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "pres3x.f", line 104: この名前'AT2'は、宣言だけされていて引用されていません。
+   jwd5001p-i  "pres3x.f", line 349: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "pres3x.f", line 349: このDOループをSIMD化しました。(名前:IP)
+   jwd8663o-i  "pres3x.f", line 349: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "pres3x.f", line 349: ループを展開数2回でアンローリングしました。
+   jwd6001s-i  "pres3x.f", line 357: このDOループをSIMD化しました。(名前:IB)
+   jwd8204o-i  "pres3x.f", line 357: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "pres3x.f", line 357: ループの繰返し数が320回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5228p-i  "pres3x.f", line 358: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd6001s-i  "pres3x.f", line 363: このDOループをSIMD化しました。(名前:IB)
+   jwd8204o-i  "pres3x.f", line 363: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "pres3x.f", line 363: ループの繰返し数が320回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5228p-i  "pres3x.f", line 364: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd6001s-i  "pres3x.f", line 369: このDOループをSIMD化しました。(名前:IB)
+   jwd8204o-i  "pres3x.f", line 369: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "pres3x.f", line 369: ループの繰返し数が224回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5228p-i  "pres3x.f", line 372: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd5228p-i  "pres3x.f", line 378: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd6229s-i  "pres3x.f", line 378: IF文が存在するため、このDOループのSIMD化を抑止しました。
+   jwd8670o-i  "pres3x.f", line 378: ループ内に分岐命令があるため、ソフトウェアパイプライニングを適用できません。
+   jwd8202o-i  "pres3x.f", line 378: ループを展開数2回でアンローリングしました。
+   jwd5001p-i  "pres3x.f", line 389: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "pres3x.f", line 389: このDOループをSIMD化しました。(名前:IP)
+   jwd8663o-i  "pres3x.f", line 389: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "pres3x.f", line 389: ループを展開数4回でアンローリングしました。
+   jwd8209o-i  "pres3x.f", line 395: 多項式の演算順序を変更しました。
+   jwd8209o-i  "pres3x.f", line 396: 多項式の演算順序を変更しました。
+   jwd5001p-i  "pres3x.f", line 408: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "pres3x.f", line 408: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "pres3x.f", line 408: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "pres3x.f", line 408: ループの繰返し数が80回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "pres3x.f", line 413: 多項式の演算順序を変更しました。
+   jwd8209o-i  "pres3x.f", line 414: 多項式の演算順序を変更しました。
+   jwd8209o-i  "pres3x.f", line 415: 多項式の演算順序を変更しました。
+   jwd5001p-i  "pres3x.f", line 425: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "pres3x.f", line 425: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "pres3x.f", line 425: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "pres3x.f", line 425: ループの繰返し数が80回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "pres3x.f", line 431: 多項式の演算順序を変更しました。
+   jwd8209o-i  "pres3x.f", line 433: 多項式の演算順序を変更しました。
+   jwd8209o-i  "pres3x.f", line 435: 多項式の演算順序を変更しました。
+   jwd5001p-i  "pres3x.f", line 446: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "pres3x.f", line 446: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "pres3x.f", line 446: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "pres3x.f", line 446: ループの繰返し数が64回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "pres3x.f", line 453: 多項式の演算順序を変更しました。
+   jwd8209o-i  "pres3x.f", line 455: 多項式の演算順序を変更しました。
+   jwd8209o-i  "pres3x.f", line 457: 多項式の演算順序を変更しました。
+   jwd5001p-i  "pres3x.f", line 468: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "pres3x.f", line 468: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "pres3x.f", line 468: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "pres3x.f", line 468: ループの繰返し数が64回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "pres3x.f", line 477: 多項式の演算順序を変更しました。
+   jwd8209o-i  "pres3x.f", line 479: 多項式の演算順序を変更しました。
+   jwd8209o-i  "pres3x.f", line 481: 多項式の演算順序を変更しました。
+   jwd5001p-i  "pres3x.f", line 487: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "pres3x.f", line 487: このDOループをSIMD化しました。(名前:IP)
+   jwd8663o-i  "pres3x.f", line 487: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "pres3x.f", line 487: ループを展開数4回でアンローリングしました。
+   jwd8209o-i  "pres3x.f", line 514: 多項式の演算順序を変更しました。
+   jwd6007s-i  "pres3x.f", line 520: リダクション演算を含むDOループをSIMD化しました。
+   jwd2890i-i  "pres3x.f", line 521: SHARED変数'ATI'への定義がスレッド間で競合する可能性があります。
+   jwd2890i-i  "pres3x.f", line 522: SHARED変数'ACI'への定義がスレッド間で競合する可能性があります。
+   jwd8209o-i  "pres3x.f", line 522: 多項式の演算順序を変更しました。
+   jwd8209o-i  "pres3x.f", line 524: 多項式の演算順序を変更しました。
+   jwd2890i-i  "pres3x.f", line 525: SHARED変数'IPI'への定義がスレッド間で競合する可能性があります。
+   jwd8209o-i  "pres3x.f", line 525: 多項式の演算順序を変更しました。
+   jwd8211o-i  "pres3x.f", line 545: ループを入れ換えました。(行:546)
+   jwd6001s-i  "pres3x.f", line 545: このDOループをSIMD化しました。(名前:I)
+   jwd8204o-i  "pres3x.f", line 545: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "pres3x.f", line 545: ループの繰返し数が176回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8211o-i  "pres3x.f", line 546: ループを入れ換えました。(行:545)
+   jwd5001p-i  "pres3x.f", line 546: このDOループを並列化しました。(名前:IE)
+   jwd8211o-i  "pres3x.f", line 561: ループを入れ換えました。(行:562)
+   jwd6001s-i  "pres3x.f", line 561: このDOループをSIMD化しました。(名前:I)
+   jwd8204o-i  "pres3x.f", line 561: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "pres3x.f", line 561: ループの繰返し数が160回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8211o-i  "pres3x.f", line 562: ループを入れ換えました。(行:561)
+   jwd5001p-i  "pres3x.f", line 562: このDOループを並列化しました。(名前:IE)
+   jwd8211o-i  "pres3x.f", line 578: ループを入れ換えました。(行:579)
+   jwd6001s-i  "pres3x.f", line 578: このDOループをSIMD化しました。(名前:I)
+   jwd8204o-i  "pres3x.f", line 578: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "pres3x.f", line 578: ループの繰返し数が96回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8211o-i  "pres3x.f", line 579: ループを入れ換えました。(行:578)
+   jwd5001p-i  "pres3x.f", line 579: このDOループを並列化しました。(名前:IE)
+   jwd8211o-i  "pres3x.f", line 596: ループを入れ換えました。(行:597)
+   jwd6001s-i  "pres3x.f", line 596: このDOループをSIMD化しました。(名前:I)
+   jwd8222o-i  "pres3x.f", line 596: このループで必要なプリフェッチの数が、ハードウェアプリフェッチの許容数を超えたため、prefetch命令を出力しました。
+   jwd8665o-i  "pres3x.f", line 596: 整数レジスタが不足しているため、ソフトウェアパイプライニングを適用できません。
+   jwd8211o-i  "pres3x.f", line 597: ループを入れ換えました。(行:596)
+   jwd5001p-i  "pres3x.f", line 597: このDOループを並列化しました。(名前:IE)
+   jwd5001p-i  "pres3x.f", line 640: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "pres3x.f", line 640: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "pres3x.f", line 640: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "pres3x.f", line 640: ループの繰返し数が288回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5208p-i  "pres3x.f", line 654: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:B)
+   jwd5001p-i  "pres3x.f", line 656: このDOループを並列化しました。(名前:ICPART)
+   jwd6156s-i  "pres3x.f", line 661: 最適化指示子NOSIMDを指定しているため、このDOループはSIMD化できません。
+   jwd5208p-i  "pres3x.f", line 682: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:B)
+   jwd5001p-i  "pres3x.f", line 684: このDOループを並列化しました。(名前:ICPART)
+   jwd6156s-i  "pres3x.f", line 689: 最適化指示子NOSIMDを指定しているため、このDOループはSIMD化できません。
+   jwd5208p-i  "pres3x.f", line 712: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:B)
+   jwd5001p-i  "pres3x.f", line 714: このDOループを並列化しました。(名前:ICPART)
+   jwd6156s-i  "pres3x.f", line 719: 最適化指示子NOSIMDを指定しているため、このDOループはSIMD化できません。
+   jwd5208p-i  "pres3x.f", line 744: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:B)
+   jwd5001p-i  "pres3x.f", line 746: このDOループを並列化しました。(名前:ICPART)
+   jwd6156s-i  "pres3x.f", line 751: 最適化指示子NOSIMDを指定しているため、このDOループはSIMD化できません。
+   jwd5001p-i  "pres3x.f", line 774: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "pres3x.f", line 774: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "pres3x.f", line 774: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "pres3x.f", line 774: ループの繰返し数が416回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5131p-i  "pres3x.f", line 801: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd5001p-i  "pres3x.f", line 835: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "pres3x.f", line 835: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "pres3x.f", line 835: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "pres3x.f", line 835: ループの繰返し数が320回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "pres3x.f", line 839: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "pres3x.f", line 839: このDOループをSIMD化しました。(名前:IP)
+   jwd8663o-i  "pres3x.f", line 839: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "pres3x.f", line 839: ループを展開数4回でアンローリングしました。
+   jwd5001p-i  "pres3x.f", line 864: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "pres3x.f", line 864: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "pres3x.f", line 864: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "pres3x.f", line 864: ループの繰返し数が320回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "pres3x.f", line 868: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "pres3x.f", line 868: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "pres3x.f", line 868: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "pres3x.f", line 868: ループの繰返し数が384回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd6001s-i  "pres3x.f", line 890: このDOループをSIMD化しました。(名前:IB)
+   jwd8204o-i  "pres3x.f", line 890: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "pres3x.f", line 890: ループの繰返し数が320回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5209p-i  "pres3x.f", line 892: 配列'PN'の添字式中の変数'IP'をループ中で定義しているため、このDOループは並列化できません。
+   jwd6001s-i  "pres3x.f", line 895: このDOループをSIMD化しました。(名前:IB)
+   jwd8204o-i  "pres3x.f", line 895: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "pres3x.f", line 895: ループの繰返し数が320回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5209p-i  "pres3x.f", line 897: 配列'PN'の添字式中の変数'IP'をループ中で定義しているため、このDOループは並列化できません。
+   jwd5001p-i  "pres3x.f", line 926: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "pres3x.f", line 926: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "pres3x.f", line 926: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "pres3x.f", line 926: ループの繰返し数が128回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "pres3x.f", line 931: 多項式の演算順序を変更しました。
+   jwd8209o-i  "pres3x.f", line 932: 多項式の演算順序を変更しました。
+   jwd5001p-i  "pres3x.f", line 941: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "pres3x.f", line 941: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "pres3x.f", line 941: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "pres3x.f", line 941: ループの繰返し数が96回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "pres3x.f", line 947: 多項式の演算順序を変更しました。
+   jwd8209o-i  "pres3x.f", line 949: 多項式の演算順序を変更しました。
+   jwd5001p-i  "pres3x.f", line 960: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "pres3x.f", line 960: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "pres3x.f", line 960: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "pres3x.f", line 960: ループの繰返し数が96回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "pres3x.f", line 967: 多項式の演算順序を変更しました。
+   jwd8209o-i  "pres3x.f", line 969: 多項式の演算順序を変更しました。
+   jwd5001p-i  "pres3x.f", line 980: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "pres3x.f", line 980: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "pres3x.f", line 980: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "pres3x.f", line 980: ループの繰返し数が64回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "pres3x.f", line 989: 多項式の演算順序を変更しました。
+   jwd8209o-i  "pres3x.f", line 991: 多項式の演算順序を変更しました。
+
+ Procedure information
+   Lines      : 996
+   Statements : 423
+   Stack(byte): 10656
+   Prefetch num: 2
+
+ Total information
+   Procedures       : 1
+   Total lines      : 996
+   Total statements : 423
+   Total stack(byte): 10656
+   Total prefetch num: 2
+

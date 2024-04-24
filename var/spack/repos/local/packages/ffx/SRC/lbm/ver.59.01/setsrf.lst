@@ -1,0 +1,199 @@
+
+ Fujitsu Fortran Version 4.8.1  Thu Nov 24 16:46:04 2022
+
+ Compilation information
+   Current directory : /vol0005/mdt2/home/u10588/SRC/lbm/ver.59.01
+   Source file       : setsrf.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -Nlst=t -Cpp -Cfpp -c -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Knointentopt
+   Cpp options          : -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Dcputime -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=8 -D__FRT_patchlevel__=1 -D__FRT_version__="4.8.1" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Knoarray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nlibomp -Nline -Nlst -Nlst=p -Nlst=t
+                          -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "SETSRF"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE SETSRF(NPSURF,LSURF,CSURF,NG,NC,NP,
+          2                          *                  RHO000,VSCALE,F,RHOSRF)
+          3                           IMPLICIT NONE
+          4                           INTEGER*4 NPSURF,LSURF(4,NPSURF),NG,NC,NP
+          5                           REAL*8    RHO000,VSCALE
+          6                           REAL*8    CSURF(3,NPSURF)
+          7                           REAL*8    F(0:NG+2,0:NG+2,0:NG+2,NP,NC)
+          8                           REAL*4    RHOSRF(NPSURF)
+          9                     C
+         10                           INTEGER*4 ISURF,IC,I,J,K,IP,II,JJ,KK,IG
+         11                           REAL*8    RHO0(8),RHO1,FBUF,DRHO
+         12                           REAL*8    CSUM,COEF(8),DX,DY,DZ,C1X,C2X,C1Y,C2Y,C1Z,C2Z
+         13                           REAL*8    EPS
+         14                     C
+         15                           DATA EPS /1.0E-4/
+         16                     C
+         17     1                     DO 1000 ISURF=1,NPSURF
+         18     1                         IC  =LSURF(1,ISURF)
+         19     1                         I   =LSURF(2,ISURF)
+         20     1                         J   =LSURF(3,ISURF)
+         21     1                         K   =LSURF(4,ISURF)
+         22     1               C
+         23     1                         DX=CSURF(1,ISURF)
+         24     1                         DY=CSURF(2,ISURF)
+         25     1                         DZ=CSURF(3,ISURF)
+         26     1                         C1X=(1.0E0-DX)
+         27     1                         C2X=       DX
+         28     1                         C1Y=(1.0E0-DY)
+         29     1                         C2Y=       DY
+         30     1                         C1Z=(1.0E0-DZ)
+         31     1                         C2Z=       DZ
+         32     1                         COEF(1) = C1X*C1Y*C1Z
+         33     1                         COEF(2) = C2X*C1Y*C1Z
+         34     1                         COEF(3) = C1X*C2Y*C1Z
+         35     1                         COEF(4) = C2X*C2Y*C1Z
+         36     1                         COEF(5) = C1X*C1Y*C2Z
+         37     1                         COEF(6) = C2X*C1Y*C2Z
+         38     1                         COEF(7) = C1X*C2Y*C2Z
+         39     1                         COEF(8) = C2X*C2Y*C2Z
+         40     1               C
+         41     1                         IG=0
+         42     1                         CSUM=0.0D0
+         43     2                         DO 1100 KK=0,1
+         44     3                         DO 1200 JJ=0,1
+         45     4                         DO 1300 II=0,1
+         46     4                             IG=IG+1
+         47     4                             RHO0(IG)=0.0D0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1067
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<< Loop-information  End >>>
+         48     5  pp    v                    DO 1400 IP=1,NP
+         49     5   p    v                        FBUF=F(I+II,J+JJ,K+KK,IP,IC)
+         50     5   p    v                        RHO0(IG)=RHO0(IG)+FBUF
+         51     5   p    v       1400         CONTINUE
+         52     4                             DRHO=RHO0(IG)-1.0D0
+         53     4                             IF(ABS(DRHO).LT.EPS) COEF(IG)=0.0D0
+         54     4                             CSUM=CSUM+COEF(IG)
+         55     4                1300     CONTINUE
+         56     3                1200     CONTINUE
+         57     2                1100     CONTINUE
+         58     1               C
+         59     2                         IF(CSUM.EQ.0.0D0) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<< Loop-information  End >>>
+         60     3   s    v                    DO 1500 IG=1,8
+         61     3   p    v                        COEF(IG)=1.0D0/8.0D0
+         62     3   p    v       1500         CONTINUE
+         63     2                         ELSE
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1334
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<< Loop-information  End >>>
+         64     3   s    v                    DO 1510 IG=1,8
+         65     3   p    v                        COEF(IG)=COEF(IG)/CSUM
+         66     3   p    v       1510         CONTINUE
+         67     2                         ENDIF
+         68     1               C
+         69     1                         RHO1 = COEF(1)*RHO0(1)+COEF(2)*RHO0(2)
+         70     1                    *          +COEF(3)*RHO0(3)+COEF(4)*RHO0(4)
+         71     1                    *          +COEF(5)*RHO0(5)+COEF(6)*RHO0(6)
+         72     1                    *          +COEF(7)*RHO0(7)+COEF(8)*RHO0(8)
+         73     1                         RHOSRF(ISURF)=REAL(RHO1)
+         74     1                1000 CONTINUE
+         75                     C
+         76                           RETURN
+         77                           END
+
+ Diagnostic messages: program name(SETSRF)
+   jwd2008i-i  "setsrf.f", line 1: Dummy argument 'VSCALE' not used in this subprogram.
+   jwd2008i-i  "setsrf.f", line 1: Dummy argument 'RHO000' not used in this subprogram.
+   jwd8220o-i  "setsrf.f", line 1: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd5208p-i  "setsrf.f", line 17: DO loop is not parallelized: the assign-refer order of 'RHO0' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setsrf.f", line 17: DO loop is not parallelized: the assign-refer order of 'COEF' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd8209o-i  "setsrf.f", line 37: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "setsrf.f", line 38: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5202p-i  "setsrf.f", line 43: DO loop is not parallelized: data dependency of variable 'CSUM' may cause different results from serial execution for loop.
+   jwd5202p-i  "setsrf.f", line 43: DO loop is not parallelized: data dependency of variable 'IG' may cause different results from serial execution for loop.
+   jwd5208p-i  "setsrf.f", line 43: DO loop is not parallelized: the assign-refer order of 'COEF' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setsrf.f", line 43: DO loop is not parallelized: the assign-refer order of 'RHO0' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5202p-i  "setsrf.f", line 44: DO loop is not parallelized: data dependency of variable 'CSUM' may cause different results from serial execution for loop.
+   jwd5202p-i  "setsrf.f", line 44: DO loop is not parallelized: data dependency of variable 'IG' may cause different results from serial execution for loop.
+   jwd5208p-i  "setsrf.f", line 44: DO loop is not parallelized: the assign-refer order of 'COEF' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setsrf.f", line 44: DO loop is not parallelized: the assign-refer order of 'RHO0' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5202p-i  "setsrf.f", line 45: DO loop is not parallelized: data dependency of variable 'CSUM' may cause different results from serial execution for loop.
+   jwd5202p-i  "setsrf.f", line 45: DO loop is not parallelized: data dependency of variable 'IG' may cause different results from serial execution for loop.
+   jwd5004p-i  "setsrf.f", line 48: DO loop with DO variable 'IP' is parallelized. The DO loop contains the reduction operation.
+   jwd6004s-i  "setsrf.f", line 48: SIMD conversion is applied to DO loop with DO variable 'IP'. The DO loop contains a reduction operation.
+   jwd8209o-i  "setsrf.f", line 49: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5143p-i  "setsrf.f", line 60: DO loop is not parallelized: the value of its iteration count is insufficient to make parallelization worthwhile.
+   jwd6001s-i  "setsrf.f", line 60: SIMD conversion is applied to DO loop with DO variable 'IG'.
+   jwd5143p-i  "setsrf.f", line 64: DO loop is not parallelized: the value of its iteration count is insufficient to make parallelization worthwhile.
+   jwd6001s-i  "setsrf.f", line 64: SIMD conversion is applied to DO loop with DO variable 'IG'.
+   jwd8206o-i  "setsrf.f", line 65: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "setsrf.f", line 69: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+
+ Procedure information
+   Lines      : 77
+   Statements : 65
+   Stack(byte): 14336
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 77
+   Total statements : 65
+   Total stack(byte): 14336
+   Total prefetch num: 0
+

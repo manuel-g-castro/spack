@@ -1,0 +1,248 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:54:08 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : link2d.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "LINK2D"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    LINK2D                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE LINK2D(LSIDE,NS,ISTART,INEXT,IEND,MLINK,
+         14                          *                  LINK,NLINK,IUT0,IERR,IWRN)
+         15                           DIMENSION LSIDE(2,NS),LINK(MLINK)
+         16                     C
+         17                           CHARACTER*60 ERMSG
+         18                           CHARACTER*60 EREXP1
+         19                           CHARACTER*60 WRMSG
+         20                           CHARACTER*60 WREXP1
+         21                           CHARACTER*60 WREXP2
+         22                           CHARACTER*60 WREXP3
+         23                     C
+         24                           DATA ERMSG
+         25                          & /' *** SUBROUTINE LINK2D REPORTS A FATAL ERROR OCCURENCE ***' /
+         26                           DATA EREXP1
+         27                          & /' NON-ENCLOSED SET OF BORDER LINE IS INCLUDED IN LSIDE(I,IS)' /
+         28                     C
+         29                           DATA WRMSG
+         30                          & /' *** SUBROUTINE LINK2D ISSUES WARNING ***' /
+         31                           DATA WREXP1
+         32                          & /' GIVEN PAIR OF ISTART AND INEXT CONSTITUTES NO BOUNDARY SIDE'/
+         33                           DATA WREXP2
+         34                          & /' LINK2D MEETS ISTART SOONER THAN MEETING IEND' /
+         35                           DATA WREXP3
+         36                          & /' NUMBER OF LINKED NODES HAS EXCEEDED THE LIMIT' /
+         37                     C
+         38                     C
+         39                     C      LINK BOUNDARY NODES BETWEEN ISTART AND IEND
+         40                     C         ( 2-D CALCULATION & GRAPHICS )
+         41                     C
+         42                     C
+         43                     C     NOTE 1 ; THIS SUBROUTINE IS AVAILABLE FOR ANY KIND OF ELEMENTS
+         44                     C             ( INCLUDING A MIXTURE OF DIFFERENT KINDS OF ELEMENTS ).
+         45                     C
+         46                     C     ARGUMENT LISTINGS
+         47                     C       (1) INPUT
+         48                     C          LSIDE(I,IS) ; BOUNDARY SIDES
+         49                     C          NS          ; NUMBER OF BOUNDARY SIDES
+         50                     C          ISTART      ; NODE NUMBER OF THE LINK STARTING NODE
+         51                     C          INEXT       ; NODE NUMBER OF THE ADJACENT NODE TO ISTART
+         52                     C          IEND        ; NODE NUMBER OF THE LINK ENDING   NODE
+         53                     C          MLINK       ; THE DIMENSION OF THE ARRAY LINK(ILINK)
+         54                     C          IUT0        ; DEVICE NUMBER TO REPORT ERROR OCCURENCE
+         55                     C
+         56                     C       (2) OUTPUT
+         57                     C          LINK(ILINK) ; LINKED BOUNDARY NODES BETWEEN ISTART AND IEND
+         58                     C          NLINK       ; NUMBER OF LINKED BOUNDARY NODES
+         59                     C          IERR        ; RETURN CODE TO REPORT ERROR OCCURENCE
+         60                     C                   0 --- NORMAL TERMINATION
+         61                     C                   1 --- A FATAL ERROR HAS OCCURED
+         62                     C          IWRN        ; RETURN CODE TO ISSUE  WARNING
+         63                     C                   0 --- NORMAL TERMINATION
+         64                     C                   1 --- LINK FAILURE
+         65                     C
+         66                           IERR  = 0
+         67                           IWRN  = 0
+         68                           NLINK = 0
+         69                     C
+         70                     C
+         71                     C      EXCEPTION
+         72                     C
+         73                     C
+         74     1                     IF(ISTART.EQ.INEXT .AND. INEXT.EQ.IEND) THEN
+         75     1                         NLINK = NLINK+1
+         76     2                         IF(NLINK.GT.MLINK) THEN
+         77     2                             WRITE(IUT0,*) WRMSG
+         78     2                             WRITE(IUT0,*) WREXP3
+         79     2                             IWRN = 1
+         80     2                             RETURN
+         81     2                         ENDIF
+         82     1                         LINK(NLINK) = IEND
+         83     1                         RETURN
+         84     1                     ENDIF
+         85                     C
+         86                     C
+         87                     C      INITIAL SETTING
+         88                     C
+         89                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LSIDE
+                              <<< Loop-information  End >>>
+         90     1                     DO 100 IS = 1 , NS
+         91     2                         IF(LSIDE(1,IS).EQ.ISTART .AND. LSIDE(2,IS).EQ.INEXT  .OR.
+         92     2                    &       LSIDE(2,IS).EQ.ISTART .AND. LSIDE(1,IS).EQ.INEXT) THEN
+         93     2                             ISFNT = IS
+         94     2                             NLINK = NLINK+1
+         95     3                             IF(NLINK.GT.MLINK) THEN
+         96     3                                 WRITE(IUT0,*) WRMSG
+         97     3                                 WRITE(IUT0,*) WREXP3
+         98     3                                 IWRN = 1
+         99     3                                 RETURN
+        100     3                             ENDIF
+        101     2                             LINK(NLINK) = ISTART
+        102     2               C
+        103     2                             NLINK = NLINK+1
+        104     3                             IF(NLINK.GT.MLINK) THEN
+        105     3                                 WRITE(IUT0,*) WRMSG
+        106     3                                 WRITE(IUT0,*) WREXP3
+        107     3                                 IWRN = 1
+        108     3                                 RETURN
+        109     3                             ENDIF
+        110     2                             LINK(NLINK) = INEXT
+        111     2                             IF(LINK(NLINK) .EQ. IEND) RETURN
+        112     2                             GO TO  200
+        113     2                         ENDIF
+        114     1                 100 CONTINUE
+        115                           WRITE(IUT0,*) WRMSG
+        116                           WRITE(IUT0,*) WREXP1
+        117                           IWRN = 1
+        118                           RETURN
+        119                       200 CONTINUE
+        120                     C
+        121                     C
+        122                     C      LINKAGE CONTINUEING UNTIL MEETING IEND
+        123                     C
+        124                     C
+        125                       300 CONTINUE
+        126     1                     DO 400 IS = 1 , NS
+        127     1                         IF(IS.EQ.ISFNT) GO TO 400
+        128     1                         JLINK = 0
+        129     1                         IF(LSIDE(1,IS).EQ.LINK(NLINK)) JLINK = 2
+        130     1                         IF(LSIDE(2,IS).EQ.LINK(NLINK)) JLINK = 1
+        131     2                         IF(JLINK.GE.1) THEN
+        132     2                             ISFNT = IS
+        133     2                             NLINK = NLINK+1
+        134     3                             IF(NLINK.GT.MLINK) THEN
+        135     3                                 WRITE(IUT0,*) WRMSG
+        136     3                                 WRITE(IUT0,*) WREXP3
+        137     3                                 IWRN = 1
+        138     3                                 RETURN
+        139     3                             ENDIF
+        140     2                             LINK(NLINK) = LSIDE(JLINK,ISFNT)
+        141     2               C
+        142     2                             IF(LINK(NLINK) .EQ. IEND  ) RETURN
+        143     3                             IF(LINK(NLINK) .EQ. ISTART) THEN
+        144     3                                 WRITE(IUT0,*) WRMSG
+        145     3                                 WRITE(IUT0,*) WREXP2
+        146     3                                 IWRN = 1
+        147     3                                 RETURN
+        148     3                             ENDIF
+        149     2                             GO TO 300
+        150     2                         ENDIF
+        151     1                 400 CONTINUE
+        152                           WRITE(IUT0,*) ERMSG
+        153                           WRITE(IUT0,*) EREXP1
+        154                           IERR = 1
+        155                           RETURN
+        156                     C
+        157                     C
+        158                           END
+
+ Diagnostic messages: program name(LINK2D)
+   jwd5131p-i  "link2d.f", line 90: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "link2d.f", line 90: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "link2d.f", line 90: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+   jwd5132p-i  "link2d.f", line 125: Loop is not parallelized: cannot parallelize DO WHILE constructs, DO UNTIL constructs, or loops by IF/GO TO statements.
+   jwd5131p-i  "link2d.f", line 126: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "link2d.f", line 126: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "link2d.f", line 126: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+
+ Procedure information
+   Lines      : 158
+   Statements : 87
+   Stack(byte): 1696
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 158
+   Total statements : 87
+   Total stack(byte): 1696
+   Total prefetch num: 0
+

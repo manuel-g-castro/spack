@@ -1,0 +1,59 @@
+      SUBROUTINE ITLIST(NG,LLEVEL,LPOSI,DSCALE,
+     *                  XTRIG,YTRIG,ZTRIG,MPBOUN,NBLIST,LBLIST)
+      IMPLICIT NONE  
+C
+C[INPUT]
+      INTEGER*4 NG,LLEVEL,LPOSI(3)
+      REAL*8    DSCALE
+      INTEGER*4 MPBOUN
+      REAL*4    XTRIG(3),YTRIG(3),ZTRIG(3)
+C
+C[OUTPUT]
+      INTEGER*4 NBLIST,LBLIST(3,MPBOUN)
+C
+C[LOCAL]
+      INTEGER*4 I,J,K,IERR,N1,N2 
+      REAL*4    DD,DG,XX,YY,ZZ,XMIN,XMAX,YMIN,YMAX,ZMIN,ZMAX
+      REAL*4    COORD(3,2)
+      DATA N1 /1/
+      DATA N2 /2/
+C
+      DD=REAL(DSCALE)*2.0E0**(LLEVEL-1)
+      DG=DD/FLOAT(NG)
+C
+      XMIN=MIN(XTRIG(1),XTRIG(2),XTRIG(3))-DG*2.0
+      XMAX=MAX(XTRIG(1),XTRIG(2),XTRIG(3))+DG*2.0
+      YMIN=MIN(YTRIG(1),YTRIG(2),YTRIG(3))-DG*2.0
+      YMAX=MAX(YTRIG(1),YTRIG(2),YTRIG(3))+DG*2.0
+      ZMIN=MIN(ZTRIG(1),ZTRIG(2),ZTRIG(3))-DG*2.0
+      ZMAX=MAX(ZTRIG(1),ZTRIG(2),ZTRIG(3))+DG*2.0
+C
+      NBLIST=0
+      DO 1000 K =0,NG+1 
+          ZZ=REAL(DSCALE)*LPOSI(3)+DG*(FLOAT(K)-0.5)
+          IF(ZZ.LT.ZMIN) GOTO 1000
+          IF(ZZ.GT.ZMAX) GOTO 1000
+C
+          DO 1100 J =0,NG+1 
+              YY=REAL(DSCALE)*LPOSI(2)+DG*(FLOAT(J)+0.5)
+              IF(YY.LT.YMIN) GOTO 1100
+              IF(YY.GT.YMAX) GOTO 1100
+C
+              DO 1200 I =0,NG+1 
+                  XX=REAL(DSCALE)*LPOSI(1)+DG*(FLOAT(I)+0.5)
+                  IF(XX.LT.XMIN) GOTO 1200
+                  IF(XX.GT.XMAX) GOTO 1200
+C
+                  NBLIST=NBLIST+1
+                  IF(NBLIST.LE.MPBOUN) THEN
+                      LBLIST(1,NBLIST)=I
+                      LBLIST(2,NBLIST)=J
+                      LBLIST(3,NBLIST)=K
+                  ENDIF 
+C
+ 1200         CONTINUE   
+ 1100     CONTINUE   
+ 1000 CONTINUE   
+C
+      RETURN
+      END

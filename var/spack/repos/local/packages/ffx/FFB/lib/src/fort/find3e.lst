@@ -1,0 +1,545 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:54:01 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : find3e.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "FIND3E"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    FIND3E                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE FIND3E(IOPT,IMODE,ELM,XM,YM,ZM,GM,EM,TM,IEM,IEMWRK,NM,
+         14                          *                  IENE,NEE,NE,MEE,NITER,
+         15                          *                  XMINE,YMINE,ZMINE,XMAXE,YMAXE,ZMAXE,
+         16                          *                  G,E,T,IWRK,LOVER,MOVER,IUT0,IERR)
+         17                           IMPLICIT REAL*4(A-H,O-Z)
+         18                           DIMENSION ELM(24,NE),XM(NM),YM(NM),ZM(NM),GM(NM),EM(NM),TM(NM),
+         19                          1          IEM(NM),IEMWRK(NM),IENE(MEE,NE),NEE(NE),
+         20                          2          G(NE),E(NE),T(NE),IWRK(NE),LOVER(MOVER),
+         21                          3          XMINE(NE),YMINE(NE),ZMINE(NE),
+         22                          4          XMAXE(NE),YMAXE(NE),ZMAXE(NE)
+         23                           DIMENSION DELTA(1)
+         24                     C
+         25                           DATA JCHECK / 0 /
+         26                     C
+         27                           CHARACTER*60 ERMSGB
+         28                          & / ' ## SUBROUTINE FIND3E: FATAL      ERROR OCCURENCE; RETURNED' /
+         29                           CHARACTER*60 EREXP1
+         30                          & / ' INSUFFICIENT ARRAY SIZE FOR ADJACENET ELEMENT SEARCH      ' /
+         31                           CHARACTER*60 EREXP2
+         32                          & / ' INSUFFICIENT ARRAY SIZE FOR ALL       ELEMENT SEARCH      ' /
+         33                     C
+         34                     C
+         35                     C      FIND ELEMENTS INCLUDING SPECIFIED POINTS. RETURN THE ELEMENT
+         36                     C     NUMBERS AND LOCAL COORDINATES OF THE POINTS
+         37                     C      5 DIFFEERENT ELEMENT FINDING OPTIONS ARE AVAILABLE FOR EFFICIENT
+         38                     C     ELEMENT SEARCH
+         39                     C         ( 3-D CALCULATION )
+         40                     C
+         41                     C
+         42                     C     NOTE ; 1. INCLUSION IN AN ELEMENT OF A POINT WILL BE JUDGED
+         43                     C              BASED ON ITS LOCAL GZAI, EATA, AND THETA COORDINATES,
+         44                     C              CALCULATED BY THE NEWTON LAPSON METHODS.
+         45                     C
+         46                     C     NOTE ; 2. TOTAL OF 'NITER' ITERATIONS WILL BE DONE WITH THE
+         47                     C              NEWTON LAPSON METHOD, REGARDLESS TO ITS CONVERGENCE.
+         48                     C              BUT, TWO OR THREE ITERATIONS ARE, IN GENERAL, ENOUGH
+         49                     C              TO OBTAIN THE LOCAL COORDINATES WITH REASONABLE ACCURACY
+         50                     C              UNLESS THE ELEMENT IS STRONGLY SKEWED.
+         51                     C
+         52                     C
+         53                     C     ARGUMENT LISTINGS
+         54                     C       (1) INPUT
+         55                     C          IOPT        ; FLAG WHICH CONTROLS ELEMENT SEARCH
+         56                     C                   0 --- FOR THOSE POINTS WITH POSITIVE ELEMENT
+         57                     C                        NUMBERS, JUDGE IF THEY ARE INCLUDED IN THE
+         58                     C                        SPECIFIED ELEMENTS.
+         59                     C                         RETURN THE LOCAL COORDINATES FOR THOSE POINTS
+         60                     C                        INCLUDED IN THE SPECIFIED ELEMENTS, (-1)*
+         61                     C                        GIVEN ELEMENT NUMBERS FOR THOSE NOT INCLUDED
+         62                     C                        IN THE SPECIFIED ELEMENTS.
+         63                     C                   1 --- SAME AS IOPT=0 EXCEPT THAT
+         64                     C                        ADJACENT ELEMENT SEARCH WILL BE DONE FOR THOSE
+         65                     C                        POINTS NOT INCLUDED IN THE SPECIFIED ELEMENTS,
+         66                     C                         RETURN THE NEW ELEMENT NUMBERS AND LOCAL
+         67                     C                        COORDINATES FOR THOSE INCLUDED IN SOME OF THEIR
+         68                     C                        ADJACENT ELEMENTS AND (-1)*GIVEN ELEMENT NUMBER
+         69                     C                        FOR THOSE NOT INCLUDED IN ANY OF THEIR ADJACENT
+         70                     C                        ELEMENTS.
+         71                     C                   2 --- SAME AS IOPT=1 EXCEPT THAT
+         72                     C                        ALL ELEMENT SEARCH WILL BE DONE FOR THOSE
+         73                     C                        POINTS NOT INCLUDED IN ANY OF THEIR ADJACENT
+         74                     C                        ELEMENTS,
+         75                     C                         RETURN THE NEW ELEMENT NUMBERS AND LOCAL
+         76                     C                        COORDINATES FOR THOSE INCLUDED IN ANY ELEMENTS
+         77                     C                        AND (-1)*GIVEN ELEMENT NUMBER FOR THOSE NOT
+         78                     C                        INCLUDED IN ANY ELEMENTS.
+         79                     C                   3 --- SAME AS IOPT=2 EXCEPT THAT
+         80                     C                        FOR THOSE POINTS INITIALLY POSSESSING ZERO OR
+         81                     C                        NEGATIVE ELEMENT NUMBERS ALSO, ALL ELEMENT
+         82                     C                        SEARCH WILL BE DONE. FOR THIS PARTICULAR
+         83                     C                        ELEMENT SEARCH, RETURN THE GIVEN ELEMENT NUMBER
+         84                     C                        FOR THOSE NOT INCLUDED IN ANY ELEMENTS.
+         85                     C                   4 --- FOR ALL THE GIVEN POINTS, ALL ELEMENT SEARCH
+         86                     C                        WILL BE DONE.
+         87                     C                         RETURN THE ELEMENT NUMBER AND LOCAL
+         88                     C                        COORDINATES FOR THOSE POINTS INCLUDED IN ANY
+         89                     C                        ELEMENT, ELEMENT NUMBER OF ZERO FOR THOSE NOT
+         90                     C                        INCLUDED IN ANY ELEMENT.
+         91                     C
+         92                     C          IMODE       ; PASS ARGUMENTS 'XMINE'-'ZMAXE' WITH THIS FLAG
+         93                     C                       BEING SET TO ONE, TO ACTIVATE FAST ELEMENT
+         94                     C                       SEARCH MODE
+         95                     C
+         96                     C           NOTES; 'FIND3E' RESTRICTS THOSE ELEMENTS TO BE SEARCHED
+         97                     C                 BASED ON THE PASSED ELEMENT'S MINIMUM & MAXIMUM
+         98                     C                 COORDINATES IF 'IMODE' FLAG IS BEING SET TO ONE.
+         99                     C                 ELEMENT RESTRICTIONS WILL BE DONE WHEN THE ADJACENT
+        100                     C                 ELEMENTS ARE SEARCHED AS WELL AS ALL THE ELEMENT ARE
+        101                     C                 SEARCHED. NOTE THAT VECTOR OPERATIONS WILL BE
+        102                     C                 SUBSTANTIALLY SURPRESSED FOR ALL THE ELEMENT SEARCH
+        103                     C                 IF 'IMODE' FLAG IS BEING SET TO ONE, BECAUSE THE
+        104                     C                 NUMBER OF ELEMENTS TO BE SEARCHED WILL BE SMALL
+        105                     C                 DUE TO THE RESTRICTION.
+        106                     C
+        107                     C          ELM( 1,IE)  ; 0.125*SUM OF X(NODE(I,IE))
+        108                     C          ELM( 2,IE)  ; 0.125*SUM OF Y(NODE(I,IE))
+        109                     C          ELM( 3,IE)  ; 0.125*SUM OF Z(NODE(I,IE))
+        110                     C
+        111                     C          ELM( 4,IE)  ; 0.125*SUM OF X(NODE(I,IE))*GI(I)
+        112                     C          ELM( 5,IE)  ; 0.125*SUM OF Y(NODE(I,IE))*GI(I)
+        113                     C          ELM( 6,IE)  ; 0.125*SUM OF Z(NODE(I,IE))*GI(I)
+        114                     C          ELM( 7,IE)  ; 0.125*SUM OF X(NODE(I,IE))*EI(I)
+        115                     C          ELM( 8,IE)  ; 0.125*SUM OF Y(NODE(I,IE))*EI(I)
+        116                     C          ELM( 9,IE)  ; 0.125*SUM OF Z(NODE(I,IE))*EI(I)
+        117                     C          ELM(10,IE)  ; 0.125*SUM OF X(NODE(I,IE))*TI(I)
+        118                     C          ELM(11,IE)  ; 0.125*SUM OF Y(NODE(I,IE))*TI(I)
+        119                     C          ELM(12,IE)  ; 0.125*SUM OF Z(NODE(I,IE))*TI(I)
+        120                     C
+        121                     C          ELM(13,IE)  ; 0.125*SUM OF X(NODE(I,IE))*GI(I)*EI(I)
+        122                     C          ELM(14,IE)  ; 0.125*SUM OF Y(NODE(I,IE))*GI(I)*EI(I)
+        123                     C          ELM(15,IE)  ; 0.125*SUM OF Z(NODE(I,IE))*GI(I)*EI(*)
+        124                     C          ELM(16,IE)  ; 0.125*SUM OF X(NODE(I,IE))*EI(I)*TI(I)
+        125                     C          ELM(17,IE)  ; 0.125*SUM OF Y(NODE(I,IE))*EI(I)*TI(I)
+        126                     C          ELM(18,IE)  ; 0.125*SUM OF Z(NODE(I,IE))*EI(I)*TI(*)
+        127                     C          ELM(19,IE)  ; 0.125*SUM OF X(NODE(I,IE))*TI(I)*GI(I)
+        128                     C          ELM(20,IE)  ; 0.125*SUM OF Y(NODE(I,IE))*TI(I)*GI(I)
+        129                     C          ELM(21,IE)  ; 0.125*SUM OF Z(NODE(I,IE))*TI(I)*GI(*)
+        130                     C
+        131                     C          ELM(22,IE)  ; 0.125*SUM OF X(NODE(I,IE))*GI(I)*EI(I)*TI(I)
+        132                     C          ELM(23,IE)  ; 0.125*SUM OF Y(NODE(I,IE))*GI(I)*EI(I)*TI(I)
+        133                     C          ELM(24,IE)  ; 0.125*SUM OF Z(NODE(I,IE))*GI(I)*EI(I)*TI(I)
+        134                     C
+        135                     C          XM    (IM)  ; X-DIR. COORDINATE OF THE POINTS
+        136                     C          YM    (IM)  ; Y-DIR. COORDINATE OF THE POINTS
+        137                     C          ZM    (IM)  ; Z-DIR. COORDINATE OF THE POINTS
+        138                     C          IEM   (IM)  ; ELEMENT NUMBER WHICH MOST PROBABLY INCLUDES
+        139                     C                       THE POINTS. SET IOPT=4 IF NO INITIAL GUESS IS
+        140                     C                       POSSIBLE FOR THE ELEMENT NUMBERS.
+        141                     C          NM          ; NUMBER OF POINTS
+        142                     C          IENE(IEE,IE); ADJACENT ELEMENT NUMBER TO ELEMENT IE
+        143                     C                      ( DUMMY ARGUMENT FOR IOPT = 0 OR 4 )
+        144                     C          NEE     (IE); NUMBER OF ADJACENT ELEMENTS TO ELEMENT IE
+        145                     C                      ( DUMMY ARGUMENT FOR IOPT = 0 OR 4 )
+        146                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+        147                     C          MEE         ; THE FIRST DIMENSION OF ARRAY IENE
+        148                     C          NITER       ; NUMBER OF ITERATIVE CALCULATIONS TO BE DONE
+        149                     C
+        150                     C           NOTES; THE FOLLOWING MIN & MAX VALUES WILL BE USED TO
+        151                     C                 ACTIVATE FAST ELEMENT SEARCH MODE AND ARE NEEDED ONLY
+        152                     C                 WHEN IMODE = 1 IS SPECIFIED.
+        153                     C          XMINE   (IE); MINIMUM X-DIR. COORDINATE OF ELEMENT
+        154                     C          YMINE   (IE); MINIMUM Y-DIR. COORDINATE OF ELEMENT
+        155                     C          ZMINE   (IE); MINIMUM Z-DIR. COORDINATE OF ELEMENT
+        156                     C          XMAXE   (IE); MAXIMUM X-DIR. COORDINATE OF ELEMENT
+        157                     C          YMAXE   (IE); MAXIMUM Y-DIR. COORDINATE OF ELEMENT
+        158                     C          ZMAXE   (IE); MAXIMUM Z-DIR. COORDINATE OF ELEMENT
+        159                     C
+        160                     C          MOVER       ; DIMENSION OF ARRAY 'LOVER(IOVER)'
+        161                     C          IUT0        ; FILE NUMBER TO REPORT AN ERROR OCCURENCE
+        162                     C
+        163                     C       (2) OUTPUT
+        164                     C          IEM   (IM)  ; ELEMENT NUMBER WHICH INCLUDES THE SPECIIED
+        165                     C                       POINTS WHEN THIS IS POSITIVE. FOR NEGATIVE
+        166                     C                       NUMBER RETURNED, SEE EXPLANATION ON IOPT
+        167                     C          GM    (IM)  ; GZAI  COORDINATE OF THE POINT FOR ELEMENT FOUND
+        168                     C          EM    (IM)  ; EATA  COORDINATE OF THE POINT FOR ELEMENT FOUND
+        169                     C          TM    (IM)  ; THETA COORDINATE OF THE POINT FOR ELEMENT FOUND
+        170                     C          IERR        ; RETURN CODE TO REPORT AN ERROR OCCURENCE
+        171                     C                   0 --- NORMAL TERMINATION
+        172                     C                   1 --- FATAL ERROR OCCURENCE
+        173                     C
+        174                     C       (4) WORK
+        175                     C          IEMWRK(IM)  ; PREPARE FOR ALL POINTS     WHEN IOPT = 0,1,2,3
+        176                     C          G     (IE)  ; PREPARE FOR ALL ELEMENTS   WHEN IOPT =   2,3,4
+        177                     C          E     (IE)  ; PREPARE FOR ALL ELEMENTS   WHEN IOPT =   2,3,4
+        178                     C          T     (IE)  ; PREPARE FOR ALL ELEMENTS   WHEN IOPT =   2,3,4
+        179                     C          IWRK  (IE)  ; PREPARE FOR ALL ELEMENTS   WHEN IOPT =   2,3,4
+        180                     C          LOVER(IOVER); PREPARE FOR THOSE POINTS FOR WHICH ADJACENT
+        181                     C                       ELEMENT SEARCH WILL BE DONE WHEN IOPT = 1,2,3
+        182                     C
+        183                     C
+        184                           IERR  = 0
+        185                     C
+        186                           IF(IOPT.EQ.4) GO TO 600
+        187                     C
+        188                     C
+        189                     C STORE INITIAL ELEMENT NUMBERS IN IEMWRK(IEM)
+        190                     C
+        191                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1455
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.00, ITR: 320, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IEM, IEMWRK
+                              <<< Loop-information  End >>>
+        192     1  pp   4v            DO 100 IM = 1 , NM
+        193     1   p   4v                IEMWRK(IM) = IEM(IM)
+        194     1   p   4v        100 CONTINUE
+        195                     C
+        196                     C
+        197                     C SEARCH THE SPECIFIED ELEMENTS
+        198                     C
+        199                     C
+        200                           CALL FIND32(ELM,NE,XM,YM,ZM,IEM,NM,NITER,GM,EM,TM,
+        201                          *            JCHECK,DELTA,ERRMAX)
+        202                           IF(IOPT.EQ.0) RETURN
+        203                     C
+        204                     C
+        205                     C SEARCH THE ADJACENT ELEMENTS TO THE SPECIFIED ELEMENTS
+        206                     C
+        207                     C
+        208                           NOVER = 0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IEM, IEMWRK
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 1
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        209     1                     DO 110 IM = 1 , NM
+        210     1                         IF(IEM(IM).EQ.IEMWRK(IM)) GO TO 110
+        211     1                         NOVER = NOVER+1
+        212     2                         IF(NOVER.GT.MOVER) THEN
+        213     2                             WRITE(IUT0,*) ERMSGB
+        214     2                             WRITE(IUT0,*) EREXP1
+        215     2                             IERR = 1
+        216     2                             RETURN
+        217     2                         ENDIF
+        218     1                         LOVER(NOVER) = IM
+        219     1                 110 CONTINUE
+        220                     C
+        221     1                     DO 310 IEE = 1 , MEE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    UNSWITCHING
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LOVER
+                              <<< Loop-information  End >>>
+        222     2   s    s                DO 200 IOVER = 1 , NOVER
+        223     2   p    v                    IM      = LOVER(IOVER)
+        224     2   m    m                    IEM(IM) = 0
+        225     2   p    m                    IF(NEE(IEMWRK(IM)).LT.IEE) GO TO 200
+        226     2               C
+        227     2               C FOR FAST ELEMENT SEARCH
+        228     2   p    s                    IECHK = IENE(IEE,IEMWRK(IM))
+        229     2   p    s                    IF(IMODE.EQ.1 .AND. XMINE(IECHK).GT.XM(IM)) GO TO 200
+        230     2   p    s                    IF(IMODE.EQ.1 .AND. YMINE(IECHK).GT.YM(IM)) GO TO 200
+        231     2   p    s                    IF(IMODE.EQ.1 .AND. ZMINE(IECHK).GT.ZM(IM)) GO TO 200
+        232     2   p    s                    IF(IMODE.EQ.1 .AND. XMAXE(IECHK).LT.XM(IM)) GO TO 200
+        233     2   p    s                    IF(IMODE.EQ.1 .AND. YMAXE(IECHK).LT.YM(IM)) GO TO 200
+        234     2   p    s                    IF(IMODE.EQ.1 .AND. ZMAXE(IECHK).LT.ZM(IM)) GO TO 200
+        235     2               C
+        236     2   m    s                    IEM(IM) = IENE(IEE,IEMWRK(IM))
+        237     2   p    v        200     CONTINUE
+        238     1                         CALL FIND33(ELM,NE,NM,XM,YM,ZM,IEM,LOVER,NOVER,NITER,GM,EM,TM,
+        239     1                    *                JCHECK,DELTA,ERRMAX)
+        240     1                         NOVER  = 0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IEMWRK
+                              <<< Loop-information  End >>>
+        241     2       2s                DO 300 IM = 1 , NM
+        242     2       2v                    IF(IEMWRK(IM).LE.0 .OR. IEM(IM).GT.0) GO TO 300
+        243     2       2m                    NOVER        = NOVER+1
+        244     2       2s                    LOVER(NOVER) = IM
+        245     2       2v                    IEM(IM) = -IEMWRK(IM)
+        246     2       2v        300     CONTINUE
+        247     1                 310 CONTINUE
+        248                     C
+        249                           IF(IOPT.EQ.1) RETURN
+        250                     C
+        251                     C
+        252                     C SEARCH ALL ELEMENTS
+        253                     C
+        254                     C
+        255     1                     IF(IOPT.EQ.3) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IEMWRK
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 1
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        256     2                     DO 410 IM = 1 , NM
+        257     2                         IF(IEMWRK(IM).GT.0) GO TO 410
+        258     2                         NOVER = NOVER+1
+        259     3                         IF(NOVER.GT.MOVER) THEN
+        260     3                             WRITE(IUT0,*) ERMSGB
+        261     3                             WRITE(IUT0,*) EREXP2
+        262     3                             IERR = 1
+        263     3                             RETURN
+        264     3                         ENDIF
+        265     2                         LOVER(NOVER) = IM
+        266     2                 410 CONTINUE
+        267     1                     ENDIF
+        268                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LOVER
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 17
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        269     1   s    s            DO 510 IOVER = 1 , NOVER
+        270     1   m    m                IM = LOVER(IOVER)
+        271     1   s    s                XP = XM(IM)
+        272     1   s    s                YP = YM(IM)
+        273     1   s    s                ZP = ZM(IM)
+        274     1   s    s                CALL FIND31(IMODE,ELM,NE,XP,YP,ZP,NITER,
+        275     1                    *                XMINE,YMINE,ZMINE,XMAXE,YMAXE,ZMAXE,
+        276     1                    *                IFOUND,GP,EP,TP,JCHECK,DELTA,ERR,G,E,T,IWRK)
+        277     2   s    s                IF(IFOUND.GT.0) THEN
+        278     2   s    s                    IEM(IM) = IFOUND
+        279     2   s    s                     GM(IM) = GP
+        280     2   s    s                     EM(IM) = EP
+        281     2   m    m                     TM(IM) = TP
+        282     2   s    s                ELSE
+        283     2   s    m                   IEM(IM) = MIN(-IEMWRK(IM), IEMWRK(IM))
+        284     2   p    v                ENDIF
+        285     1   p    v        510 CONTINUE
+        286                     C
+        287                           IF(IOPT.LE.3) RETURN
+        288                     C
+        289                       600 CONTINUE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      XM, YM, ZM, GM, EM, TM
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 15
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        290     1   s    s            DO 610 IM = 1 , NM
+        291     1   s    s                XP = XM(IM)
+        292     1   s    s                YP = YM(IM)
+        293     1   s    s                ZP = ZM(IM)
+        294     1   s    s                CALL FIND31(IMODE,ELM,NE,XP,YP,ZP,NITER,
+        295     1                    *                XMINE,YMINE,ZMINE,XMAXE,YMAXE,ZMAXE,
+        296     1                    *                IEM(IM),GP,EP,TP,JCHECK,DELTA,ERR,G,E,T,IWRK)
+        297     1   s    s                GM (IM) = GP
+        298     1   s    s                EM (IM) = EP
+        299     1   s    s                TM (IM) = TP
+        300     1   s    s        610 CONTINUE
+        301                     C
+        302                     C
+        303                           RETURN
+        304                           END
+
+ Diagnostic messages: program name(FIND3E)
+   jwd5001p-i  "find3e.f", line 192: DO loop with DO variable 'IM' is parallelized.
+   jwd6001s-i  "find3e.f", line 192: SIMD conversion is applied to DO loop with DO variable 'IM'.
+   jwd8204o-i  "find3e.f", line 192: This loop is software pipelined.
+   jwd8205o-i  "find3e.f", line 192: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 320.
+   jwd5131p-i  "find3e.f", line 209: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "find3e.f", line 209: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "find3e.f", line 209: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+   jwd5122p-i  "find3e.f", line 221: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd8321o-i  "find3e.f", line 222: Loop unswitched.
+   jwd6229s-i  "find3e.f", line 222: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8670o-i  "find3e.f", line 222: This loop cannot be software pipelined because the loop contains a branch instruction.
+   jwd5209p-i  "find3e.f", line 224: DO loop is not parallelized: the variable 'IM' referenced in the subscript expression of array 'IEM' is assigned to in DO loop.
+   jwd6209s-i  "find3e.f", line 224: SIMD conversion cannot be applied to DO loop: the variable 'IM' referenced in the subscript expression of array 'IEM' is assigned to in DO loop.
+   jwd5228p-i  "find3e.f", line 241: DO loop is not parallelized: data dependency of variable may cause different results from serial execution for loop.
+   jwd6229s-i  "find3e.f", line 241: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8670o-i  "find3e.f", line 241: This loop cannot be software pipelined because the loop contains a branch instruction.
+   jwd8202o-i  "find3e.f", line 241: Loop unrolled 2 times.
+   jwd5131p-i  "find3e.f", line 256: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "find3e.f", line 256: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "find3e.f", line 256: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+   jwd5302p-i  "find3e.f", line 269: This loop is not parallelized: the performance of a partial parallelization execution may not be improved.
+   jwd6302s-i  "find3e.f", line 269: SIMD conversion is not applied to DO loop: the performance of a partial SIMD execution may not be improved.
+   jwd6229s-i  "find3e.f", line 269: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8664o-i  "find3e.f", line 269: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5208p-i  "find3e.f", line 270: DO loop is not parallelized: the assign-refer order of 'LOVER' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "find3e.f", line 270: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'LOVER' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 271: DO loop is not parallelized: the assign-refer order of 'XP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "find3e.f", line 271: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'XP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 272: DO loop is not parallelized: the assign-refer order of 'YP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "find3e.f", line 272: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'YP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 273: DO loop is not parallelized: the assign-refer order of 'ZP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "find3e.f", line 273: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'ZP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 274: DO loop is not parallelized: the assign-refer order of 'ERR' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 274: DO loop is not parallelized: the assign-refer order of 'T' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 274: DO loop is not parallelized: the assign-refer order of 'E' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 274: DO loop is not parallelized: the assign-refer order of 'G' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 274: DO loop is not parallelized: the assign-refer order of 'IWRK' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 274: DO loop is not parallelized: the assign-refer order of 'IFOUND' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 274: DO loop is not parallelized: the assign-refer order of 'DELTA' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 274: DO loop is not parallelized: the assign-refer order of 'ELM' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 274: DO loop is not parallelized: the assign-refer order of 'JCHECK' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 274: DO loop is not parallelized: the assign-refer order of 'NITER' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 274: DO loop is not parallelized: the assign-refer order of 'NE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 274: DO loop is not parallelized: the assign-refer order of 'TP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 274: DO loop is not parallelized: the assign-refer order of 'EP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 274: DO loop is not parallelized: the assign-refer order of 'GP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 274: DO loop is not parallelized: the assign-refer order of 'ZMAXE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 274: DO loop is not parallelized: the assign-refer order of 'YMAXE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 274: DO loop is not parallelized: the assign-refer order of 'XMAXE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 274: DO loop is not parallelized: the assign-refer order of 'ZMINE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 274: DO loop is not parallelized: the assign-refer order of 'YMINE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 274: DO loop is not parallelized: the assign-refer order of 'XMINE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 274: DO loop is not parallelized: the assign-refer order of 'IMODE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "find3e.f", line 274: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "find3e.f", line 274: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'IFOUND' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "find3e.f", line 274: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'TP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "find3e.f", line 274: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'EP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "find3e.f", line 274: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'GP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "find3e.f", line 274: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5209p-i  "find3e.f", line 278: DO loop is not parallelized: the variable 'IM' referenced in the subscript expression of array 'IEM' is assigned to in DO loop.
+   jwd5208p-i  "find3e.f", line 278: DO loop is not parallelized: the assign-refer order of 'IEM' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6209s-i  "find3e.f", line 278: SIMD conversion cannot be applied to DO loop: the variable 'IM' referenced in the subscript expression of array 'IEM' is assigned to in DO loop.
+   jwd6208s-i  "find3e.f", line 278: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'IEM' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5209p-i  "find3e.f", line 279: DO loop is not parallelized: the variable 'IM' referenced in the subscript expression of array 'GM' is assigned to in DO loop.
+   jwd5209p-i  "find3e.f", line 280: DO loop is not parallelized: the variable 'IM' referenced in the subscript expression of array 'EM' is assigned to in DO loop.
+   jwd5209p-i  "find3e.f", line 281: DO loop is not parallelized: the variable 'IM' referenced in the subscript expression of array 'TM' is assigned to in DO loop.
+   jwd5208p-i  "find3e.f", line 283: DO loop is not parallelized: the assign-refer order of 'IEMWRK' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 283: DO loop is not parallelized: the assign-refer order of 'IEM' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "find3e.f", line 283: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'IEMWRK' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "find3e.f", line 283: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'IEM' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd8664o-i  "find3e.f", line 290: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5208p-i  "find3e.f", line 291: DO loop is not parallelized: the assign-refer order of 'XP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "find3e.f", line 291: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'XP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 292: DO loop is not parallelized: the assign-refer order of 'YP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "find3e.f", line 292: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'YP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 293: DO loop is not parallelized: the assign-refer order of 'ZP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "find3e.f", line 293: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'ZP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 294: DO loop is not parallelized: the assign-refer order of 'ERR' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 294: DO loop is not parallelized: the assign-refer order of 'T' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 294: DO loop is not parallelized: the assign-refer order of 'E' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 294: DO loop is not parallelized: the assign-refer order of 'G' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 294: DO loop is not parallelized: the assign-refer order of 'IWRK' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 294: DO loop is not parallelized: the assign-refer order of 'DELTA' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 294: DO loop is not parallelized: the assign-refer order of 'ELM' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 294: DO loop is not parallelized: the assign-refer order of 'JCHECK' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 294: DO loop is not parallelized: the assign-refer order of 'NITER' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 294: DO loop is not parallelized: the assign-refer order of 'NE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 294: DO loop is not parallelized: the assign-refer order of 'TP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 294: DO loop is not parallelized: the assign-refer order of 'EP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 294: DO loop is not parallelized: the assign-refer order of 'GP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 294: DO loop is not parallelized: the assign-refer order of 'ZMAXE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 294: DO loop is not parallelized: the assign-refer order of 'YMAXE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 294: DO loop is not parallelized: the assign-refer order of 'XMAXE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 294: DO loop is not parallelized: the assign-refer order of 'ZMINE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 294: DO loop is not parallelized: the assign-refer order of 'YMINE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 294: DO loop is not parallelized: the assign-refer order of 'XMINE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 294: DO loop is not parallelized: the assign-refer order of 'IMODE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find3e.f", line 294: DO loop is not parallelized: the assign-refer order of 'IEM' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "find3e.f", line 294: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "find3e.f", line 294: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'TP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "find3e.f", line 294: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'EP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "find3e.f", line 294: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'GP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "find3e.f", line 294: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+
+ Procedure information
+   Lines      : 304
+   Statements : 92
+   Stack(byte): 1648
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 304
+   Total statements : 92
+   Total stack(byte): 1648
+   Total prefetch num: 0
+

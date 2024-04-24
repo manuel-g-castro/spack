@@ -1,0 +1,435 @@
+
+ Fujitsu Fortran Version 4.8.1  Thu Nov 24 16:46:05 2022
+
+ Compilation information
+   Current directory : /vol0005/mdt2/home/u10588/SRC/lbm/ver.59.01
+   Source file       : mkbc01.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -Nlst=t -Cpp -Cfpp -c -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Knointentopt
+   Cpp options          : -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Dcputime -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=8 -D__FRT_patchlevel__=1 -D__FRT_version__="4.8.1" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Knoarray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nlibomp -Nline -Nlst -Nlst=p -Nlst=t
+                          -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "MKBC01"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE MKBC01(NP,LVEL,LREV,NG,NBC,LBC,
+          2                          *                  LBOUN,MPBOUN,NPBOUN,LPBOUN,QBOUN,
+          3                          *                  LWORK1,LWORK2,IERR)
+          4                           IMPLICIT NONE
+          5                     C
+          6                           INTEGER*4 NP,LVEL(3,NP),LREV(NP),NG,NBC,LBC(5,NBC),LBOUN(6),
+          7                          *          MPBOUN,NPBOUN,LPBOUN(5,MPBOUN),IERR
+          8                           INTEGER*4 LWORK1(0:NG+2,0:NG+2,0:NG+2)
+          9                           INTEGER*4 LWORK2(  NG+1,  NG+1,  NG+1)
+         10                           REAL*4    QBOUN(MPBOUN)
+         11                     C
+         12                     C    LBC(II,IBC)   ATTRIBUTE DATA OF B.C. GROUPS
+         13                     C                   II=1 B.C. GROUP ID (1-26) IN AN ADJACENT CUBE
+         14                     C                   II=2 SUB-DOMAIN NUMBER OF AN ADJACENT CUBE
+         15                     C                   II=3 CUBE NUMBER OF AN ADJACENT CUBE IN A DOMAIN
+         16                     C                   II=4 RELATIVE LEVEL OF AN ADJACENT CUBE
+         17                     C                    (-1: FINE, 0:SAME, 1:COARSE)
+         18                     C                   II=5 POSITION IN COARSER CUBE
+         19                     C
+         20                     C    LLEVEL        LEVEL OF CUBES, WHICH INDICATE THE GRID RESOLUTION.
+         21                     C                  LEVEL=1 CORRESPONTDS THE FINEST GRID SIZE. A GRID SIZE
+         22                     C                  WILL BE TWICE WITH ONE INCREMENT OF THE LEVEL.
+         23                     C    LPOSI(3)      INDICATES THE POSITIONS OF CUBES, WHICH ARE NORMALIZED
+         24                     C                  BY THE MINIMUM CUBE SIZE.
+         25                     C    NPBOUN        NUMBER OF BOUNDARY GRID
+         26                     C    LPBOUN(I,IPB) BOUNDARY GRID LIST
+         27                     C                     1: POSITION OF BOUNDRY GRID IN I-DIRECTION
+         28                     C                     2: POSITION OF BOUNDRY GRID IN J-DIRECTION
+         29                     C                     3: POSITION OF BOUNDRY GRID IN K-DIRECTION
+         30                     C                     4: DIRECTION TO INNER GRID (2-15)
+         31                     C                     5: BOUNDARY TYPE (ITYPE)
+         32                     C                        ITYPE=1: WALL
+         33                     C                        ITYPE=2: INLET
+         34                     C                        ITYPE=3: MOVING-WALL
+         35                     C                        ITYPE=4: FREE
+         36                     C                        ITYPE=5: SYMMETRIC
+         37                     C    QBOUN(IPB)   NON-DIMENSIONAL DISTANCE TO INNER GRIDS
+         38                     C
+         39                           INTEGER*4 ID,ISIZE,I,J,K,IB,I1,J1,K1,I2,J2,K2,N1,N2,ITYPE,
+         40                          *          ITYPE1,ITYPE2,
+         41                          *          NSB,NSI,NEB,NEI,IS,IE,JS,JE,KS,KE,
+         42                          *          IBTYPE,IP,ICHK,ICHK1,ICHK2,ICHK3
+         43                     C
+         44                           INTEGER*4 LBWORK(26)
+         45                     C
+         46                           IERR=0
+         47                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+         48     1   s    v            DO 1000 IB=1,26
+         49     1   p    v                LBWORK(IB)=1
+         50     1   p    v       1000 CONTINUE
+         51                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.25, ITR: 512, MVE: 4, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LBC
+                              <<< Loop-information  End >>>
+         52     1   s   4v            DO 1100 IB=1,NBC
+         53     1   p   4v                ID=LBC(1,IB)
+         54     1   m   4v                LBWORK(ID)=0
+         55     1   p   4v       1100 CONTINUE
+         56                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 3)
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LWORK1
+                              <<< Loop-information  End >>>
+         57     1   p    v            DO 2000 I=0,NG+2
+         58     2   p                 DO 2100 J=0,NG+2
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<< Loop-information  End >>>
+         59     3  pp                 DO 2200 K=0,NG+2
+         60     4   p    v                IF(     I.EQ.0 .OR. I.EQ.NG+2
+         61     4                    *       .OR. J.EQ.0 .OR. J.EQ.NG+2
+         62     4                    *       .OR. K.EQ.0 .OR. K.EQ.NG+2 ) THEN
+         63     4   p    v                    LWORK1(I,J,K)=0
+         64     4   p    v                ELSE
+         65     4   p    v                    LWORK1(I,J,K)=1
+         66     4   p    v                ENDIF
+         67     3   p            2200 CONTINUE
+         68     2   p            2100 CONTINUE
+         69     1   p            2000 CONTINUE
+         70                     C
+         71                           NSB=0
+         72                           NSI=1
+         73                           NEB=NG+2
+         74                           NEI=NG+1
+         75     1                     DO 2300 IB=1,26
+         76     1                         IF(LBWORK(IB).EQ.1) GOTO 2300
+         77     1               C
+         78     2                         IF(IB.EQ.1) THEN
+         79     2                             IS=NSB;IE=NSB;JS=NSI;JE=NEI;KS=NSI;KE=NEI
+         80     2                         ELSE IF(IB.EQ.2) THEN
+         81     2                             IS=NEB;IE=NEB;JS=NSI;JE=NEI;KS=NSI;KE=NEI
+         82     2                         ELSE IF(IB.EQ.3) THEN
+         83     2                             IS=NSI;IE=NEI;JS=NSB;JE=NSB;KS=NSI;KE=NEI
+         84     2                         ELSE IF(IB.EQ.4) THEN
+         85     2                             IS=NSI;IE=NEI;JS=NEB;JE=NEB;KS=NSI;KE=NEI
+         86     2                         ELSE IF(IB.EQ.5) THEN
+         87     2                             IS=NSI;IE=NEI;JS=NSI;JE=NEI;KS=NSB;KE=NSB
+         88     2                         ELSE IF(IB.EQ.6) THEN
+         89     2                             IS=NSI;IE=NEI;JS=NSI;JE=NEI;KS=NEB;KE=NEB
+         90     2                         ELSE IF(IB.EQ.7) THEN
+         91     2                             IS=NSI;IE=NEI;JS=NSB;JE=NSB;KS=NSB;KE=NSB
+         92     2                         ELSE IF(IB.EQ.8) THEN
+         93     2                             IS=NSI;IE=NEI;JS=NEB;JE=NEB;KS=NSB;KE=NSB
+         94     2                         ELSE IF(IB.EQ.9) THEN
+         95     2                             IS=NSI;IE=NEI;JS=NEB;JE=NEB;KS=NEB;KE=NEB
+         96     2                         ELSE IF(IB.EQ.10) THEN
+         97     2                             IS=NSI;IE=NEI;JS=NSB;JE=NSB;KS=NEB;KE=NEB
+         98     2                         ELSE IF(IB.EQ.11) THEN
+         99     2                             IS=NSB;IE=NSB;JS=NSI;JE=NEI;KS=NSB;KE=NSB
+        100     2                         ELSE IF(IB.EQ.12) THEN
+        101     2                             IS=NEB;IE=NEB;JS=NSI;JE=NEI;KS=NSB;KE=NSB
+        102     2                         ELSE IF(IB.EQ.13) THEN
+        103     2                             IS=NEB;IE=NEB;JS=NSI;JE=NEI;KS=NEB;KE=NEB
+        104     2                         ELSE IF(IB.EQ.14) THEN
+        105     2                             IS=NSB;IE=NSB;JS=NSI;JE=NEI;KS=NEB;KE=NEB
+        106     2                         ELSE IF(IB.EQ.15) THEN
+        107     2                             IS=NSB;IE=NSB;JS=NSB;JE=NSB;KS=NSI;KE=NEI
+        108     2                         ELSE IF(IB.EQ.16) THEN
+        109     2                             IS=NEB;IE=NEB;JS=NSB;JE=NSB;KS=NSI;KE=NEI
+        110     2                         ELSE IF(IB.EQ.17) THEN
+        111     2                             IS=NEB;IE=NEB;JS=NEB;JE=NEB;KS=NSI;KE=NEI
+        112     2                         ELSE IF(IB.EQ.18) THEN
+        113     2                             IS=NSB;IE=NSB;JS=NEB;JE=NEB;KS=NSI;KE=NEI
+        114     2                         ELSE IF(IB.EQ.19) THEN
+        115     2                             IS=NSB;IE=NSB;JS=NSB;JE=NSB;KS=NSB;KE=NSB
+        116     2                         ELSE IF(IB.EQ.20) THEN
+        117     2                             IS=NEB;IE=NEB;JS=NSB;JE=NSB;KS=NSB;KE=NSB
+        118     2                         ELSE IF(IB.EQ.21) THEN
+        119     2                             IS=NEB;IE=NEB;JS=NEB;JE=NEB;KS=NSB;KE=NSB
+        120     2                         ELSE IF(IB.EQ.22) THEN
+        121     2                             IS=NSB;IE=NSB;JS=NEB;JE=NEB;KS=NSB;KE=NSB
+        122     2                         ELSE IF(IB.EQ.23) THEN
+        123     2                             IS=NSB;IE=NSB;JS=NSB;JE=NSB;KS=NEB;KE=NEB
+        124     2                         ELSE IF(IB.EQ.24) THEN
+        125     2                             IS=NEB;IE=NEB;JS=NSB;JE=NSB;KS=NEB;KE=NEB
+        126     2                         ELSE IF(IB.EQ.25) THEN
+        127     2                             IS=NEB;IE=NEB;JS=NEB;JE=NEB;KS=NEB;KE=NEB
+        128     2                         ELSE IF(IB.EQ.26) THEN
+        129     2                             IS=NSB;IE=NSB;JS=NEB;JE=NEB;KS=NEB;KE=NEB
+        130     2                         ENDIF
+        131     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<< Loop-information  End >>>
+        132     2  pp                     DO 2400 K=KS,KE
+        133     3   p                     DO 2500 J=JS,JE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LWORK1
+                              <<< Loop-information  End >>>
+        134     4   p   4v                DO 2600 I=IS,IE
+        135     4   p   4v                   LWORK1(I,J,K)=1
+        136     4   p   4v       2600     CONTINUE
+        137     3   p            2500     CONTINUE
+        138     2   p            2400     CONTINUE
+        139     1               C
+        140     1                2300 CONTINUE
+        141                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED
+                              <<<    COLLAPSED
+                              <<< Loop-information  End >>>
+        142     1   p                 DO 3000 I=1,NG+1
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED
+                              <<<    COLLAPSED
+                              <<< Loop-information  End >>>
+        143     2   p                 DO 3100 J=1,NG+1
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1455
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<<    COLLAPSED
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LWORK2
+                              <<< Loop-information  End >>>
+        144     3  pp   4v            DO 3200 K=1,NG+1
+        145     3   p   4v                LWORK2(I,J,K)=0
+        146     3   p   4v       3200 CONTINUE
+        147     2   p   4v       3100 CONTINUE
+        148     1   p   4v       3000 CONTINUE
+        149                     C
+        150                           N1=1
+        151                           N2=NG+1
+        152                           NPBOUN =0
+        153     1                     DO 4000 ID=1,6
+        154     1               C
+        155     1                         IF(LBWORK(ID).EQ.0) GOTO 4000
+        156     1               C
+        157     2                         IF(ID.EQ.1) THEN
+        158     2                             IS=N1;IE=N1;JS=N1;JE=N2;KS=N1;KE=N2
+        159     2                         ELSE IF(ID.EQ.2) THEN
+        160     2                             IS=N2;IE=N2;JS=N1;JE=N2;KS=N1;KE=N2
+        161     2                         ELSE IF(ID.EQ.3) THEN
+        162     2                             IS=N1;IE=N2;JS=N1;JE=N1;KS=N1;KE=N2
+        163     2                         ELSE IF(ID.EQ.4) THEN
+        164     2                             IS=N1;IE=N2;JS=N2;JE=N2;KS=N1;KE=N2
+        165     2                         ELSE IF(ID.EQ.5) THEN
+        166     2                             IS=N1;IE=N2;JS=N1;JE=N2;KS=N1;KE=N1
+        167     2                         ELSE IF(ID.EQ.6) THEN
+        168     2                             IS=N1;IE=N2;JS=N1;JE=N2;KS=N2;KE=N2
+        169     2                         ENDIF
+        170     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<< Loop-information  End >>>
+        171     2  pp                     DO 4100 K=KS,KE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LWORK2
+                              <<< Loop-information  End >>>
+        172     3   p                     DO 4200 J=JS,JE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.25, ITR: 416, MVE: 7, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LWORK2
+                              <<< Loop-information  End >>>
+        173     4   p   2v                DO 4300 I=IS,IE
+        174     4   p   2v                    ITYPE1=LWORK2(I,J,K)
+        175     4   p   2v                    ITYPE2=LBOUN(ID)
+        176     5   p   2v                    IF(ITYPE1.EQ.0) THEN
+        177     5   p   2v                        LWORK2(I,J,K)=ITYPE2
+        178     5   p   2v                    ELSE
+        179     5   p   2v                        LWORK2(I,J,K)=MIN(ITYPE1,ITYPE2)
+        180     5   p   2v                    ENDIF
+        181     4   p   2v       4300     CONTINUE
+        182     3   p            4200     CONTINUE
+        183     2   p            4100     CONTINUE
+        184     1               C
+        185     1                4000 CONTINUE
+        186                     C
+        187                           NPBOUN =0
+        188     1                     DO 5000 K=1,NG+1
+        189     2                     DO 5100 J=1,NG+1
+        190     3                     DO 5200 I=1,NG+1
+        191     3                         IBTYPE=LWORK2(I,J,K)
+        192     3                         IF(IBTYPE.EQ.0) GOTO 5200
+        193     3               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LREV
+                              <<< Loop-information  End >>>
+        194     4                         DO 5300 IP=2,NP
+        195     4               C
+        196     4                             I1=I+LVEL(1,LREV(IP))
+        197     4                             J1=J+LVEL(2,LREV(IP))
+        198     4                             K1=K+LVEL(3,LREV(IP))
+        199     4                             I2=I+LVEL(1,IP)
+        200     4                             J2=J+LVEL(2,IP)
+        201     4                             K2=K+LVEL(3,IP)
+        202     4               C
+        203     4                             ICHK1=0
+        204     4                             ICHK2=0
+        205     4                             IF(LWORK1(I1,J1,K1).EQ.0 ) ICHK1=1
+        206     4                             IF(LWORK1(I2,J2,K2).EQ.1 ) ICHK2=1
+        207     4               C
+        208     4               C             ICHK=ICHK1*ICHK2
+        209     4                             ICHK=ICHK1
+        210     5                             IF(ICHK.EQ.1) THEN
+        211     5                                 NPBOUN=NPBOUN+1
+        212     6                                 IF(NPBOUN.GT.MPBOUN) THEN
+        213     6                                     IERR=1
+        214     6                                     RETURN
+        215     6                                 ENDIF
+        216     5                                 LPBOUN(1,NPBOUN)=I
+        217     5                                 LPBOUN(2,NPBOUN)=J
+        218     5                                 LPBOUN(3,NPBOUN)=K
+        219     5                                 LPBOUN(4,NPBOUN)=IP
+        220     5                                 LPBOUN(5,NPBOUN)=IBTYPE
+        221     5                                  QBOUN(  NPBOUN)=0.0
+        222     5                             ENDIF
+        223     4                5300     CONTINUE
+        224     3               C
+        225     3                5200 CONTINUE
+        226     2                5100 CONTINUE
+        227     1                5000 CONTINUE
+        228                     C
+        229                           RETURN
+        230                           END
+
+ Diagnostic messages: program name(MKBC01)
+   jwd8220o-i  "mkbc01.f", line 1: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd2006i-i  "mkbc01.f", line 39: 'ICHK3' is declared but never referenced.
+   jwd2006i-i  "mkbc01.f", line 39: 'ITYPE' is declared but never referenced.
+   jwd2006i-i  "mkbc01.f", line 39: 'ISIZE' is declared but never referenced.
+   jwd5143p-i  "mkbc01.f", line 48: DO loop is not parallelized: the value of its iteration count is insufficient to make parallelization worthwhile.
+   jwd6001s-i  "mkbc01.f", line 48: SIMD conversion is applied to DO loop with DO variable 'IB'.
+   jwd6001s-i  "mkbc01.f", line 52: SIMD conversion is applied to DO loop with DO variable 'IB'.
+   jwd8204o-i  "mkbc01.f", line 52: This loop is software pipelined.
+   jwd8205o-i  "mkbc01.f", line 52: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 512.
+   jwd5209p-i  "mkbc01.f", line 54: DO loop is not parallelized: the variable 'ID' referenced in the subscript expression of array 'LBWORK' is assigned to in DO loop.
+   jwd8211o-i  "mkbc01.f", line 57: Loops interchanged at line 59.
+   jwd6001s-i  "mkbc01.f", line 57: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8673o-i  "mkbc01.f", line 57: This loop cannot be software pipelined because of shortage of predicate registers.
+   jwd8211o-i  "mkbc01.f", line 59: Loops interchanged at line 57.
+   jwd5001p-i  "mkbc01.f", line 59: DO loop with DO variable 'K' is parallelized.
+   jwd5202p-i  "mkbc01.f", line 75: DO loop is not parallelized: data dependency of variable 'KE' may cause different results from serial execution for loop.
+   jwd5202p-i  "mkbc01.f", line 75: DO loop is not parallelized: data dependency of variable 'KS' may cause different results from serial execution for loop.
+   jwd5202p-i  "mkbc01.f", line 75: DO loop is not parallelized: data dependency of variable 'JE' may cause different results from serial execution for loop.
+   jwd5202p-i  "mkbc01.f", line 75: DO loop is not parallelized: data dependency of variable 'JS' may cause different results from serial execution for loop.
+   jwd5202p-i  "mkbc01.f", line 75: DO loop is not parallelized: data dependency of variable 'IE' may cause different results from serial execution for loop.
+   jwd5202p-i  "mkbc01.f", line 75: DO loop is not parallelized: data dependency of variable 'IS' may cause different results from serial execution for loop.
+   jwd5208p-i  "mkbc01.f", line 75: DO loop is not parallelized: the assign-refer order of 'LWORK1' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5001p-i  "mkbc01.f", line 132: DO loop with DO variable 'K' is parallelized.
+   jwd6001s-i  "mkbc01.f", line 134: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8663o-i  "mkbc01.f", line 134: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "mkbc01.f", line 134: Loop unrolled 4 times.
+   jwd5002p-i  "mkbc01.f", line 142: DO loop is parallelized.
+   jwd6002s-i  "mkbc01.f", line 144: SIMD conversion is applied to DO loop.
+   jwd8663o-i  "mkbc01.f", line 144: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "mkbc01.f", line 144: Loop unrolled 4 times.
+   jwd8209o-i  "mkbc01.f", line 145: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8330o-i  "mkbc01.f", line 145: Nested DO loops were coalesced into a single loop by DO variables K,...,I.
+   jwd5202p-i  "mkbc01.f", line 153: DO loop is not parallelized: data dependency of variable 'KE' may cause different results from serial execution for loop.
+   jwd5202p-i  "mkbc01.f", line 153: DO loop is not parallelized: data dependency of variable 'KS' may cause different results from serial execution for loop.
+   jwd5202p-i  "mkbc01.f", line 153: DO loop is not parallelized: data dependency of variable 'JE' may cause different results from serial execution for loop.
+   jwd5202p-i  "mkbc01.f", line 153: DO loop is not parallelized: data dependency of variable 'JS' may cause different results from serial execution for loop.
+   jwd5202p-i  "mkbc01.f", line 153: DO loop is not parallelized: data dependency of variable 'IE' may cause different results from serial execution for loop.
+   jwd5202p-i  "mkbc01.f", line 153: DO loop is not parallelized: data dependency of variable 'IS' may cause different results from serial execution for loop.
+   jwd5208p-i  "mkbc01.f", line 153: DO loop is not parallelized: the assign-refer order of 'LWORK2' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5001p-i  "mkbc01.f", line 171: DO loop with DO variable 'K' is parallelized.
+   jwd8211o-i  "mkbc01.f", line 172: Loops interchanged at line 144.
+   jwd6001s-i  "mkbc01.f", line 173: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8204o-i  "mkbc01.f", line 173: This loop is software pipelined.
+   jwd8205o-i  "mkbc01.f", line 173: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 416.
+   jwd5131p-i  "mkbc01.f", line 188: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "mkbc01.f", line 189: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "mkbc01.f", line 190: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "mkbc01.f", line 194: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "mkbc01.f", line 194: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "mkbc01.f", line 194: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+
+ Procedure information
+   Lines      : 230
+   Statements : 330
+   Stack(byte): 2080
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 230
+   Total statements : 330
+   Total stack(byte): 2080
+   Total prefetch num: 0
+

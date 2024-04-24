@@ -1,0 +1,512 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:54:33 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : surfex.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "SURFEX"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    SURFEX                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE SURFEX(IMODE,JBNODE,ILIST,LPNT,NPNT,
+         14                          *                  LOCAL,NODE,IENP,NEP,NE,NP,X,Y,Z,
+         15                          *                  MEP,MESURF,MPSURF,MLST,N,IUT0,IERR,LISTIP,
+         16                          *                  LESURF,NESURF,NPSURF,XSURF,YSURF,ZSURF,LPSURF)
+         17                           IMPLICIT REAL*4(A-H,O-Z)
+         18                           DIMENSION LPNT(NPNT),LOCAL(4,6),
+         19                          1          NODE(N,NE),IENP(MEP,NP),NEP(NP),LISTIP(NP),
+         20                          2          X(NP),Y(NP),Z(NP),
+         21                          3          LESURF(MLST,MESURF),
+         22                          4          XSURF(MPSURF),YSURF(MPSURF),ZSURF(MPSURF),LPSURF(MPSURF)
+         23                     C
+         24                           CHARACTER*60 ERMSGB
+         25                          & /' ## SUBROUTINE SURFEX: FATAL      ERROR OCCURENCE; RETURNED' /
+         26                           CHARACTER*60 EREXP1
+         27                          & /' AN ILLEGAL VALUE WAS SPECIFIED FOR A CONTROL PARAMETER     '/
+         28                           CHARACTER*60 EREXP2
+         29                          & /' THE FIRST DIMENSION OF OUTPUT LIST PASSED IS NOT SUFFICIENT'/
+         30                           CHARACTER*60 EREXP3
+         31                          & /' THE PASSED NODAL POINT LIST CONTAINS ILLEGAL NODE NUMBER   '/
+         32                           CHARACTER*60 EREXP4
+         33                          & /' NUMBER OF SURFACE ELEMENTS EXCEEDED LIMIT OF               '/
+         34                           CHARACTER*60 EREXP5
+         35                          & /' NUMBER OF SURFACE NODES    EXCEEDED LIMIT OF               '/
+         36                     C
+         37                     C
+         38                     C      EXTRACT ALL BOUNDARY SURFACES / ALL SURFACES COMPOSED OF A GIVEN
+         39                     C     GROUP OF NODAL POINTS
+         40                     C         ( 2-D , 3-D CALCULATION & GRAPHICS )
+         41                     C
+         42                     C
+         43                     C     NOTE 1 ;  ESTIMATED NUMBER OF OPERATIONS NEEDED FOR EXTRACTING
+         44                     C              SURFACES ARE, 252*(NUMBER OF TOTAL ELEMENTS), AND
+         45                     C              11*(NUMBER OF NODES SPECIFIED)**2, FOR BOUNDARY SURFACE
+         46                     C              EXTRACTION AND EXTRACTION OF SURFACES COMPOSED OF A SET
+         47                     C              OF NODES, RESPECTIVELY.
+         48                     C
+         49                     C     ARGUMENT LISTINGS
+         50                     C       (1) INPUT
+         51                     C          IMODE       ; SPECIFIES THE TYPE OF SURFACES TO BE EXTRACTED
+         52                     C                   1 --- ALL BOUNDARY SURFACES
+         53                     C                   2 --- ALL SURFACES COMPOSED OF A GIVEN GROUP OF
+         54                     C                        NODAL POINTS
+         55                     C          JBNODE      ; SPECIFIES, FOR IMODE = 2, WHETHER OR NOT ALL
+         56                     C                       THE NODES SPECIFIED BY ARGUMENT 'LPNT' ARE
+         57                     C                       BOUNDARY NODES
+         58                     C                   0 --- ALL THE 'LPNT' ARE NOT BOUNDARY NODES
+         59                     C                   1 --- ALL THE 'LPNT' ARE     BOUNDARY NODES
+         60                     C                NOTE  ; FOR IMODE = 2, IF ALL THE NODES SPECIFIED IN
+         61                     C                       ARGUMENT 'LPNT' ARE BOUNDARY NODES, SET THIS
+         62                     C                       ARGUMENT TO 1. IN THIS CASE, SURFACE EXTRACTION
+         63                     C                       WILL BE DONE TWICE AS FAST AS WHEN THIS ARGUMENT
+         64                     C                       IS SET TO 0.
+         65                     C                        FOR IMODE = 1, THIS ARGUMENT WILL BE IGNORED.
+         66                     C          ILIST       ; SPECIFIES THE TYPE OF SURFACE LIST TO BE OUTPUT
+         67                     C                       OUTPUT LIST 'LESURF' WILL CONTAIN THE FOLLOWING
+         68                     C                       INFORMATION, DEPENDING ON THE VALUE OF 'ILIST'
+         69                     C                       SHOWN ON THE LEFT
+         70                     C                   1 --- ELEMENT NUMBER AND ITS LOCAL SURFACE NUMBER
+         71                     C                   2 --- ELEMENT NUMBER AND ITS LOCAL NODE    NUMBERS
+         72                     C                   3 --- GLOBAL  NODE NUMBERS
+         73                     C                   4 --- SURFACE NODE TABLE
+         74                     C                NOTE 1; SEE ARGUMENT LIST OF 'LESURF' FOR DETAIL
+         75                     C                NOTE 2; FOR ILIST = 4, X, Y, AND Z COORDINATES OF ALL
+         76                     C                       THE EXTRACTED SURFACE NODES WILL BE OUTPUT TO
+         77                     C                       THE PASSED ARGUMENT ARRAYS 'XSURF', 'YSURF',
+         78                     C                       AND 'ZSURF'. AND GLOBAL NODE NUMBER
+         79                     C                       CORRESPONDING TO SURFACE NODE NUMBER IN THE
+         80                     C                       CREATED SURFACE NODE TABLE 'LESURF' WILL BE
+         81                     C                       OUTPUT TO THE PASSED ARGUMENT 'LPSURF'.
+         82                     C          LPNT  (IPNT); NODE NUMBERS    BY WHICH SURFACE EXTRACTION
+         83                     C                       WILL BE DONE FOR IMODE = 2
+         84                     C          NPNT        ; NUMBER OF NODES BY WHICH SURFACE EXTRACTION
+         85                     C                       WILL BE DONE FOR IMODE = 2
+         86                     C                NOTE  ; ARGUMENT 'LPNT(IPNT)' AND 'NPNT' MUST BE
+         87                     C                       PASSED ONLY FOR IMODE = 2.
+         88                     C          LOCAL (I,IS); NODE NUMBER TABLE DEFINING ELEMENT SURFACES
+         89                     C          NODE  (I,IE); NODE NUMBER TABLE BASED ON ELEMENT
+         90                     C          IENP(IEP,IP); ADJACENT ELEMENT NUMBER TO NODE IP
+         91                     C          NEP     (IP); NUMBER OF ADJACENT ELEMENTS TO NODE IP
+         92                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+         93                     C          NP          ; NUMBER OF TOTAL    NODES
+         94                     C          X       (IP); X-COORDINATE OF NODE
+         95                     C          Y       (IP); Y-COORDINATE OF NODE
+         96                     C          Z       (IP); Z-COORDINATE OF NODE
+         97                     C                NOTE  ; ARGUMENT X, Y, AND Z MUST BE PASSED ONLY FOR
+         98                     C                       ILIST = 4.
+         99                     C          MEP         ; THE FIRST DIMENSION OF ARRAY IENP,JENP
+        100                     C          MESURF      ; THE MAXIMUM NUMBER  OF SURFACE ELEMENTS
+        101                     C          MPSURF      ; THE MAXIMUM NUMBER  OF SURFACE NODES
+        102                     C          MLST        ; THE FIRST DIMENSION OF ARRAY LESURF
+        103                     C                NOTE  ; ARGUMENT MLST MUST BE EQUAL OR GREATER THAN
+        104                     C                       2, 5, 4, OR, 4 FOR ILIST = 1, 2, 3, AND 4
+        105                     C                       RESPECTIVELY.
+        106                     C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT
+        107                     C          IUT0        ; FILE NUMBER TO WRITE  ERROR MESSAGE
+        108                     C          IERR        ; RETURN CODE WHOSE VALUE WILL BE EITHER
+        109                     C                   0 --- INDICATING SUCCESSFUL TERMINATION
+        110                     C                OR 1 --- INDICATING OCCURENCE OF SOME ERROR CONDITIONS
+        111                     C
+        112                     C       (2) OUTPUT
+        113                     C          LESURF(I,IESURF);CONTAINS THE FOLLOWING INFORMATION OF
+        114                     C                       EXTRACTED SURFACES, DEPENDING ON THE VALUE OF
+        115                     C                       'ILIST' SPECIFIED
+        116                     C
+        117                     C                FOR ILIST = 1, THE EXTRACTED SURFACES ARE REPRESENTED
+        118                     C               BY ELEMENT NUMBER FACING ON THE SURFACE, CONTAINED IN
+        119                     C               ARGUMENT LESURF(1,IESURF), AND THE LOCAL SURFACE NUMBER
+        120                     C               IN THE ELEMENT, CONTAINED IN ARGUMENT LESURF(2,IESURF).
+        121                     C               THE LOCAL SURFACE NUMBER IS THE SAME AS THE PASSED
+        122                     C               LOCAL SURFACE NODE LIST ARGUMENT 'LOCAL'.
+        123                     C
+        124                     C                FOR ILIST = 2, THE EXTRACTED SURFACES ARE REPRESENTED
+        125                     C               BY ELEMENT NUMBER FACING ON THE SURFACE, CONTAINED IN
+        126                     C               ARGUMENT LESURF(1,IESURF), AND THE LOCAL NODE    NUMBERS
+        127                     C               IN THE ELEMENT, CONTAINED IN ARGUMENT LESURF(2,IESURF)
+        128                     C               THROUGH LESURF(5,IESURF).
+        129                     C               THE ORDER OF LOCAL NODE NUMBERS IS BASED ON THE PASSED
+        130                     C               LOCAL SURFACE NODE LIST ARGUMENT 'LOCAL'.
+        131                     C
+        132                     C                FOR ILIST = 3, THE EXTRACTED SURFACES ARE REPRESENTED
+        133                     C               BY GLOBAL NODE NUMBERS DEFINING THE SURFACE, CONTAINED
+        134                     C               IN ARGUMENT LESURF(1,IESURF) THROUGH LESURF(4,IESURF).
+        135                     C               THE ORDER OF NONE NUMBERS IS BASED ON THE PASSED
+        136                     C               LOCAL SURFACE NODE LIST ARGUMENT 'LOCAL'.
+        137                     C
+        138                     C                FOR ILIST = 4, THE EXTRACTED SURFACES ARE REPRESENTED
+        139                     C               BY SURFACE NODE TABLE, CONTAINED IN ARGUMENT
+        140                     C               LESURF(1,IESURF) THROUGH LESURF(4,IESURF), AND THE
+        141                     C               X, Y, AND Z COORDINATES OF SURFACE NODES, CONTAINED IN
+        142                     C               ARGUMENTS XSURF(IPSURF), YSURF(IPSURF), ZSURF(IPSURF).
+        143                     C               THE GLOBAL NODE NUMBER CORRESPONDING TO SURFACE NODE
+        144                     C               NUMBER IN THE CREATED SURFACE NODE TABLE IS INDICATED
+        145                     C               BY ARGUMENT 'LPSURF(IPSURF)'.
+        146                     C
+        147                     C          NESURF      ; NUMBER OF SURFACE ELEMENTS EXTRACTED
+        148                     C          NPSURF      ; NUMBER OF SURFACE NODES    EXTRACTED
+        149                     C          XSURF (IPSURF);X-COORDINATE OF SURFACE NODE
+        150                     C          YSURF (IPSURF);Y-COORDINATE OF SURFACE NODE
+        151                     C          ZSURF (IPSURF);Z-COORDINATE OF SURFACE NODE
+        152                     C          LPSURF(IPSURF);GLOBAL NODE NUMBER CORRESPONDING TO SURFACE
+        153                     C                        NODE NUMBER 'IPSURF' IN THE CREATED SURFACE
+        154                     C                        NODE TABLE 'LESURF(I,IESURF)'
+        155                     C                NOTE  ; ARGUMENT NPSURF, XSURF, YSURF, ZSURF, AND
+        156                     C                       LPSURF WILL BE OUTPUT ONLY FOR ILIST = 4.
+        157                     C
+        158                     C       (4) WORK
+        159                     C          LISTIP  (IP); NEEDED FOR ALL NODES ONLY FOR ILIST = 4
+        160                     C
+        161                     C
+        162                           IERR = 0
+        163                     C
+        164                     C CHECK PASSED PARAMETERS
+        165     1                     IF(IMODE.NE.1 .AND. IMODE.NE.2) THEN
+        166     1                         WRITE(IUT0,*) ERMSGB
+        167     1                         WRITE(IUT0,*) EREXP1, ' IMODE'
+        168     1                         IERR = 1
+        169     1                         RETURN
+        170     1                     ENDIF
+        171                     C
+        172     1                     IF(ILIST.LT.1 .OR.  ILIST.GT.4) THEN
+        173     1                         WRITE(IUT0,*) ERMSGB
+        174     1                         WRITE(IUT0,*) EREXP1, ' ILIST'
+        175     1                         IERR = 1
+        176     1                         RETURN
+        177     1                     ENDIF
+        178                     C
+        179     1                     IF(ILIST.EQ.1 .AND.  MLST.LT.2 .OR.
+        180     1                    &   ILIST.EQ.2 .AND.  MLST.LT.5 .OR.
+        181     1                    &   ILIST.EQ.3 .AND.  MLST.LT.4 .OR.
+        182     1                    &   ILIST.EQ.4 .AND.  MLST.LT.4) THEN
+        183     1                         WRITE(IUT0,*) ERMSGB
+        184     1                         WRITE(IUT0,*) EREXP2
+        185     1                         IERR = 1
+        186     1                         RETURN
+        187     1                     ENDIF
+        188                     C
+        189     1                     IF(IMODE.EQ.2) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPNT
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 4  FILL 13
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        190     2   s    s                DO 10 IPNT = 1 , NPNT
+        191     3   p    m                    IF(LPNT(IPNT).LT.1 .OR. LPNT(IPNT).GT.NP) THEN
+        192     3   m    s                        WRITE(IUT0,*) ERMSGB
+        193     3   m    s                        WRITE(IUT0,*) EREXP3
+        194     3   m    s                        WRITE(IUT0,*)
+        195     3                    &            ' *** POINT NO. = ',IPNT,' *** NODE NO. = ',LPNT(IPNT)
+        196     3   p    s                        IERR = 1
+        197     3   p    v                    ENDIF
+        198     2   p    v         10     CONTINUE
+        199     1                         IF(IERR.EQ.1) RETURN
+        200     1                     ENDIF
+        201                     C
+        202                           NESURF = 0
+        203                           NPSURF = 0
+        204                     C
+        205                     C EXTRACT ALL THE BOUNDARY SURFACES
+        206                     C
+        207     1                     IF(IMODE.EQ.1) THEN
+        208     2                         DO 150 IE = 1 , NE
+        209     3                             DO 140 IS = 1 , 6
+        210     3                                 IP = NODE(LOCAL(1,IS),IE)
+        211     4                                 DO 130 IEP = 1 , NEP(IP)
+        212     4                                     IEF = IENP(IEP,IP)
+        213     4                                     IF(IEF.EQ.IE) GO TO 130
+        214     5                                     DO 120 I = 2 , 4
+        215     5                                         IPF = NODE(LOCAL(I,IS),IE)
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IENP
+                              <<< Loop-information  End >>>
+        216     6                                         DO 110 IEPF = 1 , NEP(IPF)
+        217     6                                             IEFF = IENP(IEPF,IPF)
+        218     6                                             IF(IEFF.EQ.IEF) GO TO 120
+        219     6                 110                     CONTINUE
+        220     5                                         GO TO 130
+        221     5                 120                 CONTINUE
+        222     4                                     GO TO 140
+        223     4                 130             CONTINUE
+        224     3               C
+        225     3                                 NESURF = NESURF+1
+        226     4                                 IF(NESURF.GT.MESURF) THEN
+        227     4                                     WRITE(IUT0,*) ERMSGB
+        228     4                                     WRITE(IUT0,*) EREXP4, MESURF
+        229     4                                     IERR = 1
+        230     4                                     RETURN
+        231     4                                 ENDIF
+        232     3               C
+        233     3                                 LESURF(1,NESURF) = IE
+        234     3                                 LESURF(2,NESURF) = IS
+        235     3               C
+        236     3                 140         CONTINUE
+        237     2                 150     CONTINUE
+        238     1                     ENDIF
+        239                     C
+        240                     C EXTRACT ALL THE SURFACES COMPOSED OF GIVEN SET OF NODES
+        241                     C
+        242     1                     IF(IMODE.EQ.2) THEN
+        243     2                         DO 280 IPNT = 1 , NPNT
+        244     2                             IP = LPNT(IPNT)
+        245     3                             DO 270 IEP = 1 , NEP(IP)
+        246     3                                 IE = IENP(IEP,IP)
+        247     3                                 IF(NODE(1,IE).LT.0) GO TO 270
+        248     4                                 DO 260 IS = 1 , 6
+        249     5                                     DO 220 I = 1 , 4
+        250     5                                         IPF = NODE(LOCAL(I,IS),IE)
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPNT
+                              <<< Loop-information  End >>>
+        251     6                                         DO 210 IPNTF = 1 , NPNT
+        252     6                                             IPFF = LPNT(IPNTF)
+        253     6                                             IF(IPFF.EQ.IPF) GO TO 220
+        254     6                 210                     CONTINUE
+        255     5                                         GO TO 260
+        256     5                 220                 CONTINUE
+        257     4               C
+        258     5                                     IF(JBNODE.NE.1) THEN
+        259     6                                         DO 250 IESURF = 1 , NESURF
+        260     6                                             IEF = LESURF(1,IESURF)
+        261     6                                             ISF = LESURF(2,IESURF)
+        262     7                                             DO 240 I = 1 , 4
+        263     7                                                 IPF = NODE(LOCAL(I,IS),IE)
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LOCAL
+                              <<< Loop-information  End >>>
+        264     8                                                 DO 230 IF = 1 , 4
+        265     8                                                     IPFF = NODE(LOCAL(IF,ISF),IEF)
+        266     8                                                     IF(IPFF.LT.0) IPFF = -IPFF
+        267     8                                                     IF(IPFF.EQ.IPF) GO TO 240
+        268     8                 230                             CONTINUE
+        269     7                                                 GO TO 250
+        270     7                 240                         CONTINUE
+        271     6                                             GO TO 260
+        272     6                 250                     CONTINUE
+        273     5                                     ENDIF
+        274     4               C
+        275     4                                     NESURF = NESURF+1
+        276     5                                     IF(NESURF.GT.MESURF) THEN
+        277     5                                         WRITE(IUT0,*) ERMSGB
+        278     5                                         WRITE(IUT0,*) EREXP4, MESURF
+        279     5                                         NESURF = NESURF-1
+        280     5                                         IERR   = 1
+        281     5                                         GO TO 285
+        282     5                                     ENDIF
+        283     4               C
+        284     4                                     LESURF(1,NESURF) = IE
+        285     4                                     LESURF(2,NESURF) = IS
+        286     4                 260             CONTINUE
+        287     3               C
+        288     3                                 NODE(1,IE) = - NODE(1,IE)
+        289     3                 270         CONTINUE
+        290     2                 280     CONTINUE
+        291     1               C
+        292     1                 285     CONTINUE
+        293     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1067
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        294     2  pp   2v                DO 290 IE = 1 , NE
+        295     2   p   2v                    IF(NODE(1,IE).LT.0) NODE(1,IE) = -NODE(1,IE)
+        296     2   p   2v        290     CONTINUE
+        297     1                         IF(IERR.EQ.1) RETURN
+        298     1                     ENDIF
+        299                     C
+        300                     C CONVERT OUTPUT LISTS
+        301                     C
+        302     1                     IF(ILIST.EQ.4) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LISTIP
+                              <<< Loop-information  End >>>
+        303     2  pp   4v                DO 300 IP = 1 , NP
+        304     2   p   4v                    LISTIP(IP) = 0
+        305     2   p   4v        300     CONTINUE
+        306     1                     ENDIF
+        307                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 40
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        308     1                     DO 320 IESURF = 1 , NESURF
+        309     1                         IE = LESURF(1,IESURF)
+        310     1                         IS = LESURF(2,IESURF)
+        311     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FULL UNROLLING
+                              <<< Loop-information  End >>>
+        312     2       f                 DO 310 I = 1 , 4
+        313     2       f                     IN = LOCAL(I,IS)
+        314     2       f                     IP = NODE(IN,IE)
+        315     2               C
+        316     2       f                     IF(ILIST.EQ.2) LESURF(1+I,IESURF) = IN
+        317     2       f                     IF(ILIST.EQ.3) LESURF(  I,IESURF) = IP
+        318     2               C
+        319     3       f                     IF(ILIST.EQ.4) THEN
+        320     4       f                         IF(LISTIP(IP).EQ.0) THEN
+        321     4       f                             NPSURF = NPSURF+1
+        322     5       f                             IF(NPSURF.GT.MPSURF) THEN
+        323     5       f                                 WRITE(IUT0,*) ERMSGB
+        324     5       f                                 WRITE(IUT0,*) EREXP5, MPSURF
+        325     5       f                                 IERR = 1
+        326     5       f                                 RETURN
+        327     5       f                             ENDIF
+        328     4       f                             LISTIP(IP) = NPSURF
+        329     4       f                             LPSURF(NPSURF) = IP
+        330     4       f                             LESURF(I,IESURF) = NPSURF
+        331     4       f                             XSURF(NPSURF) = X(IP)
+        332     4       f                             YSURF(NPSURF) = Y(IP)
+        333     4       f                             ZSURF(NPSURF) = Z(IP)
+        334     4       f                         ELSE
+        335     4       f                             LESURF(I,IESURF) = LISTIP(IP)
+        336     4       f                         ENDIF
+        337     3       f                     ENDIF
+        338     2       f         310     CONTINUE
+        339     1                 320 CONTINUE
+        340                     C
+        341                     C
+        342                           RETURN
+        343                           END
+
+ Diagnostic messages: program name(SURFEX)
+   jwd6229s-i  "surfex.f", line 190: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8664o-i  "surfex.f", line 190: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5121p-i  "surfex.f", line 192: DO loop is not parallelized: an input/output statement was found in the loop.
+   jwd6121s-i  "surfex.f", line 192: SIMD conversion cannot be applied to DO loop: an input/output statement was found in the loop.
+   jwd5121p-i  "surfex.f", line 193: DO loop is not parallelized: an input/output statement was found in the loop.
+   jwd6121s-i  "surfex.f", line 193: SIMD conversion cannot be applied to DO loop: an input/output statement was found in the loop.
+   jwd5121p-i  "surfex.f", line 194: DO loop is not parallelized: an input/output statement was found in the loop.
+   jwd6121s-i  "surfex.f", line 194: SIMD conversion cannot be applied to DO loop: an input/output statement was found in the loop.
+   jwd5131p-i  "surfex.f", line 208: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "surfex.f", line 209: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "surfex.f", line 211: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "surfex.f", line 214: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "surfex.f", line 216: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "surfex.f", line 216: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "surfex.f", line 216: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+   jwd5131p-i  "surfex.f", line 243: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "surfex.f", line 245: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "surfex.f", line 248: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "surfex.f", line 249: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "surfex.f", line 251: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "surfex.f", line 251: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "surfex.f", line 251: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+   jwd5131p-i  "surfex.f", line 259: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "surfex.f", line 262: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "surfex.f", line 264: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "surfex.f", line 264: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "surfex.f", line 264: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+   jwd5001p-i  "surfex.f", line 294: DO loop with DO variable 'IE' is parallelized.
+   jwd6001s-i  "surfex.f", line 294: SIMD conversion is applied to DO loop with DO variable 'IE'.
+   jwd8663o-i  "surfex.f", line 294: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "surfex.f", line 294: Loop unrolled 2 times.
+   jwd5001p-i  "surfex.f", line 303: DO loop with DO variable 'IP' is parallelized.
+   jwd6001s-i  "surfex.f", line 303: SIMD conversion is applied to DO loop with DO variable 'IP'.
+   jwd8663o-i  "surfex.f", line 303: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "surfex.f", line 303: Loop unrolled 4 times.
+   jwd5131p-i  "surfex.f", line 308: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd8671o-i  "surfex.f", line 308: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+   jwd5131p-i  "surfex.f", line 312: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "surfex.f", line 312: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8203o-i  "surfex.f", line 312: Loop unrolled fully.
+
+ Procedure information
+   Lines      : 343
+   Statements : 157
+   Stack(byte): 3072
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 343
+   Total statements : 157
+   Total stack(byte): 3072
+   Total prefetch num: 0
+

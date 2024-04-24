@@ -1,0 +1,87 @@
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+       SUBROUTINE USTINI()
+       IMPLICIT NONE
+       INCLUDE "usrt.h"
+C
+       INTEGER*4 I
+C
+       DO 1000 I=1,MUSRT
+           LUSRT(I) =0
+           NUSRT(I) =0
+           DTUSRT(I)=0.0D0
+           TSUSRT(I)=0.0D0
+           TEUSRT(I)=0.0D0
+ 1000  CONTINUE
+C
+       RETURN
+       END
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+       SUBROUTINE USTPUT(I,C)
+       IMPLICIT NONE
+       INCLUDE "usrt.h"
+C
+       INTEGER*4 I
+       CHARACTER*30 C
+C
+       LUSRT(I) =1
+       WRITE(CUSRT(I),'(A30)') "                              "
+       WRITE(CUSRT(I),'(A30)') C
+C
+       RETURN
+       END
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+       SUBROUTINE USTSTA(I)
+       IMPLICIT NONE
+       INCLUDE "usrt.h"
+#ifdef cputime
+       INCLUDE 'mpif.h'
+#endif
+C
+       INTEGER*4 I
+C
+CC     CALL DDSYNC
+       TSUSRT(I) = 0.0E0
+#ifdef cputime
+       TSUSRT(I) = MPI_WTIME()
+#endif
+C
+       RETURN
+       END
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+       SUBROUTINE USTEND(I)
+       IMPLICIT NONE
+       INCLUDE "usrt.h"
+#ifdef cputime
+       INCLUDE 'mpif.h'
+#endif
+C
+       INTEGER*4 I
+C
+       TEUSRT(I) = 0.0E0
+#ifdef cputime
+       TEUSRT(I) = MPI_WTIME()
+#endif
+       DTUSRT(I) = DTUSRT(I) + (TEUSRT(I)-TSUSRT(I))
+        NUSRT(I) = NUSRT(I) + 1
+C
+       TSUSRT(I)=0.0E0
+       TEUSRT(I)=0.0E0
+C
+       RETURN
+       END
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+       SUBROUTINE USTWRT(IUT6)
+       IMPLICIT NONE
+       INCLUDE "usrt.h"
+C
+       INTEGER*4 I,IUT6
+C
+       DO 1000 I=1,MUSRT
+           IF(LUSRT(I).EQ.0) GOTO 1000
+           WRITE(IUT6,'(I04,A3,A30,1PD13.5,I8)') 
+     *     I,"   ",CUSRT(I),DTUSRT(I),NUSRT(I)
+ 1000  CONTINUE
+C
+       RETURN
+       END
+

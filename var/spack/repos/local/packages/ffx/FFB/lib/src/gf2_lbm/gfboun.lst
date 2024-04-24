@@ -1,0 +1,348 @@
+
+ Fujitsu Fortran Version 4.3.0a  Sat Dec 19 20:45:29 2020
+
+ Compilation information
+   Current directory : /vol0001/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/gf2_lbm
+   Source file       : gfboun.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0001/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI021-01/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI021-01/lib64 -Knointentopt
+   Cpp options          : -I/vol0001/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI021-01/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI021-01/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=3 -D__FRT_patchlevel__=0 -D__FRT_version__="4.3.0a" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "GFBOUN"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE GFBOUN(IMODE,MC,MPBOUN,FILEBC,
+          2                          *                  NG,NC,NPBOUN,LPBOUN,QBOUN,
+          3                          *                  MCOM,NCOMFL,NCOMST,COMFLE,COMSET,
+          4                          *                  IUT6,IUT0,IUTBC,IERR)
+          5                           IMPLICIT NONE
+          6                           INTEGER*4    IMODE,MC,MPBOUN,NG,NC,
+          7                          *             NPBOUN(MC),LPBOUN(5,MPBOUN,MC)
+          8                           REAL*4       QBOUN(MPBOUN,MC)
+          9                           INTEGER*4    IUT6,IUT0,IUTBC,IERR
+         10                     C
+         11                           INTEGER*4    MCOM,NCOMFL,NCOMST
+         12                           CHARACTER*60 FILEBC,COMFLE(MCOM),COMSET(MCOM)
+         13                     C
+         14                           INTEGER*4 IACT,ITARGT,IRESV,IWRITE,INAME,
+         15                          *          ICAST,ICAST1,IDATA0,IALL,ISKIP,ISKIP1,ICHECK
+         16                           INTEGER*4 MAXPRN
+         17                           CHARACTER*30 NAME
+         18                           DATA IWRITE / 2 /
+         19                           DATA INAME  / 1 /
+         20                           DATA MAXPRN / 200 /
+         21                           DATA ICAST  /0/
+         22                           DATA ICAST1 /1/
+         23                           DATA IDATA0 /0/
+         24                           DATA ISKIP  /0/
+         25                           DATA ISKIP1 /1/
+         26                           DATA ICHECK /999999/
+         27                     C
+         28                           INTEGER*4 N5
+         29                           DATA N5   /5/
+         30                     C
+         31                           INTEGER*4 IBUF1,IBUF2,IBUF3,IBUF4,IBUF5,IBUF6,IBUF7,IC,IB
+         32                     C
+         33                     C[INPUT]
+         34                     C     IMODE : SPECIFY ACTION MODE (0:CHECK SIZE, 1:READ, 2:WRITE)
+         35                     C     MC    : MAX. NUMBER OF B.C GROUPS IN CUBES (=152)
+         36                     C     IUT6  : UNIT NUMBER OF STANDARD OUTPUT
+         37                     C     IUT0  : UNIT NUMBER OF ERROR OUTPUT
+         38                     C     IUTBC : UNIT NUMBER OF GF-B.C. FILE
+         39                     C
+         40                     C[INPUT&OUTPUT]
+         41                     C
+         42                     C[OUTPUT]
+         43                     C     IERR   : ERROR FLAG
+         44                     C
+         45                           IERR=0
+         46                           IALL=-1
+         47                     C
+         48     1                     IF(IMODE.EQ.0) THEN
+         49     1                         WRITE(IUT6,*)
+         50     1                         WRITE(IUT6,*) '  GFBOUN :: CHECKING SIZE OF GF-BOUN FILE   '
+         51     1                     ELSE IF(IMODE.EQ.1) THEN
+         52     1                         WRITE(IUT6,*)
+         53     1                         WRITE(IUT6,*) '  GFBOUN :: READING GF-BOUN FILE   '
+         54     1                         GOTO 1000
+         55     1                     ELSE IF(IMODE.EQ.2) THEN
+         56     1                         WRITE(IUT6,*)
+         57     1                         WRITE(IUT6,*) '  GFBOUN :: WRITING GF-BOUN FILE   '
+         58     1                         GOTO 2000
+         59     1                     ELSE IF(IMODE.EQ.4) THEN
+         60     1                         WRITE(IUT6,*)
+         61     1                         WRITE(IUT6,*) '  GFCUBE :: WRITING GF-CUBE FILE  (OPEN) '
+         62     1                         GOTO 2000
+         63     1                     ELSE IF(IMODE.EQ.6) THEN
+         64     1                         WRITE(IUT6,*)
+         65     1                         WRITE(IUT6,*) '  GFCUBE :: WRITING GF-CUBE FILE  (APPEND) '
+         66     1                         GOTO 2200
+         67     1                     ELSE IF(IMODE.EQ.8) THEN
+         68     1                         WRITE(IUT6,*)
+         69     1                         WRITE(IUT6,*) '  GFCUBE :: WRITING GF-CUBE FILE  (CLOSE) '
+         70     1                         GOTO 2100
+         71     1                     ELSE
+         72     1                         IERR=1
+         73     1                         RETURN
+         74     1                     ENDIF
+         75                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+         76                     C                                                      C
+         77                     C    IMODE=0: CHECK MODE                               C
+         78                     C                                                      C
+         79                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+         80                     C
+         81                     CCC OPEN GF-BOUN FILE TO BE READ
+         82                     C
+         83                           IACT = 3
+         84                           CALL GFALL(IUT0,IUT6,IUTBC,FILEBC,
+         85                          *           MCOM,NCOMFL,COMFLE,
+         86                          *           MCOM,NCOMST,COMSET,
+         87                          *           IACT,IWRITE,INAME,IRESV,
+         88                          *           ICAST,IDATA0,IALL,ISKIP,IERR,
+         89                          *           ' !',ICHECK)
+         90                           IF(IERR.NE.0) RETURN
+         91                     C
+         92                       100 CONTINUE
+         93                     C
+         94                     CCC CHECK SIZE CUBE DATA
+         95                     C
+         96                           MPBOUN=0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 8
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+         97     1                     DO 200 IC=1,NC
+         98     1                         IACT = 5
+         99     1                         CALL GFALL(IUT0,IUT6,IUTBC,FILEBC,
+        100     1                    *               MCOM,NCOMFL,COMFLE,
+        101     1                    *               MCOM,NCOMST,COMSET,
+        102     1                    *               IACT,IWRITE,INAME,IRESV,
+        103     1                    *               ICAST,IDATA0,IALL,ISKIP1,IERR,
+        104     1                    *               '*LBM_BND  !',
+        105     1                    *               NAME,MPBOUN,N5,IBUF3,IBUF4,LPBOUN(1,1,IC),
+        106     1                    *               ICHECK)
+        107     1                         IF(IBUF3.GT.MPBOUN) MPBOUN=IBUF3
+        108     1                 200 CONTINUE
+        109                     C
+        110                     CCC CLOSE GF-BOUN FILE
+        111                     C
+        112                           CALL GFALL(IUT0,IUT6,IUTBC,FILEBC,
+        113                          *           MCOM,NCOMFL,COMFLE,
+        114                          *           MCOM,NCOMST,COMSET,
+        115                          *           IACT,IWRITE,INAME,IRESV,
+        116                          *           ICAST,IDATA0,IALL,ISKIP,IERR,
+        117                          *           ' !',ICHECK)
+        118                     C
+        119                           RETURN
+        120                     C
+        121                      1000 CONTINUE
+        122                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+        123                     C                                                      C
+        124                     C    IMODE=1: READ MODE                                C
+        125                     C                                                      C
+        126                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+        127                     C
+        128                     CCC OPEN GF-BOUN FILE TO BE READ
+        129                     C
+        130                           IACT = 3
+        131                           CALL GFALL(IUT0,IUT6,IUTBC,FILEBC,
+        132                          *           MCOM,NCOMFL,COMFLE,
+        133                          *           MCOM,NCOMST,COMSET,
+        134                          *           IACT,IWRITE,INAME,IRESV,
+        135                          *           ICAST,IDATA0,IALL,ISKIP,IERR,
+        136                          *           ' !',ICHECK)
+        137                           IF(IERR.NE.0) RETURN
+        138                     C
+        139                     CCC READ CUBE DATA
+        140                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 15
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        141     1                     DO 1100 IC=1,NC
+        142     1                         IACT = 5
+        143     1                         CALL GFALL(IUT0,IUT6,IUTBC,FILEBC,
+        144     1                    *               MCOM,NCOMFL,COMFLE,
+        145     1                    *               MCOM,NCOMST,COMSET,
+        146     1                    *               IACT,IWRITE,INAME,IRESV,
+        147     1                    *               ICAST,IDATA0,IALL,ISKIP,IERR,
+        148     1                    *               '*LBM_CSZ *LBM_BND *LBM_LPQ !',
+        149     1                    *               NAME,NG,
+        150     1                    *               NAME,MPBOUN,N5,NPBOUN(IC),IBUF5,LPBOUN(1,1,IC),
+        151     1                    *               NAME,MPBOUN,NPBOUN(IC),QBOUN(1,IC),
+        152     1                    *               ICHECK)
+        153     1                1100 CONTINUE
+        154                     C
+        155                     CCC CLOSE GF-BOUN FILE
+        156                     C
+        157                           IACT = 7
+        158                           CALL GFALL(IUT0,IUT6,IUTBC,FILEBC,
+        159                          *           MCOM,NCOMFL,COMFLE,
+        160                          *           MCOM,NCOMST,COMSET,
+        161                          *           IACT,IWRITE,INAME,IRESV,
+        162                          *           ICAST,IDATA0,IALL,ISKIP,IERR,
+        163                          *           ' !',ICHECK)
+        164                     C
+        165                           RETURN
+        166                     C
+        167                      2000 CONTINUE
+        168                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+        169                     C                                                      C
+        170                     C    IMODE=2: WRITE MODE                               C
+        171                     C                                                      C
+        172                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+        173                     C
+        174                     C
+        175                     CCC OPEN GF-BOUN FILE TO BE READ
+        176                     C
+        177                           IACT = 4
+        178                           CALL GFALL(IUT0,IUT6,IUTBC,FILEBC,
+        179                          *           MCOM,NCOMFL,COMFLE,
+        180                          *           MCOM,NCOMST,COMSET,
+        181                          *           IACT,IWRITE,INAME,IRESV,
+        182                          *           ICAST,IDATA0,IALL,ISKIP,IERR,
+        183                          *           ' !',ICHECK)
+        184                     C
+        185                           IF(IMODE.EQ.4) RETURN
+        186                     C
+        187                     C
+        188                     CCC READ CUBE DATA
+        189                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 14
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        190     1                     DO 2010 IC=1,NC
+        191     1                         IACT = 6
+        192     1                         CALL GFALL(IUT0,IUT6,IUTBC,FILEBC,
+        193     1                    *               MCOM,NCOMFL,COMFLE,
+        194     1                    *               MCOM,NCOMST,COMSET,
+        195     1                    *               IACT,IWRITE,INAME,IRESV,
+        196     1                    *               ICAST,IDATA0,IALL,ISKIP,IERR,
+        197     1                    *               '*LBM_CSZ *LBM_BND *LBM_LPQ !',
+        198     1                    *               NAME,NG,
+        199     1                    *               NAME,MPBOUN,N5,NPBOUN(IC),N5,LPBOUN(1,1,IC),
+        200     1                    *               NAME,MPBOUN,NPBOUN(IC),QBOUN(1,IC),
+        201     1                    *               ICHECK)
+        202     1                2010 CONTINUE
+        203                     C
+        204                     CCC CLOSE GF-BOUN FILE
+        205                     C
+        206                      2100 CONTINUE
+        207                           IACT=8
+        208                           CALL GFALL(IUT0,IUT6,IUTBC,FILEBC,
+        209                          *           MCOM,NCOMFL,COMFLE,
+        210                          *           MCOM,NCOMST,COMSET,
+        211                          *           IACT,IWRITE,INAME,IRESV,
+        212                          *           ICAST,IDATA0,IALL,ISKIP,IERR,
+        213                          *           ' !',ICHECK)
+        214                           RETURN
+        215                     C
+        216                      2200 CONTINUE
+        217                           IACT = 6
+        218                           CALL GFALL(IUT0,IUT6,IUTBC,FILEBC,
+        219                          *           MCOM,NCOMFL,COMFLE,
+        220                          *           MCOM,NCOMST,COMSET,
+        221                          *           IACT,IWRITE,INAME,IRESV,
+        222                          *           ICAST,IDATA0,IALL,ISKIP,IERR,
+        223                          *           '*LBM_CSZ *LBM_BND *LBM_LPQ !',
+        224                          *           NAME,NG,
+        225                          *           NAME,MPBOUN,N5,NPBOUN,N5,LPBOUN,
+        226                          *           NAME,MPBOUN,NPBOUN,QBOUN,
+        227                          *           ICHECK)
+        228                     C
+        229                           RETURN
+        230                           END
+        231                     
+
+ Diagnostic messages: program name(GFBOUN)
+   jwd2006i-i  "gfboun.f", line 14: 'ITARGT' is declared but never referenced.
+   jwd2006i-i  "gfboun.f", line 31: 'IB' is declared but never referenced.
+   jwd2006i-i  "gfboun.f", line 31: 'IBUF7' is declared but never referenced.
+   jwd2006i-i  "gfboun.f", line 31: 'IBUF6' is declared but never referenced.
+   jwd2006i-i  "gfboun.f", line 31: 'IBUF2' is declared but never referenced.
+   jwd2006i-i  "gfboun.f", line 31: 'IBUF1' is declared but never referenced.
+   jwd5123p-i  "gfboun.f", line 97: DO loop is not parallelized: a character or structure type data was found in the loop.
+   jwd6165s-i  "gfboun.f", line 97: SIMD conversion cannot be applied to DO loop: one or more data with character type or derived type were found in the DO loop.
+   jwd8664o-i  "gfboun.f", line 97: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5123p-i  "gfboun.f", line 141: DO loop is not parallelized: a character or structure type data was found in the loop.
+   jwd6165s-i  "gfboun.f", line 141: SIMD conversion cannot be applied to DO loop: one or more data with character type or derived type were found in the DO loop.
+   jwd8664o-i  "gfboun.f", line 141: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5123p-i  "gfboun.f", line 190: DO loop is not parallelized: a character or structure type data was found in the loop.
+   jwd6165s-i  "gfboun.f", line 190: SIMD conversion cannot be applied to DO loop: one or more data with character type or derived type were found in the DO loop.
+   jwd8664o-i  "gfboun.f", line 190: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+
+ Procedure information
+   Lines      : 231
+   Statements : 91
+   Stack(byte): 1904
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 231
+   Total statements : 91
+   Total stack(byte): 1904
+   Total prefetch num: 0
+

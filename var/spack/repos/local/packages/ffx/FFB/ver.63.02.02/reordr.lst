@@ -1,0 +1,2675 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:53:23 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : reordr.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "REORDR"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE REORDR
+          2                          *   ( JSORT,JCOLOR,NDIVX,NDIVY,NDIVZ,NEIP,
+          3                          *     IALE,MP,ME,MWRK,NP,NE,N2,NODE,
+          4                          *     MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+          5                          *     LPBTOA,LPATOB,LEBTOA,LEATOB,
+          6                          *     NETET,NEPRD,NEWED,NEHEX,
+          7                          *     NPINLT,NPWALL,NPSYMT,NPFREE,NPCCL ,NPBODY,
+          8                          *     NPINT ,NEFFO, NPFFO ,NPTEMP,NEHSRC,NPHEAT,
+          9                          *     NPSET,
+         10                          *     LPINLT,LPWALL,LPSYMT,LPFREE,LPCCL1,LPCCL2,
+         11                          *     LPBODY,LPINT1,LEFFO1,LPFFO1,LPTEMP,LEHSRC,
+         12                          *     LPHEAT,LPSET1,
+         13                          *     LEFRM ,IEATTR,IPATTR,IEMEDA,IEPROP,
+         14                          *     X,Y,Z,XD,YD,ZD,U,V,W,PN,P,T,FL,FE,
+         15                          *     UMESH,VMESH,WMESH,UMESH_P,VMESH_P,WMESH_P,
+         16                          *     TYPE,LEBTA1,LEBTA2,LWRK01,WRK01,IERR,IUT0,IUT6 )
+         17                     C
+         18                           IMPLICIT NONE
+         19                     C
+         20                           INTEGER*4 JSORT,JCOLOR
+         21                           INTEGER*4 NDIVX,NDIVY,NDIVZ
+         22                           INTEGER*4 IALE,MP,ME,MWRK,NP,NE,N2
+         23                           INTEGER*4 NODE(N2,ME)
+         24                     C
+         25                     C     PART INFO
+         26                           INTEGER*4 NEIP(4)
+         27                     C
+         28                     C     COLOR INFO
+         29                           INTEGER*4 MCOLOR,MCPART
+         30                           INTEGER*4 NCOLOR(4),NCPART(MCOLOR,4),LLOOP(MCPART,MCOLOR,4)
+         31                     C
+         32                     C     TABLE
+         33                           INTEGER*4 LPBTOA(MP),LPATOB(MP),LEBTOA(ME),LEATOB(ME)
+         34                           INTEGER*4 NETET,NEPRD,NEWED,NEHEX
+         35                     C
+         36                     C     LIST DATA
+         37                           INTEGER*4 NPINLT,NPWALL,NPSYMT,NPFREE,NPCCL ,NPBODY,
+         38                          *          NPINT ,NEFFO, NPFFO ,NPTEMP,NEHSRC,NPHEAT,
+         39                          *          NPSET
+         40                           INTEGER*4 LPINLT(NPINLT),LPWALL(NPWALL),LPSYMT(NPSYMT),
+         41                          *          LPFREE(NPFREE),LPCCL1(NPCCL ),LPCCL2(NPCCL ),
+         42                          *          LPBODY(NPBODY),LPINT1(NPINT ),LEFFO1(NEFFO ),
+         43                          *          LPFFO1(NPFFO ),LPTEMP(NPTEMP),LEHSRC(NEHSRC),
+         44                          *          LPHEAT(NPHEAT),LPSET1(NPSET )
+         45                     C
+         46                     C     ATTRIBUTE DATA
+         47                           INTEGER*4 LEFRM(NE),IEATTR(NE),IPATTR(NP),IEMEDA(NE),IEPROP(NE)
+         48                     C
+         49                     C     FLOW FILED DATA
+         50                           REAL*4    X(MP),Y(MP),Z(MP),U(NP),V(NP),W(NP),PN(NP),P(NE),
+         51                          *          T(NP),FL(NP),FE(NE),
+         52                          *          UMESH(NP),VMESH(NP),WMESH(NP),
+         53                          *          UMESH_P(NP),VMESH_P(NP),WMESH_P(NP)
+         54                           REAL*8    XD(MP),YD(MP),ZD(MP)
+         55                     C
+         56                     C     WORK
+         57                           INTEGER*4,ALLOCATABLE :: REFCNT(:),REFELM(:,:)
+         58                           INTEGER*4 MAXREF
+         59                           INTEGER*4 TYPE(ME),LEBTA1(ME),LEBTA2(ME),LWRK01(MWRK)
+         60                           REAL*4    WRK01(MWRK)
+         61                           INTEGER*4 ST(4),ED(4),NPART(4)
+         62                           INTEGER*4 IE,IP,I,J,IEBUF
+         63                           INTEGER*4 IERR,IUT0,IUT6
+         64                     CCHY_DEBUG
+         65                           INTEGER IUT80,ITMP(8)
+         66                           DATA IUT80 /80/
+         67                     CCHY_DEBUG
+         68                     C
+         69                           ! allocate and init
+         70                           ! before to after table and
+         71                           ! after to before table
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1455
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.50, ITR: 128, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPBTOA, LPATOB, (unknown)
+                              <<< Loop-information  End >>>
+         72     1  pp   2v            DO 100 IP=1,MP
+         73     1   p   2v               LPBTOA(IP) = IP
+         74     1   p   2v               LPATOB(IP) = IP
+         75     1   p   2v       100  CONTINUE
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 942
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.62, ITR: 48, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LEBTA1, LEBTA2, LEBTOA, LEATOB
+                              <<<      (unknown)
+                              <<< Loop-information  End >>>
+         76     1  pp    v            DO 110 IE=1,ME
+         77     1   p    v               LEBTA1(IE) = IE
+         78     1   p    v               LEBTA2(IE) = IE
+         79     1   p    v               LEBTOA(IE) = IE
+         80     1   p    v               LEATOB(IE) = IE
+         81     1   p    v       110  CONTINUE
+         82                     C
+         83                           ! define element type
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 75
+                              <<< Loop-information  End >>>
+         84     1  pp    v            DO 120 IE=1,NE
+         85     1   p    v               TYPE(IE)=0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FULL UNROLLING
+                              <<< Loop-information  End >>>
+         86     2   p   fs               DO 130 I=1,8
+         87     2   p   fm                  IF (NODE(I,IE).NE.0) TYPE(IE)=TYPE(IE)+1
+         88     2   p   fv       130     CONTINUE
+         89     1   p   4v       120  CONTINUE
+         90                     C
+         91                           CALL SORTELEM(ME,NE,N2,TYPE,NODE,ST,ED,LEBTA1,IUT6)
+         92                     C
+         93                           NETET=ED(1)-ST(1)+1
+         94                           NEPRD=ED(2)-ST(2)+1
+         95                           NEWED=ED(3)-ST(3)+1
+         96                           NEHEX=ED(4)-ST(4)+1
+         97                     C
+         98                           NCOLOR(1) = 1
+         99                           NCOLOR(2) = 1
+        100                           NCOLOR(3) = 1
+        101                           NCOLOR(4) = 1
+        102                     C
+        103                           NCPART(1,1) = 1
+        104                           NCPART(1,2) = 1
+        105                           NCPART(1,3) = 1
+        106                           NCPART(1,4) = 1
+        107                     C
+        108                           LLOOP(1,1,1) = ST(1)
+        109                           LLOOP(2,1,1) = ED(1) + 1
+        110                           LLOOP(1,1,2) = ST(2)
+        111                           LLOOP(2,1,2) = ED(2) + 1
+        112                           LLOOP(1,1,3) = ST(3)
+        113                           LLOOP(2,1,3) = ED(3) + 1
+        114                           LLOOP(1,1,4) = ST(4)
+        115                           LLOOP(2,1,4) = ED(4) + 1
+        116                     C
+        117                           IF (JSORT.NE.1) GOTO 290
+        118                     C
+        119                           !-----------------------------------------------------
+        120                           ! reordering nodes by inoue method
+        121                           !-----------------------------------------------------
+        122                           WRITE(IUT6,*)
+        123                           WRITE(IUT6,*) ' **REORDR** : SORTING NODE'
+        124                     C
+        125                           ! reordering (make node reordering table)
+        126                           CALL REORD_NODE(LPBTOA, MP, NP,
+        127                          *                NDIVX, NDIVY, NDIVZ,
+        128                          *                X, Y, Z,
+        129                          *                IUT6)
+        130                     
+        131                            ! making after to before table
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.25, ITR: 192, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPBTOA
+                              <<< Loop-information  End >>>
+        132     1   s   2v            DO 200 IP=1,NP
+        133     1   m   2v               LPATOB(LPBTOA(IP))=IP
+        134     1   p   2v       200  CONTINUE
+        135                     C
+        136                           ! update re-ordered node
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 70
+                              <<< Loop-information  End >>>
+        137     1  pp                 DO 210 IE=1,NE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FULL UNROLLING
+                              <<< Loop-information  End >>>
+        138     2   p   fs               DO 220 I=1,8
+        139     2   p   fv                  IP=NODE(I,IE)
+        140     2   p   fs                  IF (IP.EQ.0) GOTO 220
+        141     2   p   fs                  NODE(I,IE) = LPBTOA(IP)
+        142     2   p   fv       220     CONTINUE
+        143     1   p            210  CONTINUE
+        144                     C
+        145                           WRITE(IUT6,*)
+        146                           WRITE(IUT6,*) ' **REORDR** : DONE'
+        147                     C
+        148                      290  CONTINUE
+        149                           IF (JCOLOR.NE.1) GOTO 390
+        150                     C
+        151                           !---------------------------------
+        152                           ! make node connection list
+        153                           !---------------------------------
+        154                           CALL GETMAXREFCOUNT(MP, NP, ME, NE, N2, TYPE, NODE, MAXREF, IUT6)
+        155                           allocate(REFCNT(MP))
+        156                           allocate(REFELM(MAXREF,MP))
+        157                           CALL MAKENODECONNECT(MP, NP, ME, NE, N2, TYPE, NODE, MAXREF,
+        158                          *                     REFCNT, REFELM, IUT6)
+        159                     C
+        160                           !---------------------------------
+        161                           ! define number of parts
+        162                           !---------------------------------
+        163                     C
+        164                           ! define number of parts so that each part will have
+        165                           ! NEIP elements
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FULL UNROLLING
+                              <<< Loop-information  End >>>
+        166     1       f             DO 300 I=1,4
+        167     1       f                NPART(I)=1+(ED(I)-ST(I)+1)/NEIP(I)
+        168     1       f        300  CONTINUE
+        169                     C
+        170                           ! check for tetra
+        171     1                     IF (NPART(1).GT.(ED(1)-ST(1)+1)) THEN
+        172     1                        WRITE(IUT6,*)
+        173     1                        WRITE(IUT6,"('TETRA')")
+        174     1                        WRITE(IUT6,1000)
+        175     1                        WRITE(IUT6,2000) NPART(1),ED(1)-ST(1)+1
+        176     1                        NPART(1)=ED(1)-ST(1)+1
+        177     1                     ENDIF
+        178                           ! check for pyramid
+        179     1                     IF (NPART(2).GT.(ED(2)-ST(2)+1)) THEN
+        180     1                        WRITE(IUT6,*)
+        181     1                        WRITE(IUT6,"('PYRAMID')")
+        182     1                        WRITE(IUT6,1000)
+        183     1                        WRITE(IUT6,2000) NPART(2),ED(2)-ST(2)+1
+        184     1                        NPART(2)=ED(2)-ST(2)+1
+        185     1                     ENDIF
+        186                           ! check for prism
+        187     1                     IF (NPART(3).GT.(ED(3)-ST(3)+1)) THEN
+        188     1                        WRITE(IUT6,*)
+        189     1                        WRITE(IUT6,"('WEDGE')")
+        190     1                        WRITE(IUT6,1000)
+        191     1                        WRITE(IUT6,2000) NPART(3),ED(3)-ST(3)+1
+        192     1                        NPART(3)=ED(3)-ST(3)+1
+        193     1                     ENDIF
+        194                           ! check for hexa
+        195     1                     IF (NPART(4).GT.(ED(4)-ST(4)+1)) THEN
+        196     1                        WRITE(IUT6,*)
+        197     1                        WRITE(IUT6,"('HEXA')")
+        198     1                        WRITE(IUT6,1000)
+        199     1                        WRITE(IUT6,2000) NPART(4),ED(4)-ST(4)+1
+        200     1                        NPART(4)=ED(4)-ST(4)+1
+        201     1                     ENDIF
+        202                     C
+        203                           WRITE(IUT6,*)
+        204                           WRITE(IUT6,"('NPART(TETRA  ) = ',I9)") NPART(1)
+        205                           WRITE(IUT6,"('NPART(PYRAMID) = ',I9)") NPART(2)
+        206                           WRITE(IUT6,"('NPART(WEDGE  ) = ',I9)") NPART(3)
+        207                           WRITE(IUT6,"('NPART(HEXA   ) = ',I9)") NPART(4)
+        208                     C
+        209                           !---------------------------------
+        210                           ! make part(subspace)
+        211                           !---------------------------------
+        212                           WRITE(IUT6,*)
+        213                           WRITE(IUT6,*)
+        214                          *' **REORDR** : MAKING PART AND COLORG FOR EACH TYPE OF ELEMENTS'
+        215                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FULL UNROLLING
+                              <<< Loop-information  End >>>
+        216             f             NCOLOR = 0
+        217                     C      WRITE(IUT80, "('========')")
+        218                     C      WRITE(IUT80, "('TETRA')")
+        219                     C      WRITE(IUT80, "('========')")
+        220                           CALL MAKEPARTCOLOR(MP, NP, ME, NE, N2, TYPE, NODE, MAXREF, REFCNT,
+        221                          *                   REFELM, ST(1), ED(1), NPART(1), NCOLOR(1),
+        222                          *                   MCOLOR, NCPART(:,1), MCPART, LLOOP(:,:,1),
+        223                          *                   LEBTA2, IUT6)
+        224                     C
+        225                     C      WRITE(IUT80, "('========')")
+        226                     C      WRITE(IUT80, "('PYRAMID')")
+        227                     C      WRITE(IUT80, "('========')")
+        228                           CALL MAKEPARTCOLOR(MP, NP, ME, NE, N2, TYPE, NODE, MAXREF, REFCNT,
+        229                          *                   REFELM, ST(2), ED(2), NPART(2), NCOLOR(2),
+        230                          *                   MCOLOR, NCPART(:,2), MCPART, LLOOP(:,:,2),
+        231                          *                   LEBTA2, IUT6)
+        232                     C
+        233                     C      WRITE(IUT80, "('========')")
+        234                     C      WRITE(IUT80, "('PRISM')")
+        235                     C      WRITE(IUT80, "('========')")
+        236                           CALL MAKEPARTCOLOR(MP, NP, ME, NE, N2, TYPE, NODE, MAXREF, REFCNT,
+        237                          *                   REFELM, ST(3), ED(3), NPART(3), NCOLOR(3),
+        238                          *                   MCOLOR, NCPART(:,3), MCPART, LLOOP(:,:,3),
+        239                          *                   LEBTA2, IUT6)
+        240                     C
+        241                     C      WRITE(IUT80, "('========')")
+        242                     C      WRITE(IUT80, "('HEXA')")
+        243                     C      WRITE(IUT80, "('========')")
+        244                           CALL MAKEPARTCOLOR(MP, NP, ME, NE, N2, TYPE, NODE, MAXREF, REFCNT,
+        245                          *                   REFELM, ST(4), ED(4), NPART(4), NCOLOR(4),
+        246                          *                   MCOLOR, NCPART(:,4), MCPART, LLOOP(:,:,4),
+        247                          *                   LEBTA2, IUT6)
+        248                     C
+        249                           WRITE(IUT6,*)
+        250                           WRITE(IUT6,"('TETRA   COLOR = ', I4)") NCOLOR(1)
+        251                           WRITE(IUT6,"('PYRAMID COLOR = ', I4)") NCOLOR(2)
+        252                           WRITE(IUT6,"('PRISM   COLOR = ', I4)") NCOLOR(3)
+        253                           WRITE(IUT6,"('HEXA    COLOR = ', I4)") NCOLOR(4)
+        254                           WRITE(IUT6,*)
+        255                           WRITE(IUT6,*) ' **REORDR** : DONE'
+        256                     C
+        257                      390  CONTINUE
+        258                     C
+        259                     C     MAKING CONVERISON TEBLE
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 667
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.00, ITR: 208, MVE: 6)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LEBTOA, LEBTA1, (unknown)
+                              <<< Loop-information  End >>>
+        260     1   m   2v            DO 400 IE=1,NE
+        261     1   p   2v               IEBUF        =LEBTA1(IE  )
+        262     1   p   2v               IEBUF        =LEBTA2(IEBUF)
+        263     1   p   2v               LEBTOA(IE)   =IEBUF
+        264     1   m   2v               LEATOB(IEBUF)=IE
+        265     1   p   2v       400  CONTINUE
+        266                     C
+        267                           CALL DATCNV(IALE,NP,NE,MWRK,
+        268                          *            NPINLT,NPWALL,NPSYMT,NPFREE,NPCCL ,NPBODY,
+        269                          *            NPINT ,NEFFO ,NPFFO ,NPTEMP,NEHSRC,NPHEAT,
+        270                          *            NPSET ,
+        271                          *            LPINLT,LPWALL,LPSYMT,LPFREE,LPCCL1,LPCCL2,
+        272                          *            LPBODY,LPINT1,LEFFO1,LPFFO1,LPTEMP,LEHSRC,
+        273                          *            LPHEAT,LPSET1,
+        274                          *            LEFRM ,IEATTR,IPATTR,IEMEDA,IEPROP,
+        275                          *            X,Y,Z,XD,YD,ZD,U,V,W,PN,P,T,FL,FE,
+        276                          *            UMESH,VMESH,WMESH,UMESH_P,VMESH_P,WMESH_P,
+        277                          *            LPBTOA,LEBTOA,LWRK01,WRK01,IERR,IUT0)
+        278                     C
+        279                      1000 FORMAT('SPECIFIED PART WAS MORE THAN PROCESSED ELEMENTS')
+        280                      2000 FORMAT('NUMBER OF PART HAS BEEN CHANGED ',I9,' TO ',I9)
+        281                      3000 FORMAT('  COLOR ',I4,' CONTAINS ',I4,' PARTS')
+        282                     C
+        283                           RETURN
+        284                           END
+
+ Diagnostic messages: program name(REORDR)
+   jwd2006i-i  "reordr.f", line 62: この名前'J'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "reordr.f", line 65: この名前'ITMP'は、宣言だけされていて引用されていません。
+   jwd5001p-i  "reordr.f", line 72: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "reordr.f", line 72: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "reordr.f", line 72: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "reordr.f", line 72: ループの繰返し数が128回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "reordr.f", line 76: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "reordr.f", line 76: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "reordr.f", line 76: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "reordr.f", line 76: ループの繰返し数が48回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8215o-i  "reordr.f", line 84: 不完全多重ループを分割して、完全多重ループにしました。
+   jwd5001p-i  "reordr.f", line 84: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "reordr.f", line 84: このDOループをSIMD化しました。(名前:IE)
+   jwd8670o-i  "reordr.f", line 84: ループ内に分岐命令があるため、ソフトウェアパイプライニングを適用できません。
+   jwd6229s-i  "reordr.f", line 86: IF文が存在するため、このDOループのSIMD化を抑止しました。
+   jwd8203o-i  "reordr.f", line 86: ループをフルアンローリングしました。
+   jwd8663o-i  "reordr.f", line 89: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "reordr.f", line 89: ループを展開数4回でアンローリングしました。
+   jwd6001s-i  "reordr.f", line 132: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "reordr.f", line 132: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "reordr.f", line 132: ループの繰返し数が192回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5228p-i  "reordr.f", line 133: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd5001p-i  "reordr.f", line 137: このDOループを並列化しました。(名前:IE)
+   jwd8670o-i  "reordr.f", line 137: ループ内に分岐命令があるため、ソフトウェアパイプライニングを適用できません。
+   jwd6229s-i  "reordr.f", line 138: IF文が存在するため、このDOループのSIMD化を抑止しました。
+   jwd8203o-i  "reordr.f", line 138: ループをフルアンローリングしました。
+   jwd8203o-i  "reordr.f", line 166: ループをフルアンローリングしました。
+   jwd5005p-i  "reordr.f", line 260: このDOループを部分的に並列化しました。(名前:IE)
+   jwd6001s-i  "reordr.f", line 260: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "reordr.f", line 260: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "reordr.f", line 260: ループの繰返し数が208回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5209p-i  "reordr.f", line 264: 配列'LEATOB'の添字式中の変数'IEBUF'をループ中で定義しているため、このDOループは並列化できません。
+
+ Procedure information
+   Lines      : 284
+   Statements : 147
+   Stack(byte): 5728
+   Prefetch num: 0
+
+ External subroutine subprogram "countelemadj"
+  (line-no.)(nest)(optimize)
+        285                     C
+        286                     C=====================================================================
+        287                     C countelemadj
+        288                     C Counts total number of adjacent relationship between elements
+        289                     C
+        290                     C Essential Input:
+        291                     C REFCNT(MP)   Number of owner element refferencing to each node
+        292                     C REFELM(:,MP) Owner element list for each node
+        293                     C
+        294                     C Output:
+        295                     C NEADJ        Total number of element adjacent relationship
+        296                     C
+        297                     C 2012/06/04 Kuma(RIKEN) Fix
+        298                     C=====================================================================
+        299                           subroutine countelemadj(MP, NP, ME, NE, N2, TYPE, NODE,
+        300                          *                        MAXREF, REFCNT, REFELM, IES, IEE, NEADJ,
+        301                          *                        IUT6)
+        302                           implicit none
+        303                     
+        304                           ! argument (entire mesh info)
+        305                           integer(4),intent(in) :: MP
+        306                           integer(4),intent(in) :: NP                ! (NODE)number of nodes
+        307                           integer(4),intent(in) :: ME
+        308                           integer(4),intent(in) :: NE                ! (ELEM)number of elements
+        309                           integer(4),intent(in) :: N2
+        310                           integer(4),intent(in) :: TYPE(ME)          ! (ELEM)type (=number of vertices)
+        311                           integer(4),intent(in) :: NODE(N2,ME)       ! (ELEM)vertices list
+        312                           integer(4),intent(in) :: MAXREF            ! (NODE)maxinum adjacent number
+        313                           integer(4),intent(in) :: REFCNT(MP)        ! (NODE)adjacent number of each node
+        314                           integer(4),intent(in) :: REFELM(MAXREF,MP) ! (NODE)adjacent node list
+        315                     
+        316                           ! argument (processing element range)
+        317                           integer(4),intent(in) :: IES ! first elem index at array NODE
+        318                           integer(4),intent(in) :: IEE ! last elem index at array NODE
+        319                     
+        320                           ! argument (Numuber of All Element Adjacent Relation)
+        321                           integer(4),intent(out) :: NEADJ
+        322                     
+        323                           integer(4),intent(in) :: IUT6
+        324                     
+        325                           ! local
+        326                           integer(4) :: I, J, K, L, M, N, NPE
+        327                           integer(4) :: DUPFLG
+        328                           integer(4) :: NADJ
+        329                           integer(4),allocatable :: ADJELM(:)
+        330                     
+        331                     C      write(IUT6,*)
+        332                     C      write(IUT6,"('countelemadj')")
+        333                     
+        334                           NPE = IEE - IES + 1
+        335                           allocate(ADJELM(NPE))
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2286
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      ADJELM
+                              <<< Loop-information  End >>>
+        336        pp   4v            ADJELM(:) = 0
+        337                     C      write(IUT6,"('IES = ', I8)") IES
+        338                     C      write(IUT6,"('IEE = ', I8)") IEE
+        339                     C      write(IUT6,"('NPE = ', I8)") NPE
+        340                     C      write(IUT6,"('size(ADJELM)=',I12)") size(ADJELM)
+        341                     
+        342                           NEADJ = 0
+        343     1                     do I=IES, IEE
+        344     2                        if(MOD(I-IES+1,100000) .eq. 0) then
+        345     2               C            write(IUT6, "('I=',I7,' /'I7)") I-IES+1,NPE
+        346     2                        endif
+        347     1               
+        348     1                        NADJ = 0
+        349     2                        do J=1, TYPE(I)
+        350     2                           K = NODE(J,I)
+        351     3                           do L=1, REFCNT(K)
+        352     3                              N = REFELM(L,K)
+        353     3               
+        354     3                              ! check duplex
+        355     3                              DUPFLG = 0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 843
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        356     4  pp    v                     do M=1, NADJ
+        357     5   p    v                        if(N .eq. ADJELM(M)) then
+        358     5   p    v                           DUPFLG = 1
+        359     5   p    v                           goto 100
+        360     5   p                             endif
+        361     4   p    v       100           enddo
+        362     3               
+        363     3                              ! add adjacent elem into array ADJELM
+        364     4                              if((DUPFLG .ne. 1) .and. (I   .ne. N) .and.
+        365     4                    *            (IES    .le. N) .and. (IEE .ge. N)) then
+        366     4                                 NADJ = NADJ + 1
+        367     4                                 ADJELM(NADJ) = N
+        368     4                              endif
+        369     3                           enddo
+        370     2                        enddo
+        371     1                        NEADJ = NEADJ + NADJ
+        372     1                     enddo
+        373                     C      write(IUT6,"('NEADJ = ',I12)") NEADJ
+        374                     
+        375                     C      write(IUT6,"('size(ADJELM) = ', I12)") size(ADJELM)
+        376                     
+        377                           deallocate(ADJELM)
+        378                           end subroutine countelemadj
+
+ Diagnostic messages: program name(countelemadj)
+   jwd2008i-i  "reordr.f", line 299: この仮引数'IUT6'は、副プログラム中で使用されていません。
+   jwd2008i-i  "reordr.f", line 299: この仮引数'NE'は、副プログラム中で使用されていません。
+   jwd2008i-i  "reordr.f", line 299: この仮引数'NP'は、副プログラム中で使用されていません。
+   jwd5003p-i  "reordr.f", line 336: この配列記述を並列化しました。
+   jwd6003s-i  "reordr.f", line 336: この配列記述をSIMD化しました。
+   jwd8663o-i  "reordr.f", line 336: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "reordr.f", line 336: ループを展開数4回でアンローリングしました。
+   jwd5202p-i  "reordr.f", line 343: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:NEADJ)
+   jwd5208p-i  "reordr.f", line 343: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:ADJELM)
+   jwd5202p-i  "reordr.f", line 349: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:NADJ)
+   jwd5208p-i  "reordr.f", line 349: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:ADJELM)
+   jwd5202p-i  "reordr.f", line 351: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:NADJ)
+   jwd5208p-i  "reordr.f", line 351: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:ADJELM)
+   jwd5208p-i  "reordr.f", line 351: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:NADJ)
+   jwd5001p-i  "reordr.f", line 356: このDOループを並列化しました。(名前:M)
+   jwd6001s-i  "reordr.f", line 356: このDOループをSIMD化しました。(名前:M)
+
+ Procedure information
+   Lines      : 94
+   Statements : 49
+   Stack(byte): 28080
+   Prefetch num: 0
+
+ External subroutine subprogram "getmaxrefcount"
+  (line-no.)(nest)(optimize)
+        379                     C=====================================================================
+        380                     C getmaxrefcount
+        381                     C Counts maximum number of refference from element to node
+        382                     C (Number of owner element of the node that is reffered most elements)
+        383                     C
+        384                     C Essential Input:
+        385                     C TYPE(ME)    Element type
+        386                     C NODE(N2,ME) Element connectivety
+        387                     C
+        388                     C Output:
+        389                     C MAXREF      Maximum number of refference from element to node
+        390                     C
+        391                     C 2012/06/04 Kuma(RIKEN) Fix
+        392                     C=====================================================================
+        393                           subroutine getmaxrefcount(MP, NP, ME, NE, N2, TYPE, NODE, MAXREF,
+        394                          *                          IUT6)
+        395                           implicit none
+        396                     
+        397                           ! argument
+        398                           integer(4),intent(in)  :: MP
+        399                           integer(4),intent(in)  :: NP
+        400                           integer(4),intent(in)  :: ME
+        401                           integer(4),intent(in)  :: NE
+        402                           integer(4),intent(in)  :: N2
+        403                           integer(4),intent(in)  :: TYPE(ME)
+        404                           integer(4),intent(in)  :: NODE(N2,ME)
+        405                           integer(4),intent(out) :: MAXREF
+        406                           integer(4),intent(in)  :: IUT6
+        407                     
+        408                           ! local
+        409                           integer(4) :: I, J, K
+        410                           integer(4),allocatable :: REFCNT(:)
+        411                     
+        412                           allocate(REFCNT(NP))
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2286
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      REFCNT
+                              <<< Loop-information  End >>>
+        413        pp   4v            REFCNT = 0
+        414                     
+        415                           ! count maximum adjacent count
+        416                           MAXREF = 0
+        417     1                     do I=1, NE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE
+                              <<< Loop-information  End >>>
+        418     2   s   2s               do J=1, TYPE(I)
+        419     2   p   2v                  K = NODE(J,I)
+        420     2               
+        421     2   m   2m                  REFCNT(K) = REFCNT(K) + 1
+        422     3   p   2v                  if(REFCNT(K) .gt. MAXREF) then
+        423     3   p   2v                     MAXREF = REFCNT(K)
+        424     3   p   2v                  endif
+        425     2   p   2v               enddo
+        426     1                     enddo
+        427                     
+        428                     C      write(IUT6,*)
+        429                     C      write(IUT6,"('getmaxrefcount')")
+        430                     C      write(IUT6,"('MAX REFFERENCED COUNT=',I8)") MAXREF
+        431                     
+        432                     C      write(IUT6,*)
+        433                     C      write(IUT6,"('size(REFCNT) = ', I12)") size(REFCNT)
+        434                     
+        435                           deallocate(REFCNT)
+        436                           end subroutine getmaxrefcount
+
+ Diagnostic messages: program name(getmaxrefcount)
+   jwd2008i-i  "reordr.f", line 393: この仮引数'IUT6'は、副プログラム中で使用されていません。
+   jwd2008i-i  "reordr.f", line 393: この仮引数'MP'は、副プログラム中で使用されていません。
+   jwd5003p-i  "reordr.f", line 413: この配列記述を並列化しました。
+   jwd6003s-i  "reordr.f", line 413: この配列記述をSIMD化しました。
+   jwd8663o-i  "reordr.f", line 413: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "reordr.f", line 413: ループを展開数4回でアンローリングしました。
+   jwd5202p-i  "reordr.f", line 417: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:MAXREF)
+   jwd5208p-i  "reordr.f", line 417: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:REFCNT)
+   jwd6229s-i  "reordr.f", line 418: IF文が存在するため、このDOループのSIMD化を抑止しました。
+   jwd8670o-i  "reordr.f", line 418: ループ内に分岐命令があるため、ソフトウェアパイプライニングを適用できません。
+   jwd8202o-i  "reordr.f", line 418: ループを展開数2回でアンローリングしました。
+   jwd5209p-i  "reordr.f", line 421: 配列'REFCNT'の添字式中の変数'K'をループ中で定義しているため、このDOループは並列化できません。
+   jwd6209s-i  "reordr.f", line 421: 配列'REFCNT'の添字式中の変数'K'をループ中で定義しているため、このDOループはSIMD化できません。
+   jwd6202s-i  "reordr.f", line 422: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:MAXREF)
+
+ Procedure information
+   Lines      : 58
+   Statements : 27
+   Stack(byte): 992
+   Prefetch num: 0
+
+ External subroutine subprogram "makenodeconnect"
+  (line-no.)(nest)(optimize)
+        437                     C=====================================================================
+        438                     C makenodeconnect
+        439                     C Make element list refferencing to each node
+        440                     C
+        441                     C Essential Input:
+        442                     C TYPE(ME)    Element type
+        443                     C NODE(N2,ME) Element connectivety
+        444                     C
+        445                     C Output:
+        446                     C REFCNT(MP)   Number of owner element refferencing to each node
+        447                     C REFELM(:,MP) Owner element list for each node
+        448                     C
+        449                     C 2012/06/04 Kuma(RIKEN) Fix
+        450                     C=====================================================================
+        451                           subroutine makenodeconnect(MP, NP, ME, NE, N2, TYPE, NODE,
+        452                          *                           MAXREF, REFCNT, REFELM, IUT6)
+        453                           implicit none
+        454                     
+        455                           ! argument
+        456                           integer(4),intent(in)  :: MP
+        457                           integer(4),intent(in)  :: NP
+        458                           integer(4),intent(in)  :: ME
+        459                           integer(4),intent(in)  :: NE
+        460                           integer(4),intent(in)  :: N2
+        461                           integer(4),intent(in)  :: TYPE(ME)
+        462                           integer(4),intent(in)  :: NODE(N2,ME)
+        463                           integer(4),intent(in)  :: MAXREF
+        464                           integer(4),intent(out) :: REFCNT(MP)
+        465                           integer(4),intent(out) :: REFELM(MAXREF,MP)
+        466                           integer(4),intent(in)  :: IUT6
+        467                     
+        468                           ! local
+        469                           integer(4) :: I, J, K
+        470                     
+        471                     C      write(IUT6,*)
+        472                     C      write(IUT6,"('makenodeconnect')")
+        473                     
+        474                           ! list-up elements that reffer the node.I
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED(lines: 475,476)
+                              <<< Loop-information  End >>>
+        475         p                 REFCNT = 0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 9
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      REFELM
+                              <<< Loop-information  End >>>
+        476        pp   4v            REFELM = 0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE
+                              <<< Loop-information  End >>>
+        477     1                     do I=1, NE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SOFTWARE PIPELINING(IPC: 0.87, ITR: 6, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE
+                              <<< Loop-information  End >>>
+        478     2   s   2s               do J=1, TYPE(I)
+        479     2   p   2v                  K = NODE(J,I)
+        480     2   m   2m                  REFCNT(K) = REFCNT(K) + 1
+        481     2   m   2v                  REFELM(REFCNT(K),K) = I
+        482     2   p   2v               enddo
+        483     1                     enddo
+        484                     
+        485                     #if 0
+        486                           do I=1,NP
+        487                              write(IUT6,"(I7,'(',I3,') ',$)") I,REFCNT(I)
+        488                              do J=1,REFCNT(I)
+        489                                 write(IUT6,"(I7,' ',$)") REFELM(J,I)
+        490                              enddo
+        491                              write(IUT6,*)
+        492                           enddo
+        493                           stop
+        494                     #endif
+        495                     
+        496                           end subroutine
+
+ Diagnostic messages: program name(makenodeconnect)
+   jwd2008i-i  "reordr.f", line 451: この仮引数'IUT6'は、副プログラム中で使用されていません。
+   jwd2008i-i  "reordr.f", line 451: この仮引数'NP'は、副プログラム中で使用されていません。
+   jwd5003p-i  "reordr.f", line 476: この配列記述を並列化しました。
+   jwd6003s-i  "reordr.f", line 476: この配列記述をSIMD化しました。
+   jwd8663o-i  "reordr.f", line 476: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "reordr.f", line 476: ループを展開数4回でアンローリングしました。
+   jwd5208p-i  "reordr.f", line 477: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:REFELM)
+   jwd5208p-i  "reordr.f", line 477: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:REFCNT)
+   jwd6302s-i  "reordr.f", line 478: 部分的なSIMD化による性能向上が得られない可能性があるため、このDOループのSIMD化を抑止しました。
+   jwd8204o-i  "reordr.f", line 478: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "reordr.f", line 478: ループの繰返し数が6回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5209p-i  "reordr.f", line 480: 配列'REFCNT'の添字式中の変数'K'をループ中で定義しているため、このDOループは並列化できません。
+   jwd6209s-i  "reordr.f", line 480: 配列'REFCNT'の添字式中の変数'K'をループ中で定義しているため、このDOループはSIMD化できません。
+   jwd5209p-i  "reordr.f", line 481: 配列'REFELM'の添字式中の変数'K'をループ中で定義しているため、このDOループは並列化できません。
+
+ Procedure information
+   Lines      : 60
+   Statements : 24
+   Stack(byte): 752
+   Prefetch num: 0
+
+ External subroutine subprogram "makepartcolor"
+  (line-no.)(nest)(optimize)
+        497                     C=====================================================================
+        498                     C makepartcolor
+        499                     C Divide mesh into parts, and separate parts into colors so that
+        500                     C adjacent parts will be belong different color
+        501                     C
+        502                     C Essential Input:
+        503                     C REFCNT(MP)   Number of owner element refferencing to each node
+        504                     C REFELM(:,MP) Owner element list for each node
+        505                     C
+        506                     C Output:
+        507                     C TYPE(ME)    Element type (sorted)
+        508                     C NODE(N2,ME) Element connectivety (sorted)
+        509                     C NCOLOR      Number of resultant color
+        510                     C NCPART(:)   Number of parts in each color
+        511                     C LSTART(:,:) Start index of a part in array NODE. For example
+        512                     C             LSTART(2,3)=100 means that 2nd part of 3rd color
+        513                     C             starts in index 100 of array NODE
+        514                     C
+        515                     C 2012/06/04 Kuma(RIKEN) Fix
+        516                     C=====================================================================
+        517                           subroutine makepartcolor(MP, NP, ME, NE, N2, TYPE, NODE, MAXREF,
+        518                          *                         REFCNT, REFELM, IES, IEE, NPART, NCOLOR,
+        519                          *                         NMAXCOL, NCPART, NMAXPRT, LSTART,
+        520                          *                         LEBTOA, IUT6)
+        521                           implicit none
+        522                     
+        523                           ! argument (entire mesh info)
+        524                           integer(4),intent(in)    :: MP
+        525                           integer(4),intent(in)    :: NP                ! (NODE) number of nodes
+        526                           integer(4),intent(in)    :: ME
+        527                           integer(4),intent(in)    :: NE                ! (ELEM) number of elements
+        528                           integer(4),intent(in)    :: N2
+        529                           integer(4),intent(inout) :: TYPE(ME)          ! (ELEM)type (=number of vertices)
+        530                           integer(4),intent(inout) :: NODE(N2,ME)        ! (ELEM)vertices list
+        531                           integer(4),intent(in)    :: MAXREF            ! (NODE)maxinum adjacent number
+        532                           integer(4),intent(in)    :: REFCNT(ME)        ! (NODE)adjacent number of each node
+        533                           integer(4),intent(in)    :: REFELM(MAXREF,ME) ! (NODE)adjacent node list
+        534                           integer(4),intent(in)    :: NPART             ! Number of partitioned parts
+        535                     
+        536                           integer(4),intent(in) :: IES ! first elem index in array NODE
+        537                           integer(4),intent(in) :: IEE ! last elem index in array NODE
+        538                     
+        539                           integer(4),intent(out) :: NCOLOR  ! number of resultant color
+        540                           integer(4),intent(in)  :: NMAXCOL ! maxinum number of color
+        541                           integer(4),intent(out) :: NCPART(NMAXCOL) ! number of part of each color
+        542                           integer(4),intent(in)  :: NMAXPRT ! maxinum number of parts of each color
+        543                           integer(4),intent(out) :: LSTART(NMAXPRT, NMAXCOL)
+        544                           integer(4),intent(out) :: LEBTOA(ME)
+        545                           integer(4),intent(in)  :: IUT6
+        546                     
+        547                           ! local
+        548                           integer(4) :: NPE
+        549                           integer(4) :: I, J, K, L, M, N, P
+        550                           integer(4),allocatable :: XADJE(:)
+        551                           integer(4),allocatable :: YADJE(:)
+        552                           integer(4),allocatable :: WORKE(:)
+        553                           integer(4) :: DUPFLG
+        554                           integer(4) :: NADJ
+        555                           integer(4) :: MAX, MIN
+        556                           integer(4) :: NEADJ
+        557                     
+        558                           ! local
+        559                           integer(4),allocatable :: WORKP(:)
+        560                           integer(4),allocatable :: WORKC(:)
+        561                           integer(4),allocatable :: XPELE(:)
+        562                           integer(4),allocatable :: YPELE(:)
+        563                           integer(4),allocatable :: XADJP(:)
+        564                           integer(4),allocatable :: YADJP(:)
+        565                     
+        566                           ! local
+        567                           integer(4),allocatable :: PARTC(:)     ! (PART)
+        568                           integer(4),allocatable :: ADJFLG(:)    ! (PART)
+        569                           integer(4),allocatable :: WK_TYPE(:)   ! (ELEM)
+        570                           integer(4),allocatable :: WK_NODE(:,:) ! (ELEM)
+        571                     
+        572                           ! local part number contained each color
+        573                           integer(4),allocatable :: XCOLP(:)
+        574                           integer(4),allocatable :: YCOLP(:)
+        575                     
+        576                           ! number of processed elements
+        577                           NPE = IEE - IES + 1
+        578                           if(NPE .eq. 0) return
+        579                     
+        580                     C      write(IUT6,*)
+        581                     C      write(IUT6,"('makepartcolor')")
+        582                     
+        583                           !---------------------------------
+        584                           ! make element adjacent list
+        585                           !---------------------------------
+        586                           call countelemadj(MP, NP, ME, NE, N2, TYPE, NODE, MAXREF, REFCNT,
+        587                          *                 REFELM, IES, IEE, NEADJ, IUT6)
+        588                           allocate(XADJE(NPE+1))
+        589                           allocate(YADJE(NEADJ+1))
+        590                           call makeelemadj(MP, NP, ME, NE, N2, TYPE, NODE, MAXREF, REFCNT,
+        591                          *                 REFELM, IES, IEE, NEADJ, XADJE, YADJE, IUT6)
+        592                     #if 0
+        593                           write(IUT6,*)
+        594                           write(IUT6,"('ELEMENT RELATIONSHIP')")
+        595                           do I=1,NPE
+        596                              write(IUT6,"(I7,'(',I7,')',$)") I, XADJE(I+1)-XADJE(I)
+        597                              do J=XADJE(I), XADJE(I+1)-1
+        598                                 write(IUT6,"(I7, ' ',$)") YADJE(J)
+        599                              enddo
+        600                              write(IUT6,*)
+        601                           enddo
+        602                           stop
+        603                     #endif
+        604                     
+        605                           !---------------------------------
+        606                           ! call metis
+        607                           !---------------------------------
+        608                           allocate(WORKE(NPE))
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2286
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WORKE
+                              <<< Loop-information  End >>>
+        609        pp   4v            WORKE = 1
+        610     1                     if(NPART .ne. 1) then
+        611     1               #ifndef NOMETIS
+        612     1                        call callmetis(NPE, NEADJ, XADJE, YADJE, NPART, WORKE, IUT6)
+        613     1               #endif
+        614     1                     endif
+        615                     #if 0
+        616                           do I=1,NPE
+        617                              write(IUT6,"('ELEM 'I8,' IS BELOING TO PART ',I8)")
+        618                          *        I+(NPE-1), WORKE(I)
+        619                           enddo
+        620                           stop
+        621                     #endif
+        622                     
+        623                           !-----------------------
+        624                           ! write partitioned part info
+        625                           !-----------------------
+        626                           allocate(WORKP(NPART))
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2286
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WORKP
+                              <<< Loop-information  End >>>
+        627        pp   4v            WORKP = 0
+        628                     #if 0
+        629                           do I=1, NPE
+        630                              J = WORKE(I)
+        631                              WORKP(J) = WORKP(J) + 1
+        632                           enddo
+        633                           write(IUT6,"('NUM PART = ', I8)") NPART
+        634                           write(IUT6,"('PART NO.,   ELEMS')")
+        635                           MAX = 0
+        636                           MIN = WORKP(1)
+        637                           do I=1, NPART
+        638                              write(IUT6, "(I8,' ',I8)") I, WORKP(I)
+        639                              if(WORKP(I) .gt. MAX) MAX = WORKP(I)
+        640                              if(WORKP(I) .lt. MIN) MIN = WORKP(I)
+        641                           enddo
+        642                           write(IUT6,"('MAX = ', I8)") MAX
+        643                           write(IUT6,"('MIN = ', I8)") MIN
+        644                           write(IUT6,"('AVE = ', I8)") NPE / NPART
+        645                     #endif
+        646                     
+        647                           !-----------------------------------------
+        648                           ! make element list contained in each part
+        649                           !-----------------------------------------
+        650                           allocate(XPELE(NPART+1))
+        651                           allocate(YPELE(NPE))
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2286
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      XPELE
+                              <<< Loop-information  End >>>
+        652        pp   4v            XPELE = 0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2286
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      YPELE
+                              <<< Loop-information  End >>>
+        653        pp   4v            YPELE = 0
+        654                     
+        655                           ! count elements belonging to each part
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SOFTWARE PIPELINING(IPC: 0.54, ITR: 6, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WORKE
+                              <<< Loop-information  End >>>
+        656     1   s   2s            do I=1, NPE
+        657     1   p   2v               J = WORKE(I)
+        658     1   m   2m               XPELE(J) = XPELE(J) + 1
+        659     1   p   2v            enddo
+        660                     #if 0
+        661                           do I=1, NPART
+        662                              write(IUT6,"('PART ',I4,' HAS ',I4,' ELEMS')") I, XPELE(I)
+        663                           enddo
+        664                           stop
+        665                     #endif
+        666                     
+        667                           ! adjust XPELE into CSR format
+        668                           J = 0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SOFTWARE PIPELINING(IPC: 3.16, ITR: 28, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      XPELE
+                              <<< Loop-information  End >>>
+        669     1   s   4s            do I=1, NPART+1
+        670     1   s   4s               K = XPELE(I)
+        671     1   s   4s               XPELE(I) = J + 1
+        672     1   s   4s               J = J + K
+        673     1   s   4s            enddo
+        674                     
+        675                           ! substitute elems into part
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2286
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WORKP
+                              <<< Loop-information  End >>>
+        676        pp   4v            WORKP = 0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SOFTWARE PIPELINING(IPC: 1.00, ITR: 8, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WORKE
+                              <<< Loop-information  End >>>
+        677     1   s   2s            do I=1, NPE
+        678     1   p   2v               J = WORKE(I)
+        679     1   m   2m               YPELE(XPELE(J) + WORKP(J)) = I
+        680     1   s   2s               WORKP(J) = WORKP(J) + 1
+        681     1   p   2v            enddo
+        682                     #if 0
+        683                           write(IUT6,*)
+        684                           write(IUT6,"('PART LIST')")
+        685                           do I=1,NPART
+        686                              write(IUT6,"(I4,'(',I4,')',$)") I, XPELE(I+1)-XPELE(I)
+        687                              do J=XPELE(I), XPELE(I+1)-1
+        688                                 write(IUT6,"(I7, ' ',$)") YPELE(J)
+        689                     
+        690                                 K=YPELE(J)
+        691                                 if(I .ne. WORKE(K)) then
+        692                                    write(IUT6,"('WRONG')")
+        693                                 endif
+        694                              enddo
+        695                              write(IUT6,*)
+        696                           enddo
+        697                     #endif
+        698                     
+        699                           !-----------------------
+        700                           ! make part relationship
+        701                           !-----------------------
+        702                           allocate(XADJP(NPART+1))
+        703                           allocate(YADJP(NPART*NPART)) !! optimal array size is under considering 05/16
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2286
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      XADJP
+                              <<< Loop-information  End >>>
+        704        pp   4v            XADJP  = 1
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2286
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      YADJP
+                              <<< Loop-information  End >>>
+        705        pp   4v            YADJP  = 0
+        706                           NADJ   = 1
+        707     1                     do I=1, NPART
+        708     2                        do J=XPELE(I), XPELE(I+1)-1
+        709     2                           K = YPELE(J) ! element
+        710     2               
+        711     2                           ! search element adjacent list
+        712     3                           do L=XADJE(K), XADJE(K+1)-1
+        713     3                              M = YADJE(L) ! one of adjacent element of element K
+        714     3                              N = WORKE(M) ! belonging part of element K
+        715     3               #ifdef _DEBUG
+        716     3                              write(IUT6,"(' PART ',I2,$)") I
+        717     3                              write(IUT6,"(' ELM ',I2,'(',I2,')',$)") K,WORKE(K)
+        718     3                              write(IUT6,"(' ELM ',I2,'(',I2,')',$)") M,WORKE(M)
+        719     3               #endif
+        720     4                              if(I .ne. N) then
+        721     4               #ifdef _DEBUG
+        722     4                                 write(IUT6,"('  !')")
+        723     4               #endif
+        724     4                                 DUPFLG = 0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1067
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        725     5  pp    v                        do P=XADJP(I),NADJ
+        726     6   p    v                           if(N .eq. YADJP(P)) then
+        727     6   p    v                              DUPFLG = 1
+        728     6   p    v                              continue
+        729     6   p    v                           endif
+        730     5   p    v                        enddo
+        731     4               
+        732     5                                 if(DUPFLG .ne. 1) then
+        733     5                                    YADJP(NADJ) = N
+        734     5                                    NADJ = NADJ + 1
+        735     5                                 endif
+        736     4               #ifdef _DEBUG
+        737     4                              else
+        738     4                                 write(IUT6,*)
+        739     4               #endif
+        740     4                              endif
+        741     3                           enddo
+        742     2                        enddo
+        743     1                        XADJP(I+1) = NADJ
+        744     1                     enddo
+        745                     #if 0
+        746                           write(IUT6,*)
+        747                           write(IUT6,"('PART RELATIONSHIP')")
+        748                           do I=1,NPART
+        749                              write(IUT6,"(I3,'(',I3,')',$)") I, XADJP(I+1)-XADJP(I)
+        750                              do J=XADJP(I), XADJP(I+1)-1
+        751                                 write(IUT6,"(I3, ' ',$)") YADJP(J)
+        752                              enddo
+        753                              write(IUT6,*)
+        754                           enddo
+        755                     #endif
+        756                     
+        757                           !-----------------------
+        758                           ! do coloring
+        759                           !-----------------------
+        760                           allocate(PARTC(NPART))
+        761                           allocate(ADJFLG(NPART))
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2286
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      PARTC
+                              <<< Loop-information  End >>>
+        762        pp   4v            PARTC  = 0
+        763                     #if 0
+        764                           write(IUT6,*)
+        765                           write(IUT6,"('PART ADJACENT MATRIX')")
+        766                           do I=1, NPART
+        767                              ADJFLG = 0
+        768                             do J=XADJP(I),XADJP(I+1)-1
+        769                                 K = YADJP(J)
+        770                                 ADJFLG(K) = ADJFLG(K) + 1
+        771                              enddo
+        772                     
+        773                              do J=1, NPART
+        774                                 write(IUT6,"(I2,' ',$)") ADJFLG(J)
+        775                              enddo
+        776                              write(IUT6,*)
+        777                           enddo
+        778                           write(IUT6,*)
+        779                     #endif
+        780                     
+        781                           NCOLOR = 0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      YADJP
+                              <<< Loop-information  End >>>
+        782     1                     do I=1,NPART
+        783     1                        if(PARTC(I) .ne. 0) goto 100
+        784     1                        NCOLOR = NCOLOR + 1
+        785     1                        PARTC(I) = NCOLOR
+        786     1               
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2286
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      ADJFLG
+                              <<< Loop-information  End >>>
+        787     1  pp   4v               ADJFLG = 0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SOFTWARE PIPELINING(IPC: 0.54, ITR: 6, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      YADJP
+                              <<< Loop-information  End >>>
+        788     2   s   2s               do J=XADJP(I),XADJP(I+1)-1
+        789     2   p   2v                  K = YADJP(J)
+        790     2   m   2m                  ADJFLG(K) = ADJFLG(K) + 1
+        791     2   p   2v               enddo
+        792     1               
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      YADJP
+                              <<< Loop-information  End >>>
+        793     2                        do J=1,NPART
+        794     2                           if(J .eq. I)         goto 200
+        795     2                           if(PARTC(J) .ne. 0)  goto 200
+        796     2                           if(ADJFLG(J) .ne. 0) goto 200
+        797     2                           PARTC(J) = NCOLOR
+        798     2               
+        799     2                           ! superimpose part.J's adjacent info
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SOFTWARE PIPELINING(IPC: 0.54, ITR: 6, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      YADJP
+                              <<< Loop-information  End >>>
+        800     3   s   2s                  do K=XADJP(J),XADJP(J+1)-1
+        801     3   p   2v                     L = YADJP(K)
+        802     3   m   2m                     ADJFLG(L) = ADJFLG(L) + 1
+        803     3   p   2v                  enddo
+        804     2                200     enddo
+        805     1                100  enddo
+        806                     
+        807                     !      write(IUT6,*)
+        808                     !      write(IUT6,"('COLOR INFO')")
+        809                     !      do I=1, NPART
+        810                     !         write(IUT6,"('PART ',I3,' BELONGS COLOR ',I3)") I,PARTC(I)
+        811                     !      enddo
+        812                     
+        813                           !-----------------------
+        814                           ! store part into color
+        815                           !-----------------------
+        816                           allocate(XCOLP(NCOLOR+1))
+        817                           allocate(YCOLP(NPART))
+        818                           allocate(WORKC(NCOLOR))
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2286
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      XCOLP
+                              <<< Loop-information  End >>>
+        819        pp   4v            XCOLP = 0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2286
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      YCOLP
+                              <<< Loop-information  End >>>
+        820        pp   4v            YCOLP = 0
+        821                     
+        822                           ! count parts beloinging to each color
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SOFTWARE PIPELINING(IPC: 0.54, ITR: 6, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      PARTC
+                              <<< Loop-information  End >>>
+        823     1   s   2s            do I=1, NPART
+        824     1   p   2v               J = PARTC(I)
+        825     1   m   2m               XCOLP(J) = XCOLP(J) + 1
+        826     1   p   2v            enddo
+        827                     
+        828                           ! adjust XCOLP into CSR format
+        829                           J = 0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SOFTWARE PIPELINING(IPC: 3.16, ITR: 28, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      XCOLP
+                              <<< Loop-information  End >>>
+        830     1   s   4s            do I=1, NCOLOR+1
+        831     1   s   4s               K = XCOLP(I)
+        832     1   s   4s               XCOLP(I) = J + 1
+        833     1   s   4s               J = J + K
+        834     1   s   4s            enddo
+        835                     
+        836                           ! substitute parts into color
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2286
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WORKC
+                              <<< Loop-information  End >>>
+        837        pp   4v            WORKC = 0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SOFTWARE PIPELINING(IPC: 1.00, ITR: 8, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      PARTC
+                              <<< Loop-information  End >>>
+        838     1   s   2s            do I=1, NPART
+        839     1   p   2v               J = PARTC(I)
+        840     1   m   2m               YCOLP(XCOLP(J) + WORKC(J)) = I
+        841     1   s   2s               WORKC(J) = WORKC(J) + 1
+        842     1   p   2v            enddo
+        843                     
+        844                     C      write(IUT6,*)
+        845                     C      write(IUT6,"('RESULTANT COLOR =',I3,' COLOR')") NCOLOR
+        846                     C      write(IUT6,"('COLOR INFO (CONTAINED PARTS)')")
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.50, ITR: 256, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      XCOLP, NCPART
+                              <<< Loop-information  End >>>
+        847     1  pp   2v            do I=1,NCOLOR
+        848     1   p   2v               NCPART(I) = XCOLP(I+1)-XCOLP(I)
+        849     1               
+        850     1               C         write(IUT6,"(I3,'(',I3,'): ',$)") I, NCPART(I)
+        851     1               C         do J=XCOLP(I),XCOLP(I+1)-1
+        852     1               C            write(IUT6,"(I3,' ',$)") YCOLP(J)
+        853     1               C         enddo
+        854     1               C         write(IUT6,*)
+        855     1   p   2v            enddo
+        856                     
+        857                           !---------------------------------
+        858                           ! sort elems by part and color
+        859                           !---------------------------------
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2286
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WORKE
+                              <<< Loop-information  End >>>
+        860        pp   4v            WORKE = 0
+        861                           N     = 1
+        862     1                     do I=1,NCOLOR                         ! iterate color (color.I)
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      YPELE, WORKE
+                              <<< Loop-information  End >>>
+        863     2                        do J=XCOLP(I),XCOLP(I+1)-1         ! iterate part in the color (part.K)
+        864     2                           K=YCOLP(J)
+        865     2                           LSTART(J-XCOLP(I)+1,I) = N+(IES-1)
+        866     2               
+        867     2               !            write(IUT6,"('|',5I7)") I, J-XCOLP(I)+1, J, K,
+        868     2               !     *           LSTART(J-XCOLP(I)+1,I)
+        869     2               
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1143
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.66, ITR: 352, MVE: 5)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      YPELE, WORKE
+                              <<< Loop-information  End >>>
+        870     3  pp   2v                  do L=XPELE(K),XPELE(K+1)-1      ! iterate elem in the part
+        871     3   p   2v                     WORKE(N) = YPELE(L)+(IES-1)
+        872     3   p   2v                     N = N + 1
+        873     3   p   2v                  enddo
+        874     2                        enddo
+        875     1                        LSTART(J-XCOLP(I)+1,I) = N+(IES-1)
+        876     1               !         write(IUT6,"('*',5I7)") I,J-XCOLP(I)+1,J,K,
+        877     1               !     *        LSTART(J-XCOLP(I)+1,I)
+        878     1                     enddo
+        879                     
+        880                     !      do I=1,NPE
+        881                     !         write(IUT6,"(I8,' ->',I8,'(',I1,')',$)") I,WORKE(I),TYPE(WORKE(I))
+        882                     !         if(WORKE(I) .lt. IES .or. WORKE(I) .gt. IEE) then
+        883                     !            write(IUT6,"('  WRONG')")
+        884                     !         else
+        885                     !            write(IUT6,*)
+        886                     !         endif
+        887                     !      enddo
+        888                     !      stop
+        889                     
+        890                           ! sort elems into local array
+        891                           allocate(WK_TYPE(NE))
+        892                           allocate(WK_NODE(8,NE))
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED(lines: 893,894)
+                              <<< Loop-information  End >>>
+        893         p                 WK_TYPE = 0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 198
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED
+                              <<<    SIMD(VL: 8)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WK_TYPE, WK_NODE
+                              <<< Loop-information  End >>>
+        894        pp   2v            WK_NODE = 0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 45
+                              <<<  [OPTIMIZATION]
+                              <<<    SOFTWARE PIPELINING(IPC: 2.87, ITR: 112, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WK_TYPE, WORKE
+                              <<< Loop-information  End >>>
+        895     1  pp   2             do I=1,NPE
+        896     1   p   2                J = WORKE(I)
+        897     1   p   2                WK_TYPE(I) = TYPE(J)
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<< Loop-information  End >>>
+        898     2   p   2v               do K=1,8
+        899     2   p   2v                  WK_NODE(K,I) = NODE(K,J)
+        900     2   p   2v               enddo
+        901     1   p   2             enddo
+        902                     
+        903                           ! superimpose sorted elems in array NODE and TYPE
+        904                     !      write(IUT6,"('substitute')")
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 45
+                              <<<  [OPTIMIZATION]
+                              <<<    SOFTWARE PIPELINING(IPC: 3.00, ITR: 64, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WK_TYPE, TYPE
+                              <<< Loop-information  End >>>
+        905     1  pp   2             do I=1,NPE
+        906     1   p   2                K = I+IES-1
+        907     1   p   2                TYPE(K) = WK_TYPE(I)
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<< Loop-information  End >>>
+        908     2   p   2v               do J=1,8
+        909     2   p   2v                  NODE(J,K) = WK_NODE(J,I)
+        910     2   p   2v               enddo
+        911     1               !         write(IUT6,"('IES=',I0,' IEE=',I0,' LOCAL=',I0,' GLOBAL=',I0)")
+        912     1               !     *        IES, IEE, I, I+IES-1
+        913     1   p   2             enddo
+        914                     
+        915                     C     ADDED BY MIZUHO
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.25, ITR: 192, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WORKE
+                              <<< Loop-information  End >>>
+        916     1   s   2v            DO I=1,NPE
+        917     1   p   2v               J=WORKE(I)
+        918     1   m   2v               LEBTOA(J)=I+IES-1
+        919     1   p   2v            ENDDO
+        920                     C
+        921                     C      write(IUT6,*)
+        922                     C      write(IUT6,"('size(XADJE)  = ',I12)") size(XADJE)
+        923                     C      write(IUT6,"('size(YADJE)  = ',I12)") size(YADJE)
+        924                     C      write(IUT6,"('size(WORKE)  = ',I12)") size(WORKE)
+        925                     C      write(IUT6,"('size(WORKP)  = ',I12)") size(WORKP)
+        926                     C      write(IUT6,"('size(WORKC)  = ',I12)") size(WORKC)
+        927                     C      write(IUT6,"('size(XPELE)  = ',I12)") size(XPELE)
+        928                     C      write(IUT6,"('size(YPELE)  = ',I12)") size(YPELE)
+        929                     C      write(IUT6,"('size(XADJP)  = ',I12)") size(XADJP)
+        930                     C      write(IUT6,"('size(YADJP)  = ',I12)") size(YADJP)
+        931                     C      write(IUT6,"('size(PARTC)  = ',I12)") size(PARTC)
+        932                     C      write(IUT6,"('size(ADJFLG) = ',I12)") size(ADJFLG)
+        933                     C      write(IUT6,"('size(XCOLP)  = ',I12)") size(XCOLP)
+        934                     C      write(IUT6,"('size(YCOLP)  = ',I12)") size(YCOLP)
+        935                     C      write(IUT6,"('TOTAL        = ',I12)") size(XADJE) + size(YADJE) +
+        936                     C     *     size(WORKE) + size(WORKP) + size(XPELE) + size(YPELE) +
+        937                     C     *     size(XADJP) + size(YADJP) + size(PARTC) + size(ADJFLG) +
+        938                     C     *     size(XCOLP) + size(YCOLP) + size(WORKC)
+        939                     
+        940                           deallocate(XADJE)
+        941                           deallocate(YADJE)
+        942                           deallocate(WORKE)
+        943                           deallocate(WORKP)
+        944                           deallocate(XPELE)
+        945                           deallocate(YPELE)
+        946                           deallocate(XADJP)
+        947                           deallocate(YADJP)
+        948                           deallocate(PARTC)
+        949                           deallocate(ADJFLG)
+        950                           deallocate(XCOLP)
+        951                           deallocate(YCOLP)
+        952                           deallocate(WORKC)
+        953                     
+        954                           end subroutine makepartcolor
+
+ Diagnostic messages: program name(makepartcolor)
+   jwd2006i-i  "reordr.f", line 555: この名前'MIN'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "reordr.f", line 555: この名前'MAX'は、宣言だけされていて引用されていません。
+   jwd5003p-i  "reordr.f", line 609: この配列記述を並列化しました。
+   jwd6003s-i  "reordr.f", line 609: この配列記述をSIMD化しました。
+   jwd8663o-i  "reordr.f", line 609: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "reordr.f", line 609: ループを展開数4回でアンローリングしました。
+   jwd5003p-i  "reordr.f", line 627: この配列記述を並列化しました。
+   jwd6003s-i  "reordr.f", line 627: この配列記述をSIMD化しました。
+   jwd8663o-i  "reordr.f", line 627: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "reordr.f", line 627: ループを展開数4回でアンローリングしました。
+   jwd5003p-i  "reordr.f", line 652: この配列記述を並列化しました。
+   jwd6003s-i  "reordr.f", line 652: この配列記述をSIMD化しました。
+   jwd8663o-i  "reordr.f", line 652: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "reordr.f", line 652: ループを展開数4回でアンローリングしました。
+   jwd5003p-i  "reordr.f", line 653: この配列記述を並列化しました。
+   jwd6003s-i  "reordr.f", line 653: この配列記述をSIMD化しました。
+   jwd8663o-i  "reordr.f", line 653: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "reordr.f", line 653: ループを展開数4回でアンローリングしました。
+   jwd8204o-i  "reordr.f", line 656: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "reordr.f", line 656: ループの繰返し数が6回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5209p-i  "reordr.f", line 658: 配列'XPELE'の添字式中の変数'J'をループ中で定義しているため、このDOループは並列化できません。
+   jwd6209s-i  "reordr.f", line 658: 配列'XPELE'の添字式中の変数'J'をループ中で定義しているため、このDOループはSIMD化できません。
+   jwd8204o-i  "reordr.f", line 669: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "reordr.f", line 669: ループの繰返し数が28回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5202p-i  "reordr.f", line 671: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:J)
+   jwd6202s-i  "reordr.f", line 671: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:J)
+   jwd5003p-i  "reordr.f", line 676: この配列記述を並列化しました。
+   jwd6003s-i  "reordr.f", line 676: この配列記述をSIMD化しました。
+   jwd8663o-i  "reordr.f", line 676: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "reordr.f", line 676: ループを展開数4回でアンローリングしました。
+   jwd8204o-i  "reordr.f", line 677: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "reordr.f", line 677: ループの繰返し数が8回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5228p-i  "reordr.f", line 679: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd5209p-i  "reordr.f", line 679: 配列'WORKP'の添字式中の変数'J'をループ中で定義しているため、このDOループは並列化できません。
+   jwd6209s-i  "reordr.f", line 679: 配列'WORKP'の添字式中の変数'J'をループ中で定義しているため、このDOループはSIMD化できません。
+   jwd5003p-i  "reordr.f", line 704: この配列記述を並列化しました。
+   jwd6003s-i  "reordr.f", line 704: この配列記述をSIMD化しました。
+   jwd8663o-i  "reordr.f", line 704: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "reordr.f", line 704: ループを展開数4回でアンローリングしました。
+   jwd5003p-i  "reordr.f", line 705: この配列記述を並列化しました。
+   jwd6003s-i  "reordr.f", line 705: この配列記述をSIMD化しました。
+   jwd8663o-i  "reordr.f", line 705: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "reordr.f", line 705: ループを展開数4回でアンローリングしました。
+   jwd5202p-i  "reordr.f", line 707: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:NADJ)
+   jwd5201p-i  "reordr.f", line 707: データの引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:XADJP)
+   jwd5208p-i  "reordr.f", line 707: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:YADJP)
+   jwd5202p-i  "reordr.f", line 712: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:NADJ)
+   jwd5208p-i  "reordr.f", line 712: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:YADJP)
+   jwd5208p-i  "reordr.f", line 712: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:NADJ)
+   jwd5001p-i  "reordr.f", line 725: このDOループを並列化しました。(名前:P)
+   jwd6001s-i  "reordr.f", line 725: このDOループをSIMD化しました。(名前:P)
+   jwd5003p-i  "reordr.f", line 762: この配列記述を並列化しました。
+   jwd6003s-i  "reordr.f", line 762: この配列記述をSIMD化しました。
+   jwd8663o-i  "reordr.f", line 762: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "reordr.f", line 762: ループを展開数4回でアンローリングしました。
+   jwd5202p-i  "reordr.f", line 782: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:NCOLOR)
+   jwd5208p-i  "reordr.f", line 782: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:PARTC)
+   jwd5208p-i  "reordr.f", line 782: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:ADJFLG)
+   jwd5003p-i  "reordr.f", line 787: この配列記述を並列化しました。
+   jwd6003s-i  "reordr.f", line 787: この配列記述をSIMD化しました。
+   jwd8663o-i  "reordr.f", line 787: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "reordr.f", line 787: ループを展開数4回でアンローリングしました。
+   jwd6302s-i  "reordr.f", line 788: 部分的なSIMD化による性能向上が得られない可能性があるため、このDOループのSIMD化を抑止しました。
+   jwd8204o-i  "reordr.f", line 788: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "reordr.f", line 788: ループの繰返し数が6回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5209p-i  "reordr.f", line 790: 配列'ADJFLG'の添字式中の変数'K'をループ中で定義しているため、このDOループは並列化できません。
+   jwd6209s-i  "reordr.f", line 790: 配列'ADJFLG'の添字式中の変数'K'をループ中で定義しているため、このDOループはSIMD化できません。
+   jwd5208p-i  "reordr.f", line 793: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:ADJFLG)
+   jwd8204o-i  "reordr.f", line 800: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "reordr.f", line 800: ループの繰返し数が6回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5209p-i  "reordr.f", line 802: 配列'ADJFLG'の添字式中の変数'L'をループ中で定義しているため、このDOループは並列化できません。
+   jwd6209s-i  "reordr.f", line 802: 配列'ADJFLG'の添字式中の変数'L'をループ中で定義しているため、このDOループはSIMD化できません。
+   jwd5003p-i  "reordr.f", line 819: この配列記述を並列化しました。
+   jwd6003s-i  "reordr.f", line 819: この配列記述をSIMD化しました。
+   jwd8663o-i  "reordr.f", line 819: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "reordr.f", line 819: ループを展開数4回でアンローリングしました。
+   jwd5003p-i  "reordr.f", line 820: この配列記述を並列化しました。
+   jwd6003s-i  "reordr.f", line 820: この配列記述をSIMD化しました。
+   jwd8663o-i  "reordr.f", line 820: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "reordr.f", line 820: ループを展開数4回でアンローリングしました。
+   jwd8204o-i  "reordr.f", line 823: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "reordr.f", line 823: ループの繰返し数が6回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5209p-i  "reordr.f", line 825: 配列'XCOLP'の添字式中の変数'J'をループ中で定義しているため、このDOループは並列化できません。
+   jwd6209s-i  "reordr.f", line 825: 配列'XCOLP'の添字式中の変数'J'をループ中で定義しているため、このDOループはSIMD化できません。
+   jwd8204o-i  "reordr.f", line 830: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "reordr.f", line 830: ループの繰返し数が28回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5202p-i  "reordr.f", line 832: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:J)
+   jwd6202s-i  "reordr.f", line 832: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:J)
+   jwd5003p-i  "reordr.f", line 837: この配列記述を並列化しました。
+   jwd6003s-i  "reordr.f", line 837: この配列記述をSIMD化しました。
+   jwd8663o-i  "reordr.f", line 837: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "reordr.f", line 837: ループを展開数4回でアンローリングしました。
+   jwd8204o-i  "reordr.f", line 838: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "reordr.f", line 838: ループの繰返し数が8回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5228p-i  "reordr.f", line 840: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd5209p-i  "reordr.f", line 840: 配列'WORKC'の添字式中の変数'J'をループ中で定義しているため、このDOループは並列化できません。
+   jwd6209s-i  "reordr.f", line 840: 配列'WORKC'の添字式中の変数'J'をループ中で定義しているため、このDOループはSIMD化できません。
+   jwd5001p-i  "reordr.f", line 847: このDOループを並列化しました。(名前:I)
+   jwd6001s-i  "reordr.f", line 847: このDOループをSIMD化しました。(名前:I)
+   jwd8204o-i  "reordr.f", line 847: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "reordr.f", line 847: ループの繰返し数が256回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5003p-i  "reordr.f", line 860: この配列記述を並列化しました。
+   jwd6003s-i  "reordr.f", line 860: この配列記述をSIMD化しました。
+   jwd8663o-i  "reordr.f", line 860: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "reordr.f", line 860: ループを展開数4回でアンローリングしました。
+   jwd5202p-i  "reordr.f", line 862: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:N)
+   jwd5208p-i  "reordr.f", line 862: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:WORKE)
+   jwd5001p-i  "reordr.f", line 870: このDOループを並列化しました。(名前:L)
+   jwd6001s-i  "reordr.f", line 870: このDOループをSIMD化しました。(名前:L)
+   jwd8204o-i  "reordr.f", line 870: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "reordr.f", line 870: ループの繰返し数が352回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5003p-i  "reordr.f", line 894: この配列記述を並列化しました。
+   jwd6003s-i  "reordr.f", line 894: この配列記述をSIMD化しました。
+   jwd5001p-i  "reordr.f", line 895: このDOループを並列化しました。(名前:I)
+   jwd8204o-i  "reordr.f", line 895: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "reordr.f", line 895: ループの繰返し数が112回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd6001s-i  "reordr.f", line 898: このDOループをSIMD化しました。(名前:K)
+   jwd5001p-i  "reordr.f", line 905: このDOループを並列化しました。(名前:I)
+   jwd8204o-i  "reordr.f", line 905: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "reordr.f", line 905: ループの繰返し数が64回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd6001s-i  "reordr.f", line 908: このDOループをSIMD化しました。(名前:J)
+   jwd6001s-i  "reordr.f", line 916: このDOループをSIMD化しました。(名前:I)
+   jwd8204o-i  "reordr.f", line 916: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "reordr.f", line 916: ループの繰返し数が192回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5209p-i  "reordr.f", line 918: 配列'LEBTOA'の添字式中の変数'J'をループ中で定義しているため、このDOループは並列化できません。
+
+ Procedure information
+   Lines      : 458
+   Statements : 201
+   Stack(byte): 36976
+   Prefetch num: 0
+
+ External subroutine subprogram "makeelemadj"
+  (line-no.)(nest)(optimize)
+        955                     C=====================================================================
+        956                     C makeelemadj
+        957                     C Make element adjacent list
+        958                     C
+        959                     C Essential Input:
+        960                     C REFCNT(MP)   Number of owner element refferencing to each node
+        961                     C REFELM(:,MP) Owner element list for each node
+        962                     C
+        963                     C Output:
+        964                     C XADJE, YADJE  Element adjacent list as CSR
+        965                     C
+        966                     C 2012/06/04 Kuma(RIKEN) Fix
+        967                     C=====================================================================
+        968                           subroutine makeelemadj(MP, NP, ME, NE, N2, TYPE, NODE, MAXREF,
+        969                          *                       REFCNT, REFELM, IES, IEE, NEADJ, XADJE,
+        970                          *                       YADJE, IUT6)
+        971                           implicit none
+        972                     
+        973                           ! argument (entire mesh info)
+        974                           integer(4),intent(in) :: MP
+        975                           integer(4),intent(in) :: NP                ! (NODE)number of nodes
+        976                           integer(4),intent(in) :: ME
+        977                           integer(4),intent(in) :: NE                ! (ELEM)number of elements
+        978                           integer(4),intent(in) :: N2
+        979                           integer(4),intent(in) :: TYPE(ME)          ! (ELEM)type (=number of vertices)
+        980                           integer(4),intent(in) :: NODE(N2,ME)        ! (ELEM)vertices list
+        981                           integer(4),intent(in) :: MAXREF            ! (NODE)maxinum adjacent number
+        982                           integer(4),intent(in) :: REFCNT(MP)        ! (NODE)adjacent number of each node
+        983                           integer(4),intent(in) :: REFELM(MAXREF,MP) ! (NODE)adjacent node list
+        984                     
+        985                           ! argument (processing element range)
+        986                           integer(4),intent(in) :: IES ! start elem index in array NODE
+        987                           integer(4),intent(in) :: IEE ! end   elem index in array NODE
+        988                     
+        989                           ! argument (element adjacent list in CSR)
+        990                           integer(4),intent(in)  :: NEADJ
+        991                           integer(4),intent(out) :: XADJE(IEE-IES+2)
+        992                           integer(4),intent(out) :: YADJE(NEADJ+1)
+        993                     
+        994                           integer(4),intent(in) :: IUT6
+        995                     
+        996                           ! local
+        997                           integer(4) :: I, J, K, L, M, N
+        998                           integer(4) :: DUPFLG
+        999                           integer(4) :: NUMADJ
+       1000                           integer(4) :: NADJ
+       1001                           integer(4),allocatable :: ADJELM(:)
+       1002                           integer(4) :: NPE ! number of processed elements
+       1003                     
+       1004                     C      write(IUT6,*)
+       1005                     C      write(IUT6,"('makeelemadj')")
+       1006                     
+       1007                           NPE = IEE - IES + 1
+       1008                           allocate(ADJELM(NPE))
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2286
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      XADJE
+                              <<< Loop-information  End >>>
+       1009        pp   4v            XADJE(:)  = 1
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2286
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      YADJE
+                              <<< Loop-information  End >>>
+       1010        pp   4v            YADJE(:)  = 0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2286
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      ADJELM
+                              <<< Loop-information  End >>>
+       1011        pp   4v            ADJELM(:) = 0
+       1012                     C      write(IUT6,"('IES = ', I8)") IES
+       1013                     C      write(IUT6,"('IEE = ', I8)") IEE
+       1014                     C      write(IUT6,"('NPE = ', I8)") NPE
+       1015                     C      write(IUT6,"('size(XADJE) =',I12)") size(XADJE)
+       1016                     C      write(IUT6,"('size(YADJE) =',I12)") size(YADJE)
+       1017                     C      write(IUT6,"('size(ADJELM)=',I12)") size(ADJELM)
+       1018                     
+       1019                           NUMADJ = 1
+       1020     1                     do I=IES, IEE
+       1021     2                        if(MOD(I-IES+1,100000) .eq. 0) then
+       1022     2               C            write(IUT6, "('I=',I7,' /'I7)") I-IES+1,NPE
+       1023     2                        endif
+       1024     1               
+       1025     1                        NADJ = 0
+       1026     2                        do J=1, TYPE(I)
+       1027     2                           K = NODE(J,I)
+       1028     3                           do L=1, REFCNT(K)
+       1029     3                              N = REFELM(L,K)
+       1030     3               
+       1031     3                              ! check duplex
+       1032     3                              DUPFLG = 0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 843
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+       1033     4  pp    v                     do M=1, NADJ
+       1034     5   p    v                        if(N .eq. ADJELM(M)) then
+       1035     5   p    v                           DUPFLG = 1
+       1036     5   p    v                           goto 100
+       1037     5   p                             endif
+       1038     4   p    v       100           enddo
+       1039     3               
+       1040     3                              ! add adjacent elem into array ADJELM
+       1041     4                              if((DUPFLG .ne. 1) .and. (I   .ne. N) .and.
+       1042     4                    *            (IES    .le. N) .and. (IEE .ge. N)) then
+       1043     4                                 NADJ = NADJ + 1
+       1044     4                                 ADJELM(NADJ) = N
+       1045     4                              endif
+       1046     3                           enddo
+       1047     2                        enddo
+       1048     1               
+       1049     1                        ! convert into csr
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      ADJELM
+                              <<< Loop-information  End >>>
+       1050     2       2s               do J=1, NADJ
+       1051     3       2v                  if(ADJELM(J) .ne. I) then
+       1052     3       2s                     YADJE(NUMADJ) = ADJELM(J)
+       1053     3       2m                     NUMADJ = NUMADJ + 1
+       1054     3       2v                  endif
+       1055     2       2v               enddo
+       1056     1                        XADJE((I-IES+1)+1) = NUMADJ
+       1057     1                     enddo
+       1058                     #if 0
+       1059                           open(100, file="csr.txt", form='formatted')
+       1060                           write(100,"(8I8)") (XADJE(J), J=1, NE+1)
+       1061                           write(100,"(8I8)") (ADJNCY(J), J=1, size(ADJNCY))
+       1062                           close(100)
+       1063                           stop
+       1064                     #endif
+       1065                     
+       1066                     #if 0
+       1067                           !---------------------------------
+       1068                           ! check
+       1069                           !---------------------------------
+       1070                           do I=1,NPE
+       1071                     !         write(IUT6,"(I8,'('I3,')',$)") I,XADJE(I+1)-XADJE(I)
+       1072                              do J=XADJE(I), XADJE(I+1)-1
+       1073                                 K = YADJE(J)
+       1074                     !            write(IUT6,"(I7, ' ',$)") K
+       1075                                 if(K .lt. IES .or. K .gt. IEE) write(IUT6,"('WRONG')")
+       1076                                 if(TYPE(K) .ne. TYPE(IES))     write(IUT6,"('WRONG')")
+       1077                              enddo
+       1078                     !         write(IUT6,*)
+       1079                           enddo
+       1080                     #endif
+       1081                     
+       1082                           !---------------------------------
+       1083                           ! convert golbal index to local index
+       1084                           ! local index starts IES
+       1085                           !---------------------------------
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      YADJE
+                              <<< Loop-information  End >>>
+       1086     1                     do I=1,NPE
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1334
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.00, ITR: 416, MVE: 7)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      YADJE
+                              <<< Loop-information  End >>>
+       1087     2  pp   2v               do J=XADJE(I),XADJE(I+1)-1
+       1088     2   p   2v                  YADJE(J) = YADJE(J) - IES + 1
+       1089     2   p   2v               enddo
+       1090     1                     enddo
+       1091                     
+       1092                           deallocate(ADJELM)
+       1093                           end subroutine makeelemadj
+
+ Diagnostic messages: program name(makeelemadj)
+   jwd2008i-i  "reordr.f", line 968: この仮引数'IUT6'は、副プログラム中で使用されていません。
+   jwd2008i-i  "reordr.f", line 968: この仮引数'NE'は、副プログラム中で使用されていません。
+   jwd2008i-i  "reordr.f", line 968: この仮引数'NP'は、副プログラム中で使用されていません。
+   jwd5003p-i  "reordr.f", line 1009: この配列記述を並列化しました。
+   jwd6003s-i  "reordr.f", line 1009: この配列記述をSIMD化しました。
+   jwd8663o-i  "reordr.f", line 1009: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "reordr.f", line 1009: ループを展開数4回でアンローリングしました。
+   jwd5003p-i  "reordr.f", line 1010: この配列記述を並列化しました。
+   jwd6003s-i  "reordr.f", line 1010: この配列記述をSIMD化しました。
+   jwd8663o-i  "reordr.f", line 1010: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "reordr.f", line 1010: ループを展開数4回でアンローリングしました。
+   jwd5003p-i  "reordr.f", line 1011: この配列記述を並列化しました。
+   jwd6003s-i  "reordr.f", line 1011: この配列記述をSIMD化しました。
+   jwd8663o-i  "reordr.f", line 1011: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "reordr.f", line 1011: ループを展開数4回でアンローリングしました。
+   jwd5202p-i  "reordr.f", line 1020: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:NUMADJ)
+   jwd5208p-i  "reordr.f", line 1020: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:YADJE)
+   jwd5208p-i  "reordr.f", line 1020: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:ADJELM)
+   jwd5202p-i  "reordr.f", line 1026: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:NADJ)
+   jwd5208p-i  "reordr.f", line 1026: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:ADJELM)
+   jwd5202p-i  "reordr.f", line 1028: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:NADJ)
+   jwd5208p-i  "reordr.f", line 1028: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:ADJELM)
+   jwd5208p-i  "reordr.f", line 1028: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:NADJ)
+   jwd5001p-i  "reordr.f", line 1033: このDOループを並列化しました。(名前:M)
+   jwd6001s-i  "reordr.f", line 1033: このDOループをSIMD化しました。(名前:M)
+   jwd5228p-i  "reordr.f", line 1050: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd6229s-i  "reordr.f", line 1050: IF文が存在するため、このDOループのSIMD化を抑止しました。
+   jwd8670o-i  "reordr.f", line 1050: ループ内に分岐命令があるため、ソフトウェアパイプライニングを適用できません。
+   jwd8202o-i  "reordr.f", line 1050: ループを展開数2回でアンローリングしました。
+   jwd6228s-i  "reordr.f", line 1052: データの定義引用の順序が逐次実行と異なる可能性があるため、このDOループはSIMD化できません。
+   jwd5208p-i  "reordr.f", line 1086: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:YADJE)
+   jwd5001p-i  "reordr.f", line 1087: このDOループを並列化しました。(名前:J)
+   jwd6001s-i  "reordr.f", line 1087: このDOループをSIMD化しました。(名前:J)
+   jwd8204o-i  "reordr.f", line 1087: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "reordr.f", line 1087: ループの繰返し数が416回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+
+ Procedure information
+   Lines      : 139
+   Statements : 66
+   Stack(byte): 29216
+   Prefetch num: 0
+
+ External subroutine subprogram "reord_node"
+  (line-no.)(nest)(optimize)
+       1094                     C=====================================================================
+       1095                     C reord_node
+       1096                     C Reordering node number
+       1097                     C
+       1098                     C Essential Input:
+       1099                     C x(mp),y(mp), z(mp)  coordinates
+       1100                     C numx,numy,numz      divide number of xyz axis
+       1101                     C
+       1102                     C Output:
+       1103                     C num_reorder(mp)     table from original to reordered
+       1104                     C=====================================================================
+       1105                           subroutine reord_node(num_reorder,mp, np, numx, numy, numz,
+       1106                          *                      x, y, z, IUT6)
+       1107                           implicit none
+       1108                     
+       1109                           ! arguments
+       1110                           integer(4),intent(out) :: num_reorder(mp)
+       1111                           integer(4),intent( in) :: mp
+       1112                           integer(4),intent( in) :: np
+       1113                           integer(4),intent( in) :: IUT6
+       1114                           integer(4),intent( in) :: numx, numy, numz
+       1115                           real(4),   intent( in) :: x(mp), y(mp), z(mp)
+       1116                     
+       1117                           ! local
+       1118                           integer*4 num,i,numx_pos,numy_pos,numz_pos,ii,jj,kk,
+       1119                          *          max_num_box,ic,itotal,icc,ll,iold
+       1120                           real*8    xl_ratio,yl_ratio,zl_ratio,
+       1121                          *          posx_max,posy_max,posz_max,posx_min,posy_min,posz_min,
+       1122                          *          posx,posy,posz,postx,posty,postz,xunit,yunit,zunit
+       1123                           real*8,dimension(:,:),allocatable :: pos
+       1124                           integer*4,dimension(:,:,:),allocatable :: icount_in
+       1125                           integer*4,dimension(:,:,:),allocatable :: icount_out
+       1126                           integer*4,dimension(:,:,:,:),allocatable :: num_new_in
+       1127                           integer*4,dimension(:,:,:,:),allocatable :: num_new_out
+       1128                           integer*4 :: iout,iin
+       1129                     
+       1130                           !! param
+       1131                           parameter(xl_ratio=0.1,yl_ratio=0.1,zl_ratio=0.1)
+       1132                     
+       1133                           ! allocate and initialize
+       1134                           num = np
+       1135                           allocate(pos(3,num))
+       1136                           allocate(icount_in (numx,numy,numz))
+       1137                           allocate(icount_out(numx,numy,numz))
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 471
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.20, ITR: 64, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      z, x, y, pos
+                              <<< Loop-information  End >>>
+       1138     1  pp    v            do i = 1, num
+       1139     1   p    v               pos(1,i) = x(i)
+       1140     1   p    v               pos(2,i) = y(i)
+       1141     1   p    v               pos(3,i) = z(i)
+       1142     1   p    v            enddo
+       1143                     
+       1144                           write(IUT6, "(/,'DIVISION NUMBER')")
+       1145                           write(IUT6, "('X: ', I0)") numx
+       1146                           write(IUT6, "('Y: ', I0)") numy
+       1147                           write(IUT6, "('Z: ', I0)") numz
+       1148                     
+       1149                           write(IUT6, "(/,'BOUNDARY RATIO')")
+       1150                           write(IUT6, "('X: ', F24.18)") xl_ratio
+       1151                           write(IUT6, "('Y: ', F24.18)") yl_ratio
+       1152                           write(IUT6, "('Z: ', F24.18)") zl_ratio
+       1153                     
+       1154                           ! search max,min position for x-y-z direction
+       1155                           posx_max = 0.0
+       1156                           posy_max = 0.0
+       1157                           posz_max = 0.0
+       1158                           posx_min = 1.0e+20
+       1159                           posy_min = 1.0e+20
+       1160                           posz_min = 1.0e+20
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 286
+                              <<< Loop-information  End >>>
+       1161     1  pp    s            do i = 1,num
+       1162     1   p    s               posx = pos(1,i)
+       1163     1   p    s               posy = pos(2,i)
+       1164     1   p    s               posz = pos(3,i)
+       1165     2   p    s               if(posx < posx_min ) then
+       1166     2   p    s                  posx_min = posx
+       1167     2   p    s               endif
+       1168     2   p    s               if(posy < posy_min ) then
+       1169     2   p    s                  posy_min = posy
+       1170     2   p    s               endif
+       1171     2   p    s               if(posz < posz_min ) then
+       1172     2   p    s                  posz_min = posz
+       1173     2   p    s               endif
+       1174     2   p    s               if(posx_max < posx ) then
+       1175     2   p    s                  posx_max = posx
+       1176     2   p    s               endif
+       1177     2   p    s               if(posy_max < posy ) then
+       1178     2   p    s                  posy_max = posy
+       1179     2   p    s               endif
+       1180     2   p    s               if(posz_max < posz ) then
+       1181     2   p    s                  posz_max = posz
+       1182     2   p    s               endif
+       1183     1   p    s            end do
+       1184                           write(IUT6, "(/,'MINIMUM AND MAXIMUM COORDINATE')")
+       1185                           write(IUT6, "('X:', F10.7, ' to', F10.7)") posx_min, posx_max
+       1186                           write(IUT6, "('Y:', F10.7, ' to', F10.7)") posy_min, posy_max
+       1187                           write(IUT6, "('Z:', F10.7, ' to', F10.7)") posz_min, posz_max
+       1188                     
+       1189                           !! calculation x-y-z unit
+       1190                           xunit = (posx_max - posx_min) / numx
+       1191                           yunit = (posy_max - posy_min) / numy
+       1192                           zunit = (posz_max - posz_min) / numz
+       1193                     C      write(IUT6, "(/,'DIVISION LENGTH')")
+       1194                     C      write(IUT6, "('X:', F10.7)") xunit
+       1195                     C      write(IUT6, "('Y:', F10.7)") yunit
+       1196                     C      write(IUT6, "('Z:', F10.7)") zunit
+       1197                     
+       1198                           ! count number of nodes belonging to the subdivision
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      icount_in
+                              <<< Loop-information  End >>>
+       1199        pp   4v            icount_in = 0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      pos
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 4  FILL 11
+                              <<<      SIMD&FP   : SPILL 0  FILL 7
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+       1200     1   s    s            do i = 1,num
+       1201     1   p    v               posx = pos(1,i) - posx_min
+       1202     1   p    v               posy = pos(2,i) - posy_min
+       1203     1   p    v               posz = pos(3,i) - posz_min
+       1204     1               
+       1205     2   p    s               if(posx .eq. 0.0) then
+       1206     2   p    s                  numx_pos = 1
+       1207     2   p    s               else
+       1208     2   p    s                  numx_pos = int((posx - 1.0e-10) / xunit) +1
+       1209     2   p    v               end if
+       1210     2   p    s               if(numx_pos < 0 ) then
+       1211     2   m    s                  write(6,*) 'minus x_number o!!urs i=',i
+       1212     2   p    v               endif
+       1213     1               
+       1214     2   p    s               if(posy .eq. 0.0) then
+       1215     2   p    s                  numy_pos = 1
+       1216     2   p    s               else
+       1217     2   p    s                  numy_pos = int((posy - 1.0e-10) / yunit) + 1
+       1218     2   p    v               end if
+       1219     2   p    s               if(numy_pos < 0 ) then
+       1220     2   m    s                  write(6,*) 'minus y_number o!!urs i=',i
+       1221     2   p    v               endif
+       1222     1               
+       1223     2   p    s               if(posz .eq. 0.0) then
+       1224     2   p    s                  numz_pos = 1
+       1225     2   p    s               else
+       1226     2   p    s                  numz_pos = int((posz - 1.0e-10) / zunit) + 1
+       1227     2   p    v               end if
+       1228     2   p    s               if(numz_pos < 0 ) then
+       1229     2   m    s                  write(6,*) 'minus z_number o!!urs i=',i
+       1230     2   p    v               endif
+       1231     1               
+       1232     1   m    m               icount_in(numx_pos,numy_pos,numz_pos) =
+       1233     1                    *   icount_in(numx_pos,numy_pos,numz_pos)+1
+       1234     1   p    v            end do
+       1235                     
+       1236                           ! search max number of box points
+       1237                           max_num_box = 0
+       1238     1                     do kk=1,numz
+       1239     2                     do jj=1,numy
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1067
+                              <<< Loop-information  End >>>
+       1240     3  pp    s            do ii=1,numx
+       1241     3   p    s               ic=icount_in(ii,jj,kk)
+       1242     4   p    s               if(max_num_box < ic) then
+       1243     4   p    s                  max_num_box = ic
+       1244     4   p    s               end if
+       1245     3   p    s            end do
+       1246     2                     end do
+       1247     1                     end do
+       1248                     
+       1249                           ! allocate section
+       1250                           allocate(num_new_in(max_num_box,numx,numy,numz))
+       1251                           allocate(num_new_out(max_num_box,numx,numy,numz))
+       1252                     
+       1253                           ! make the lists containing node amount in inner region and
+       1254                           ! outer region of a subudivision
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      icount_in
+                              <<< Loop-information  End >>>
+       1255        pp   4v            icount_in   = 0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      icount_out
+                              <<< Loop-information  End >>>
+       1256        pp   4v            icount_out  = 0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      num_new_out, num_new_in
+                              <<< Loop-information  End >>>
+       1257        pp   2v            num_new_in  = 0
+       1258         p   2v            num_new_out = 0
+       1259                     
+       1260                           iin  = 0
+       1261                           iout = 0
+       1262     1   s    s            do i = 1,num
+       1263     1   p    v               posx = pos(1,i) - posx_min
+       1264     1   p    v               posy = pos(2,i) - posy_min
+       1265     1   p    v               posz = pos(3,i) - posz_min
+       1266     1               
+       1267     2   p    v               if(posx .eq. 0.0) then
+       1268     2   p    v                  numx_pos = 1
+       1269     2   p    v                  postx    = posx
+       1270     2   p    v               else
+       1271     2   p    v                  numx_pos = int((posx - 1.0E-10 ) / xunit) + 1
+       1272     2   p    v                  postx    = posx - (numx_pos - 1) * xunit
+       1273     2   p    v               end if
+       1274     1               
+       1275     2   p    v               if(posy .eq. 0.0) then
+       1276     2   p    v                  numy_pos = 1
+       1277     2   p    v                  posty    = posy
+       1278     2   p    v               else
+       1279     2   p    v                  numy_pos = int((posy - 1.0e-10) / yunit) + 1
+       1280     2   p    v                  posty    = posy - (numy_pos - 1) * yunit
+       1281     2   p    v               end if
+       1282     1               
+       1283     2   p    v               if(posz .eq. 0.0) then
+       1284     2   p    v                  numz_pos = 1
+       1285     2   p    v                  postz    = posz
+       1286     2   p    v               else
+       1287     2   p    v                  numz_pos = int((posz - 1.0e-10) / zunit) + 1
+       1288     2   p    v                  postz    = posz - (numz_pos - 1) * zunit
+       1289     2   p    v               end if
+       1290     1               
+       1291     1                        ! check outer or inner
+       1292     2   p    v               if(xunit*xl_ratio .le. postx                .and.
+       1293     2                    &      postx          .le. xunit*(1.0-xl_ratio) .and.
+       1294     2                    &      yunit*yl_ratio .le. posty                .and.
+       1295     2                    &      posty          .le. yunit*(1.0-yl_ratio) .and.
+       1296     2                    &      zunit*zl_ratio .le. postz                .and.
+       1297     2                    &      postz          .le. zunit*(1.0-zl_ratio)) then
+       1298     2               
+       1299     2                           ! inner
+       1300     2   m    m                  icount_in(numx_pos,numy_pos,numz_pos) =
+       1301     2                    &      icount_in(numx_pos,numy_pos,numz_pos)+1
+       1302     2               
+       1303     2   m    v                  num_new_in(icount_in(numx_pos,numy_pos,numz_pos),
+       1304     2                    &                           numx_pos,numy_pos,numz_pos)=i
+       1305     2   p    v                  iin=iin+1
+       1306     2   p    v               else
+       1307     2                           ! outer
+       1308     2   m    m                  icount_out(numx_pos,numy_pos,numz_pos) =
+       1309     2                    &      icount_out(numx_pos,numy_pos,numz_pos)+1
+       1310     2   m    v                  num_new_out(icount_out(numx_pos,numy_pos,numz_pos),
+       1311     2                    &                             numx_pos,numy_pos,numz_pos)=i
+       1312     2   p    v                  iout=iout+1
+       1313     2   p    v               end if
+       1314     1   p    v            end do
+       1315                     C      write(IUT6, "(/,'CONTAINING NODES IN EACH DIVISION')")
+       1316                           ITOTAL = 0
+       1317     1                     do kk=1,numz
+       1318     2                     do jj=1,numy
+       1319     3                     do ii=1,numx
+       1320     3               C         write(IUT6, 1000) ii,jj,kk,
+       1321     3               C     *                     icount_in(ii,jj,kk),
+       1322     3               C     *                     icount_out(ii,jj,kk)
+       1323     3                1000    format('(',I2,',',I2,',',I2,') -> Inner(',I3,'), Outer(',I3')')
+       1324     3                        ITOTAL = ITOTAL + icount_in(ii,jj,kk) +
+       1325     3                    *                     icount_out(ii,jj,kk)
+       1326     3                     enddo
+       1327     2                     enddo
+       1328     1                     enddo
+       1329                     C      write(IUT6, "('TOTAL: ',I0, ' NODES')") ITOTAL
+       1330                     
+       1331                           ! make renumber list
+       1332                           icc = 0
+       1333     1                     do kk=1,numz
+       1334     2                     do jj=1,numy
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      num_new_in, num_new_out
+                              <<< Loop-information  End >>>
+       1335     3                     do ii=1,numx
+       1336     3               
+       1337     3                        ic=icount_in(ii,jj,kk)
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.25, ITR: 192, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      num_new_in
+                              <<< Loop-information  End >>>
+       1338     4   s   2v               do ll=1,ic
+       1339     4   p   2v                  iold = num_new_in(ll,ii,jj,kk)
+       1340     4   p   2v                  icc  = icc + 1
+       1341     4   m   2v                  num_reorder(iold)=icc
+       1342     4   p   2v               end do
+       1343     3               
+       1344     3                        ic=icount_out(ii,jj,kk)
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.25, ITR: 192, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      num_new_out
+                              <<< Loop-information  End >>>
+       1345     4   s   2v               do ll=1,ic
+       1346     4   p   2v                  iold = num_new_out(ll,ii,jj,kk)
+       1347     4   p   2v                  icc  = icc + 1
+       1348     4   m   2v                  num_reorder(iold)=icc
+       1349     4   p   2v               end do
+       1350     3                     end do
+       1351     2                     end do
+       1352     1                     end do
+       1353                           deallocate(icount_in)
+       1354                           deallocate(icount_out)
+       1355                           deallocate(num_new_in)
+       1356                           deallocate(num_new_out)
+       1357                     
+       1358                           return
+       1359                           end subroutine reord_node
+
+ Diagnostic messages: program name(reord_node)
+   jwd5001p-i  "reordr.f", line 1138: このDOループを並列化しました。(名前:i)
+   jwd6001s-i  "reordr.f", line 1138: このDOループをSIMD化しました。(名前:i)
+   jwd8204o-i  "reordr.f", line 1138: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "reordr.f", line 1138: ループの繰返し数が64回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5004p-i  "reordr.f", line 1161: リダクション演算を含むDOループを並列化しました。(名前:i)
+   jwd6229s-i  "reordr.f", line 1161: IF文が存在するため、このDOループのSIMD化を抑止しました。
+   jwd6202s-i  "reordr.f", line 1165: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:posx_min)
+   jwd6202s-i  "reordr.f", line 1168: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:posy_min)
+   jwd6202s-i  "reordr.f", line 1171: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:posz_min)
+   jwd6202s-i  "reordr.f", line 1174: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:posx_max)
+   jwd6202s-i  "reordr.f", line 1177: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:posy_max)
+   jwd6202s-i  "reordr.f", line 1180: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:posz_max)
+   jwd5003p-i  "reordr.f", line 1199: この配列記述を並列化しました。
+   jwd6003s-i  "reordr.f", line 1199: この配列記述をSIMD化しました。
+   jwd8663o-i  "reordr.f", line 1199: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "reordr.f", line 1199: ループを展開数4回でアンローリングしました。
+   jwd6229s-i  "reordr.f", line 1200: IF文が存在するため、このDOループのSIMD化を抑止しました。
+   jwd8664o-i  "reordr.f", line 1200: ループ内に関数呼出しなどの最適化対象外の命令があるため、ソフトウェアパイプライニングを適用できません。
+   jwd5121p-i  "reordr.f", line 1211: DOループ内に、自動並列化の制約となる入出力文が存在します。
+   jwd6121s-i  "reordr.f", line 1211: DOループ内に、SIMD化の制約となる入出力文が存在します。
+   jwd5121p-i  "reordr.f", line 1220: DOループ内に、自動並列化の制約となる入出力文が存在します。
+   jwd6121s-i  "reordr.f", line 1220: DOループ内に、SIMD化の制約となる入出力文が存在します。
+   jwd5121p-i  "reordr.f", line 1229: DOループ内に、自動並列化の制約となる入出力文が存在します。
+   jwd6121s-i  "reordr.f", line 1229: DOループ内に、SIMD化の制約となる入出力文が存在します。
+   jwd5209p-i  "reordr.f", line 1232: 配列'icount_in'の添字式中の変数'numz_pos'をループ中で定義しているため、このDOループは並列化できません。
+   jwd6209s-i  "reordr.f", line 1232: 配列'icount_in'の添字式中の変数'numz_pos'をループ中で定義しているため、このDOループはSIMD化できません。
+   jwd5202p-i  "reordr.f", line 1238: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:max_num_box)
+   jwd5202p-i  "reordr.f", line 1239: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:max_num_box)
+   jwd5004p-i  "reordr.f", line 1240: リダクション演算を含むDOループを並列化しました。(名前:ii)
+   jwd6229s-i  "reordr.f", line 1240: IF文が存在するため、このDOループのSIMD化を抑止しました。
+   jwd6202s-i  "reordr.f", line 1242: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:max_num_box)
+   jwd5003p-i  "reordr.f", line 1255: この配列記述を並列化しました。
+   jwd6003s-i  "reordr.f", line 1255: この配列記述をSIMD化しました。
+   jwd8663o-i  "reordr.f", line 1255: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "reordr.f", line 1255: ループを展開数4回でアンローリングしました。
+   jwd5003p-i  "reordr.f", line 1256: この配列記述を並列化しました。
+   jwd6003s-i  "reordr.f", line 1256: この配列記述をSIMD化しました。
+   jwd8663o-i  "reordr.f", line 1256: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "reordr.f", line 1256: ループを展開数4回でアンローリングしました。
+   jwd5003p-i  "reordr.f", line 1257: この配列記述を並列化しました。
+   jwd6003s-i  "reordr.f", line 1257: この配列記述をSIMD化しました。
+   jwd8663o-i  "reordr.f", line 1257: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "reordr.f", line 1257: ループを展開数2回でアンローリングしました。
+   jwd6229s-i  "reordr.f", line 1262: IF文が存在するため、このDOループのSIMD化を抑止しました。
+   jwd8670o-i  "reordr.f", line 1262: ループ内に分岐命令があるため、ソフトウェアパイプライニングを適用できません。
+   jwd5209p-i  "reordr.f", line 1300: 配列'icount_in'の添字式中の変数'numz_pos'をループ中で定義しているため、このDOループは並列化できません。
+   jwd6209s-i  "reordr.f", line 1300: 配列'icount_in'の添字式中の変数'numz_pos'をループ中で定義しているため、このDOループはSIMD化できません。
+   jwd5209p-i  "reordr.f", line 1303: 配列'num_new_in'の添字式中の変数'numz_pos'をループ中で定義しているため、このDOループは並列化できません。
+   jwd5209p-i  "reordr.f", line 1308: 配列'icount_out'の添字式中の変数'numz_pos'をループ中で定義しているため、このDOループは並列化できません。
+   jwd6209s-i  "reordr.f", line 1308: 配列'icount_out'の添字式中の変数'numz_pos'をループ中で定義しているため、このDOループはSIMD化できません。
+   jwd5209p-i  "reordr.f", line 1310: 配列'num_new_out'の添字式中の変数'numz_pos'をループ中で定義しているため、このDOループは並列化できません。
+   jwd5202p-i  "reordr.f", line 1333: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:icc)
+   jwd5208p-i  "reordr.f", line 1333: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:num_reorder)
+   jwd5202p-i  "reordr.f", line 1334: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:icc)
+   jwd5208p-i  "reordr.f", line 1334: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:num_reorder)
+   jwd5202p-i  "reordr.f", line 1335: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:icc)
+   jwd5208p-i  "reordr.f", line 1335: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:num_reorder)
+   jwd6001s-i  "reordr.f", line 1338: このDOループをSIMD化しました。(名前:ll)
+   jwd8204o-i  "reordr.f", line 1338: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "reordr.f", line 1338: ループの繰返し数が192回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5209p-i  "reordr.f", line 1341: 配列'num_reorder'の添字式中の変数'iold'をループ中で定義しているため、このDOループは並列化できません。
+   jwd6001s-i  "reordr.f", line 1345: このDOループをSIMD化しました。(名前:ll)
+   jwd8204o-i  "reordr.f", line 1345: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "reordr.f", line 1345: ループの繰返し数が192回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5209p-i  "reordr.f", line 1348: 配列'num_reorder'の添字式中の変数'iold'をループ中で定義しているため、このDOループは並列化できません。
+
+ Procedure information
+   Lines      : 266
+   Statements : 189
+   Stack(byte): 99120
+   Prefetch num: 0
+
+ External subroutine subprogram "sortelem"
+  (line-no.)(nest)(optimize)
+       1360                     C=====================================================================
+       1361                     C sortelem
+       1362                     C sort elems by element kind order
+       1363                     C   Tetra, Tetra, ..., Pyramid, Pyramid, ..., Prism, Prism, ...,
+       1364                     C   Hexa, Hexa
+       1365                     C
+       1366                     C Essential Input:
+       1367                     C NODE(N2,ME)       Element connectivety (sorted)
+       1368                     C
+       1369                     C Output:
+       1370                     C TYPE(ME)          Element type (sorted)
+       1371                     C NODE(N2,ME)       Element connectivety (sorted)
+       1372                     C ST(4), ED(4)      Start and end index of each element type in NODE
+       1373                     C
+       1374                     C 2012/06/04 Kuma(RIKEN) Fix
+       1375                     C=====================================================================
+       1376                           subroutine sortelem(ME, NE, N2, TYPE, NODE, ST, ED, LEBTOA, IUT6)
+       1377                           implicit none
+       1378                     
+       1379                           ! argument
+       1380                           integer(4),intent(in)    :: ME
+       1381                           integer(4),intent(in)    :: NE
+       1382                           integer(4),intent(in)    :: N2
+       1383                           integer(4),intent(inout) :: TYPE(ME)
+       1384                           integer(4),intent(inout) :: NODE(N2,ME)
+       1385                           integer(4),intent(out)   :: ST(4)
+       1386                           integer(4),intent(out)   :: ED(4)
+       1387                           integer(4),intent(out)   :: LEBTOA(ME)
+       1388                           integer(4),intent(in)    :: IUT6
+       1389                     
+       1390                           ! local
+       1391                           integer(4) :: I, J, K
+       1392                           integer(4),allocatable :: WK_INDEX(:)
+       1393                           integer(4),allocatable :: WK_NODE(:,:)
+       1394                           integer(4),allocatable :: WK_TYPE(:)
+       1395                     
+       1396                           ! count each type element
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FULL UNROLLING
+                              <<< Loop-information  End >>>
+       1397             f             ST = 0
+       1398             f             ED = 0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 267
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+       1399     1  pp    v            do I=1, NE
+       1400     1   p    v               if(TYPE(I) .eq. 4) ED(1) = ED(1) + 1
+       1401     1   p    v               if(TYPE(I) .eq. 5) ED(2) = ED(2) + 1
+       1402     1   p    v               if(TYPE(I) .eq. 6) ED(3) = ED(3) + 1
+       1403     1   p                    if(TYPE(I) .eq. 8) ED(4) = ED(4) + 1
+       1404     1   p    v            enddo
+       1405                           ST(1) = 1
+       1406                           ST(2) = ST(1) + ED(1)
+       1407                           ST(3) = ST(2) + ED(2)
+       1408                           ST(4) = ST(3) + ED(3)
+       1409                     
+       1410                            ! list each type element position
+       1411                           allocate(WK_INDEX(NE))
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2286
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WK_INDEX
+                              <<< Loop-information  End >>>
+       1412        pp   4v            WK_INDEX = 0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FULL UNROLLING
+                              <<< Loop-information  End >>>
+       1413             f             ED       = 0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      TYPE
+                              <<< Loop-information  End >>>
+       1414     1   s    s            do I=1,NE
+       1415     2   p    m               if(TYPE(I) .eq. 4) then
+       1416     2   m    s                  WK_INDEX(ST(1) + ED(1)) = I
+       1417     2   m    s                  ED(1) = ED(1) + 1
+       1418     2               
+       1419     2   p    s               elseif(TYPE(I) .eq. 5) then
+       1420     2   m    s                  WK_INDEX(ST(2) + ED(2)) = I
+       1421     2   m    m                  ED(2) = ED(2) + 1
+       1422     2               
+       1423     2   p    s               elseif(TYPE(I) .eq. 6) then
+       1424     2   m    s                  WK_INDEX(ST(3) + ED(3)) = I
+       1425     2   m    s                  ED(3) = ED(3) + 1
+       1426     2               
+       1427     2   p    s               elseif(TYPE(I) .eq. 8) then
+       1428     2   m    s                  WK_INDEX(ST(4) + ED(4)) = I
+       1429     2   m    s                  ED(4) = ED(4) + 1
+       1430     2   p    v               endif
+       1431     1   p    v            enddo
+       1432                           ED(1) = ST(1) + ED(1) - 1
+       1433                           ED(2) = ST(2) + ED(2) - 1
+       1434                           ED(3) = ST(3) + ED(3) - 1
+       1435                           ED(4) = ST(4) + ED(4) - 1
+       1436                     
+       1437                           ! sort each type element into local array
+       1438                           allocate(WK_TYPE(NE))
+       1439                           allocate(WK_NODE(8,NE))
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED(lines: 1440,1441)
+                              <<< Loop-information  End >>>
+       1440         p                 WK_TYPE = 0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 198
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED
+                              <<<    SIMD(VL: 8)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WK_TYPE, WK_NODE
+                              <<< Loop-information  End >>>
+       1441        pp   2v            WK_NODE = 0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SOFTWARE PIPELINING(IPC: 2.70, ITR: 96, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WK_INDEX, WK_TYPE
+                              <<< Loop-information  End >>>
+       1442     1       2             do I=1,NE
+       1443     1       2                J = WK_INDEX(I)
+       1444     1       2                LEBTOA(J)=I
+       1445     1       2                WK_TYPE(I) = TYPE(J)
+       1446     1               
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<< Loop-information  End >>>
+       1447     2   s   2v               do K=1,8
+       1448     2   p   2v                  WK_NODE(K,I) = NODE(K,J)
+       1449     2   p   2v               enddo
+       1450     1       2             enddo
+       1451                     
+       1452                           ! copy local array into return array
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 50
+                              <<<  [OPTIMIZATION]
+                              <<<    SOFTWARE PIPELINING(IPC: 3.00, ITR: 64, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WK_TYPE, TYPE
+                              <<< Loop-information  End >>>
+       1453     1  pp   2             do I=1,NE
+       1454     1   p   2                TYPE(I) = WK_TYPE(I)
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<< Loop-information  End >>>
+       1455     2   p   2v               do J=1,8
+       1456     2   p   2v                  NODE(J,I) = WK_NODE(J,I)
+       1457     2   p   2v               enddo
+       1458     1   p   2             enddo
+       1459                     !     do I=1, NE
+       1460                     !         write(IUT6, "(I7,' TYPE=',I1,8I7)") I, TYPE(I),
+       1461                     !     *        NODE(1,I), NODE(2,I), NODE(3,I), NODE(4,I),
+       1462                     !     *        NODE(5,I), NODE(6,I), NODE(7,I), NODE(8,I)
+       1463                     !      enddo
+       1464                     !      write(IUT6, "('ST = ',4I8)") ST
+       1465                     !      write(IUT6, "('ED = ',4I8)") ED
+       1466                     !      stop
+       1467                     
+       1468                           write(IUT6,*)
+       1469                           write(IUT6,"('SORTELEM')")
+       1470                           write(IUT6,"('TETRA   ',I9, ' TO ',I9, ' : ',I6,' ELEMS')")
+       1471                          *     ST(1), ED(1), ED(1)-ST(1)+1
+       1472                           write(IUT6,"('PYRAMID ',I9, ' TO ',I9, ' : ',I6,' ELEMS')")
+       1473                          *     ST(2), ED(2), ED(2)-ST(2)+1
+       1474                           write(IUT6,"('WEDGE   ',I9, ' TO ',I9, ' : ',I6,' ELEMS')")
+       1475                          *     ST(3), ED(3), ED(3)-ST(3)+1
+       1476                           write(IUT6,"('HEXA    ',I9, ' TO ',I9, ' : ',I6,' ELEMS')")
+       1477                          *     ST(4), ED(4), ED(4)-ST(4)+1
+       1478                     
+       1479                     !      ! confirm
+       1480                     !      do I=1,NE
+       1481                     !         if(ST(1) .le. I .and. I .le. ED(1)) then
+       1482                     !            write(IUT6,"('TET ',10I7)") I, TYPE(I),
+       1483                     !     *           NODE(1,I),NODE(2,I),NODE(3,I),NODE(4,I),
+       1484                     !     *           NODE(5,I),NODE(6,I),NODE(7,I),NODE(8,I)
+       1485                     !         elseif(ST(2) .le. I .and. I .le. ED(2)) then
+       1486                     !            write(IUT6,"('PYR ',10I7)") I, TYPE(I),
+       1487                     !     *           NODE(1,I),NODE(2,I),NODE(3,I),NODE(4,I),
+       1488                     !     *           NODE(5,I),NODE(6,I),NODE(7,I),NODE(8,I)
+       1489                     !         elseif(ST(3) .le. I .and. I .le. ED(3)) then
+       1490                     !            write(IUT6,"('PRM ',10I7)") I, TYPE(I),
+       1491                     !     *           NODE(1,I),NODE(2,I),NODE(3,I),NODE(4,I),
+       1492                     !     *           NODE(5,I),NODE(6,I),NODE(7,I),NODE(8,I)
+       1493                     !         elseif(ST(4) .le. I .and. I .le. ED(4)) then
+       1494                     !            write(IUT6,"('HEX ',10I7)") I, TYPE(I),
+       1495                     !     *           NODE(1,I),NODE(2,I),NODE(3,I),NODE(4,I),
+       1496                     !     *           NODE(5,I),NODE(6,I),NODE(7,I),NODE(8,I)
+       1497                     !         endif
+       1498                     !      enddo
+       1499                     
+       1500                     C      write(IUT6,*)
+       1501                     C      write(IUT6,"('size(WK_INDEX) = ', I12)") size(WK_INDEX)
+       1502                     C      write(IUT6,"('size(WK_TYPE)  = ', I12)") size(WK_TYPE)
+       1503                     C      write(IUT6,"('size(WK_NODE)  = ', I12)") size(WK_NODE)
+       1504                     C      write(IUT6,"('TOTAL          = ', I12)") size(WK_INDEX) +
+       1505                     C     *     size(WK_TYPE) + size(WK_NODE)
+       1506                     
+       1507                           deallocate(WK_INDEX)
+       1508                           deallocate(WK_TYPE)
+       1509                           deallocate(WK_NODE)
+       1510                           end subroutine sortelem
+
+ Diagnostic messages: program name(sortelem)
+   jwd5004p-i  "reordr.f", line 1399: リダクション演算を含むDOループを並列化しました。(名前:I)
+   jwd6004s-i  "reordr.f", line 1399: リダクション演算を含むDOループをSIMD化しました。(名前:I)
+   jwd5003p-i  "reordr.f", line 1412: この配列記述を並列化しました。
+   jwd6003s-i  "reordr.f", line 1412: この配列記述をSIMD化しました。
+   jwd8663o-i  "reordr.f", line 1412: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "reordr.f", line 1412: ループを展開数4回でアンローリングしました。
+   jwd6229s-i  "reordr.f", line 1414: IF文が存在するため、このDOループのSIMD化を抑止しました。
+   jwd8670o-i  "reordr.f", line 1414: ループ内に分岐命令があるため、ソフトウェアパイプライニングを適用できません。
+   jwd5228p-i  "reordr.f", line 1416: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd5208p-i  "reordr.f", line 1416: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:ED)
+   jwd6228s-i  "reordr.f", line 1416: データの定義引用の順序が逐次実行と異なる可能性があるため、このDOループはSIMD化できません。
+   jwd6208s-i  "reordr.f", line 1416: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループはSIMD化できません。(名前:ED)
+   jwd5208p-i  "reordr.f", line 1420: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:ED)
+   jwd6208s-i  "reordr.f", line 1420: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループはSIMD化できません。(名前:ED)
+   jwd5208p-i  "reordr.f", line 1424: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:ED)
+   jwd6208s-i  "reordr.f", line 1424: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループはSIMD化できません。(名前:ED)
+   jwd5208p-i  "reordr.f", line 1428: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:ED)
+   jwd6208s-i  "reordr.f", line 1428: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループはSIMD化できません。(名前:ED)
+   jwd5003p-i  "reordr.f", line 1441: この配列記述を並列化しました。
+   jwd6003s-i  "reordr.f", line 1441: この配列記述をSIMD化しました。
+   jwd5208p-i  "reordr.f", line 1442: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:LEBTOA)
+   jwd5208p-i  "reordr.f", line 1442: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:WK_NODE)
+   jwd8204o-i  "reordr.f", line 1442: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "reordr.f", line 1442: ループの繰返し数が96回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5143p-i  "reordr.f", line 1447: DOループの繰返し数が少ないため、このDOループは並列化できません。
+   jwd6001s-i  "reordr.f", line 1447: このDOループをSIMD化しました。(名前:K)
+   jwd5001p-i  "reordr.f", line 1453: このDOループを並列化しました。(名前:I)
+   jwd8204o-i  "reordr.f", line 1453: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "reordr.f", line 1453: ループの繰返し数が64回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd6001s-i  "reordr.f", line 1455: このDOループをSIMD化しました。(名前:J)
+
+ Procedure information
+   Lines      : 151
+   Statements : 77
+   Stack(byte): 56720
+   Prefetch num: 0
+
+ External subroutine subprogram "callmetis"
+  (line-no.)(nest)(optimize)
+       1511                     C=====================================================================
+       1512                     C callmetis
+       1513                     C Divide mesh into some parts, using METIS_partGraphRecursive
+       1514                     C
+       1515                     C Essential Input:
+       1516                     C NPART         Number of divided parts
+       1517                     C
+       1518                     C XADJE, YADJE  Elements connectivety as graph written by CSR format
+       1519                     C
+       1520                     C Output:
+       1521                     C VEBPN         Vector of element belonging part number
+       1522                     C
+       1523                     C 2012/06/01 Kuma(RIKEN) Fix
+       1524                     C=====================================================================
+       1525                     #ifndef NOMETIS
+       1526                           subroutine callmetis(NPE, NEADJ, XADJE, YADJE, NPART, VEBPN, IUT6)
+       1527                           implicit none
+       1528                     
+       1529                           ! argument
+       1530                           integer(4),intent(in)  :: NPE
+       1531                           integer(4),intent(in)  :: NEADJ
+       1532                           integer(4),intent(in)  :: XADJE(NPE+1)
+       1533                           integer(4),intent(in)  :: YADJE(NEADJ+1)
+       1534                           integer(4),intent(in)  :: NPART
+       1535                           integer(4),intent(out) :: VEBPN(NPE)
+       1536                           integer(4),intent(in)  :: IUT6
+       1537                     
+       1538                           ! local (for calling METIS)
+       1539                           integer(4)             :: OPTIONS(0:4)
+       1540                           integer(4)             :: EDGECUT
+       1541                           integer(4)             :: NUMFLAG
+       1542                           integer(4)             :: WGTFLAG
+       1543                           integer(4),allocatable :: WEIGHT(:)
+       1544                           integer(4),allocatable :: ADJWGT(:)
+       1545                     
+       1546                           ! local (util)
+       1547                           integer(4) :: I, J, K
+       1548                     
+       1549                     C      write(IUT6,"('NPART = ', I8)") NPART
+       1550                     C      write(IUT6,"('NPE   = ', I8)") NPE
+       1551                     !      if(NPART .gt. NPE) then
+       1552                     !         write(*,"('SPECIFIED PART WAS MORE THAN PROCESSED ELEMENT')")
+       1553                     !         write(*,"('NUMBER OF PART HAS BEEN CHANGED ',I7,' TO ',I7)")
+       1554                     !     *        NPART,NPE
+       1555                     !         NPART = NPE
+       1556                     !      endif
+       1557                     
+       1558                           WGTFLAG = 2
+       1559                           NUMFLAG = 1
+       1560                     
+       1561                           OPTIONS(0) = 0
+       1562                           OPTIONS(1) = 3
+       1563                           OPTIONS(2) = 1
+       1564                           OPTIONS(3) = 1
+       1565                           OPTIONS(4) = 0
+       1566                     
+       1567                           allocate(WEIGHT(NPE))
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2286
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WEIGHT
+                              <<< Loop-information  End >>>
+       1568        pp   4v            WEIGHT = 1
+       1569                     
+       1570                           allocate(ADJWGT(NPE))
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2286
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      ADJWGT
+                              <<< Loop-information  End >>>
+       1571        pp   4v            ADJWGT = 0
+       1572                     
+       1573                     #if 0
+       1574                           do I=1,NPE
+       1575                              write(IUT6,"(I8,'(',I3,')',$)") I,XADJE(I+1)-XADJE(I)
+       1576                              do J=XADJE(I), XADJE(I+1)-1
+       1577                                 K = YADJE(J)
+       1578                                 write(IUT6,"(I8,$)") K
+       1579                     
+       1580                                 if(K .lt. 1 .or. K .gt. NPE) write(IUT6,"(' WRONG')")
+       1581                              enddo
+       1582                              write(IUT6,*)
+       1583                           enddo
+       1584                           stop
+       1585                     #endif
+       1586                     
+       1587                           !-----------------------
+       1588                           ! call metis
+       1589                           !-----------------------
+       1590                     C      write(IUT6,"('call METIS_PartGraphRecursive',$)")
+       1591                           CALL METIS_PartGraphRecursive(
+       1592                          *     NPE,                 ! number of elems
+       1593                          *     XADJE,               ! adjacency structure
+       1594                          *     YADJE,               !
+       1595                          *     WEIGHT,              ! weight information
+       1596                          *     ADJWGT,              !
+       1597                          *     WGTFLAG,             ! flag for using weight or not
+       1598                          *     NUMFLAG,             ! kind of array index, 0->C style, 1->Fortran style
+       1599                          *     NPART,               ! number of parts
+       1600                          *     OPTIONS,             !
+       1601                          *     EDGECUT,             ! (result) number of edge-cut
+       1602                          *     VEBPN)               ! (result) partitioned graph
+       1603                     C      write(IUT6,"('... Done')")
+       1604                     
+       1605                           ! convert local index to global index
+       1606                     !      do I=1,XADJE(NPE)
+       1607                     !         YADJE(I) = YADJE(I) + (IES - 1)
+       1608                     !      enddo
+       1609                     
+       1610                     C      write(IUT6,"('size(WEIGHT) = ', I12)") size(WEIGHT)
+       1611                     !     write(IUT6,"('size(ADJWGT) = ', I12)") size(ADJWGT)
+       1612                           deallocate(WEIGHT)
+       1613                           deallocate(ADJWGT)
+       1614                           end subroutine callmetis
+       1615                     #endif
+
+ Diagnostic messages: program name(callmetis)
+   jwd2008i-i  "reordr.f", line 1526: この仮引数'IUT6'は、副プログラム中で使用されていません。
+   jwd2006i-i  "reordr.f", line 1547: この名前'K'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "reordr.f", line 1547: この名前'J'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "reordr.f", line 1547: この名前'I'は、宣言だけされていて引用されていません。
+   jwd5003p-i  "reordr.f", line 1568: この配列記述を並列化しました。
+   jwd6003s-i  "reordr.f", line 1568: この配列記述をSIMD化しました。
+   jwd8663o-i  "reordr.f", line 1568: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "reordr.f", line 1568: ループを展開数4回でアンローリングしました。
+   jwd5003p-i  "reordr.f", line 1571: この配列記述を並列化しました。
+   jwd6003s-i  "reordr.f", line 1571: この配列記述をSIMD化しました。
+   jwd8663o-i  "reordr.f", line 1571: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "reordr.f", line 1571: ループを展開数4回でアンローリングしました。
+
+ Procedure information
+   Lines      : 105
+   Statements : 31
+   Stack(byte): 1648
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 9
+   Total lines      : 1615
+   Total statements : 811
+   Total stack(byte): 259232
+   Total prefetch num: 0
+

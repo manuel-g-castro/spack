@@ -1,0 +1,191 @@
+
+ Fujitsu Fortran Version 4.8.1  Thu Nov 24 16:46:16 2022
+
+ Compilation information
+   Current directory : /vol0005/mdt2/home/u10588/SRC/lbm/ver.59.01
+   Source file       : tgttau.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -Nlst=t -Cpp -Cfpp -c -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Knointentopt
+   Cpp options          : -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Dcputime -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=8 -D__FRT_patchlevel__=1 -D__FRT_version__="4.8.1" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Knoarray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nlibomp -Nline -Nlst -Nlst=p -Nlst=t
+                          -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "TGTTAU"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE TGTTAU(JDUMP,NP,WF,CVEL,PARDMP,FDUMP)
+          2                           IMPLICIT NONE
+          3                           INTEGER*4 JDUMP,NP
+          4                           REAL*8    WF(NP),CVEL(3,NP),PARDMP(12),FDUMP(NP)
+          5                     C
+          6                     C JDUMP       : TYPE OF DUMPING REGION
+          7                     C             : 0: NO DUMPING REGION
+          8                     C             : 1: SPHERE
+          9                     C             : 2: CYLINDER ALONG X-DIRECTION
+         10                     C             : 3: CYLINDER ALONG X-DIRECTION
+         11                     C             : 4: CYLINDER ALONG X-DIRECTION
+         12                     C             :11: ELLIPSOID
+         13                     C
+         14                     C IF JDUMP = 1,2,3 OR 4
+         15                     C PARDMP( 1)  : X CORDINATE OF CENTER OF DUMPING REGION
+         16                     C PARDMP( 2)  : Y CORDINATE OF CENTER OF DUMPING REGION
+         17                     C PARDMP( 3)  : Z CORDINATE OF CENTER OF DUMPING REGION
+         18                     C PARDMP( 4)  : R1 OF DOUMPING REGION
+         19                     C PARDMP( 5)  : R2 OF DOUMPING REGION
+         20                     C PARDMP( 6)  : COEFICIENT OF DUMPING TERM (=ALPHA)
+         21                     C PARDMP( 7)  : TARGET DENSITY
+         22                     C PARDMP( 8)  : TARGET VELOCITY-U
+         23                     C PARDMP( 9)  : TARGET VELOCITY-V
+         24                     C PARDMP(10)  : TARGET VELOCITY-W
+         25                     C
+         26                     C IF JDUMP = 11
+         27                     C PARDMP( 1)  : X CORDINATE OF CENTER OF DUMPING REGION
+         28                     C PARDMP( 2)  : Y CORDINATE OF CENTER OF DUMPING REGION
+         29                     C PARDMP( 3)  : Z CORDINATE OF CENTER OF DUMPING REGION
+         30                     C PARDMP( 4)  : RX    OF DOUMPING REGION
+         31                     C PARDMP( 5)  : RY    OF DOUMPING REGION
+         32                     C PARDMP( 6)  : RZ    OF DOUMPING REGION
+         33                     C PARDMP( 7)  : RATIO OF DOUMPING REGION
+         34                     C PARDMP( 8)  : COEFICIENT OF DUMPING TERM (=ALPHA)
+         35                     C PARDMP( 9)  : TARGET DENSITY
+         36                     C PARDMP(10)  : TARGET VELOCITY-U
+         37                     C PARDMP(11)  : TARGET VELOCITY-V
+         38                     C PARDMP(12)  : TARGET VELOCITY-W
+         39                     C
+         40                     C FDUMP (NP)  : EQUIBRIUM DISTRIBUTION FUNCTION  CALCULATED BY TARGET
+         41                     C
+         42                           INTEGER*4 I,J,K,IP
+         43                           REAL*8    XC,YC,ZC,R1,R2,ALPHA,RHO,U0,V0,W0
+         44                           REAL*8    CU,UU,DCUBE,DD,X0,Y0,Z0,X1,Y1,Z1,DX,DY,DZ,RR
+         45                           REAL*8    RX,RY,RZ,RATIO
+         46                     C
+         47     1                     IF(JDUMP.GE.1 .AND. JDUMP.LE.4) THEN
+         48     1                         XC   =PARDMP(1)
+         49     1                         YC   =PARDMP(2)
+         50     1                         ZC   =PARDMP(3)
+         51     1                         R1   =PARDMP(4)
+         52     1                         R2   =PARDMP(5)
+         53     1                         ALPHA=PARDMP(6)
+         54     1                         RHO  =PARDMP(7)
+         55     1                         U0   =PARDMP(8)
+         56     1                         V0   =PARDMP(9)
+         57     1                         W0   =PARDMP(10)
+         58     1                     ELSE IF(JDUMP.EQ.11) THEN
+         59     1                         XC   =PARDMP(1)
+         60     1                         YC   =PARDMP(2)
+         61     1                         ZC   =PARDMP(3)
+         62     1                         RX   =PARDMP(4)
+         63     1                         RY   =PARDMP(5)
+         64     1                         RZ   =PARDMP(6)
+         65     1                         RATIO=PARDMP(7)
+         66     1                         ALPHA=PARDMP(8)
+         67     1                         RHO  =PARDMP(9)
+         68     1                         U0   =PARDMP(10)
+         69     1                         V0   =PARDMP(11)
+         70     1                         W0   =PARDMP(12)
+         71     1                     ENDIF
+         72                     C
+         73                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 485
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.50, ITR: 80, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WF, CVEL, FDUMP
+                              <<< Loop-information  End >>>
+         74     1  pp    v            DO 1000 IP=1,NP
+         75     1   p    v                CU=U0*CVEL(1,IP)+V0*CVEL(2,IP)+W0*CVEL(3,IP)
+         76     1   p    v                UU=U0*U0+V0*V0+W0*W0
+         77     1   p    v                FDUMP(IP)=WF(IP)*RHO*(1.0D0+3.0D0*CU+4.5D0*CU*CU-1.5D0*UU)
+         78     1   p    v       1000 CONTINUE
+         79                     C
+         80                           RETURN
+         81                           END
+
+ Diagnostic messages: program name(TGTTAU)
+   jwd8220o-i  "tgttau.f", line 1: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd2006i-i  "tgttau.f", line 42: 'K' is declared but never referenced.
+   jwd2006i-i  "tgttau.f", line 42: 'J' is declared but never referenced.
+   jwd2006i-i  "tgttau.f", line 42: 'I' is declared but never referenced.
+   jwd2006i-i  "tgttau.f", line 44: 'RR' is declared but never referenced.
+   jwd2006i-i  "tgttau.f", line 44: 'DZ' is declared but never referenced.
+   jwd2006i-i  "tgttau.f", line 44: 'DY' is declared but never referenced.
+   jwd2006i-i  "tgttau.f", line 44: 'DX' is declared but never referenced.
+   jwd2006i-i  "tgttau.f", line 44: 'Z1' is declared but never referenced.
+   jwd2006i-i  "tgttau.f", line 44: 'Y1' is declared but never referenced.
+   jwd2006i-i  "tgttau.f", line 44: 'X1' is declared but never referenced.
+   jwd2006i-i  "tgttau.f", line 44: 'Z0' is declared but never referenced.
+   jwd2006i-i  "tgttau.f", line 44: 'Y0' is declared but never referenced.
+   jwd2006i-i  "tgttau.f", line 44: 'X0' is declared but never referenced.
+   jwd2006i-i  "tgttau.f", line 44: 'DD' is declared but never referenced.
+   jwd2006i-i  "tgttau.f", line 44: 'DCUBE' is declared but never referenced.
+   jwd8209o-i  "tgttau.f", line 74: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5001p-i  "tgttau.f", line 74: DO loop with DO variable 'IP' is parallelized.
+   jwd6001s-i  "tgttau.f", line 74: SIMD conversion is applied to DO loop with DO variable 'IP'.
+   jwd8204o-i  "tgttau.f", line 74: This loop is software pipelined.
+   jwd8205o-i  "tgttau.f", line 74: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 80.
+   jwd8209o-i  "tgttau.f", line 75: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "tgttau.f", line 77: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+
+ Procedure information
+   Lines      : 81
+   Statements : 40
+   Stack(byte): 816
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 81
+   Total statements : 40
+   Total stack(byte): 816
+   Total prefetch num: 0
+

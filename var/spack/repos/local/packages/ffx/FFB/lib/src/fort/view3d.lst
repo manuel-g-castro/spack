@@ -1,0 +1,317 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:54:36 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : view3d.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "VIEW3D"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    VIEW3D                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE VIEW3D(JPSOUT,IUTPS,IMODE,X,Y,SR,NODE,NE,NP,N,
+         14                          *                  SCL,RAD1,RAD2,RNGX,RNGY,SFCRT,ICL3D1,ICL3D2,
+         15                          *                  XX,YY,ZZ,ZZG,LIST)
+         16                           IMPLICIT REAL*4(A-H,O-Z)
+         17                           DIMENSION X(NP),Y(NP),SR(NP),NODE(N,NE),
+         18                          1          XX(NP),YY(NP),ZZ(NP),ZZG(NE),LIST(NE)
+         19                     C
+         20                     #ifdef VOS
+         21                           INCLUDE (GN)
+         22                     #else
+         23                           INCLUDE 'gn.h'
+         24                     #endif
+         25                     C
+         26                           DIMENSION T(3,3)
+         27                           DIMENSION XP(5), YP(5)
+         28                     C
+         29                     C
+         30                     C      DISPLAY 3-DIMENSIONAL VIEW OF SCALAR FIELD
+         31                     C         ( 2-D GRAPHICS )
+         32                     C
+         33                     C
+         34                     C     NOTE 1 ; CALLING GENERIC GRAPHIC AND POSTSCRIPT INTERFACES.
+         35                     C
+         36                     C
+         37                     C     ARGUMENT LISTINGS
+         38                     C       (1) INPUT
+         39                     C          JPSOUT      ; POSTSCRIPT FILE WILL BE OUTPUT IF SET TO 1 OE 2
+         40                     C          IUTPS       ; FILE NUMBER TO ACCESS POSTSCRIPT FILE
+         41                     C          IMODE       ; SPECIFIES DISPLAY MODE AS FOLLOWS
+         42                     C                   1 --- TRANSPARENT
+         43                     C                   2 --- SHADING
+         44                     C          X       (IP); X-COORDINATE OF NODES
+         45                     C          Y       (IP); Y-COORDINATE OF NODES
+         46                     C          SR      (IP); SCALAR
+         47                     C          NODE  (I,IE); NODE TABLE
+         48                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+         49                     C          NP          ; NUMBER OF TOTAL NODES
+         50                     C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT
+         51                     C          SCL         ; SCALAR-TO-FIELD SCALING FACTOR
+         52                     C          RAD1        ; ANGLE BETWEEN VIEWING DIR. AND X-AXIS
+         53                     C          RAD2        ; ANGLE BETWEEN VIEWING DIR. AND Z-AXIS
+         54                     C          RNGX        ; X-DIR. GRAPHIC RANGE SPECIFIED
+         55                     C          RNGY        ; Y-DIR. GRAPHIC RANGE SPECIFIED
+         56                     C          SFCRT       ; GRAPHIC SCALING COEFFICIENT
+         57                     C          ICL3D1      ; COLOR INDEX   USED TO PAINT ELEMENT
+         58                     C          ICL3D2      ; COLOR INDEX   USED TO DRAW  ELEMENT BORDER
+         59                     C
+         60                     C       (4) WORK
+         61                     C          XX      (IP); TRANSVERSED X-DIR. COORDINATE OF NODE
+         62                     C          YY      (IP); TRANSVERSED Y-DIR. COORDINATE OF NODE
+         63                     C          ZZ      (IP); TRANSVERSED Z-DIR. COORDINATE OF NODE
+         64                     C          ZZG     (IE); TRANSVERSED Z-DIR. COORDINATE OF ELEMENT
+         65                     C          LIST (IEORD); ELEMENT PAINTING ORDER SPECIFYING LIST
+         66                     C
+         67                     C
+         68                           NEORD = NE
+         69                     C
+         70                     C
+         71                     C      CALCULATE PROJECTED X-Y COORDINATE OF NODE
+         72                     C
+         73                     C
+         74                           CALL TRANSG(RAD1,RAD2,T)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 422
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.20, ITR: 96, MVE: 2, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      X, Y, SR, ZZ, YY, XX
+                              <<< Loop-information  End >>>
+         75     1  pp    v            DO 10 IP = 1 , NP
+         76     1   p    v                XX(IP) = T(1,1)*X(IP)+T(2,1)*Y(IP)+T(3,1)*SCL*SR(IP)
+         77     1   p    v                YY(IP) = T(1,2)*X(IP)+T(2,2)*Y(IP)+T(3,2)*SCL*SR(IP)
+         78     1   p    v                ZZ(IP) = T(1,3)*X(IP)+T(2,3)*Y(IP)+T(3,3)*SCL*SR(IP)
+         79     1   p    v         10 CONTINUE
+         80                     C
+         81                     C
+         82                     C      GRAPHIC SCALING
+         83                     C
+         84                     C
+         85                           CALL SCALEG(XX,YY,NP,RNGX,RNGY,SFCRT,XMIN,XMAX,YMIN,YMAX,SFC)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 762
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.33, ITR: 416, MVE: 7, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      YY, XX
+                              <<< Loop-information  End >>>
+         86     1  pp   2v            DO 20 IP = 1 , NP
+         87     1   p   2v                XX(IP) = SFC*(XX(IP)-XMIN)
+         88     1   p   2v                YY(IP) = SFC*(YY(IP)-YMIN)
+         89     1   p   2v         20 CONTINUE
+         90                     C
+         91                     C
+         92                     C      PAINTING ORDER DECISION FOR SHADING DISPLAY
+         93                     C
+         94                     C
+         95     1                     IF(IMODE.EQ.2) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 327
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.04, ITR: 224, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      ZZG
+                              <<< Loop-information  End >>>
+         96     2  pp   2v                DO 30 IE = 1 , NE
+         97     2   p   2v                    ZZG(IE) = 0.25*(ZZ(NODE(1,IE))+ZZ(NODE(2,IE))
+         98     2                    &                       +ZZ(NODE(3,IE))+ZZ(NODE(4,IE)))
+         99     2   p   2v         30     CONTINUE
+        100     1                         CALL ORDERG(ZZG,NE,LIST)
+        101     1                     ELSE
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.75, ITR: 192, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LIST
+                              <<< Loop-information  End >>>
+        102     2  pp   2v                DO 35 IE = 1 , NE
+        103     2   p   2v                    LIST(IE) = IE
+        104     2   p   2v         35     CONTINUE
+        105     1                     ENDIF
+        106                     C
+        107                     C
+        108                     C      3-D VIEW
+        109                     C
+        110                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LIST
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 3  FILL 11
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        111     1                     DO 60 IEORD = 1 , NEORD
+        112     1                       IE = LIST(IEORD)
+        113     1               C
+        114     1               C SHADING
+        115     1               C
+        116     2                       IF (IMODE.EQ.2) THEN
+        117     2                          CALL GNCSET(ICL3D1)
+        118     2                          IF(JPSOUT.EQ.1) CALL PSGRAY(IUTPS,ICL3D1)
+        119     2                          IF(JPSOUT.EQ.2) CALL PSCSET(IUTPS,ICL3D1)
+        120     2               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 640
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        121     3   s    v                 DO 40 I = 1 , N
+        122     3   p    v                     IP = NODE(I,IE)
+        123     3   p    v                     XP(I) = XX(IP)
+        124     3   p    v                     YP(I) = YY(IP)
+        125     3   p    v         40      CONTINUE
+        126     2                          CALL  GNFILL(XP,YP,N)
+        127     2                          IF(JPSOUT.GE.1) CALL  PSFILL(IUTPS,XP,YP,N)
+        128     2                       ENDIF
+        129     1               C
+        130     1               C LINE
+        131     1               C
+        132     1                       LNTYPE = GLSOLD
+        133     1                       PLTYPE = GLSOLD
+        134     1               C
+        135     1                       LNWDTH = GLBOLD
+        136     1                       PLWDTH = GLBOLD
+        137     1               C
+        138     1                       CALL GNCSET (ICL3D2)
+        139     1                       IF(JPSOUT.EQ.1) CALL PSGRAY (IUTPS,ICL3D2)
+        140     1                       IF(JPSOUT.EQ.2) CALL PSCSET (IUTPS,ICL3D2)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 640
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        141     2   s    v              DO 50 I = 1 , N
+        142     2   p    v                  IP = NODE(I,IE)
+        143     2   p    v                  XP(I) = XX(IP)
+        144     2   p    v                  YP(I) = YY(IP)
+        145     2   p    v         50    CONTINUE
+        146     1                        XP(N+1) = XX(NODE(1,IE))
+        147     1                        YP(N+1) = YY(NODE(1,IE))
+        148     1                        CALL  GNLINE(XP,YP,N+1)
+        149     1                        IF(JPSOUT.GE.1) CALL  PSLINE(IUTPS,XP,YP,N+1)
+        150     1                  60 CONTINUE
+        151                     C
+        152                           RETURN
+        153                           END
+
+ Diagnostic messages: program name(VIEW3D)
+   jwd8220o-i  "view3d.f", line 13: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd5001p-i  "view3d.f", line 75: DO loop with DO variable 'IP' is parallelized.
+   jwd6001s-i  "view3d.f", line 75: SIMD conversion is applied to DO loop with DO variable 'IP'.
+   jwd8204o-i  "view3d.f", line 75: This loop is software pipelined.
+   jwd8205o-i  "view3d.f", line 75: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 96.
+   jwd8209o-i  "view3d.f", line 76: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "view3d.f", line 77: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "view3d.f", line 78: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5001p-i  "view3d.f", line 86: DO loop with DO variable 'IP' is parallelized.
+   jwd6001s-i  "view3d.f", line 86: SIMD conversion is applied to DO loop with DO variable 'IP'.
+   jwd8204o-i  "view3d.f", line 86: This loop is software pipelined.
+   jwd8205o-i  "view3d.f", line 86: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 416.
+   jwd5001p-i  "view3d.f", line 96: DO loop with DO variable 'IE' is parallelized.
+   jwd6001s-i  "view3d.f", line 96: SIMD conversion is applied to DO loop with DO variable 'IE'.
+   jwd8204o-i  "view3d.f", line 96: This loop is software pipelined.
+   jwd8205o-i  "view3d.f", line 96: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 224.
+   jwd5001p-i  "view3d.f", line 102: DO loop with DO variable 'IE' is parallelized.
+   jwd6001s-i  "view3d.f", line 102: SIMD conversion is applied to DO loop with DO variable 'IE'.
+   jwd8204o-i  "view3d.f", line 102: This loop is software pipelined.
+   jwd8205o-i  "view3d.f", line 102: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 192.
+   jwd5122p-i  "view3d.f", line 111: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd8664o-i  "view3d.f", line 111: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5143p-i  "view3d.f", line 121: DO loop is not parallelized: the value of its iteration count is insufficient to make parallelization worthwhile.
+   jwd8325o-i  "view3d.f", line 121: Assume that the maximum number of iterations for this loop is 5 from the array declaration.
+   jwd6001s-i  "view3d.f", line 121: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd5143p-i  "view3d.f", line 141: DO loop is not parallelized: the value of its iteration count is insufficient to make parallelization worthwhile.
+   jwd8325o-i  "view3d.f", line 141: Assume that the maximum number of iterations for this loop is 5 from the array declaration.
+   jwd6001s-i  "view3d.f", line 141: SIMD conversion is applied to DO loop with DO variable 'I'.
+
+ Procedure information
+   Lines      : 341
+   Statements : 130
+   Stack(byte): 2144
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 341
+   Total statements : 130
+   Total stack(byte): 2144
+   Total prefetch num: 0
+

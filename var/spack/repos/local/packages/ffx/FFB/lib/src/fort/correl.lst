@@ -1,0 +1,188 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:53:47 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : correl.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "CORREL"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    CORREL                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE CORREL(IMODE,XIN,YIN,COR,NTIME)
+         14                           IMPLICIT REAL*4(A-H,O-Z)
+         15                           DIMENSION XIN(NTIME),YIN(NTIME),COR(0:NTIME/2)
+         16                     C
+         17                     C
+         18                     C      TAKE CORRELATION OF GIVEN DATA IN TIME SPACE
+         19                     C
+         20                     C
+         21                     C     ARGUMENT LISTINGS
+         22                     C       (1) INPUT
+         23                     C          IMODE       ; SPECIFIES TYPE OF CORRELATION AS FOLLOWS
+         24                     C                   1 --- AUTO   CORRELATION
+         25                     C                   2 --- CROSS  CORRELATION
+         26                     C          XIN  (ITIME); INPUT DATA 1
+         27                     C          YIN  (ITIME); INPUT DATA 2 ( DUMMY ARGUMENT FOR IMODE = 1 )
+         28                     C          NTIME       ; NUMBER OF TOTAL TIME STEPS
+         29                     C
+         30                     C       (2) OUTPUT
+         31                     C          COR(0:ITIME); CORRELATION
+         32                     C           NOTES; FOR IMODE = 1, CALCULATED CORRELATIONS WILL BE PASSED
+         33                     C                 IN THE ARGUMENT COR(ITIME), ITIME=0,NTIME/2, WITH
+         34                     C                 ITIME=0 DENOTING NO TIME LAG AND ITIME=NTIME/2 MAXIMUM
+         35                     C                 POSSITIVE TIME LAG OF HAHF THE TIME SPAN IN THE INPUT
+         36                     C                 HISTORY DATA.
+         37                     C                  FOR IMODE = 2, CALCULATED CORRELATIONS WILL BE PASSED
+         38                     C                 IN THE ARGUMENT COR(ITIME), ITIME=0,NTIME/2, WITH
+         39                     C                 ITIME=0 DENOTING MAXIMUM NEGATIVE TIME LAG OF
+         40                     C                 ONE-FORTH THE TIME SPAN IN THE INPUT HISTORY DATA.
+         41                     C                 AND ITIME=NTIME/2 MAXIMUM POSSITIVE TIME LAG OF
+         42                     C                 OF ONE-FORTH THE TIME SPAN IN THE INPUT HISTORY DATA.
+         43                     C
+         44                     C
+         45                     C TAKE AUTO   CORRELATIONS
+         46                     C
+         47     1                     IF(IMODE.EQ.1) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 3
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      XIN
+                              <<< Loop-information  End >>>
+         48     2  pp                     DO 110 ITAU = 0 , NTIME/2
+         49     2   p                         COR(ITAU) = 0.E0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.81, ITR: 384, MVE: 2, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      XIN
+                              <<< Loop-information  End >>>
+         50     3   p   8v                    DO 100 ITIME = 1 , NTIME/2
+         51     3   p   8v                        COR(ITAU) = COR(ITAU)+XIN(ITIME)*XIN(ITIME+ITAU)
+         52     3   p   8v        100         CONTINUE
+         53     2   p                         COR(ITAU) = COR(ITAU)/FLOAT(NTIME/2)
+         54     2   p             110     CONTINUE
+         55     1                     ELSE
+         56     1               C
+         57     1               C TAKE CROSS CORRELATIONS
+         58     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 3
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      YIN, XIN
+                              <<< Loop-information  End >>>
+         59     2  pp                     DO 210 ITAU = 0 , NTIME/2
+         60     2   p                         COR(ITAU) = 0.E0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.81, ITR: 384, MVE: 2, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      YIN, XIN
+                              <<< Loop-information  End >>>
+         61     3   p   8v                    DO 200 ITIME = NTIME/4+1 , (3*NTIME)/4
+         62     3   p   8v                        COR(ITAU)=COR(ITAU)+XIN(ITIME)*YIN(ITIME+ITAU-NTIME/4)
+         63     3   p   8v        200         CONTINUE
+         64     2   p                         COR(ITAU) = COR(ITAU)/FLOAT(NTIME/2)
+         65     2   p             210     CONTINUE
+         66     1                     ENDIF
+         67                     C
+         68                           RETURN
+         69                           END
+
+ Diagnostic messages: program name(CORREL)
+   jwd8220o-i  "correl.f", line 13: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd5001p-i  "correl.f", line 48: DO loop with DO variable 'ITAU' is parallelized.
+   jwd6004s-i  "correl.f", line 50: SIMD conversion is applied to DO loop with DO variable 'ITIME'. The DO loop contains a reduction operation.
+   jwd8204o-i  "correl.f", line 50: This loop is software pipelined.
+   jwd8205o-i  "correl.f", line 50: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 384.
+   jwd8208o-i  "correl.f", line 51: Method of calculating sum or product is changed.
+   jwd8206o-i  "correl.f", line 53: Division is changed to multiplication by reciprocal.
+   jwd5001p-i  "correl.f", line 59: DO loop with DO variable 'ITAU' is parallelized.
+   jwd6004s-i  "correl.f", line 61: SIMD conversion is applied to DO loop with DO variable 'ITIME'. The DO loop contains a reduction operation.
+   jwd8204o-i  "correl.f", line 61: This loop is software pipelined.
+   jwd8205o-i  "correl.f", line 61: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 384.
+   jwd8208o-i  "correl.f", line 62: Method of calculating sum or product is changed.
+   jwd8206o-i  "correl.f", line 64: Division is changed to multiplication by reciprocal.
+
+ Procedure information
+   Lines      : 69
+   Statements : 22
+   Stack(byte): 1136
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 69
+   Total statements : 22
+   Total stack(byte): 1136
+   Total prefetch num: 0
+

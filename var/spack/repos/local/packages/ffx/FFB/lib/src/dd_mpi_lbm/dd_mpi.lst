@@ -1,0 +1,643 @@
+
+ Fujitsu Fortran Version 4.3.0a  Thu Dec 17 10:09:14 2020
+
+ Compilation information
+   Current directory : /vol0001/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/dd_mpi_lbm
+   Source file       : dd_mpi.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0001/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI021-01/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI021-01/lib64 -Knointentopt
+   Cpp options          : -I/vol0001/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI021-01/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI021-01/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=3 -D__FRT_patchlevel__=0 -D__FRT_version__="4.3.0a" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "DDINIT"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    DD_MPI                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                     C
+         14                     C      GENERIC TO MPI FORTRAN INTERFACE FOR DOMAIN-DECOMPOSITION
+         15                     C     PROGRAMMING MODEL
+         16                     C                        AUTHOR: C. KATO, MERL, HITACHI, LTD.
+         17                     C                        DATE FIRST WRITTEN : FEBRUARY 20TH, 1998
+         18                     C                        DATE       MODIFIED: APRIL    14TH, 2001
+         19                     C                            (-PRECEXP OPTION IMPLEMENTED)
+         20                     C                        DATE LAST  MODIFIED: MARCH     7TH, 2003
+         21                     C                            (ENTRIES DDCOM1 AND DDCOM2 ADDED)
+         22                     C
+         23                     C
+         24                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+         25                           SUBROUTINE DDINIT(NPART,IPART)
+         26                           IMPLICIT REAL*4(A-H,O-Z)
+         27                     C
+         28                           INCLUDE 'mpif.h'
+         29                     C
+         30                     C
+         31                     C      INITIALIZE A PARALLEL TASK FOR DOMAIN-DECOMPOSITION PROGRAMMING
+         32                     C     MODEL
+         33                     C                            ( MPI VERSION )
+         34                     C
+         35                     C
+         36                     C NOTE 1; THIS SUBROUTINE QUERIES THE TASK NUMBER (I.E. TASK ID) OF THE
+         37                     C       CALLING TASK, THE NUMBER OF TASKS WHICH ARE SHARING THE PROGRAM
+         38                     C       RUN. THE NUMBER OF SUB-DOMAINS AND THE SUB-DOMAIN NUMBER
+         39                     C       THAT THE CALLING TASK SHOULD TAKE CARE OF, WILL BE RETURNED TO
+         40                     C       THE CALLING TASK, AFTER BEING SET TO THE NUMBER OF TASKS, AND
+         41                     C       THE TASK NUMBER PLUS ONE, RESPECTIVELY.
+         42                     C
+         43                     C NOTE 2; THE NUMBER OF TASKS TO SHARE A PARTICULAR RUN IS DETERMINED AT
+         44                     C       RUN TIME BY THE PARALLEL ENVIRONMENT, WHILE THE NUMBER OF
+         45                     C       SUB-DOMAINS IS THE SAME AS THE NUMBER OF SUB-DOMAIN FILES WHICH
+         46                     C       HAVE BEEN PREPARED BEFORE THE RUN. THEREFORE, IN SOME CASES,
+         47                     C       THE NUMBER OF TASKS MIGHT DIFFER FROM THE ACTUAL NUMBER OF
+         48                     C       SUB-DOMAINS, ALTHOUGH THEY MUST BE THE SAME TO RUN A MEANINGFUL
+         49                     C       COMPUTATION. NOTE THAT THIS SUBROUTINE DOES NOT CHECK THE
+         50                     C       CONSISTENCY OF THESE VALUES.
+         51                     C
+         52                     C NOTE 3; A TASK NUMBER (I.E. TASK ID) IS A UNIQUE NUMBER FROM 0 TO ONE
+         53                     C       MINUS THE TOTAL NUMBER OF TASKS, ASSIGNED BY THE SYSTEM AT RUN
+         54                     C       TIME. THUS, THE SUB-DOMAIN NUMBER IS ALSO A UNIQUE NUMBER
+         55                     C       FROM 1 TO THE NUMBER OF SUB-DOMAINS.
+         56                     C
+         57                     C NOTE 4; ALL 'MPI' ROUTINES RETURN AN ERROR CODE 'IERR' WHICH INDICATES
+         58                     C       THE STATUS OF ITS EXECUTION. THIS SUBROUTINE IGNORES SUCH ERROR
+         59                     C       CODE AND RETURNS THE SEQUENCE TO THE CALLING PROGRAM UNIT,
+         60                     C       REGARDLESS OF THE VALUE OF THE 'MPI' RETURN CODE.
+         61                     C
+         62                     C
+         63                     C     ARGUMENT LISTINGS
+         64                     C       (1) INPUT
+         65                     C          ( NONE )
+         66                     C
+         67                     C       (2) OUTPUT
+         68                     C INT *4   NPART       ; TOTAL NUMBER OF SUB-DOMAINS
+         69                     C INT *4   IPART       ; SUB-DOMAIN NUMBER THAT THE CALLING TASK SHOULD
+         70                     C                       TAKE CARE OF
+         71                     C
+         72                     C
+         73                           CALL MPI_INIT(IERR)
+         74                           CALL MPI_COMM_SIZE(MPI_COMM_WORLD,NTASK,IERR)
+         75                           CALL MPI_COMM_RANK(MPI_COMM_WORLD,ITASK,IERR)
+         76                     C
+         77                           NPART = NTASK
+         78                           IPART = ITASK+1
+         79                     C
+         80                     C
+         81                           RETURN
+         82                           END
+
+ Procedure information
+   Lines      : 4111
+   Statements : 3266
+   Stack(byte): 368
+   Prefetch num: 0
+
+ External subroutine subprogram "DDEXIT"
+  (line-no.)(nest)(optimize)
+         83                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+         84                           SUBROUTINE DDEXIT
+         85                           IMPLICIT REAL*4(A-H,O-Z)
+         86                     C
+         87                           INCLUDE 'mpif.h'
+         88                     C
+         89                     C
+         90                     C      EXIT FROM PARALLEL EXECUTIONS
+         91                     C                            ( MPI VERSION )
+         92                     C
+         93                     C
+         94                     C NOTE ; ALL 'MPI' ROUTINES RETURN AN ERROR CODE 'IERR' WHICH INDICATES
+         95                     C       THE STATUS OF ITS EXECUTION. THIS SUBROUTINE IGNORES SUCH ERROR
+         96                     C       CODE AND RETURNS THE SEQUENCE TO THE CALLING PROGRAM UNIT,
+         97                     C       REGARDLESS OF THE VALUE OF THE 'MPI' RETURN CODE.
+         98                     C
+         99                     C
+        100                     C     ARGUMENT LISTINGS
+        101                     C       (1) INPUT
+        102                     C          ( NONE )
+        103                     C
+        104                     C       (2) OUTPUT
+        105                     C          ( NONE )
+        106                     C
+        107                     C
+        108                           CALL MPI_FINALIZE(IERR)
+        109                     C
+        110                     C
+        111                           RETURN
+        112                           END
+
+ Procedure information
+   Lines      : 4059
+   Statements : 3262
+   Stack(byte): 368
+   Prefetch num: 0
+
+ External subroutine subprogram "DDSYNC"
+  (line-no.)(nest)(optimize)
+        113                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+        114                           SUBROUTINE DDSYNC
+        115                           IMPLICIT REAL*4(A-H,O-Z)
+        116                     C
+        117                           INCLUDE 'mpif.h'
+        118                     C
+        119                     C
+        120                     C      IMPLEMENT BARRIER SYNCHRONIZATION AMONG THE GROUP OF ALL TASKS
+        121                     C                            ( MPI VERSION )
+        122                     C
+        123                     C
+        124                     C NOTE ; ALL 'MPI' ROUTINES RETURN AN ERROR CODE 'IERR' WHICH INDICATES
+        125                     C       THE STATUS OF ITS EXECUTION. THIS SUBROUTINE IGNORES SUCH ERROR
+        126                     C       CODE AND RETURNS THE SEQUENCE TO THE CALLING PROGRAM UNIT,
+        127                     C       REGARDLESS OF THE VALUE OF THE 'MPI' RETURN CODE.
+        128                     C
+        129                     C
+        130                     C     ARGUMENT LISTINGS
+        131                     C       (1) INPUT
+        132                     C          ( NONE )
+        133                     C
+        134                     C       (2) OUTPUT
+        135                     C          ( NONE )
+        136                     C
+        137                     C
+        138                           CALL MPI_BARRIER(MPI_COMM_WORLD,IERR)
+        139                     C
+        140                     C
+        141                           RETURN
+        142                           END
+
+ Procedure information
+   Lines      : 4059
+   Statements : 3262
+   Stack(byte): 368
+   Prefetch num: 0
+
+ External subroutine subprogram "DDSTOP"
+  (line-no.)(nest)(optimize)
+        143                     C
+        144                     C
+        145                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+        146                           SUBROUTINE DDSTOP(IPART,IUT0)
+        147                           IMPLICIT REAL*4(A-H,O-Z)
+        148                     C
+        149                           INCLUDE 'mpif.h'
+        150                     C
+        151                           CHARACTER*60 ERMSGB
+        152                          & / ' ## SUBROUTINE DDSTOP: FATAL      ERROR REPORTED ; STOPPING' /
+        153                           CHARACTER*60 EREXP1
+        154                          & / ' A SUB-DOMAIN COMPUTATION HAS BEEN ABNORMALLY TERMINATED AT' /
+        155                     C
+        156                     C
+        157                     C      STOP ALL THE RUNNING PARALLEL TASKS FOR DOMAIN-DECOMPOSITION
+        158                     C     PROGRAMMING MODEL
+        159                     C                            ( MPI VERSION )
+        160                     C
+        161                     C
+        162                     C NOTE 1; IF AN ERROR CONDITION HAS BEEN DETECTED IN SOME TASK RUNNING
+        163                     C       IN PARALLEL, ALL THE TASKS SHARING THAT PARTICULAR RUN SHOULD BE
+        164                     C       APPROPRIATELY STOPPED. THIS SUBROUTINE TERMINATES ALL THE
+        165                     C       RUNNING TASKS AND CANCELS THE PARALLEL JOB.
+        166                     C
+        167                     C NOTE 2; ALL 'MPI' ROUTINES RETURN AN ERROR CODE 'IERR' WHICH INDICATES
+        168                     C       THE STATUS OF ITS EXECUTION. THIS SUBROUTINE IGNORES SUCH ERROR
+        169                     C       CODE AND RETURNS THE SEQUENCE TO THE CALLING PROGRAM UNIT,
+        170                     C       REGARDLESS OF THE VALUE OF THE 'MPI' RETURN CODE.
+        171                     C
+        172                     C
+        173                     C     ARGUMENT LISTINGS
+        174                     C       (1) INPUT
+        175                     C INT *4   IPART       ; SUB-DOMAIN NUMBER THAT THE CALLING TASK IS
+        176                     C                       TAKING CARE OF
+        177                     C INT *4   IUT0        ; FILE NUMBER TO WRITE ERROR MESSAGE
+        178                     C
+        179                     C       (2) OUTPUT
+        180                     C          ( NONE )
+        181                     C
+        182                     C
+        183                           WRITE(IUT0,*) ERMSGB
+        184                           WRITE(IUT0,*) EREXP1, IPART
+        185                           CALL MPI_ABORT(MPI_COMM_WORLD,IPART,IERR)
+        186                     C
+        187                           RETURN
+        188                           END
+
+ Procedure information
+   Lines      : 4075
+   Statements : 3266
+   Stack(byte): 592
+   Prefetch num: 0
+
+ External subroutine subprogram "DDCOMA"
+  (line-no.)(nest)(optimize)
+        189                     C
+        190                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+        191                           SUBROUTINE DDCOMA(SEND,RECV)
+        192                           IMPLICIT REAL*4(A-H,O-Z)
+        193                     C
+        194                           INCLUDE 'mpif.h'
+        195                     C
+        196                     #ifdef cputime
+        197                           INTEGER*4 NUMALL
+        198                           REAL*4 DTALLA,DTALLR
+        199                           COMMON /CPUALL/ NUMALL,DTALLA,DTALLR
+        200                           REAL*4 DTCPU,TBUF1,TBUF2
+        201                     #endif
+        202                     #ifdef USE_TIMER
+        203                           include 'timer.h'
+        204                     #endif
+        205                     C
+        206                     C
+        207                     C      SUM UP A SINGLE SCALAR AMONG ALL THE PARTICIPATING TASKS FOR
+        208                     C     DOMAIN-DECOMPOSITION PROGRAMMING MODEL
+        209                     C
+        210                     C                            ( MPI VERSION )
+        211                     C
+        212                     C
+        213                     C NOTE 1; ALL 'MPI' ROUTINES RETURN AN ERROR CODE 'IERR' WHICH INDICATES
+        214                     C       THE STATUS OF ITS EXECUTION. THIS SUBROUTINE IGNORES SUCH ERROR
+        215                     C       CODE AND RETURNS THE SEQUENCE TO THE CALLING PROGRAM UNIT,
+        216                     C       REGARDLESS OF THE VALUE OF THE 'MPI' RETURN CODE.
+        217                     C
+        218                     C NOTE 2; SOME COMPILERS, SUCH AS OFORT90 IN HI-UXMPP, SUPPORT AUTOMATIC
+        219                     C       PRECISION EXPANSION, WHERE ALL THE CONSTANTS, VARIABLES AND
+        220                     C       ARRAYS OF 4-BYTE PRECISION (REAL*4) ARE AUTOMATICALLY CONVERTED
+        221                     C       TO THOSE OF 8-BYTE PRECISION (REAL*8) WITH UNFORMATTED I/O DATA
+        222                     C       BEING KEPT AS THEY ARE (IF SO SPECIFIED). WHEN USING SUCH
+        223                     C       FEATURES (FUNCTIONS) OF A COMPILER, SPECIAL CARE IS NEEDED
+        224                     C       BECAUSE A COUPLE OF MPI SUBROUTINES CALLED IN THIS SUBPROGRAM
+        225                     C       ACCEPT THE DATA TYPE (DATA PRECISION) AS THEIR INPUT AND
+        226                     C       PERFORM THE OPERATIONS ACCORDING TO THIS INPUT VALUE. THIS
+        227                     C       INTERFACE SUPPORTS THE AUTOMATIC PRECISION EXPANSION MENTIONED
+        228                     C       ABOVE. IF YOU WISH TO USE SUCH FEATURE, ADD '-DPRECEXP' OPTION
+        229                     C       WHEN INVOKING 'cpp' FOR PRI-PROCESSING THIS SOURCE PROGRAM FILE.
+        230                     C
+        231                     C
+        232                     C     ARGUMENT LISTINGS
+        233                     C       (1) INPUT
+        234                     C REAL*4   SEND             ; SCALAR VARIABLE TO SUM UP
+        235                     C
+        236                     C       (2) OUTPUT
+        237                     C REAL*4   RECV             ; SCALAR VARIABLE SUMMED UP AMONG ALL TASKS
+        238                     C
+        239                     C
+        240                     #ifdef PRECEXP
+        241                           CALL MPI_ALLREDUCE(SEND,RECV,1,MPI_REAL8,MPI_SUM,
+        242                          &                   MPI_COMM_WORLD,IERR)
+        243                     #else
+        244                           CALL MPI_ALLREDUCE(SEND,RECV,1,MPI_REAL ,MPI_SUM,
+        245                          &                   MPI_COMM_WORLD,IERR)
+        246                     #endif
+        247                     
+        248                     C
+        249                           RETURN
+        250                           END
+
+ Diagnostic messages: program name(DDCOMA)
+   jwd2003i-i  "/vol0001/hp120295/u00324/FFB/include/timer.h", line 24: 'nclrcrs' is declared in INCLUDE but never referenced.
+   jwd2003i-i  "/vol0001/hp120295/u00324/FFB/include/timer.h", line 25: 'tclrcrs' is declared in INCLUDE but never referenced.
+   jwd2003i-i  "/vol0001/hp120295/u00324/FFB/include/timer.h", line 129: 'tend' is declared in INCLUDE but never referenced.
+   jwd2003i-i  "/vol0001/hp120295/u00324/FFB/include/timer.h", line 129: 'tstart' is declared in INCLUDE but never referenced.
+   jwd2006i-i  "dd_mpi.f", line 200: 'TBUF2' is declared but never referenced.
+   jwd2006i-i  "dd_mpi.f", line 200: 'TBUF1' is declared but never referenced.
+   jwd2006i-i  "dd_mpi.f", line 200: 'DTCPU' is declared but never referenced.
+
+ Procedure information
+   Lines      : 4221
+   Statements : 3329
+   Stack(byte): 368
+   Prefetch num: 0
+
+ External subroutine subprogram "DDCOM0"
+  (line-no.)(nest)(optimize)
+        251                     C
+        252                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+        253                           SUBROUTINE DDCOM0(IPART,MBC,MDOM,NC,NBC,LBC,NDOM,LDOM,IERR)
+        254                           IMPLICIT NONE
+        255                           INTEGER*4 IPART,MBC,MDOM,NC,IERR,
+        256                          *          NBC(NC),LBC(5,MBC,NC),NDOM,LDOM(MDOM)
+        257                     C
+        258                           INTEGER*4 IC,IB,IDOM,JPART
+        259                     C
+        260                           IERR=0
+        261                           NDOM=0
+        262     1                     DO 1000 IC=1,NC
+        263     2                         DO 1100 IB=1,NBC(IC)
+        264     2                             JPART=LBC(2,IB,IC)
+        265     2                             IF(IPART.EQ.JPART) GOTO 1100
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LDOM
+                              <<< Loop-information  End >>>
+        266     3                             DO 1200 IDOM=1,NDOM
+        267     3                                 IF(LDOM(IDOM).EQ.JPART) GOTO 1100
+        268     3                1200         CONTINUE
+        269     2                             NDOM=NDOM+1
+        270     3                             IF(NDOM.GT.MDOM) THEN
+        271     3                                 IERR=1
+        272     3                                 RETURN
+        273     3                             ENDIF
+        274     2                             LDOM(NDOM)=JPART
+        275     2                1100     CONTINUE
+        276     1                1000 CONTINUE
+        277                     C
+        278                           RETURN
+        279                           END
+
+ Diagnostic messages: program name(DDCOM0)
+   jwd5131p-i  "dd_mpi.f", line 262: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "dd_mpi.f", line 263: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "dd_mpi.f", line 266: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "dd_mpi.f", line 266: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "dd_mpi.f", line 266: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+
+ Procedure information
+   Lines      : 29
+   Statements : 23
+   Stack(byte): 352
+   Prefetch num: 0
+
+ External subroutine subprogram "DDCOM1"
+  (line-no.)(nest)(optimize)
+        280                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+        281                           SUBROUTINE DDCOM1(NDOM,LDOM,NBPSND,NBPRCV,IERR)
+        282                           IMPLICIT NONE
+        283                           INTEGER*4 NDOM,LDOM(NDOM),NBPSND(NDOM),NBPRCV(NDOM),IERR
+        284                           INTEGER*4 IDOM,MSGTYP,IRECV,MSGLEN,ISEND
+        285                     C
+        286                           INCLUDE 'mpif.h'
+        287                           INTEGER*4 MAXDOM
+        288                           PARAMETER ( MAXDOM = 100000 )
+        289                           INTEGER*4 MSGIDS(MAXDOM),MSGSTS(MPI_STATUS_SIZE,MAXDOM)
+        290                     C
+        291                     C     ====FUNCTION====
+        292                     C     COMMUNICATE NUMBER OF DATA AMONG NEIBERING DOMAINS
+        293                     C
+        294                     C     ====VARIABLES LIST====
+        295                     C[IN]
+        296                     C  NDOM   :NUMBER OF THE NEIGHBORING SUB-DOMAINS
+        297                     C  LDOM   :NEIGHBORING SUB-DOMAIN NUMBER
+        298                     C  NBPSND :NUMBER OF DATA TO SEND TO THE NEIGHBORING SUB-DOMAINS
+        299                     C
+        300                     C[OUT]
+        301                     C  NBPRCV :NUMBER OF DATA TO BE RECEIVED FROM THE NEIGHBORING SUB-DOMAINS
+        302                     C  IERR   :ERROR CODE
+        303                     C
+        304                           IERR=0
+        305                     C
+        306                     C [1] POST ALL THE EXPECTED RECEIVES
+        307                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LDOM
+                              <<< Loop-information  End >>>
+        308     1   s    s            DO 1000 IDOM = 1 , NDOM
+        309     1   s    s                MSGTYP = 1
+        310     1   s    s                IRECV  = LDOM (IDOM)-1
+        311     1   s    s                MSGLEN = 1
+        312     1   s    s                CALL MPI_IRECV(NBPRCV(IDOM),MSGLEN,MPI_REAL,IRECV,MSGTYP,
+        313     1                    *                   MPI_COMM_WORLD,MSGIDS(IDOM),IERR)
+        314     1   s    s       1000      CONTINUE
+        315                     C
+        316                     C [2] SEND THE RESIDUALS
+        317                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LDOM
+                              <<< Loop-information  End >>>
+        318     1   s    s            DO 2000 IDOM = 1 , NDOM
+        319     1   s    s                MSGTYP = 1
+        320     1   s    s                ISEND  = LDOM (IDOM)-1
+        321     1   s    s                MSGLEN = 1
+        322     1   s    s                CALL MPI_ISEND(NBPSND(IDOM),MSGLEN,MPI_REAL ,ISEND,MSGTYP,
+        323     1                    *                   MPI_COMM_WORLD,MSGIDS(NDOM+IDOM),IERR)
+        324     1   s    s       2000 CONTINUE
+        325                     C
+        326                     C [3] WAIT FOR THE COMPLETION OF ALL THE REQUESTED COMMUNICATIONS
+        327                     C
+        328                           CALL MPI_WAITALL(2*NDOM,MSGIDS,MSGSTS,IERR)
+        329                     C
+        330                           RETURN
+        331                           END
+
+ Diagnostic messages: program name(DDCOM1)
+   jwd8664o-i  "dd_mpi.f", line 308: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5208p-i  "dd_mpi.f", line 309: DO loop is not parallelized: the assign-refer order of 'MSGTYP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "dd_mpi.f", line 309: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'MSGTYP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "dd_mpi.f", line 310: DO loop is not parallelized: the assign-refer order of 'LDOM' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "dd_mpi.f", line 310: DO loop is not parallelized: the assign-refer order of 'IRECV' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "dd_mpi.f", line 310: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'LDOM' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "dd_mpi.f", line 310: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'IRECV' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "dd_mpi.f", line 311: DO loop is not parallelized: the assign-refer order of 'MSGLEN' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "dd_mpi.f", line 311: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'MSGLEN' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "dd_mpi.f", line 312: DO loop is not parallelized: the assign-refer order of 'NBPRCV' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "dd_mpi.f", line 312: DO loop is not parallelized: the assign-refer order of 'MSGIDS' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "dd_mpi.f", line 312: DO loop is not parallelized: the assign-refer order of 'IERR' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "dd_mpi.f", line 312: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6122s-i  "dd_mpi.f", line 312: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd8664o-i  "dd_mpi.f", line 318: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5208p-i  "dd_mpi.f", line 319: DO loop is not parallelized: the assign-refer order of 'MSGTYP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "dd_mpi.f", line 319: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'MSGTYP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "dd_mpi.f", line 320: DO loop is not parallelized: the assign-refer order of 'LDOM' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "dd_mpi.f", line 320: DO loop is not parallelized: the assign-refer order of 'ISEND' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "dd_mpi.f", line 320: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'LDOM' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "dd_mpi.f", line 320: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'ISEND' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "dd_mpi.f", line 321: DO loop is not parallelized: the assign-refer order of 'MSGLEN' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "dd_mpi.f", line 321: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'MSGLEN' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "dd_mpi.f", line 322: DO loop is not parallelized: the assign-refer order of 'NBPSND' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "dd_mpi.f", line 322: DO loop is not parallelized: the assign-refer order of 'MSGIDS' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "dd_mpi.f", line 322: DO loop is not parallelized: the assign-refer order of 'IERR' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "dd_mpi.f", line 322: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6122s-i  "dd_mpi.f", line 322: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+
+ Procedure information
+   Lines      : 4081
+   Statements : 3280
+   Stack(byte): 2800400
+   Prefetch num: 0
+
+ External subroutine subprogram "DDCOM2"
+  (line-no.)(nest)(optimize)
+        332                     C
+        333                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+        334                           SUBROUTINE DDCOM2(NDOM,LDOM,MPB,NBPSND,NBPRCV,
+        335                          *                  BUFSND,BUFRCV,IERR)
+        336                           IMPLICIT NONE
+        337                           INTEGER*4 NDOM,LDOM(NDOM),MPB,NBPSND(NDOM),NBPRCV(NDOM)
+        338                           REAL*8    BUFSND(MPB,NDOM),BUFRCV(MPB,NDOM)
+        339                           INTEGER*4 IDOM,MSGTYP,IRECV,MSGLEN,ISEND,IERR
+        340                     C
+        341                           INCLUDE 'mpif.h'
+        342                           INTEGER*4 MAXDOM
+        343                           PARAMETER ( MAXDOM = 100000 )
+        344                           INTEGER*4 MSGIDS(MAXDOM),MSGSTS(MPI_STATUS_SIZE,MAXDOM)
+        345                     C
+        346                     C     ====FUNCTION====
+        347                     C     COMMUNICATE B.C. DATA AMONG NEIBERING DOMAINS
+        348                     C
+        349                     C     ====VARIABLES LIST====
+        350                     C[IN]
+        351                     C  NDOM   :NUMBER OF THE NEIGHBORING SUB-DOMAINS
+        352                     C  LDOM   :NEIGHBORING SUB-DOMAIN NUMBER
+        353                     C  MPB    :SIZE OF 1ST DIMENSION OF BUFFERS FOR COMMUNICATION
+        354                     C  NBPRCV :NUMBER OF DATA TO BE RECEIVED FROM THE NEIGHBORING SUB-DOMAINS
+        355                     C  NBPSND :NUMBER OF DATA TO SEND TO THE NEIGHBORING SUB-DOMAINS
+        356                     C  BUFSND :WORK REGION FOR SENDING
+        357                     C
+        358                     C[OUT]
+        359                     C  BUFRCV :WORK REGION FOR RECEIVING
+        360                     C  IERR   :ERROR CODE
+        361                     C
+        362                           IERR=0
+        363                     C
+        364                     C [1] POST ALL THE EXPECTED RECEIVES
+        365                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LDOM, NBPRCV
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 2
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        366     1   s    s            DO 1000 IDOM = 1 , NDOM
+        367     1   s    s                MSGTYP = 1
+        368     1   s    s                IRECV  = LDOM (IDOM)-1
+        369     1   s    s                MSGLEN = NBPRCV(IDOM)
+        370     1   s    s                CALL MPI_IRECV(BUFRCV(1,IDOM),MSGLEN,MPI_REAL8,IRECV,MSGTYP,
+        371     1                    *                   MPI_COMM_WORLD,MSGIDS(IDOM),IERR)
+        372     1   s    s       1000 CONTINUE
+        373                     C
+        374                     C [2] SEND THE RESIDUALS
+        375                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LDOM, NBPSND
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 1
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        376     1   s    s            DO 2000 IDOM = 1 , NDOM
+        377     1   s    s                MSGTYP = 1
+        378     1   s    s                ISEND  = LDOM (IDOM)-1
+        379     1   s    s                MSGLEN = NBPSND(IDOM)
+        380     1   s    s                CALL MPI_ISEND(BUFSND(1,IDOM),MSGLEN,MPI_REAL8,ISEND,MSGTYP,
+        381     1                    *                   MPI_COMM_WORLD,MSGIDS(NDOM+IDOM),IERR)
+        382     1   s    s       2000 CONTINUE
+        383                     C
+        384                     C [3] WAIT FOR THE COMPLETION OF ALL THE REQUESTED COMMUNICATIONS
+        385                     C
+        386                           CALL MPI_WAITALL(2*NDOM,MSGIDS,MSGSTS,IERR)
+        387                     C
+        388                           RETURN
+        389                           END
+
+ Diagnostic messages: program name(DDCOM2)
+   jwd8664o-i  "dd_mpi.f", line 366: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5208p-i  "dd_mpi.f", line 367: DO loop is not parallelized: the assign-refer order of 'MSGTYP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "dd_mpi.f", line 367: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'MSGTYP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "dd_mpi.f", line 368: DO loop is not parallelized: the assign-refer order of 'LDOM' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "dd_mpi.f", line 368: DO loop is not parallelized: the assign-refer order of 'IRECV' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "dd_mpi.f", line 368: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'LDOM' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "dd_mpi.f", line 368: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'IRECV' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "dd_mpi.f", line 369: DO loop is not parallelized: the assign-refer order of 'NBPRCV' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "dd_mpi.f", line 369: DO loop is not parallelized: the assign-refer order of 'MSGLEN' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "dd_mpi.f", line 369: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NBPRCV' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "dd_mpi.f", line 369: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'MSGLEN' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "dd_mpi.f", line 370: DO loop is not parallelized: the assign-refer order of 'BUFRCV' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "dd_mpi.f", line 370: DO loop is not parallelized: the assign-refer order of 'MSGIDS' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "dd_mpi.f", line 370: DO loop is not parallelized: the assign-refer order of 'IERR' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "dd_mpi.f", line 370: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6122s-i  "dd_mpi.f", line 370: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd8664o-i  "dd_mpi.f", line 376: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5208p-i  "dd_mpi.f", line 377: DO loop is not parallelized: the assign-refer order of 'MSGTYP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "dd_mpi.f", line 377: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'MSGTYP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "dd_mpi.f", line 378: DO loop is not parallelized: the assign-refer order of 'LDOM' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "dd_mpi.f", line 378: DO loop is not parallelized: the assign-refer order of 'ISEND' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "dd_mpi.f", line 378: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'LDOM' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "dd_mpi.f", line 378: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'ISEND' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "dd_mpi.f", line 379: DO loop is not parallelized: the assign-refer order of 'NBPSND' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "dd_mpi.f", line 379: DO loop is not parallelized: the assign-refer order of 'MSGLEN' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "dd_mpi.f", line 379: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NBPSND' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "dd_mpi.f", line 379: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'MSGLEN' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "dd_mpi.f", line 380: DO loop is not parallelized: the assign-refer order of 'BUFSND' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "dd_mpi.f", line 380: DO loop is not parallelized: the assign-refer order of 'MSGIDS' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "dd_mpi.f", line 380: DO loop is not parallelized: the assign-refer order of 'IERR' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "dd_mpi.f", line 380: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6122s-i  "dd_mpi.f", line 380: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+
+ Procedure information
+   Lines      : 4087
+   Statements : 3281
+   Stack(byte): 2800432
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 8
+   Total lines      : 28722
+   Total statements : 22969
+   Total stack(byte): 5603248
+   Total prefetch num: 0
+

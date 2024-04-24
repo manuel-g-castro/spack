@@ -1,0 +1,313 @@
+C======================================================================C
+C                                                                      C
+C SOFTWARE NAME : FRONTFLOW_BLUE.8.1                                   C
+C                                                                      C
+C  SUB ROUTINE : MKFACE                                                C
+C                                                                      C
+C                                       WRITTEN BY H.YOSHIMURA         C
+C                                                                      C
+C                                                                      C
+C CONTACT ADDRESS : IIS, THE UNIVERSITY OF TOKYO, CISS                 C
+C                                                                      C
+C THERMO-FLUID ANALYSIS SOLVERS FOR LARGE-SCALE-ASSEMBLY               C
+C                                                                      C
+C======================================================================C
+      SUBROUTINE MKFACE(IPART,NE,NP,N2,NSP,NS,MEP,MFACE,MBF,
+     *                  MBFDOM,
+     *                  NODE,LOCAL,NEP,IENP,X,Y,Z,FE,
+     *                  NPWALL,NPINLT,NPFREE,NPSYMT,
+     *                  LPWALL,LPINLT,LPFREE,LPSYMT,
+     *                  MDOM,NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,
+     *                  LEFACE,NFACE,NFACE1,NFACE2,NFACE3,LFACE,
+     *                  AVEC,DVEC,
+     *                  NFWALL,NFINLT,NFFREE,NFSYMT,
+     *                  LFWALL,LFINLT,LFFREE,LFSYMT,FINLT,
+     *                  NDOMF,LDOMF,NBFDOM,IFSLF,IFSND,IMASS,
+     *                  WRK01,WRK02,WRK03,LWRK01,
+     *                  FBWRK1,FBWRK2,FBWRK3,
+     *                  BUFSND,BUFRCV,IUT6,IUT0,IERR)
+C
+      IMPLICIT NONE
+C
+C     [INPUT]
+      INTEGER*4 IPART,NE,NP,N2,NSP,NS,MEP,MFACE,MBF,MBFDOM
+      INTEGER*4 NODE(N2,NE),LOCAL(NSP,NS,4),NEP(NP),IENP(MEP,NP)
+      REAL*8    X(NP),Y(NP),Z(NP)
+      REAL*4    FE(NE)
+      INTEGER*4 NPWALL,NPINLT,NPFREE,NPSYMT
+      INTEGER*4 LPWALL(NPWALL),LPINLT(NPINLT),
+     *          LPFREE(NPFREE),LPSYMT(NPSYMT)
+      INTEGER*4 MDOM,NDOM,MBPDOM
+      INTEGER*4 LDOM(MDOM),NBPDOM(MDOM),
+     *          IPSLF(MBPDOM,MDOM),IPSND(MBPDOM,MDOM)
+C
+C     [IN-OUTPUT]
+      INTEGER*4 LEFACE(6,NE),NFACE,NFACE1,NFACE2,NFACE3,LFACE(5,MFACE)
+      REAL*4    AVEC(4,MFACE),DVEC(3,MFACE)
+      INTEGER*4 NFWALL,NFINLT,NFFREE,NFSYMT
+      INTEGER*4 LFWALL(MBF),LFINLT(MBF),LFFREE(MBF),LFSYMT(MBF)
+      REAL*4    FINLT(MBF)
+      INTEGER*4 NDOMF,LDOMF(MDOM),NBFDOM(MDOM)
+      INTEGER*4 IFSLF(MBFDOM,MDOM),IFSND(MBFDOM,MDOM)
+      INTEGER*4 IMASS,IUT6,IUT0,IERR
+C
+C     [WORK]
+      INTEGER*4 LWRK01(NP)
+      REAL*4    WRK01(NE),WRK02(NE),WRK03(NE),
+     *          FBWRK1(MBF),FBWRK2(MBF),FBWRK3(MBF),BUFSND,BUFRCV
+C
+C     [LOCAL]
+      INTEGER*4 IP,IP1,IP2,IP3,IP4,IFACE,IFACE2,IFACE3,IA0,IA1,IB0,IB1
+      INTEGER*4 IE,IE1,IE2,NSD,IETYPE,NLS,IS,I,
+     *          IERRA,NERRFC,IDIM,MAXBUF
+      REAL*8    XP,YP,ZP
+      REAL*4    AFINLT,AFFREE,VAL1,VAL2
+C
+      CHARACTER*60 ERMSGC
+     & /' ## SUBROUTINE MKFACE: ERROR OCCURED             ; RETURNED' /
+C
+CC
+CCHY [1] INITIALIZE 
+CC
+      DO 1000 IFACE=1,MFACE
+         LFACE(1,IFACE)=0
+         LFACE(2,IFACE)=0
+         LFACE(3,IFACE)=0
+         LFACE(4,IFACE)=0
+         LFACE(5,IFACE)=0
+         AVEC (1,IFACE)=0.0E0
+         AVEC (2,IFACE)=0.0E0
+         AVEC (3,IFACE)=0.0E0
+         AVEC (4,IFACE)=0.0E0
+         DVEC (1,IFACE)=0.0E0
+         DVEC (2,IFACE)=0.0E0
+         DVEC (3,IFACE)=0.0E0
+ 1000 CONTINUE
+C
+      DO 2000 IE=1,NE
+         DO 2100 IS=1,6
+            LEFACE(IS,IE)=0
+ 2100    CONTINUE
+ 2000 CONTINUE
+CC
+CCHY [2] MKFAC1 : MAKE FACE LIST FOR INNER REGION
+CC
+      WRITE(IUT6,*) 
+      WRITE(IUT6,*) ' **MKFAC1** : MAKING FACE LIST FOR INNER REGION'
+      NFACE=0
+      CALL MKFAC1(IPART,NE,NP,N2,NSP,NS,MEP,MFACE,
+     *            NODE,LOCAL,NEP,IENP,X,Y,Z,
+     *            NFACE,LFACE,AVEC,DVEC,
+     *            LEFACE,IUT6,IUT0,IERR)
+      CALL ERRCHK(IUT6,IPART,1,IERR,IERRA)
+      IF(IERRA.NE.0) GOTO 9999
+      NFACE1=NFACE
+      WRITE(IUT6,*) ' NUMBER OF FACE = ',NFACE1,NFACE
+      WRITE(IUT6,*) ' **MKFAC1** : DONE'
+C
+CC
+CCHY [3] MKFAC2 : MAKE BOUNDARY FACE LIST
+CC
+      WRITE(IUT6,*) 
+      WRITE(IUT6,*) ' **MKFAC2** : MAKING BOUNDARY FACE LIST'
+      CALL MKFAC2(IPART,NE,NP,N2,NSP,NS,MEP,MFACE,MBF,
+     *            NODE,LOCAL,NEP,IENP,X,Y,Z,FE,
+     *            NPWALL,NPINLT,NPFREE,NPSYMT,
+     *            LPWALL,LPINLT,LPFREE,LPSYMT,
+     *            NFACE,LFACE,AVEC,DVEC,
+     *            NFWALL,NFINLT,NFFREE,NFSYMT,
+     *            LFWALL,LFINLT,LFFREE,LFSYMT,FINLT,
+     *            LWRK01,LEFACE,IUT6,IUT0,IERR)
+      CALL ERRCHK(IUT6,IPART,1,IERR,IERRA)
+      IF(IERRA.NE.0) GOTO 9999
+      NFACE2=NFACE-NFACE1
+      WRITE(IUT6,*) ' NUMBER OF FACE = ',NFACE2,NFACE
+      WRITE(IUT6,*) ' **MKFAC2** : DONE'
+C
+      AFINLT=FLOAT(NFINLT)
+      AFFREE=FLOAT(NFFREE)
+      IF(IPART.GE.1) THEN
+         CALL DDCOM2(AFINLT, VAL1)
+         CALL DDCOM2(AFFREE, VAL2)
+         AFINLT=VAL1
+         AFFREE=VAL2
+      ENDIF
+      IF(AFINLT.GE.1.0E0.AND.AFFREE.GE.1.0E0) THEN
+         WRITE(IUT6,*) ' SET MASS IMBALANCE CORRECTION TO ACTIVE'
+         WRITE(IUT6,*) ' FOR VOF CALCULATION.'
+         IMASS=1
+      ENDIF
+C
+CC
+CCHY [4] MKFAC3 : MAKE INTER-CONNECT BOUNDARY FACE LIST
+CC
+      IF (IPART.EQ.0) GOTO 3000
+      WRITE(IUT6,*) 
+      WRITE(IUT6,*)
+     *' **MKFAC3** : MAKING INTER-CONNECT BOUNDARY FACE LIST'
+      CALL MKFAC3(IPART,NE,NP,N2,NSP,NS,MEP,MFACE,MBFDOM,
+     *            NODE,LOCAL,NEP,IENP,X,Y,Z,
+     *            MDOM,NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,
+     *            NFACE,NFACE1,NFACE2,LFACE,AVEC,DVEC,
+     *            LWRK01,LEFACE,IUT6,IUT0,IERR)
+      CALL ERRCHK(IUT6,IPART,1,IERR,IERRA)
+      IF(IERRA.NE.0) GOTO 9999
+      NFACE3=NFACE-NFACE2-NFACE1
+      WRITE(IUT6,*) ' NUMBER OF FACE = ',NFACE3,NFACE
+      WRITE(IUT6,*) ' **MKFAC3** : DONE'
+C
+ 3000 CONTINUE
+C
+CC
+CCHY [5] CHECK FACE LIST
+CC
+      WRITE(IUT6,*) 
+      WRITE(IUT6,*) ' **MKFACE** : CHECKING FACE LIST'
+      NERRFC=0
+      DO 4000 IE=1,NE
+         IF(     NODE(8,IE).GE.1) THEN ! HEX
+            IETYPE=4
+            NLS=6
+         ELSE IF(NODE(6,IE).GE.1) THEN ! PRS
+            IETYPE=3
+            NLS=5
+         ELSE IF(NODE(5,IE).GE.1) THEN ! PYR
+            IETYPE=2
+            NLS=5
+         ELSE                          ! TET
+            IETYPE=1
+            NLS=4
+         ENDIF
+         DO 4100 IS=1,NLS
+            IF (LEFACE(IS,IE).NE.0) GOTO 4100
+C
+            NERRFC=NERRFC+1
+            IP1=NODE(LOCAL(1,IS,IETYPE),IE)
+            IP2=NODE(LOCAL(2,IS,IETYPE),IE)
+            IP3=NODE(LOCAL(3,IS,IETYPE),IE)
+C
+            IF ((IETYPE.EQ.1            ).OR. ! TRI
+     *          (IETYPE.EQ.2.AND.IS.LE.4).OR.
+     *          (IETYPE.EQ.3.AND.IS.LE.2)) THEN
+               XP=(X(IP1)+X(IP2)+X(IP3))/3.0E0
+               YP=(Y(IP1)+Y(IP2)+Y(IP3))/3.0E0
+               ZP=(Z(IP1)+Z(IP2)+Z(IP3))/3.0E0
+            ELSE                              ! QUAD
+               IP4=NODE(LOCAL(4,IS,IETYPE),IE)
+               XP=(X(IP1)+X(IP2)+X(IP3)+X(IP4))/4.0E0
+               YP=(Y(IP1)+Y(IP2)+Y(IP3)+Y(IP4))/4.0E0
+               ZP=(Z(IP1)+Z(IP2)+Z(IP3)+Z(IP4))/4.0E0
+            ENDIF
+            WRITE(IUT6,'(A5,2I8,3E13.5)') 'N.F.',IE,IS,XP,YP,ZP
+ 4100    CONTINUE
+ 4000 CONTINUE
+      IF (NERRFC.GT.0) THEN
+         WRITE(IUT6,*) 'ERROR FACES ARE EXIST'
+         GOTO 9999
+      ENDIF
+      WRITE(IUT6,*) ' **MKFACE** : DONE'
+C
+CC
+CCHY [6] SET BOUNDARY CONDITION TO LEFACE
+CC
+      DO 4200 IFACE2=1,NFACE2
+         IFACE=NFACE1+IFACE2
+         IE=LFACE(1,IFACE)
+         IS=LFACE(3,IFACE)
+         LEFACE(IS,IE)=0
+ 4200 CONTINUE
+C
+      DO 4300 IFACE3=1,NFACE3
+         IFACE=NFACE1+NFACE2+IFACE3
+         IE=LFACE(1,IFACE)
+         IS=LFACE(3,IFACE)
+         LEFACE(IS,IE)=-IFACE3
+ 4300 CONTINUE
+C
+CC
+CCHY [7] GENERATE NEIGHBORING DOMAIN FACE LISTS
+CC
+      IF (IPART.EQ.0) GOTO 5000
+      WRITE(IUT6,*) 
+      WRITE(IUT6,*)
+     *' **MKFACE** : GENERATING NEIGHBORING DOMAIN FACE LISTS'
+      CALL DDFAC0(IPART,NFACE3,LFACE(1,NFACE1+NFACE2+1),MDOM,MBFDOM,
+     *            NDOMF,LDOMF,NBFDOM,IFSLF,IFSND,IUT0,IERR)
+      CALL ERRCHK(IUT6,IPART,1,IERR,IERRA)
+      IF(IERRA.NE.0) GOTO 9999
+C
+      IDIM=0
+      MAXBUF=5*NFACE
+      CALL DDFAC1(IDIM,MBFDOM,NDOMF,LDOMF,NBFDOM,IFSLF,IFSND,NFACE3,
+     *            LWRK01,LWRK01,LWRK01,BUFSND,BUFRCV,MAXBUF,IUT0,IERR)
+      CALL ERRCHK(IUT6,IPART,1,IERR,IERRA)
+      IF(IERRA.NE.0) GOTO 9999
+      WRITE(IUT6,*) ' **MKFACE** : DONE'
+C
+ 5000 CONTINUE
+C
+CC
+CCHY [8] CALCULATE DIRECTION VECTOR FROM DONOR TO ACCEPTOR
+CC
+      DO 6000 IE=1,NE
+         XP=0.0E0
+         YP=0.0E0
+         ZP=0.0E0
+         NSD=0
+         DO 6100 I=1,8
+            IP=NODE(I,IE)
+            IF (IP.EQ.0) GOTO 6100
+            XP=XP+X(IP)
+            YP=YP+Y(IP)
+            ZP=ZP+Z(IP)
+            NSD=NSD+1
+ 6100    CONTINUE
+         WRK01(IE)=XP/FLOAT(NSD)
+         WRK02(IE)=YP/FLOAT(NSD)
+         WRK03(IE)=ZP/FLOAT(NSD)
+ 6000 CONTINUE
+C
+      DO 6200 IFACE3=1,NFACE3
+         IFACE=NFACE1+NFACE2+IFACE3
+         IE=LFACE(1,IFACE)
+         FBWRK1(IFACE3)=WRK01(IE)
+         FBWRK2(IFACE3)=WRK02(IE)
+         FBWRK3(IFACE3)=WRK03(IE)
+ 6200 CONTINUE
+C
+      IF (IPART.EQ.0) GOTO 6250
+      IDIM=3
+      CALL DDFAC1(IDIM,MBFDOM,NDOMF,LDOMF,NBFDOM,IFSLF,IFSND,NFACE3,
+     *            FBWRK1,FBWRK2,FBWRK3,BUFSND,BUFRCV,MAXBUF,IUT0,IERR)
+      CALL ERCHK2(IUT6,IPART,1,IERR,IERRA)
+      IF(IERRA.NE.0) GOTO 9999
+C
+ 6250 CONTINUE
+C
+      DO 6300 IFACE=1,NFACE
+         IE1=LFACE(1,IFACE)
+         IE2=LFACE(2,IFACE)
+C
+         IF (IE2.EQ.0) GOTO 6300 ! BOUNDARY FACE
+C         
+         IF (IE2.LT.0) THEN
+            IFACE3=IFACE-NFACE1-NFACE2
+            DVEC(1,IFACE)=FBWRK1(IFACE3)-WRK01(IE1)
+            DVEC(2,IFACE)=FBWRK2(IFACE3)-WRK02(IE1)
+            DVEC(3,IFACE)=FBWRK3(IFACE3)-WRK03(IE1)
+         ELSE
+            DVEC(1,IFACE)=WRK01(IE2)-WRK01(IE1)
+            DVEC(2,IFACE)=WRK02(IE2)-WRK02(IE1)
+            DVEC(3,IFACE)=WRK03(IE2)-WRK03(IE1)
+         ENDIF
+ 6300 CONTINUE
+C
+      RETURN
+C
+ 9999 CONTINUE
+      WRITE(IUT0,*) ERMSGC
+      IERR=1
+      RETURN
+C
+      END
+C

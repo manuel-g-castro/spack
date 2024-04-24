@@ -1,0 +1,616 @@
+
+ Fujitsu Fortran Version 4.8.1  Thu Nov 24 16:46:08 2022
+
+ Compilation information
+   Current directory : /vol0005/mdt2/home/u10588/SRC/lbm/ver.59.01
+   Source file       : mkintr.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -Nlst=t -Cpp -Cfpp -c -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Knointentopt
+   Cpp options          : -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Dcputime -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=8 -D__FRT_patchlevel__=1 -D__FRT_version__="4.8.1" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Knoarray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nlibomp -Nline -Nlst -Nlst=p -Nlst=t
+                          -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "MKINTR"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE MKINTR(NP,NG,MBC,M1,LLEVEL,LPOSI,DSCALE,
+          2                          *                  NTRIG,XTRIG,YTRIG,ZTRIG,
+          3                          *                  MPBOUN,NPBOUN,LPBOUN,QBOUN,
+          4                          *                  LWORK,QCELL,IMODQ,EPSTRG,IUT6,IUT0,IERR)
+          5                           IMPLICIT NONE
+          6                     C
+          7                     C     FUNCTION: MAKE INTERSECT DATA IN THE CUBE
+          8                     C
+          9                     C
+         10                     C[INPUT]
+         11                           INTEGER*4 NP,NG,MBC,LLEVEL,LPOSI(3),MPBOUN,M1
+         12                           REAL*8    DSCALE
+         13                           INTEGER*4 NTRIG
+         14                           REAL*4    XTRIG(NTRIG),YTRIG(NTRIG),ZTRIG(NTRIG)
+         15                           INTEGER*4 IMODQ
+         16                           REAL*8    EPSTRG
+         17                           INTEGER*4 IUT6,IUT0
+         18                     C
+         19                     C[INPUT-OUTPUT]
+         20                           INTEGER*4 NPBOUN,LPBOUN(5,MPBOUN)
+         21                           REAL*4    QBOUN(MPBOUN)
+         22                     C
+         23                     C[OUTPUT]
+         24                           INTEGER*4 IERR
+         25                     C
+         26                     C[WORK]
+         27                           INTEGER*4 LWORK(NP,NG+1,NG+1,NG+1)
+         28                           REAL*4    QCELL(M1,0:NG+1,0:NG+1,0:NG+1)
+         29                     C
+         30                     C[LOCAL]
+         31                           INTEGER*4 IP,IP1,IP2,IP3,ITMP1,ITMP2,IB,I,J,K,II,NPBOUN1
+         32                           REAL*8    DD,DG,BB1(6),BB2(6)
+         33                           INTEGER*4 NBLIST,LBLIST(3,MPBOUN)
+         34                           REAL*8    QLIST(3,M1,MPBOUN)
+         35                           REAL*8    XA,XC,XD,XE,X0,
+         36                          *          YA,YC,YD,YE,Y0,
+         37                          *          ZA,ZC,ZD,ZE,Z0,
+         38                          *          XX1,XX2,XX3,YY1,YY2,YY3,ZZ1,ZZ2,ZZ3,B1,B2,B3,
+         39                          *          C11,C12,C21,C22
+         40                     C
+         41                           INTEGER*4 LCELL(3,2,13)
+         42                           DATA LCELL / 0,0,0, 1,0,0,
+         43                          *             0,0,0, 0,1,0,
+         44                          *             0,0,0, 0,0,1,
+         45                          *             0,0,0, 1,1,1,
+         46                          *             1,0,0, 0,1,1,
+         47                          *             1,1,0, 0,0,1,
+         48                          *             0,1,0, 1,0,1,
+         49                          *             0,0,0, 0,1,1,
+         50                          *             0,0,1, 0,1,0,
+         51                          *             0,0,0, 1,0,1,
+         52                          *             0,0,1, 1,0,0,
+         53                          *             0,0,0, 1,1,0,
+         54                          *             0,1,0, 1,0,0/
+         55                     C
+         56                           REAL*8 EPS1,EPS2
+         57                           DATA EPS1 /1.0D-3/
+         58                           DATA EPS2 /2.0D-1/
+         59                     C
+         60                           EPS2=EPSTRG
+         61                     C
+         62                           DD=REAL(DSCALE)
+         63                           DG=(DD*2.0E0**(LLEVEL-1))/FLOAT(NG)
+         64                           BB1(1)=DBLE(DSCALE)*LPOSI(1)-DG
+         65                           BB1(2)=DBLE(DSCALE)*LPOSI(2)-DG
+         66                           BB1(3)=DBLE(DSCALE)*LPOSI(3)-DG
+         67                           BB1(4)=BB1(1)+(DD*2.0E0**(LLEVEL-1))+DG
+         68                           BB1(5)=BB1(2)+(DD*2.0E0**(LLEVEL-1))+DG
+         69                           BB1(6)=BB1(3)+(DD*2.0E0**(LLEVEL-1))+DG
+         70                     C
+         71                           BB2(1)= 1.0D8
+         72                           BB2(2)= 1.0D8
+         73                           BB2(3)= 1.0D8
+         74                           BB2(4)=-1.0D8
+         75                           BB2(5)=-1.0D8
+         76                           BB2(6)=-1.0D8
+         77                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 67
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<< Loop-information  End >>>
+         78     1  pp    v            DO 1000 IP=1,NTRIG/3
+         79     1   p    v                IP1=3*(IP-1)+1
+         80     1   p    v                IP2=3*(IP-1)+2
+         81     1   p    v                IP3=3*(IP-1)+3
+         82     1   p    v                BB2(1)=MIN(BB2(1),XTRIG(IP1),XTRIG(IP2),XTRIG(IP3))
+         83     1   p    v                BB2(2)=MIN(BB2(2),YTRIG(IP1),YTRIG(IP2),YTRIG(IP3))
+         84     1   p    v                BB2(3)=MIN(BB2(3),ZTRIG(IP1),ZTRIG(IP2),ZTRIG(IP3))
+         85     1   p    v                BB2(4)=MAX(BB2(4),XTRIG(IP1),XTRIG(IP2),XTRIG(IP3))
+         86     1   p    v                BB2(5)=MAX(BB2(5),YTRIG(IP1),YTRIG(IP2),YTRIG(IP3))
+         87     1   p    v                BB2(6)=MAX(BB2(6),ZTRIG(IP1),ZTRIG(IP2),ZTRIG(IP3))
+         88     1   p    v       1000 CONTINUE
+         89                     C
+         90                           CALL CHKBB(ITMP1,BB1,BB2)
+         91                           CALL CHKBB(ITMP2,BB2,BB1)
+         92                     C     IF(ITMP1.EQ.0 .AND. ITMP2.EQ.0) RETURN
+         93                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1455
+                              <<<  [OPTIMIZATION]
+                              <<<    COLLAPSED
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      QCELL
+                              <<< Loop-information  End >>>
+         94     1  pp   4v            DO 1100 K=0,NG+1
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    COLLAPSED
+                              <<< Loop-information  End >>>
+         95     2   p   4             DO 1200 J=0,NG+1
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    COLLAPSED
+                              <<< Loop-information  End >>>
+         96     3   p   4             DO 1300 I=0,NG+1
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    COLLAPSED
+                              <<< Loop-information  End >>>
+         97     4   p   4             DO 1400 II=1,M1
+         98     4   p   4v                QCELL(II,I,J,K)=1.0E2
+         99     4   p   4v       1400 CONTINUE
+        100     3   p            1300 CONTINUE
+        101     2   p            1200 CONTINUE
+        102     1   p            1100 CONTINUE
+        103                     C
+        104     1                     DO 2000 IP = 1,NTRIG/3
+        105     1                         IP1=3*(IP-1)+1
+        106     1                         IP2=3*(IP-1)+2
+        107     1                         IP3=3*(IP-1)+3
+        108     1                         BB2(1)=MIN(XTRIG(IP1),XTRIG(IP2),XTRIG(IP3))
+        109     1                         BB2(2)=MIN(YTRIG(IP1),YTRIG(IP2),YTRIG(IP3))
+        110     1                         BB2(3)=MIN(ZTRIG(IP1),ZTRIG(IP2),ZTRIG(IP3))
+        111     1                         BB2(4)=MAX(XTRIG(IP1),XTRIG(IP2),XTRIG(IP3))
+        112     1                         BB2(5)=MAX(YTRIG(IP1),YTRIG(IP2),YTRIG(IP3))
+        113     1                         BB2(6)=MAX(ZTRIG(IP1),ZTRIG(IP2),ZTRIG(IP3))
+        114     1                         CALL CHKBB(ITMP1,BB1,BB2)
+        115     1                         CALL CHKBB(ITMP2,BB2,BB1)
+        116     1               C         IF(ITMP1.EQ.0 .AND. ITMP2.EQ.0) GOTO 2000
+        117     1               C
+        118     1                         CALL USTSTA(25)
+        119     1                         CALL ITLIST(NG,LLEVEL,LPOSI,DSCALE,
+        120     1                    *                XTRIG(IP1),YTRIG(IP1),ZTRIG(IP1),
+        121     1                    *                MPBOUN,NBLIST,LBLIST)
+        122     1                         CALL USTEND(25)
+        123     1               C
+        124     1                         CALL USTSTA(26)
+        125     1                         XC=XTRIG(IP1)
+        126     1                         XD=XTRIG(IP2)
+        127     1                         XE=XTRIG(IP3)
+        128     1                         YC=YTRIG(IP1)
+        129     1                         YD=YTRIG(IP2)
+        130     1                         YE=YTRIG(IP3)
+        131     1                         ZC=ZTRIG(IP1)
+        132     1                         ZD=ZTRIG(IP2)
+        133     1                         ZE=ZTRIG(IP3)
+        134     1               C
+        135     1                         YY1=XC-XD
+        136     1                         YY2=YC-YD
+        137     1                         YY3=ZC-ZD
+        138     1                         ZZ1=XC-XE
+        139     1                         ZZ2=YC-YE
+        140     1                         ZZ3=ZC-ZE
+        141     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 22
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LBLIST
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 0
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 64
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        142     2  pp    v                DO 2100 IB=1,NBLIST
+        143     2   p    v                    I=LBLIST(1,IB)
+        144     2   p    v                    J=LBLIST(2,IB)
+        145     2   p    v                    K=LBLIST(3,IB)
+        146     2   p    v                    X0=DD*DBLE(LPOSI(1))+DG*DBLE(I-1)
+        147     2   p    v                    Y0=DD*DBLE(LPOSI(2))+DG*DBLE(J-1)
+        148     2   p    v                    Z0=DD*DBLE(LPOSI(3))+DG*DBLE(K-1)
+        149     2               C
+        150     2               CCC II=1
+        151     2   p    v                    B1=XC-( X0+DG*DBLE(LCELL(1,1,1)) )
+        152     2   p    v                    B2=YC-( Y0+DG*DBLE(LCELL(2,1,1)) )
+        153     2   p    v                    B3=ZC-( Z0+DG*DBLE(LCELL(3,1,1)) )
+        154     2   p    v                    C11=YY2
+        155     2   p    v                    C12=ZZ2
+        156     2   p    v                    C21=YY3
+        157     2   p    v                    C22=ZZ3
+        158     2   p    v                    XX2=( C22*B2-C12*B3)/(C11*C22-C12*C21)
+        159     2   p    v                    XX3=(-C21*B2+C11*B3)/(C11*C22-C12*C21)
+        160     2   p    v                    XX1=(B1-YY1*XX2-ZZ1*XX3)/DG
+        161     2   p    v                    QLIST(1,1,IB)=XX1
+        162     2   p    v                    QLIST(2,1,IB)=XX2
+        163     2   p    v                    QLIST(3,1,IB)=XX3
+        164     2               C
+        165     2               CCC II=2
+        166     2   p    v                    B1=XC-( X0+DG*DBLE(LCELL(1,1,2)) )
+        167     2   p    v                    B2=YC-( Y0+DG*DBLE(LCELL(2,1,2)) )
+        168     2   p    v                    B3=ZC-( Z0+DG*DBLE(LCELL(3,1,2)) )
+        169     2   p    v                    C11=YY1
+        170     2   p    v                    C12=ZZ1
+        171     2   p    v                    C21=YY3
+        172     2   p    v                    C22=ZZ3
+        173     2   p    v                    XX2=( C22*B1-C12*B3)/(C11*C22-C12*C21)
+        174     2   p    v                    XX3=(-C21*B1+C11*B3)/(C11*C22-C12*C21)
+        175     2   p    v                    XX1=(B2-YY2*XX2-ZZ2*XX3)/DG
+        176     2   p    v                    QLIST(1,2,IB)=XX1
+        177     2   p    v                    QLIST(2,2,IB)=XX2
+        178     2   p    v                    QLIST(3,2,IB)=XX3
+        179     2               C
+        180     2               CCC II=3
+        181     2   p    v                    B1=XC-( X0+DG*DBLE(LCELL(1,1,3)) )
+        182     2   p    v                    B2=YC-( Y0+DG*DBLE(LCELL(2,1,3)) )
+        183     2   p    v                    B3=ZC-( Z0+DG*DBLE(LCELL(3,1,3)) )
+        184     2   p    v                    C11=YY1
+        185     2   p    v                    C12=ZZ1
+        186     2   p    v                    C21=YY2
+        187     2   p    v                    C22=ZZ2
+        188     2   p    v                    XX2=( C22*B1-C12*B2)/(C11*C22-C12*C21)
+        189     2   p    v                    XX3=(-C21*B1+C11*B2)/(C11*C22-C12*C21)
+        190     2   p    v                    XX1=(B3-YY3*XX2-ZZ3*XX3)/DG
+        191     2   p    v                    QLIST(1,3,IB)=XX1
+        192     2   p    v                    QLIST(2,3,IB)=XX2
+        193     2   p    v                    QLIST(3,3,IB)=XX3
+        194     2               C
+        195     2               CCC II=4
+        196     2   p    v                    B1=XC-( X0+DG*DBLE(LCELL(1,1,4)) )
+        197     2   p    v                    B2=YC-( Y0+DG*DBLE(LCELL(2,1,4)) )
+        198     2   p    v                    B3=ZC-( Z0+DG*DBLE(LCELL(3,1,4)) )
+        199     2   p    v                    C11=YY2-YY1
+        200     2   p    v                    C12=ZZ2-ZZ1
+        201     2   p    v                    C21=YY3-YY1
+        202     2   p    v                    C22=ZZ3-ZZ1
+        203     2   p    v                    XX2=( C22*(B2-B1)-C12*(B3-B1))/(C11*C22-C12*C21)
+        204     2   p    v                    XX3=(-C21*(B2-B1)+C11*(B3-B1))/(C11*C22-C12*C21)
+        205     2   p    v                    XX1=(B1-YY1*XX2-ZZ1*XX3)/DG
+        206     2   p    v                    QLIST(1,4,IB)=XX1
+        207     2   p    v                    QLIST(2,4,IB)=XX2
+        208     2   p    v                    QLIST(3,4,IB)=XX3
+        209     2               C
+        210     2               CCC II=5
+        211     2   p    v                    B1=XC-( X0+DG*DBLE(LCELL(1,1,5)) )
+        212     2   p    v                    B2=YC-( Y0+DG*DBLE(LCELL(2,1,5)) )
+        213     2   p    v                    B3=ZC-( Z0+DG*DBLE(LCELL(3,1,5)) )
+        214     2   p    v                    C11=YY2+YY1
+        215     2   p    v                    C12=ZZ2+ZZ1
+        216     2   p    v                    C21=YY3+YY1
+        217     2   p    v                    C22=ZZ3+ZZ1
+        218     2   p    v                    XX2=( C22*(B2+B1)-C12*(B3+B1))/(C11*C22-C12*C21)
+        219     2   p    v                    XX3=(-C21*(B2+B1)+C11*(B3+B1))/(C11*C22-C12*C21)
+        220     2   p    v                    XX1=(-B1+YY1*XX2+ZZ1*XX3)/DG
+        221     2   p    v                    QLIST(1,5,IB)=XX1
+        222     2   p    v                    QLIST(2,5,IB)=XX2
+        223     2   p    v                    QLIST(3,5,IB)=XX3
+        224     2               C
+        225     2               CCC II=6
+        226     2   p    v                    B1=XC-( X0+DG*DBLE(LCELL(1,1,6)) )
+        227     2   p    v                    B2=YC-( Y0+DG*DBLE(LCELL(2,1,6)) )
+        228     2   p    v                    B3=ZC-( Z0+DG*DBLE(LCELL(3,1,6)) )
+        229     2   p    v                    C11=YY2-YY1
+        230     2   p    v                    C12=ZZ2-ZZ1
+        231     2   p    v                    C21=YY3+YY1
+        232     2   p    v                    C22=ZZ3+ZZ1
+        233     2   p    v                    XX2=( C22*(B2-B1)-C12*(B3+B1))/(C11*C22-C12*C21)
+        234     2   p    v                    XX3=(-C21*(B2-B1)+C11*(B3+B1))/(C11*C22-C12*C21)
+        235     2   p    v                    XX1=(-B1+YY1*XX2+ZZ1*XX3)/DG
+        236     2   p    v                    QLIST(1,6,IB)=XX1
+        237     2   p    v                    QLIST(2,6,IB)=XX2
+        238     2   p    v                    QLIST(3,6,IB)=XX3
+        239     2               C
+        240     2               CCC II=7
+        241     2   p    v                    B1=XC-( X0+DG*DBLE(LCELL(1,1,7)) )
+        242     2   p    v                    B2=YC-( Y0+DG*DBLE(LCELL(2,1,7)) )
+        243     2   p    v                    B3=ZC-( Z0+DG*DBLE(LCELL(3,1,7)) )
+        244     2   p    v                    C11=YY2+YY1
+        245     2   p    v                    C12=ZZ2+ZZ1
+        246     2   p    v                    C21=YY3-YY1
+        247     2   p    v                    C22=ZZ3-ZZ1
+        248     2   p    v                    XX2=( C22*(B2+B1)-C12*(B3-B1))/(C11*C22-C12*C21)
+        249     2   p    v                    XX3=(-C21*(B2+B1)+C11*(B3-B1))/(C11*C22-C12*C21)
+        250     2   p    v                    XX1=( B1-YY1*XX2-ZZ1*XX3)/DG
+        251     2   p    v                    QLIST(1,7,IB)=XX1
+        252     2   p    v                    QLIST(2,7,IB)=XX2
+        253     2   p    v                    QLIST(3,7,IB)=XX3
+        254     2               C
+        255     2   p    v                    IF(NP.EQ.15) GOTO 2100
+        256     2               C
+        257     2               CCC II=8
+        258     2   p    v                    B1=XC-( X0+DG*DBLE(LCELL(1,1,8)) )
+        259     2   p    v                    B2=YC-( Y0+DG*DBLE(LCELL(2,1,8)) )
+        260     2   p    v                    B3=ZC-( Z0+DG*DBLE(LCELL(3,1,8)) )
+        261     2   p    v                    C11=YY1
+        262     2   p    v                    C12=ZZ1
+        263     2   p    v                    C21=YY3-YY2
+        264     2   p    v                    C22=ZZ3-ZZ2
+        265     2   p    v                    XX2=( C22*(B1)-C12*(B3-B2))/(C11*C22-C12*C21)
+        266     2   p    v                    XX3=(-C21*(B1)+C11*(B3-B2))/(C11*C22-C12*C21)
+        267     2   p    v                    XX1=( B2-YY2*XX2-ZZ2*XX3)/DG
+        268     2   p    v                    QLIST(1,8,IB)=XX1
+        269     2   p    v                    QLIST(2,8,IB)=XX2
+        270     2   p    v                    QLIST(3,8,IB)=XX3
+        271     2               C
+        272     2               CCC II=9
+        273     2   p    v                    B1=XC-( X0+DG*DBLE(LCELL(1,1,9)) )
+        274     2   p    v                    B2=YC-( Y0+DG*DBLE(LCELL(2,1,9)) )
+        275     2   p    v                    B3=ZC-( Z0+DG*DBLE(LCELL(3,1,9)) )
+        276     2   p    v                    C11=YY1
+        277     2   p    v                    C12=ZZ1
+        278     2   p    v                    C21=YY3+YY2
+        279     2   p    v                    C22=ZZ3+ZZ2
+        280     2   p    v                    XX2=( C22*(B1)-C12*(B3+B2))/(C11*C22-C12*C21)
+        281     2   p    v                    XX3=(-C21*(B1)+C11*(B3+B2))/(C11*C22-C12*C21)
+        282     2   p    v                    XX1=( B2-YY2*XX2-ZZ2*XX3)/DG
+        283     2   p    v                    QLIST(1,9,IB)=XX1
+        284     2   p    v                    QLIST(2,9,IB)=XX2
+        285     2   p    v                    QLIST(3,9,IB)=XX3
+        286     2               C
+        287     2               CCC II=10
+        288     2   p    v                    B1=XC-( X0+DG*DBLE(LCELL(1,1,10)) )
+        289     2   p    v                    B2=YC-( Y0+DG*DBLE(LCELL(2,1,10)) )
+        290     2   p    v                    B3=ZC-( Z0+DG*DBLE(LCELL(3,1,10)) )
+        291     2   p    v                    C11=YY2
+        292     2   p    v                    C12=ZZ2
+        293     2   p    v                    C21=YY3-YY1
+        294     2   p    v                    C22=ZZ3-ZZ1
+        295     2   p    v                    XX2=( C22*(B2)-C12*(B3-B1))/(C11*C22-C12*C21)
+        296     2   p    v                    XX3=(-C21*(B2)+C11*(B3-B1))/(C11*C22-C12*C21)
+        297     2   p    v                    XX1=( B1-YY1*XX2-ZZ1*XX3)/DG
+        298     2   p    v                    QLIST(1,10,IB)=XX1
+        299     2   p    v                    QLIST(2,10,IB)=XX2
+        300     2   p    v                    QLIST(3,10,IB)=XX3
+        301     2               C
+        302     2               CCC II=11
+        303     2   p    v                    B1=XC-( X0+DG*DBLE(LCELL(1,1,11)) )
+        304     2   p    v                    B2=YC-( Y0+DG*DBLE(LCELL(2,1,11)) )
+        305     2   p    v                    B3=ZC-( Z0+DG*DBLE(LCELL(3,1,11)) )
+        306     2   p    v                    C11=YY2
+        307     2   p    v                    C12=ZZ2
+        308     2   p    v                    C21=YY3+YY1
+        309     2   p    v                    C22=ZZ3+ZZ1
+        310     2   p    v                    XX2=( C22*(B2)-C12*(B3+B1))/(C11*C22-C12*C21)
+        311     2   p    v                    XX3=(-C21*(B2)+C11*(B3+B1))/(C11*C22-C12*C21)
+        312     2   p    v                    XX1=( B1-YY1*XX2-ZZ1*XX3)/DG
+        313     2   p    v                    QLIST(1,11,IB)=XX1
+        314     2   p    v                    QLIST(2,11,IB)=XX2
+        315     2   p    v                    QLIST(3,11,IB)=XX3
+        316     2               C
+        317     2               CCC II=12
+        318     2   p    v                    B1=XC-( X0+DG*DBLE(LCELL(1,1,12)) )
+        319     2   p    v                    B2=YC-( Y0+DG*DBLE(LCELL(2,1,12)) )
+        320     2   p    v                    B3=ZC-( Z0+DG*DBLE(LCELL(3,1,12)) )
+        321     2   p    v                    C11=YY2-YY1
+        322     2   p    v                    C12=ZZ2-ZZ1
+        323     2   p    v                    C21=YY3
+        324     2   p    v                    C22=ZZ3
+        325     2   p    v                    XX2=( C22*(B2-B1)-C12*(B3))/(C11*C22-C12*C21)
+        326     2   p    v                    XX3=(-C21*(B2-B1)+C11*(B3))/(C11*C22-C12*C21)
+        327     2   p    v                    XX1=( B1-YY1*XX2-ZZ1*XX3)/DG
+        328     2   p    v                    QLIST(1,12,IB)=XX1
+        329     2   p    v                    QLIST(2,12,IB)=XX2
+        330     2   p    v                    QLIST(3,12,IB)=XX3
+        331     2               C
+        332     2               CCC II=13
+        333     2   p    v                    B1=XC-( X0+DG*DBLE(LCELL(1,1,13)) )
+        334     2   p    v                    B2=YC-( Y0+DG*DBLE(LCELL(2,1,13)) )
+        335     2   p    v                    B3=ZC-( Z0+DG*DBLE(LCELL(3,1,13)) )
+        336     2   p    v                    C11=YY2+YY1
+        337     2   p    v                    C12=ZZ2+ZZ1
+        338     2   p    v                    C21=YY3
+        339     2   p    v                    C22=ZZ3
+        340     2   p    v                    XX2=( C22*(B2+B1)-C12*(B3))/(C11*C22-C12*C21)
+        341     2   p    v                    XX3=(-C21*(B2+B1)+C11*(B3))/(C11*C22-C12*C21)
+        342     2   p    v                    XX1=( B1-YY1*XX2-ZZ1*XX3)/DG
+        343     2   p    v                    QLIST(1,13,IB)=XX1
+        344     2   p    v                    QLIST(2,13,IB)=XX2
+        345     2   p    v                    QLIST(3,13,IB)=XX3
+        346     2               C
+        347     2   p    v       2100     CONTINUE
+        348     1                         CALL USTEND(26)
+        349     1               C
+        350     1                         CALL USTSTA(27)
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      QLIST, QCELL
+                              <<< Loop-information  End >>>
+        351     2                         DO 2300 IB=1,NBLIST
+        352     2                             I=LBLIST(1,IB)
+        353     2                             J=LBLIST(2,IB)
+        354     2                             K=LBLIST(3,IB)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 667
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.52, ITR: 128, MVE: 4, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      QCELL, QLIST
+                              <<< Loop-information  End >>>
+        355     3  pp   2v                    DO 2400 II=1,M1
+        356     3   p   2v                        XX1=QLIST(1,II,IB)
+        357     3   p   2v                        XX2=QLIST(2,II,IB)
+        358     3   p   2v                        XX3=QLIST(3,II,IB)
+        359     4   p   2v                        IF(      XX1.GE.-EPS1 .AND. XX1.LE.1.0+EPS1
+        360     4                    *               .AND. XX2.GE.-EPS2 .AND. XX2.LE.1.0+EPS2
+        361     4                    *               .AND. XX3.GE.-EPS2 .AND. XX3.LE.1.0+EPS2
+        362     4                    *            ) THEN
+        363     4   p   2v                            QCELL(II,I,J,K)=XX1
+        364     4   p   2v                        ENDIF
+        365     3   p   2v       2400         CONTINUE
+        366     2                2300     CONTINUE
+        367     1                         CALL USTEND(27)
+        368     1               C
+        369     1                2000 CONTINUE
+        370                     C
+        371                     C
+        372                           CALL USTSTA(28)
+        373                           NPBOUN1=NPBOUN
+        374                           CALL CNVQCL(NG,MPBOUN,M1,QCELL,NPBOUN,LPBOUN,QBOUN,IMODQ,
+        375                          *            IUT6,IERR)
+        376                           CALL USTEND(28)
+        377                     C
+        378                           CALL USTSTA(29)
+        379                           CALL MODIFQ(NP,NG,NPBOUN1,NPBOUN,
+        380                          *            LPBOUN,QBOUN,LWORK)
+        381                           CALL USTEND(29)
+        382                     C
+        383                           RETURN
+        384                           END
+
+ Diagnostic messages: program name(MKINTR)
+   jwd2008i-i  "mkintr.f", line 1: Dummy argument 'IUT0' not used in this subprogram.
+   jwd2008i-i  "mkintr.f", line 1: Dummy argument 'MBC' not used in this subprogram.
+   jwd8220o-i  "mkintr.f", line 1: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd2006i-i  "mkintr.f", line 35: 'ZA' is declared but never referenced.
+   jwd2006i-i  "mkintr.f", line 35: 'YA' is declared but never referenced.
+   jwd2006i-i  "mkintr.f", line 35: 'XA' is declared but never referenced.
+   jwd8209o-i  "mkintr.f", line 67: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 68: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 69: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5004p-i  "mkintr.f", line 78: DO loop with DO variable 'IP' is parallelized. The DO loop contains the reduction operation.
+   jwd6004s-i  "mkintr.f", line 78: SIMD conversion is applied to DO loop with DO variable 'IP'. The DO loop contains a reduction operation.
+   jwd6002s-i  "mkintr.f", line 94: SIMD conversion is applied to DO loop.
+   jwd8663o-i  "mkintr.f", line 94: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "mkintr.f", line 94: Loop unrolled 4 times.
+   jwd5002p-i  "mkintr.f", line 97: DO loop is parallelized.
+   jwd8330o-i  "mkintr.f", line 98: Nested DO loops were coalesced into a single loop by DO variables K,...,II.
+   jwd5122p-i  "mkintr.f", line 104: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd5001p-i  "mkintr.f", line 142: DO loop with DO variable 'IB' is parallelized.
+   jwd6001s-i  "mkintr.f", line 142: SIMD conversion is applied to DO loop with DO variable 'IB'.
+   jwd8666o-i  "mkintr.f", line 142: This loop cannot be software pipelined because of shortage of floating-point registers.
+   jwd8209o-i  "mkintr.f", line 152: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 153: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "mkintr.f", line 158: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "mkintr.f", line 159: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "mkintr.f", line 159: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "mkintr.f", line 160: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "mkintr.f", line 160: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "mkintr.f", line 166: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 168: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "mkintr.f", line 173: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "mkintr.f", line 174: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "mkintr.f", line 174: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "mkintr.f", line 175: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "mkintr.f", line 175: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "mkintr.f", line 181: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 182: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "mkintr.f", line 188: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "mkintr.f", line 189: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "mkintr.f", line 189: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "mkintr.f", line 190: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "mkintr.f", line 190: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "mkintr.f", line 196: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 197: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 198: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "mkintr.f", line 203: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "mkintr.f", line 204: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "mkintr.f", line 204: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "mkintr.f", line 205: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "mkintr.f", line 211: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 212: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 213: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "mkintr.f", line 218: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "mkintr.f", line 219: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "mkintr.f", line 219: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "mkintr.f", line 220: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "mkintr.f", line 220: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "mkintr.f", line 226: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 227: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 228: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "mkintr.f", line 233: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "mkintr.f", line 234: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "mkintr.f", line 234: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "mkintr.f", line 235: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "mkintr.f", line 235: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "mkintr.f", line 241: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 242: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 243: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "mkintr.f", line 248: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "mkintr.f", line 249: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "mkintr.f", line 249: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "mkintr.f", line 250: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "mkintr.f", line 258: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 259: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 260: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 266: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 273: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 274: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 275: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 281: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 288: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 289: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 290: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 296: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 303: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 304: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 305: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 311: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 318: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 319: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 320: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 326: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 333: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 334: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 335: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "mkintr.f", line 341: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5208p-i  "mkintr.f", line 351: DO loop is not parallelized: the assign-refer order of 'QCELL' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5001p-i  "mkintr.f", line 355: DO loop with DO variable 'II' is parallelized.
+   jwd6001s-i  "mkintr.f", line 355: SIMD conversion is applied to DO loop with DO variable 'II'.
+   jwd8204o-i  "mkintr.f", line 355: This loop is software pipelined.
+   jwd8205o-i  "mkintr.f", line 355: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 128.
+
+ Procedure information
+   Lines      : 384
+   Statements : 296
+   Stack(byte): 82656
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 384
+   Total statements : 296
+   Total stack(byte): 82656
+   Total prefetch num: 0
+

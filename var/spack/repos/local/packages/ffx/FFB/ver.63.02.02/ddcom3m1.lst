@@ -1,0 +1,1456 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:53:39 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : ddcom3m1.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "DDCOM3M"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW/BLUE-ACOUSTICS                             C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE  DDCOM3M1                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY Y.GUO               C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C CONTACT ADDRESS: IIS, THE UNIVERSITY OF TOKYO, RSS21 PROJECT         C
+         11                     C                                                                      C
+         12                     C MULTI PHYSICS FLOW SIMULATION SYSTEM                                 C
+         13                     C                                                                      C
+         14                     C  PERFORMANCE OPTIMIZATION                                            C
+         15                     C                                                                      C
+         16                     C                                       MODIFIED BY RIST               C
+         17                     C======================================================================C
+         18                           SUBROUTINE DDCOM3M(IPART,IDIM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+         19                          *                  FX,FY,FZ,NP,IUT0,IERR,BUFSND,BUFRCV,MAXBUF)
+         20                           IMPLICIT REAL*4(A-H,O-Z)
+         21                           DIMENSION LDOM(NDOM),NBPDOM(NDOM),IPSLF(MBPDOM,NDOM),
+         22                          1          IPSND(MBPDOM,NDOM)
+         23                           COMPLEX*16 FX(NP),FY(NP),FZ(NP),BUFSND(MAXBUF),BUFRCV(MAXBUF)
+         24                     C
+         25                           INCLUDE 'mpif.h'
+         26                     C
+         27                           PARAMETER ( MAXDOM = 10000 )
+         28                           INTEGER*4 MSGIDS(MAXDOM),MSGSTS(MPI_STATUS_SIZE,MAXDOM)
+         29                     C
+         30                     C
+         31                           CHARACTER*60 ERMSGB
+         32                          & / ' ## SUBROUTINE DDCOM3: FATAL     ERROR OCCURRENCE; RETURNED' /
+         33                           CHARACTER*60 EREXP1
+         34                          & / ' DIMENSION SIZE OF INTERNAL      ARRAYS IS NOT SUFFICIENT  ' /
+         35                           CHARACTER*60 EREXP2
+         36                          & / ' DIMENSION SIZE OF PASSED BUFFER ARRAYS IS NOT SUFFICIENT  ' /
+         37                           CHARACTER*60 EREXP3
+         38                          & / ' RECEIVED NODE NUMBER IS OUT OF THE GLOBAL NODE NUMBER     ' /
+         39                     C
+         40                     C
+         41                     C      EXCHANGE X, Y, AND Z RESIDUALS AMONG THE NEIGHBORING SUB-DOMAINS
+         42                     C     AND SUPERIMPOSE THE EXCHANGED RESIDUALS TO THE CALLING TASK'S
+         43                     C     RESIDUALS, FOR DOMAIN-DECOMPOSITION PROGRAMMING MODEL
+         44                     C
+         45                     C                            ( MPI VERSION )
+         46                     C
+         47                     C
+         48                     C NOTE 1; ALL 'MPI' ROUTINES RETURN AN ERROR CODE 'IERR' WHICH INDICATES
+         49                     C       THE STATUS OF ITS EXECUTION. THIS SUBROUTINE IGNORES SUCH ERROR
+         50                     C       CODE AND RETURNS THE SEQUENCE TO THE CALLING PROGRAM UNIT,
+         51                     C       REGARDLESS OF THE VALUE OF THE 'MPI' RETURN CODE.
+         52                     C
+         53                     C NOTE 2; SOME COMPILERS, SUCH AS OFORT90 IN HI-UXMPP, SUPPORT AUTOMATIC
+         54                     C       PRECISION EXPANSION, WHERE ALL THE CONSTANTS, VARIABLES AND
+         55                     C       ARRAYS OF 4-BYTE PRECISION (REAL*4) ARE AUTOMATICALLY CONVERTED
+         56                     C       TO THOSE OF 8-BYTE PRECISION (REAL*8) WITH UNFORMATTED I/O DATA
+         57                     C       BEING KEPT AS THEY ARE (IF SO SPECIFIED). WHEN USING SUCH
+         58                     C       FEATURES (FUNCTIONS) OF A COMPILER, SPECIAL CARE IS NEEDED
+         59                     C       BECAUSE A COUPLE OF MPI SUBROUTINES CALLED IN THIS SUBPROGRAM
+         60                     C       ACCEPT THE DATA TYPE (DATA PRECISION) AS THEIR INPUT AND
+         61                     C       PERFORM THE OPERATIONS ACCORDING TO THIS INPUT VALUE. THIS
+         62                     C       INTERFACE SUPPORTS THE AUTOMATIC PRECISION EXPANSION MENTIONED
+         63                     C       ABOVE. IF YOU WISH TO USE SUCH FEATURE, ADD '-DPRECEXP' OPTION
+         64                     C       WHEN INVOKING 'cpp' FOR PRI-PROCESSING THIS SOURCE PROGRAM FILE.
+         65                     C
+         66                     C
+         67                     C     ARGUMENT LISTINGS
+         68                     C       (1) INPUT
+         69                     C INT *4   IPART       ; SUB-DOMAIN NUMBER THAT THE CALLING TASK IS
+         70                     C                       TAKING CARE OF
+         71                     C           NOTES ; ARGUMENT 'IPART' IS NOT CURRENTLY USED. IT IS
+         72                     C                  RETAINED FOR A POSSIBLE FUTURE USE.
+         73                     C INT *4   IDIM             ; SPACE DIMENSION ( 1, 2, OR 3 )
+         74                     C INT *4   LDOM      (IDOM) ; NEIGHBORING SUB-DOMAIN NUMBER
+         75                     C INT *4   NBPDOM    (IDOM) ; NUMBER OF INTER-CONNECT BOUNDARY NODES
+         76                     C                            SHARING WITH THE IDOM'TH NEIGHBORING
+         77                     C                            SUB-DOMAIN, LDOM(IDOM)
+         78                     C INT *4   NDOM             ; NUMBER OF THE NEIGHBORING SUB-DOMAINS
+         79                     C INT *4   IPSLF (IBP,IDOM) ; INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+         80                     C                            CALLING TASK'S SUB-DOMAIN, FOR THE IDOM'TH
+         81                     C                            NEIGHBORING SUB-DOMAIN, LDOM(IDOM)
+         82                     C INT *4   IPSND (IBP,IDOM) ; INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+         83                     C                            SUB-DOMAIN THAT IS RECEIVING THE CALLING
+         84                     C                            TASK'S RESIDUALS.
+         85                     C INT *4   MBPDOM           ; THE DIMENSION SIZE OF THE FIRST ELEMENTS
+         86                     C                            OF THE PASSED ARRAYS 'IPSLF' AND 'IPSND'
+         87                     C                            (I.E. THE MAXIMUM NUMBER OF THE
+         88                     C                             INTER-CONNECT BOUNDARY NODES FOR A
+         89                     C                             NEIGHBORING SUB-DOMAIN)
+         90                     C INT *4   NP               ; NUMBER OF THE TOTAL NODES IN THE CALLING
+         91                     C                            TASK'S SUB-DOMAIN
+         92                     C INT *4   IUT0             ; FILE NUMBER TO WRITE ERROR MESSAGE
+         93                     C INT *4   MAXBUF           ; LENGTH OF THE PASSED COMMUNICATION BUFFERS
+         94                     C                            'BUFSND' AND 'BUFRCV' IN WORDS. 'MAXBUF'
+         95                     C                             MUST BE NO SMALLER THAN 4 TIMES THE TOTAL
+         96                     C                             NUMBER OF INTER-CONNECT BOUNDARY NODES IN
+         97                     C                             THE CALLING TASK
+         98                     C
+         99                     C       (2) OUTPUT
+        100                     C INT *4   IERR             ; RETURN CODE WHOSE VALUE WILL BE EITHER
+        101                     C                   0 --- INDICATING SUCCESSFUL TERMINATION
+        102                     C                OR 1 --- INDICATING OCCURRENCE OF SOME ERROR CONDITIONS
+        103                     C
+        104                     C       (3) INPUT-OUTPUT
+        105                     C COMPLEX*16   FX(IP)           ; X-DIRECTION RESIDUAL VECTOR
+        106                     C COMPLEX*16   FY(IP)           ; Y-DIRECTION RESIDUAL VECTOR
+        107                     C COMPLEX*16   FZ(IP)           ; Z-DIRECTION RESIDUAL VECTOR
+        108                     C
+        109                     C       (4) WORK
+        110                     C COMPLEX*16   BUFSND(IBUF)     ; HOLDS THE VALUES OF THE INTER-CONNECT
+        111                     C                            BOUNDARY NODE NUMBER IN THE NEIGHBORING
+        112                     C                            SUB-DOMAINS AND THE RESIDUALS OF THE
+        113                     C                            CALLING TASK'S SUB-DOMAIN WHEN SENDING
+        114                     C                            THE RESIDUALS
+        115                     C
+        116                     C COMPLEX*16   BUFRCV(IBUF)     ; HOLDS THE VALUES OF THE INTER-CONNECT
+        117                     C                            BOUNDARY NODE NUMBER IN THE CALLING TASK'S
+        118                     C                            SUB-DOMAIN AND THE RESIDUALS OF THE
+        119                     C                            NEIGHBORING SUB-DOMAINS AT THE RECEIPT OF
+        120                     C                            THE RESIDUALS FROM THE NEIGHBORING
+        121                     C                            SUB-DOMAINS
+        122                     C
+        123                     C
+        124                           IERR = 0
+        125                     C
+        126                     C
+        127                     C
+        128                     C CHECK THE INTERNAL ARRAY SIZE
+        129                     C
+        130                     C
+        131                     C
+        132     1                     IF(2*NDOM.GT.MAXDOM) THEN
+        133     1                         WRITE(IUT0,*) ERMSGB
+        134     1                         WRITE(IUT0,*) EREXP1
+        135     1                         IERR = 1
+        136     1                         RETURN
+        137     1                     ENDIF
+        138                     C
+        139                     C
+        140                     C
+        141                     C POST ALL THE EXPECTED RECEIVES
+        142                     C
+        143                     C
+        144                     C
+        145                           NSTART = 1
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LDOM, NBPDOM
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 4
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        146     1                     DO 110 IDOM = 1 , NDOM
+        147     1                         MSGTYP = 1
+        148     1                         IRECV  = LDOM(IDOM)-1
+        149     1                         MSGLEN = 4*NBPDOM(IDOM)
+        150     1               C
+        151     2                         IF(NSTART+MSGLEN-1.GT.MAXBUF) THEN
+        152     2                             WRITE(IUT0,*) ERMSGB
+        153     2                             WRITE(IUT0,*) EREXP2
+        154     2                             IERR = 1
+        155     2                             RETURN
+        156     2                         ENDIF
+        157     1               C
+        158     1                         CALL MPI_IRECV(BUFRCV(NSTART),MSGLEN,MPI_COMPLEX16,
+        159     1                    &                   IRECV,MSGTYP,
+        160     1                    &                   MPI_COMM_WORLD,MSGIDS(IDOM),IERR)
+        161     1               C
+        162     1                         NSTART = NSTART+MSGLEN
+        163     1                 110 CONTINUE
+        164                     C
+        165                     !      CALL MPI_BARRIER(MPI_COMM_WORLD,IERR)
+        166                     C
+        167                     C
+        168                     C
+        169                     C SET UP THE SEND BUFFER
+        170                     C
+        171                     C
+        172                     CC    CALL FTRACE_REGION_BEGIN("ddcom3:200-210")
+        173                     !CDIR PARALLEL DO PRIVATE(NSTART,IP,IPS)
+        174     1                     DO 210 IDOM = 1 , NDOM
+        175     1                         NSTART  = 0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1600
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        176     2  pp    v                DO 205 ITMP = 2 , IDOM
+        177     2   p    v                    NSTART = NSTART + NBPDOM(ITMP-1)*4
+        178     2   p    v        205     CONTINUE
+        179     1               !CDIR NOINNER
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 229
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.93, ITR: 32, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IPSLF, BUFSND, IPSND
+                              <<< Loop-information  End >>>
+        180     2  pp    v                DO 200 IBP = 1 , NBPDOM(IDOM)
+        181     2   p    v                    IP  = IPSLF(IBP,IDOM)
+        182     2   p    v                    IPS = IPSND(IBP,IDOM)
+        183     2   p    v                    BUFSND(NSTART+1) = IPS
+        184     2   p    v                    BUFSND(NSTART+2) = FX(IP)
+        185     2   p    v                    BUFSND(NSTART+3) = FY(IP)
+        186     2   p    v                    BUFSND(NSTART+4) = FZ(IP)
+        187     2   p    v                    NSTART = NSTART + 4
+        188     2   p    v        200     CONTINUE
+        189     1                 210 CONTINUE
+        190                     CC    CALL FTRACE_REGION_END("ddcom3:200-210")
+        191                     C
+        192                     C
+        193                     C
+        194                     C SEND THE RESIDUALS
+        195                     C
+        196                     C
+        197                     C
+        198                           NSTART = 1
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LDOM, NBPDOM
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 2
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        199     1   s    s            DO 220 IDOM = 1 , NDOM
+        200     1   s    s                MSGTYP = 1
+        201     1   s    s                ISEND  = LDOM(IDOM)-1
+        202     1   s    s                MSGLEN = 4*NBPDOM(IDOM)
+        203     1               
+        204     1   s    s                CALL MPI_ISEND(BUFSND(NSTART),MSGLEN,MPI_COMPLEX16,
+        205     1                    &                   ISEND,MSGTYP,
+        206     1                    &                   MPI_COMM_WORLD,MSGIDS(NDOM+IDOM),IERR)
+        207     1               C
+        208     1   s    s                NSTART = NSTART+MSGLEN
+        209     1   s    s        220 CONTINUE
+        210                     C
+        211                     C
+        212                     C
+        213                     C WAIT FOR THE COMPLETION OF ALL THE REQUESTED COMMUNICATIONS
+        214                     C
+        215                     C
+        216                     C
+        217                           CALL MPI_WAITALL(2*NDOM,MSGIDS,MSGSTS,IERR)
+        218                     C
+        219                     C
+        220                     C IMPORTANT NOTES!
+        221                     C        AFTER A NON-BLOCKING SEND/RECEIVE ROUTINE, SUCH AS 'MPI_ISEND'
+        222                     C    OR 'MPI_IRECV', IS CALLED, THE COMMUNICATION REQUEST CREATED BY
+        223                     C    THESE ROUTINES MUST BE FREED EITHER BY EXPLICITLY OR IMPLICITLY.
+        224                     C   'MPI_REQUEST_FREE' FREES SUCH REQUEST EXPLICITLY, WHILE A ROUTINE
+        225                     C    WHICH IDENTIFIES COMPLETION OF THE REQUEST, SUCH AS 'MPI_WAIT',
+        226                     C    'MPI_WAITANY', OR 'MPI_WAITALL' IMPLICITLY FREES THE REQUEST.
+        227                     C        THIS INTERFACE PROGRAM USES 'MPI_WAITALL' ROUTINES TO FREE SUCH
+        228                     C    REQUESTS. PAY PARTICULAR ATTENTION IF YOU WISH TO, INSTEAD, USE
+        229                     C   'MPI_REQUEST_FREE', BECAUSE 'MPI_REQUEST_FREE' FREES THE REQUESTS
+        230                     C    REGARDLESS OF THE STATE OF THE PREVIOUSLY CALLED COMMUNICATION
+        231                     C    ROUTINES, THUS SOMETIMES FREES REQUESTS WHICH HAVE NOT BEEN
+        232                     C    COMPLETED.
+        233                     C
+        234                     C
+        235                     C SUPERIMPOSE THE RECEIVED RESIDUALS
+        236                     C
+        237                     C
+        238                     CC    CALL FTRACE_REGION_BEGIN("ddcom3:300-310")
+        239                           NSTARTMP = 0
+        240     1                     DO IDOM = 1 , NDOM
+        241     1               !CDIR NOINNER
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 348
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<< Loop-information  End >>>
+        242     2  pp    v              DO IBP = 1, NBPDOM(IDOM)
+        243     2   p    v                IP = BUFRCV(NSTARTMP+1)+0.1
+        244     3   p    v                IF(IP.LT.1 .OR. IP.GT.NP) THEN
+        245     3   p    v                  IERR = 1
+        246     3   p    v                ENDIF
+        247     2   p    v                NSTARTMP = NSTARTMP + 4
+        248     2   p    v              ENDDO
+        249     1                     ENDDO
+        250                     C
+        251     1                     IF(IERR .EQ. 1) THEN
+        252     1                       WRITE(IUT0,*) ERMSGB
+        253     1                       WRITE(IUT0,*) EREXP3
+        254     1                       RETURN
+        255     1                     ENDIF
+        256                     C
+        257     1                     IF(IDIM .GE. 3) THEN
+        258     1               !CDIR LISTVEC
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SOFTWARE PIPELINING(IPC: 0.95, ITR: 6, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      BUFRCV
+                              <<< Loop-information  End >>>
+        259     2   s    s                DO NSTART = 0, NSTARTMP-4, 4
+        260     2   p    v                  IP = BUFRCV(NSTART+1)+0.1
+        261     2   m    m                  FX(IP) = FX(IP)+BUFRCV(NSTART+2)
+        262     2   m    s                  FY(IP) = FY(IP)+BUFRCV(NSTART+3)
+        263     2   m    s                  FZ(IP) = FZ(IP)+BUFRCV(NSTART+4)
+        264     2   p    v                ENDDO
+        265     1                     ELSE IF(IDIM .GE. 2) THEN
+        266     1               !CDIR LISTVEC
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SOFTWARE PIPELINING(IPC: 0.78, ITR: 6, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      BUFRCV
+                              <<< Loop-information  End >>>
+        267     2   s    s                DO NSTART = 0, NSTARTMP-4, 4
+        268     2   p    v                  IP = BUFRCV(NSTART+1)+0.1
+        269     2   m    m                  FX(IP) = FX(IP)+BUFRCV(NSTART+2)
+        270     2   m    s                  FY(IP) = FY(IP)+BUFRCV(NSTART+3)
+        271     2   p    v                ENDDO
+        272     1                     ELSE
+        273     1               !CDIR LISTVEC
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SOFTWARE PIPELINING(IPC: 0.58, ITR: 8, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      BUFRCV
+                              <<< Loop-information  End >>>
+        274     2   s   2s                DO NSTART = 0, NSTARTMP-4, 4
+        275     2   p   2v                  IP = BUFRCV(NSTART+1)+0.1
+        276     2   m   2m                  FX(IP) = FX(IP)+BUFRCV(NSTART+2)
+        277     2   p   2v                ENDDO
+        278     1                     ENDIF
+        279                     C
+        280                     CC    CALL FTRACE_REGION_END("ddcom3:300-310")
+        281                     C
+        282                           IPART = IPART
+        283                     C
+        284                     C
+        285                           RETURN
+        286                           END
+
+ Diagnostic messages: program name(DDCOM3M)
+   jwd5131p-i  "ddcom3m1.f", line 146: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd6131s-i  "ddcom3m1.f", line 146: ループ出口が2つ以上あるため、このDOループはSIMD化できません。
+   jwd8664o-i  "ddcom3m1.f", line 146: ループ内に関数呼出しなどの最適化対象外の命令があるため、ソフトウェアパイプライニングを適用できません。
+   jwd5208p-i  "ddcom3m1.f", line 174: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:BUFSND)
+   jwd6138s-i  "ddcom3m1.f", line 174: DO変数をループ中で再定義する可能性があるため、このDOループはSIMD化できません。
+   jwd8664o-i  "ddcom3m1.f", line 174: ループ内に関数呼出しなどの最適化対象外の命令があるため、ソフトウェアパイプライニングを適用できません。
+   jwd5004p-i  "ddcom3m1.f", line 176: リダクション演算を含むDOループを並列化しました。(名前:ITMP)
+   jwd6004s-i  "ddcom3m1.f", line 176: リダクション演算を含むDOループをSIMD化しました。(名前:ITMP)
+   jwd5001p-i  "ddcom3m1.f", line 180: このDOループを並列化しました。(名前:IBP)
+   jwd6001s-i  "ddcom3m1.f", line 180: このDOループをSIMD化しました。(名前:IBP)
+   jwd8204o-i  "ddcom3m1.f", line 180: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "ddcom3m1.f", line 180: ループの繰返し数が32回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8664o-i  "ddcom3m1.f", line 199: ループ内に関数呼出しなどの最適化対象外の命令があるため、ソフトウェアパイプライニングを適用できません。
+   jwd5208p-i  "ddcom3m1.f", line 200: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:MSGTYP)
+   jwd6208s-i  "ddcom3m1.f", line 200: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループはSIMD化できません。(名前:MSGTYP)
+   jwd5208p-i  "ddcom3m1.f", line 201: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:LDOM)
+   jwd5208p-i  "ddcom3m1.f", line 201: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:ISEND)
+   jwd6208s-i  "ddcom3m1.f", line 201: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループはSIMD化できません。(名前:LDOM)
+   jwd6208s-i  "ddcom3m1.f", line 201: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループはSIMD化できません。(名前:ISEND)
+   jwd5208p-i  "ddcom3m1.f", line 202: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:NBPDOM)
+   jwd5208p-i  "ddcom3m1.f", line 202: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:MSGLEN)
+   jwd6208s-i  "ddcom3m1.f", line 202: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループはSIMD化できません。(名前:NBPDOM)
+   jwd6208s-i  "ddcom3m1.f", line 202: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループはSIMD化できません。(名前:MSGLEN)
+   jwd5202p-i  "ddcom3m1.f", line 204: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:NSTART)
+   jwd5208p-i  "ddcom3m1.f", line 204: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:MSGIDS)
+   jwd5208p-i  "ddcom3m1.f", line 204: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:IERR)
+   jwd5208p-i  "ddcom3m1.f", line 204: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:BUFSND)
+   jwd5122p-i  "ddcom3m1.f", line 204: DOループ内に、自動並列化の制約となる手続引用が存在します。
+   jwd6202s-i  "ddcom3m1.f", line 204: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:NSTART)
+   jwd6122s-i  "ddcom3m1.f", line 204: DOループ内に、SIMD化の制約となる手続引用が存在します。
+   jwd5202p-i  "ddcom3m1.f", line 240: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:IERR)
+   jwd5202p-i  "ddcom3m1.f", line 240: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:NSTARTMP)
+   jwd5001p-i  "ddcom3m1.f", line 242: このDOループを並列化しました。(名前:IBP)
+   jwd6001s-i  "ddcom3m1.f", line 242: このDOループをSIMD化しました。(名前:IBP)
+   jwd8204o-i  "ddcom3m1.f", line 259: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "ddcom3m1.f", line 259: ループの繰返し数が6回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5209p-i  "ddcom3m1.f", line 261: 配列'FX'の添字式中の変数'IP'をループ中で定義しているため、このDOループは並列化できません。
+   jwd6209s-i  "ddcom3m1.f", line 261: 配列'FX'の添字式中の変数'IP'をループ中で定義しているため、このDOループはSIMD化できません。
+   jwd5209p-i  "ddcom3m1.f", line 262: 配列'FY'の添字式中の変数'IP'をループ中で定義しているため、このDOループは並列化できません。
+   jwd6209s-i  "ddcom3m1.f", line 262: 配列'FY'の添字式中の変数'IP'をループ中で定義しているため、このDOループはSIMD化できません。
+   jwd5209p-i  "ddcom3m1.f", line 263: 配列'FZ'の添字式中の変数'IP'をループ中で定義しているため、このDOループは並列化できません。
+   jwd6209s-i  "ddcom3m1.f", line 263: 配列'FZ'の添字式中の変数'IP'をループ中で定義しているため、このDOループはSIMD化できません。
+   jwd8204o-i  "ddcom3m1.f", line 267: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "ddcom3m1.f", line 267: ループの繰返し数が6回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5209p-i  "ddcom3m1.f", line 269: 配列'FX'の添字式中の変数'IP'をループ中で定義しているため、このDOループは並列化できません。
+   jwd6209s-i  "ddcom3m1.f", line 269: 配列'FX'の添字式中の変数'IP'をループ中で定義しているため、このDOループはSIMD化できません。
+   jwd5209p-i  "ddcom3m1.f", line 270: 配列'FY'の添字式中の変数'IP'をループ中で定義しているため、このDOループは並列化できません。
+   jwd6209s-i  "ddcom3m1.f", line 270: 配列'FY'の添字式中の変数'IP'をループ中で定義しているため、このDOループはSIMD化できません。
+   jwd8204o-i  "ddcom3m1.f", line 274: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "ddcom3m1.f", line 274: ループの繰返し数が8回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5209p-i  "ddcom3m1.f", line 276: 配列'FX'の添字式中の変数'IP'をループ中で定義しているため、このDOループは並列化できません。
+   jwd6209s-i  "ddcom3m1.f", line 276: 配列'FX'の添字式中の変数'IP'をループ中で定義しているため、このDOループはSIMD化できません。
+
+ Procedure information
+   Lines      : 4315
+   Statements : 3349
+   Stack(byte): 321808
+   Prefetch num: 0
+
+ External subroutine subprogram "DDCOM2M"
+  (line-no.)(nest)(optimize)
+        287                     C
+        288                           SUBROUTINE DDCOM2M(SEND,RECV)
+        289                           IMPLICIT REAL*4(A-H,O-Z)
+        290                           COMPLEX*16 SEND,RECV
+        291                     C
+        292                           INCLUDE 'mpif.h'
+        293                     C
+        294                     C
+        295                     C      SUM UP A SINGLE SCALAR AMONG ALL THE PARTICIPATING TASKS FOR
+        296                     C     DOMAIN-DECOMPOSITION PROGRAMMING MODEL
+        297                     C
+        298                     C                            ( MPI VERSION )
+        299                     C
+        300                     C
+        301                     C NOTE 1; ALL 'MPI' ROUTINES RETURN AN ERROR CODE 'IERR' WHICH INDICATES
+        302                     C       THE STATUS OF ITS EXECUTION. THIS SUBROUTINE IGNORES SUCH ERROR
+        303                     C       CODE AND RETURNS THE SEQUENCE TO THE CALLING PROGRAM UNIT,
+        304                     C       REGARDLESS OF THE VALUE OF THE 'MPI' RETURN CODE.
+        305                     C
+        306                     C NOTE 2; SOME COMPILERS, SUCH AS OFORT90 IN HI-UXMPP, SUPPORT AUTOMATIC
+        307                     C       PRECISION EXPANSION, WHERE ALL THE CONSTANTS, VARIABLES AND
+        308                     C       ARRAYS OF 4-BYTE PRECISION (REAL*4) ARE AUTOMATICALLY CONVERTED
+        309                     C       TO THOSE OF 8-BYTE PRECISION (REAL*8) WITH UNFORMATTED I/O DATA
+        310                     C       BEING KEPT AS THEY ARE (IF SO SPECIFIED). WHEN USING SUCH
+        311                     C       FEATURES (FUNCTIONS) OF A COMPILER, SPECIAL CARE IS NEEDED
+        312                     C       BECAUSE A COUPLE OF MPI SUBROUTINES CALLED IN THIS SUBPROGRAM
+        313                     C       ACCEPT THE DATA TYPE (DATA PRECISION) AS THEIR INPUT AND
+        314                     C       PERFORM THE OPERATIONS ACCORDING TO THIS INPUT VALUE. THIS
+        315                     C       INTERFACE SUPPORTS THE AUTOMATIC PRECISION EXPANSION MENTIONED
+        316                     C       ABOVE. IF YOU WISH TO USE SUCH FEATURE, ADD '-DPRECEXP' OPTION
+        317                     C       WHEN INVOKING 'cpp' FOR PRI-PROCESSING THIS SOURCE PROGRAM FILE.
+        318                     C
+        319                     C
+        320                     C     ARGUMENT LISTINGS
+        321                     C       (1) INPUT
+        322                     C COMPLEX*16   SEND             ; SCALAR VARIABLE TO SUM UP
+        323                     C
+        324                     C       (2) OUTPUT
+        325                     C COMPLEX*16   RECV             ; SCALAR VARIABLE SUMMED UP AMONG ALL TASKS
+        326                     C
+        327                     C
+        328                               CALL MPI_ALLREDUCE(SEND,RECV,1,MPI_COMPLEX16,MPI_SUM,
+        329                          &                       MPI_COMM_WORLD,IERR)
+        330                     C
+        331                     C
+        332                           RETURN
+        333                           END
+
+ Procedure information
+   Lines      : 4076
+   Statements : 3263
+   Stack(byte): 368
+   Prefetch num: 0
+
+ External subroutine subprogram "DDCOM2V4"
+  (line-no.)(nest)(optimize)
+        334                     C
+        335                           SUBROUTINE DDCOM2V4(SEND,RECV,N)
+        336                           IMPLICIT REAL*4(A-H,O-Z)
+        337                           REAL*4 SEND(N),RECV(N)
+        338                     C
+        339                           INCLUDE 'mpif.h'
+        340                     C
+        341                     C
+        342                     C      SUM UP A SINGLE SCALAR AMONG ALL THE PARTICIPATING TASKS FOR
+        343                     C     DOMAIN-DECOMPOSITION PROGRAMMING MODEL
+        344                     C
+        345                     C                            ( MPI VERSION )
+        346                     C
+        347                     C
+        348                     C NOTE 1; ALL 'MPI' ROUTINES RETURN AN ERROR CODE 'IERR' WHICH INDICATES
+        349                     C       THE STATUS OF ITS EXECUTION. THIS SUBROUTINE IGNORES SUCH ERROR
+        350                     C       CODE AND RETURNS THE SEQUENCE TO THE CALLING PROGRAM UNIT,
+        351                     C       REGARDLESS OF THE VALUE OF THE 'MPI' RETURN CODE.
+        352                     C
+        353                     C NOTE 2; SOME COMPILERS, SUCH AS OFORT90 IN HI-UXMPP, SUPPORT AUTOMATIC
+        354                     C       PRECISION EXPANSION, WHERE ALL THE CONSTANTS, VARIABLES AND
+        355                     C       ARRAYS OF 4-BYTE PRECISION (REAL*4) ARE AUTOMATICALLY CONVERTED
+        356                     C       TO THOSE OF 8-BYTE PRECISION (REAL*8) WITH UNFORMATTED I/O DATA
+        357                     C       BEING KEPT AS THEY ARE (IF SO SPECIFIED). WHEN USING SUCH
+        358                     C       FEATURES (FUNCTIONS) OF A COMPILER, SPECIAL CARE IS NEEDED
+        359                     C       BECAUSE A COUPLE OF MPI SUBROUTINES CALLED IN THIS SUBPROGRAM
+        360                     C       ACCEPT THE DATA TYPE (DATA PRECISION) AS THEIR INPUT AND
+        361                     C       PERFORM THE OPERATIONS ACCORDING TO THIS INPUT VALUE. THIS
+        362                     C       INTERFACE SUPPORTS THE AUTOMATIC PRECISION EXPANSION MENTIONED
+        363                     C       ABOVE. IF YOU WISH TO USE SUCH FEATURE, ADD '-DPRECEXP' OPTION
+        364                     C       WHEN INVOKING 'cpp' FOR PRI-PROCESSING THIS SOURCE PROGRAM FILE.
+        365                     C
+        366                     C
+        367                     C     ARGUMENT LISTINGS
+        368                     C       (1) INPUT
+        369                     C REAL*4   SEND             ; SCALAR VARIABLE TO SUM UP
+        370                     C
+        371                     C       (2) OUTPUT
+        372                     C REAL*4   RECV             ; SCALAR VARIABLE SUMMED UP AMONG ALL TASKS
+        373                     C
+        374                     C
+        375                               CALL MPI_ALLREDUCE(SEND,RECV,N,MPI_REAL4,MPI_SUM,
+        376                          &                       MPI_COMM_WORLD,IERR)
+        377                     C
+        378                     C
+        379                           RETURN
+        380                           END
+
+ Procedure information
+   Lines      : 4076
+   Statements : 3263
+   Stack(byte): 368
+   Prefetch num: 0
+
+ External subroutine subprogram "DDCOM2V"
+  (line-no.)(nest)(optimize)
+        381                     C
+        382                           SUBROUTINE DDCOM2V(SEND,RECV,N)
+        383                           IMPLICIT REAL*4(A-H,O-Z)
+        384                           COMPLEX*16 SEND(N),RECV(N)
+        385                     C
+        386                           INCLUDE 'mpif.h'
+        387                     C
+        388                     C
+        389                     C      SUM UP A SINGLE SCALAR AMONG ALL THE PARTICIPATING TASKS FOR
+        390                     C     DOMAIN-DECOMPOSITION PROGRAMMING MODEL
+        391                     C
+        392                     C                            ( MPI VERSION )
+        393                     C
+        394                     C
+        395                     C NOTE 1; ALL 'MPI' ROUTINES RETURN AN ERROR CODE 'IERR' WHICH INDICATES
+        396                     C       THE STATUS OF ITS EXECUTION. THIS SUBROUTINE IGNORES SUCH ERROR
+        397                     C       CODE AND RETURNS THE SEQUENCE TO THE CALLING PROGRAM UNIT,
+        398                     C       REGARDLESS OF THE VALUE OF THE 'MPI' RETURN CODE.
+        399                     C
+        400                     C NOTE 2; SOME COMPILERS, SUCH AS OFORT90 IN HI-UXMPP, SUPPORT AUTOMATIC
+        401                     C       PRECISION EXPANSION, WHERE ALL THE CONSTANTS, VARIABLES AND
+        402                     C       ARRAYS OF 4-BYTE PRECISION (REAL*4) ARE AUTOMATICALLY CONVERTED
+        403                     C       TO THOSE OF 8-BYTE PRECISION (REAL*8) WITH UNFORMATTED I/O DATA
+        404                     C       BEING KEPT AS THEY ARE (IF SO SPECIFIED). WHEN USING SUCH
+        405                     C       FEATURES (FUNCTIONS) OF A COMPILER, SPECIAL CARE IS NEEDED
+        406                     C       BECAUSE A COUPLE OF MPI SUBROUTINES CALLED IN THIS SUBPROGRAM
+        407                     C       ACCEPT THE DATA TYPE (DATA PRECISION) AS THEIR INPUT AND
+        408                     C       PERFORM THE OPERATIONS ACCORDING TO THIS INPUT VALUE. THIS
+        409                     C       INTERFACE SUPPORTS THE AUTOMATIC PRECISION EXPANSION MENTIONED
+        410                     C       ABOVE. IF YOU WISH TO USE SUCH FEATURE, ADD '-DPRECEXP' OPTION
+        411                     C       WHEN INVOKING 'cpp' FOR PRI-PROCESSING THIS SOURCE PROGRAM FILE.
+        412                     C
+        413                     C
+        414                     C     ARGUMENT LISTINGS
+        415                     C       (1) INPUT
+        416                     C REAL*4   SEND             ; SCALAR VARIABLE TO SUM UP
+        417                     C
+        418                     C       (2) OUTPUT
+        419                     C REAL*4   RECV             ; SCALAR VARIABLE SUMMED UP AMONG ALL TASKS
+        420                     C
+        421                     C
+        422                               CALL MPI_ALLREDUCE(SEND,RECV,N,MPI_COMPLEX16,MPI_SUM,
+        423                          &                       MPI_COMM_WORLD,IERR)
+        424                     C
+        425                     C
+        426                           RETURN
+        427                           END
+
+ Procedure information
+   Lines      : 4076
+   Statements : 3263
+   Stack(byte): 368
+   Prefetch num: 0
+
+ External subroutine subprogram "DDSET3M"
+  (line-no.)(nest)(optimize)
+        428                     C
+        429                           SUBROUTINE DDSET3M(NSND,LSND,NPTSND,IPSET,IPSRC,VALX,VALY,VALZ,NB,
+        430                          *                   NRCV,LRCV,NPTRCV,FX,FY,FZ,NP,
+        431                          *                   IDIM,MPT,IUT0,IERR,BUFSND,BUFRCV,MAXBUF)
+        432                           IMPLICIT REAL*4(A-H,O-Z)
+        433                           DIMENSION LSND(NSND),NPTSND(NSND),IPSET(MPT,NSND),IPSRC(MPT,NSND),
+        434                          1          LRCV(NRCV),NPTRCV(NRCV),
+        435                          2          VALX(NB),VALY(NB),VALZ(NB),FX(NP),FY(NP),FZ(NP),
+        436                          3          BUFSND(MAXBUF),BUFRCV(MAXBUF)
+        437                     C
+        438                           COMPLEX*16 VALX,VALY,VALZ,FX,FY,FZ,BUFSND,BUFRCV
+        439                     C
+        440                           INCLUDE 'mpif.h'
+        441                     C
+        442                           PARAMETER ( MAXDOM = 10000 )
+        443                           INTEGER*4 MSGIDS(MAXDOM),MSGSTS(MPI_STATUS_SIZE,MAXDOM)
+        444                     C
+        445                     C
+        446                           CHARACTER*60 ERMSGB
+        447                          & / ' ## SUBROUTINE DDSET3M: FATAL    ERROR OCCURRENCE; RETURNED' /
+        448                           CHARACTER*60 EREXP1
+        449                          & / ' DIMENSION SIZE OF INTERNAL      ARRAYS IS NOT SUFFICIENT  ' /
+        450                           CHARACTER*60 EREXP2
+        451                          & / ' DIMENSION SIZE OF PASSED BUFFER ARRAYS IS NOT SUFFICIENT  ' /
+        452                           CHARACTER*60 EREXP3
+        453                          & / ' RECEIVED NODE NUMBER IS OUT OF THE GLOBAL NODE NUMBER     ' /
+        454                     C
+        455                     C
+        456                     C      OVERSET SOME VALUES OF THE PASSED ARRAY ELEMENTS,
+        457                     C     FOR DOMAIN-DECOMPOSITION PROGRAMMING MODEL
+        458                     C
+        459                     C                            ( MPI VERSION )
+        460                     C
+        461                     C
+        462                     C NOTE 1; ALL 'MPI' ROUTINES RETURN AN ERROR CODE 'IERR' WHICH INDICATES
+        463                     C       THE STATUS OF ITS EXECUTION. THIS SUBROUTINE IGNORES SUCH ERROR
+        464                     C       CODE AND RETURNS THE SEQUENCE TO THE CALLING PROGRAM UNIT,
+        465                     C       REGARDLESS OF THE VALUE OF THE 'MPI' RETURN CODE.
+        466                     C
+        467                     C NOTE 2; SOME COMPILERS, SUCH AS OFORT90 IN HI-UXMPP, SUPPORT AUTOMATIC
+        468                     C       PRECISION EXPANSION, WHERE ALL THE CONSTANTS, VARIABLES AND
+        469                     C       ARRAYS OF 4-BYTE PRECISION (REAL*4) ARE AUTOMATICALLY CONVERTED
+        470                     C       TO THOSE OF 8-BYTE PRECISION (REAL*8) WITH UNFORMATTED I/O DATA
+        471                     C       BEING KEPT AS THEY ARE (IF SO SPECIFIED). WHEN USING SUCH
+        472                     C       FEATURES (FUNCTIONS) OF A COMPILER, SPECIAL CARE IS NEEDED
+        473                     C       BECAUSE A COUPLE OF MPI SUBROUTINES CALLED IN THIS SUBPROGRAM
+        474                     C       ACCEPT THE DATA TYPE (DATA PRECISION) AS THEIR INPUT AND
+        475                     C       PERFORM THE OPERATIONS ACCORDING TO THIS INPUT VALUE. THIS
+        476                     C       INTERFACE SUPPORTS THE AUTOMATIC PRECISION EXPANSION MENTIONED
+        477                     C       ABOVE. IF YOU WISH TO USE SUCH FEATURE, ADD '-DPRECEXP' OPTION
+        478                     C       WHEN INVOKING 'cpp' FOR PRI-PROCESSING THIS SOURCE PROGRAM FILE.
+        479                     C
+        480                     C
+        481                     C
+        482                     C     ARGUMENT LISTINGS
+        483                     C       (1) INPUT
+        484                     C INT *4   NSND             ; NUMBER OF DOMAINS TO SEND OVERSET VALUE
+        485                     C INT *4   LSND      (IDOM) ; DOMAIN NUMBER     TO SEND OVERSET VALUE
+        486                     C INT *4   NPTSND    (IDOM) ; NUMBER OF OVERSET POINTS TO SEND TO
+        487                     C                            SUB-DOMAIN 'LSND(IDOM)'
+        488                     C INT *4   IPSET (IPT,IDOM) ; OVERSET NODE/ELEMENT NUMBER IN THE
+        489                     C                            SUB-DOMAIN RECEIVING THE OVERSET VALUES.
+        490                     C
+        491                     C INT *4   IPSRC (IPT,IDOM) ; INDICATES POSITION IN THE OVERSET-VALUES
+        492                     C                            PASSING ARRAYS
+        493                     C COMPLEX*16   VALX        (IB) ; X-DIRECTION OVERSET VALUES
+        494                     C COMPLEX*16   VALY        (IB) ; Y-DIRECTION OVERSET VALUES
+        495                     C COMPLEX*16   VALZ        (IB) ; Z-DIRECTION OVERSET VALUES
+        496                     C INT *4   NB               ; TOTAL NUMBER OF OVERSET VALUES TO SEND
+        497                     C
+        498                     C INT *4   NRCV             ; NUMBER OF DOMAINS TO RECEIVE OVERSET VALUE
+        499                     C INT *4   LRCV      (IDOM) ; DOMAIN NUMBER     TO RECEIVE OVERSET VALUE
+        500                     C INT *4   NPTRCV    (IDOM) ; NUMBER OF OVERSET POINTS TO RECEIVE FROM
+        501                     C                            SUB-DOMAIN 'LRCV(IDOM)'
+        502                     C INT *4   NP               ; NUMBER OF THE TOTAL NODES/ELEMENTS IN THE
+        503                     C                            CALLING TASK'S SUB-DOMAIN
+        504                     C
+        505                     C INT *4   IDIM             ; SPACE DIMENSION ( 1, 2, OR 3 )
+        506                     C
+        507                     C INT *4   MPT              ; THE DIMENSION SIZE OF THE FIRST ELEMENTS
+        508                     C                            OF THE PASSED ARRAYS 'IPSET'
+        509                     C                            (I.E. THE MAXIMUM NUMBER OF THE OVERSET
+        510                     C                             POINTS FOR A SINGLE SUB-DOMAIN)
+        511                     C
+        512                     C INT *4   MAXBUF           ; LENGTH OF THE PASSED COMMUNICATION BUFFERS
+        513                     C                            'BUFSND' AND 'BUFRCV' IN WORDS. 'MAXBUF'
+        514                     C                            MUST BE NO SMALLER THAN 4 TIMES THE TOTAL
+        515                     C                            NUMBER OF OVERSET POINTS TO SEND OR RECEIVE
+        516                     C
+        517                     C INT *4   IUT0             ; FILE NUMBER TO WRITE ERROR MESSAGE
+        518                     C
+        519                     C       (2) OUTPUT
+        520                     C INT *4   IERR             ; RETURN CODE WHOSE VALUE WILL BE EITHER
+        521                     C                   0 --- INDICATING SUCCESSFUL TERMINATION
+        522                     C                OR 1 --- INDICATING OCCURRENCE OF SOME ERROR CONDITIONS
+        523                     C
+        524                     C       (3) INPUT-OUTPUT
+        525                     C COMPLEX*16   FX          (IP) ; X-DIRECTION ARRAY TO OVERSET
+        526                     C COMPLEX*16   FY          (IP) ; Y-DIRECTION ARRAY TO OVERSET
+        527                     C COMPLEX*16   FZ          (IP) ; Z-DIRECTION ARRAY TO OVERSET
+        528                     C
+        529                     C       (4) WORK
+        530                     C COMPLEX*16   BUFSND(IBUF)     ; HOLDS THE OVERSET VALUES AND OVERSET NODE/
+        531                     C                            ELEMENT NUMBERS IN THE SUB-DOMAIN RECEIVING
+        532                     C                            THEM WHEN SENDING OVERSET VALUES
+        533                     C
+        534                     C COMPLEX*16   BUFRCV(IBUF)     ; HOLDS THE OVERSET VALUES AND OVERSET NODE/
+        535                     C                            ELEMENT NUMBERS IN THE CALLING TASK'S
+        536                     C                            SUB-DOMAIN AT THE RECEIPT OF THE OVERSET
+        537                     C                            VALUES
+        538                     C
+        539                     C
+        540                           IERR = 0
+        541                     C
+        542                     C
+        543                     C
+        544                     C CHECK THE INTERNAL ARRAY SIZE
+        545                     C
+        546                     C
+        547                     C
+        548     1                     IF(NRCV+NSND.GT.MAXDOM) THEN
+        549     1                         WRITE(IUT0,*) ERMSGB
+        550     1                         WRITE(IUT0,*) EREXP1
+        551     1                         IERR = 1
+        552     1                         RETURN
+        553     1                     ENDIF
+        554                     C
+        555                     C
+        556                     C
+        557                     C POST ALL THE EXPECTED RECEIPTS
+        558                     C
+        559                     C
+        560                     C
+        561                           NSTART = 1
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LRCV, NPTRCV
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 4
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        562     1                     DO 110 IDOM = 1 , NRCV
+        563     1                         MSGTYP = 2
+        564     1                         IRECV  = LRCV(IDOM)-1
+        565     1                         MSGLEN = 4*NPTRCV(IDOM)
+        566     1               C
+        567     2                         IF(NSTART+MSGLEN-1.GT.MAXBUF) THEN
+        568     2                             WRITE(IUT0,*) ERMSGB
+        569     2                             WRITE(IUT0,*) EREXP2
+        570     2                             IERR = 1
+        571     2                             RETURN
+        572     2                         ENDIF
+        573     1               C
+        574     1                         CALL MPI_IRECV(BUFRCV(NSTART),MSGLEN,MPI_COMPLEX16,IRECV,
+        575     1                    &                   MSGTYP,MPI_COMM_WORLD,MSGIDS(IDOM),IERR)
+        576     1               C
+        577     1                         NSTART = NSTART+MSGLEN
+        578     1                 110 CONTINUE
+        579                     C
+        580                           CALL MPI_BARRIER(MPI_COMM_WORLD,IERR)
+        581                     C
+        582                     C
+        583                     C
+        584                     C SET UP SEND BUFFER AND SEND OVERSET VALUES FOR EACH DOMAIN
+        585                     C
+        586                     C
+        587                     C
+        588                           NSTART = 1
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IPSRC, IPSET, BUFSND
+                              <<< Loop-information  End >>>
+        589     1                     DO 210 IDOM = 1 , NSND
+        590     1                         MSGTYP = 2
+        591     1                         ISEND  = LSND(IDOM)-1
+        592     1                         MSGLEN = 4*NPTSND(IDOM)
+        593     1               C
+        594     2                         IF(NSTART+MSGLEN-1.GT.MAXBUF) THEN
+        595     2                             WRITE(IUT0,*) ERMSGB
+        596     2                             WRITE(IUT0,*) EREXP2
+        597     2                             IERR = 1
+        598     2                             RETURN
+        599     2                         ENDIF
+        600     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 206
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.56, ITR: 40, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      BUFSND, IPSRC, IPSET
+                              <<< Loop-information  End >>>
+        601     2  pp    v                DO 200 IPT = 1 , NPTSND(IDOM)
+        602     2   p    v                    BUFSND(NSTART+4*(IPT-1)  ) = IPSET(IPT,IDOM)
+        603     2   p    v                    BUFSND(NSTART+4*(IPT-1)+1) = VALX(IPSRC(IPT,IDOM))
+        604     2   p    v                    BUFSND(NSTART+4*(IPT-1)+2) = VALY(IPSRC(IPT,IDOM))
+        605     2   p    v                    BUFSND(NSTART+4*(IPT-1)+3) = VALZ(IPSRC(IPT,IDOM))
+        606     2   p    v        200     CONTINUE
+        607     1               C
+        608     1                         CALL MPI_ISEND(BUFSND(NSTART),MSGLEN,MPI_COMPLEX16,ISEND,
+        609     1                    &                   MSGTYP,MPI_COMM_WORLD,MSGIDS(NRCV+IDOM),IERR)
+        610     1               C
+        611     1                         NSTART = NSTART+MSGLEN
+        612     1                 210 CONTINUE
+        613                     C
+        614                     C
+        615                     C
+        616                     C WAIT FOR THE COMPLETION OF ALL THE REQUESTED COMMUNICATIONS
+        617                     C
+        618                     C
+        619                     C
+        620                           CALL MPI_WAITALL(NRCV+NSND,MSGIDS,MSGSTS,IERR)
+        621                     C
+        622                     C
+        623                     C IMPORTANT NOTES!
+        624                     C        AFTER A NON-BLOCKING SEND/RECEIVE ROUTINE, SUCH AS 'MPI_ISEND'
+        625                     C    OR 'MPI_IRECV', IS CALLED, THE COMMUNICATION REQUEST CREATED BY
+        626                     C    THESE ROUTINES MUST BE FREED EITHER BY EXPLICITLY OR IMPLICITLY.
+        627                     C   'MPI_REQUEST_FREE' FREES SUCH REQUEST EXPLICITLY, WHILE A ROUTINE
+        628                     C    WHICH IDENTIFIES COMPLETION OF THE REQUEST, SUCH AS 'MPI_WAIT',
+        629                     C    'MPI_WAITANY', OR 'MPI_WAITALL' IMPLICITLY FREES THE REQUEST.
+        630                     C        THIS INTERFACE PROGRAM USES 'MPI_WAITALL' ROUTINES TO FREE SUCH
+        631                     C    REQUESTS. PAY PARTICULAR ATTENTION IF YOU WISH TO, INSTEAD, USE
+        632                     C   'MPI_REQUEST_FREE', BECAUSE 'MPI_REQUEST_FREE' FREES THE REQUESTS
+        633                     C    REGARDLESS OF THE STATE OF THE PREVIOUSLY CALLED COMMUNICATION
+        634                     C    ROUTINES, THUS SOMETIMES FREES REQUESTS WHICH HAVE NOT BEEN
+        635                     C    COMPLETED.
+        636                     C
+        637                     C
+        638                     C OVERSET WITH THE RECEIVED VALUES
+        639                     C
+        640                     C
+        641                     C
+        642                           NSTART = 1
+        643     1                     DO 310 IDOM = 1 , NRCV
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      BUFRCV
+                              <<< Loop-information  End >>>
+        644     2                         DO 300 IPT = 1 , NPTRCV(IDOM)
+        645     2                             IP = BUFRCV(NSTART)+0.1
+        646     2               C
+        647     3                             IF(IP.LT.1 .OR. IP.GT.NP) THEN
+        648     3                                 WRITE(IUT0,*) ERMSGB
+        649     3                                 WRITE(IUT0,*) EREXP3
+        650     3                                 IERR = 1
+        651     3                                 RETURN
+        652     3                             ENDIF
+        653     2               C
+        654     2                                           FX(IP) = BUFRCV(NSTART+1)
+        655     2                             IF(IDIM.GE.2) FY(IP) = BUFRCV(NSTART+2)
+        656     2                             IF(IDIM.GE.3) FZ(IP) = BUFRCV(NSTART+3)
+        657     2                             NSTART = NSTART+4
+        658     2                 300     CONTINUE
+        659     1                 310 CONTINUE
+        660                     C
+        661                     C
+        662                           RETURN
+        663                           END
+
+ Diagnostic messages: program name(DDSET3M)
+   jwd5131p-i  "ddcom3m1.f", line 562: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd6131s-i  "ddcom3m1.f", line 562: ループ出口が2つ以上あるため、このDOループはSIMD化できません。
+   jwd8664o-i  "ddcom3m1.f", line 562: ループ内に関数呼出しなどの最適化対象外の命令があるため、ソフトウェアパイプライニングを適用できません。
+   jwd5131p-i  "ddcom3m1.f", line 589: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd5001p-i  "ddcom3m1.f", line 601: このDOループを並列化しました。(名前:IPT)
+   jwd6001s-i  "ddcom3m1.f", line 601: このDOループをSIMD化しました。(名前:IPT)
+   jwd8204o-i  "ddcom3m1.f", line 601: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "ddcom3m1.f", line 601: ループの繰返し数が40回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5131p-i  "ddcom3m1.f", line 643: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd5131p-i  "ddcom3m1.f", line 644: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd6131s-i  "ddcom3m1.f", line 644: ループ出口が2つ以上あるため、このDOループはSIMD化できません。
+   jwd8671o-i  "ddcom3m1.f", line 644: ループの形状が最適化の対象外であるため、ソフトウェアパイプライニングを適用できません。
+
+ Procedure information
+   Lines      : 4265
+   Statements : 3328
+   Stack(byte): 281824
+   Prefetch num: 0
+
+ External subroutine subprogram "DDSET0C"
+  (line-no.)(nest)(optimize)
+        664                     C
+        665                           SUBROUTINE DDSET0C(LPSET1,LPSET3,NPSET,MPT,MDOM,IUT0,
+        666                          *                   NSND,LSND,NPTSND,IPSET,IPSRC,
+        667                          *                   NRCV,LRCV,NPTRCV,LISTS,L1,L2,L3,IERR)
+        668                           IMPLICIT REAL*4(A-H,O-Z)
+        669                           DIMENSION LPSET1(NPSET),LPSET3(NPSET),
+        670                          1          LSND(MDOM),NPTSND(MDOM),IPSET(MPT,MDOM),IPSRC(MPT,MDOM),
+        671                          2          LRCV(MDOM),NPTRCV(MDOM),LISTS(NPSET),
+        672                          3          L1(NPSET),L2(NPSET),L3(NPSET)
+        673                     C
+        674                     C
+        675                           CHARACTER*60 ERMSGB
+        676                     C
+        677                          & / ' ## SUBROUTINE DDSET0C: FATAL    ERROR OCCURRENCE; RETURNED' /
+        678                           CHARACTER*60 EREXP1
+        679                          & / ' DIMENSION SIZE OF PASSED LIST ARRAYS IS NOT SUFFICIENT    ' /
+        680                     C
+        681                     C
+        682                     C      SET UP OVERSET SUB-DOMAIN LISTS FOR DOMAIN-DECOMPOSITION
+        683                     C     PROGRAMMING MODEL
+        684                     C
+        685                     C
+        686                     C     ARGUMENT LISTINGS
+        687                     C       (1) INPUT
+        688                     C INT *4   LPSET1  (IB); OVERSET BOUNDARY NODES/ELEMENTS
+        689                     C INT *4   LPSET3  (IB); DOMAIN NUMBER TO SEND/RECEIVE OVERSET VALUES
+        690                     C                   0 --- CALCULATE AND SET OVERSET VALUE WITHIN THE
+        691                     C                         SELF-DOMAIN
+        692                     C          (POS. INT.)--- SEND    OVERSET VALUE TO   DOMAIN  LPSET3(IB)
+        693                     C                         AFTER CALCULATING IT WITHIN THE SELF-DOMAIN
+        694                     C          (NEG. INT.)--- RECEIVE OVERSET VALUE FROM DOMAIN -LPSET3(IB)
+        695                     C          NPSET       ; NUMBER OF OVERSET BOUNDARY NODES/ELEMENTS
+        696                     C
+        697                     C INT *4   MPT              ; THE DIMENSION SIZE OF THE FIRST ELEMENTS
+        698                     C                            OF THE PASSED ARRAYS 'IPSET'
+        699                     C                            (I.E. THE MAXIMUM NUMBER OF THE OVERSET
+        700                     C                             POINTS FOR A SINGLE SUB-DOMAIN)
+        701                     C INT *4   MDOM             ; MAX. NUMBER OF THE OVERSET SUB-DOMAINS
+        702                     C
+        703                     C INT *4   IUT0             ; FILE NUMBER TO WRITE ERROR MESSAGE
+        704                     C
+        705                     C       (2) OUTPUT
+        706                     C INT *4   NSND             ; NUMBER OF DOMAINS TO SEND OVERSET VALUE
+        707                     C INT *4   LSND      (IDOM) ; DOMAIN NUMBER     TO SEND OVERSET VALUE
+        708                     C INT *4   NPTSND    (IDOM) ; NUMBER OF OVERSET POINTS TO SEND TO
+        709                     C                            SUB-DOMAIN 'LSND(IDOM)'
+        710                     C INT *4   IPSET (IPT,IDOM) ; OVERSET NODE/ELEMENT NUMBER IN THE
+        711                     C                            SUB-DOMAIN RECEIVING THE OVERSET VALUES.
+        712                     C INT *4   IPSRC (IPT,IDOM) ; INDICATES POSITION IN THE OVERSET-VALUES
+        713                     C                            PASSING ARRAYS WHEN OVERSET CONDITIONS DATA
+        714                     C                            ARE COMPILED SEQUENTIALLY
+        715                     C
+        716                     C INT *4   NRCV             ; NUMBER OF DOMAINS TO RECEIVE OVERSET VALUE
+        717                     C INT *4   LRCV      (IDOM) ; DOMAIN NUMBER     TO RECEIVE OVERSET VALUE
+        718                     C INT *4   NPTRCV    (IDOM) ; NUMBER OF OVERSET POINTS TO RECEIVE FROM
+        719                     C                            SUB-DOMAIN 'LRCV(IDOM)'
+        720                     C
+        721                     C INT *4   IERR             ; RETURN CODE WHOSE VALUE WILL BE EITHER
+        722                     C                   0 --- INDICATING SUCCESSFUL TERMINATION
+        723                     C                OR 1 --- INDICATING OCCURRENCE OF SOME ERROR CONDITIONS
+        724                     C
+        725                     C
+        726                           IERR = 0
+        727                     C
+        728                     C
+        729                     C
+        730                     C SET INITIAL VALUES
+        731                     C
+        732                     C
+        733                     C
+        734                           NSND = 0
+        735                           NRCV = 0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1455
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NPTRCV, NPTSND
+                              <<< Loop-information  End >>>
+        736     1  pp   2v            DO 100 IDOM = 1 , MDOM
+        737     1   p   2v                NPTSND(IDOM) = 0
+        738     1   p   2v                NPTRCV(IDOM) = 0
+        739     1   p   2v        100 CONTINUE
+        740                     C
+        741                     C
+        742                     C
+        743                     C SET DOMAIN LISTS FOR SEND
+        744                     C
+        745                     C
+        746                     C
+        747                           NDUM = 0
+        748     1                     DO 230 IBP = 1 , NPSET
+        749     1                         IF(LPSET3(IBP).LE.0) GO TO 230
+        750     1               C
+        751     1                         NDUM = NDUM+1
+        752     1               C
+        753     1                         IFNEW = LPSET3(IBP)
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LSND
+                              <<< Loop-information  End >>>
+        754     2                         DO 210 ICHK = 1 , NSND
+        755     3                             IF(LSND(ICHK).EQ.IFNEW) THEN
+        756     3                                 IDOM = ICHK
+        757     3                                 GO TO 220
+        758     3                             ENDIF
+        759     2                 210     CONTINUE
+        760     1                         NSND = NSND+1
+        761     1                         IDOM = NSND
+        762     1               C
+        763     2                         IF(NSND.GT.MDOM) THEN
+        764     2                             WRITE(IUT0,*) ERMSGB
+        765     2                             WRITE(IUT0,*) EREXP1
+        766     2                             IERR = 1
+        767     2                             RETURN
+        768     2                         ENDIF
+        769     1               C
+        770     1                         LSND(NSND) = IFNEW
+        771     1               C
+        772     1                 220     CONTINUE
+        773     1                         NPTSND(IDOM) = NPTSND(IDOM)+1
+        774     1               C
+        775     2                         IF(NPTSND(IDOM).GT.MPT) THEN
+        776     2                             WRITE(IUT0,*) ERMSGB
+        777     2                             WRITE(IUT0,*) EREXP1
+        778     2                             IERR = 1
+        779     2                             RETURN
+        780     2                         ENDIF
+        781     1               C
+        782     1                         IPSET(NPTSND(IDOM),IDOM) = LPSET1(IBP)
+        783     1                         IPSRC(NPTSND(IDOM),IDOM) = NDUM
+        784     1                 230 CONTINUE
+        785                     C
+        786                     C
+        787                     C
+        788                     C SET DOMAIN LISTS FOR RECEIVE
+        789                     C
+        790                     C
+        791                     C
+        792     1                     DO 330 IBP = 1 , NPSET
+        793     1                         IF(LPSET3(IBP).GE.0) GO TO 330
+        794     1                         IFNEW = -LPSET3(IBP)
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LRCV
+                              <<< Loop-information  End >>>
+        795     2                         DO 310 ICHK = 1 , NRCV
+        796     3                             IF(LRCV(ICHK).EQ.IFNEW) THEN
+        797     3                                 IDOM = ICHK
+        798     3                                 GO TO 320
+        799     3                             ENDIF
+        800     2                 310     CONTINUE
+        801     1                         NRCV = NRCV+1
+        802     1                         IDOM = NRCV
+        803     1               C
+        804     2                         IF(NRCV.GT.MDOM) THEN
+        805     2                             WRITE(IUT0,*) ERMSGB
+        806     2                             WRITE(IUT0,*) EREXP1
+        807     2                             IERR = 1
+        808     2                             RETURN
+        809     2                         ENDIF
+        810     1               C
+        811     1                         LRCV(NRCV) = IFNEW
+        812     1               C
+        813     1                 320     CONTINUE
+        814     1                         NPTRCV(IDOM) = NPTRCV(IDOM)+1
+        815     1               C
+        816     1                         L1(IBP) = IDOM
+        817     1                         L2(IBP) = NPTRCV(IDOM)
+        818     1                 330 CONTINUE
+        819                     C
+        820                           L3(1) = 0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SOFTWARE PIPELINING(IPC: 3.33, ITR: 12, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      L3, NPTRCV
+                              <<< Loop-information  End >>>
+        821     1   s   2s            DO 340 IDOM = 2, NRCV
+        822     1   s   2s                L3(IDOM) = L3(IDOM-1) + NPTRCV(IDOM-1)
+        823     1   s   2s        340 CONTINUE
+        824                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 616
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.42, ITR: 192, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPSET3, L1, L2, LISTS
+                              <<< Loop-information  End >>>
+        825     1  pp   2v            DO 350 IBP = 1 , NPSET
+        826     1   p   2v                IF(LPSET3(IBP).GE.0) GO TO 350
+        827     1   p   2v                LISTS(IBP) = L3(L1(IBP))+L2(IBP)
+        828     1   p   2v        350 CONTINUE
+        829                     C
+        830                     C
+        831                           RETURN
+        832                           END
+
+ Diagnostic messages: program name(DDSET0C)
+   jwd5001p-i  "ddcom3m1.f", line 736: このDOループを並列化しました。(名前:IDOM)
+   jwd6001s-i  "ddcom3m1.f", line 736: このDOループをSIMD化しました。(名前:IDOM)
+   jwd8663o-i  "ddcom3m1.f", line 736: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "ddcom3m1.f", line 736: ループを展開数2回でアンローリングしました。
+   jwd5131p-i  "ddcom3m1.f", line 748: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd5131p-i  "ddcom3m1.f", line 754: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd6131s-i  "ddcom3m1.f", line 754: ループ出口が2つ以上あるため、このDOループはSIMD化できません。
+   jwd8671o-i  "ddcom3m1.f", line 754: ループの形状が最適化の対象外であるため、ソフトウェアパイプライニングを適用できません。
+   jwd5131p-i  "ddcom3m1.f", line 792: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd5131p-i  "ddcom3m1.f", line 795: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd6131s-i  "ddcom3m1.f", line 795: ループ出口が2つ以上あるため、このDOループはSIMD化できません。
+   jwd8671o-i  "ddcom3m1.f", line 795: ループの形状が最適化の対象外であるため、ソフトウェアパイプライニングを適用できません。
+   jwd8204o-i  "ddcom3m1.f", line 821: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "ddcom3m1.f", line 821: ループの繰返し数が12回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5202p-i  "ddcom3m1.f", line 822: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:L3)
+   jwd6202s-i  "ddcom3m1.f", line 822: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:L3)
+   jwd5001p-i  "ddcom3m1.f", line 825: このDOループを並列化しました。(名前:IBP)
+   jwd6001s-i  "ddcom3m1.f", line 825: このDOループをSIMD化しました。(名前:IBP)
+   jwd8204o-i  "ddcom3m1.f", line 825: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "ddcom3m1.f", line 825: ループの繰返し数が192回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+
+ Procedure information
+   Lines      : 169
+   Statements : 76
+   Stack(byte): 1760
+   Prefetch num: 0
+
+ External subroutine subprogram "DDSET3C"
+  (line-no.)(nest)(optimize)
+        833                     C
+        834                           SUBROUTINE DDSET3C(NSND,LSND,NPTSND,IPSET,IPSRC,VALX,VALY,VALZ,NB,
+        835                          *                   NRCV,LRCV,NPTRCV,FX,FY,FZ,NP,
+        836                          *                   IDIM,MPT,IUT0,IERR,BUFSND,BUFRCV,MAXBUF)
+        837                           IMPLICIT REAL*4(A-H,O-Z)
+        838                           DIMENSION LSND(NSND),NPTSND(NSND),IPSET(MPT,NSND),IPSRC(MPT,NSND),
+        839                          1          LRCV(NRCV),NPTRCV(NRCV),
+        840                          2          VALX(NB),VALY(NB),VALZ(NB),FX(NP),FY(NP),FZ(NP),
+        841                          3          BUFSND(MAXBUF),BUFRCV(MAXBUF)
+        842                     C
+        843                           COMPLEX*16 VALX,VALY,VALZ,FX,FY,FZ,BUFSND,BUFRCV
+        844                     C
+        845                           INCLUDE 'mpif.h'
+        846                     C
+        847                           PARAMETER ( MAXDOM = 10000 )
+        848                           INTEGER*4 MSGIDS(MAXDOM),MSGSTS(MPI_STATUS_SIZE,MAXDOM)
+        849                     C
+        850                     C
+        851                           CHARACTER*60 ERMSGB
+        852                          & / ' ## SUBROUTINE DDSET3C: FATAL    ERROR OCCURRENCE; RETURNED' /
+        853                           CHARACTER*60 EREXP1
+        854                          & / ' DIMENSION SIZE OF INTERNAL      ARRAYS IS NOT SUFFICIENT  ' /
+        855                           CHARACTER*60 EREXP2
+        856                          & / ' DIMENSION SIZE OF PASSED BUFFER ARRAYS IS NOT SUFFICIENT  ' /
+        857                           CHARACTER*60 EREXP3
+        858                          & / ' RECEIVED NODE NUMBER IS OUT OF THE GLOBAL NODE NUMBER     ' /
+        859                     C
+        860                     C
+        861                     C      OVERSET SOME VALUES OF THE PASSED ARRAY ELEMENTS,
+        862                     C     FOR DOMAIN-DECOMPOSITION PROGRAMMING MODEL
+        863                     C
+        864                     C                            ( MPI VERSION )
+        865                     C
+        866                     C
+        867                     C NOTE 1; ALL 'MPI' ROUTINES RETURN AN ERROR CODE 'IERR' WHICH INDICATES
+        868                     C       THE STATUS OF ITS EXECUTION. THIS SUBROUTINE IGNORES SUCH ERROR
+        869                     C       CODE AND RETURNS THE SEQUENCE TO THE CALLING PROGRAM UNIT,
+        870                     C       REGARDLESS OF THE VALUE OF THE 'MPI' RETURN CODE.
+        871                     C
+        872                     C NOTE 2; SOME COMPILERS, SUCH AS OFORT90 IN HI-UXMPP, SUPPORT AUTOMATIC
+        873                     C       PRECISION EXPANSION, WHERE ALL THE CONSTANTS, VARIABLES AND
+        874                     C       ARRAYS OF 4-BYTE PRECISION (REAL*4) ARE AUTOMATICALLY CONVERTED
+        875                     C       TO THOSE OF 8-BYTE PRECISION (REAL*8) WITH UNFORMATTED I/O DATA
+        876                     C       BEING KEPT AS THEY ARE (IF SO SPECIFIED). WHEN USING SUCH
+        877                     C       FEATURES (FUNCTIONS) OF A COMPILER, SPECIAL CARE IS NEEDED
+        878                     C       BECAUSE A COUPLE OF MPI SUBROUTINES CALLED IN THIS SUBPROGRAM
+        879                     C       ACCEPT THE DATA TYPE (DATA PRECISION) AS THEIR INPUT AND
+        880                     C       PERFORM THE OPERATIONS ACCORDING TO THIS INPUT VALUE. THIS
+        881                     C       INTERFACE SUPPORTS THE AUTOMATIC PRECISION EXPANSION MENTIONED
+        882                     C       ABOVE. IF YOU WISH TO USE SUCH FEATURE, ADD '-DPRECEXP' OPTION
+        883                     C       WHEN INVOKING 'cpp' FOR PRI-PROCESSING THIS SOURCE PROGRAM FILE.
+        884                     C
+        885                     C
+        886                     C
+        887                     C     ARGUMENT LISTINGS
+        888                     C       (1) INPUT
+        889                     C INT *4   NSND             ; NUMBER OF DOMAINS TO SEND OVERSET VALUE
+        890                     C INT *4   LSND      (IDOM) ; DOMAIN NUMBER     TO SEND OVERSET VALUE
+        891                     C INT *4   NPTSND    (IDOM) ; NUMBER OF OVERSET POINTS TO SEND TO
+        892                     C                            SUB-DOMAIN 'LSND(IDOM)'
+        893                     C INT *4   IPSET (IPT,IDOM) ; OVERSET NODE/ELEMENT NUMBER IN THE
+        894                     C                            SUB-DOMAIN RECEIVING THE OVERSET VALUES.
+        895                     C
+        896                     C INT *4   IPSRC (IPT,IDOM) ; INDICATES POSITION IN THE OVERSET-VALUES
+        897                     C                            PASSING ARRAYS
+        898                     C COMPLEX*16   VALX        (IB) ; X-DIRECTION OVERSET VALUES
+        899                     C COMPLEX*16   VALY        (IB) ; Y-DIRECTION OVERSET VALUES
+        900                     C COMPLEX*16   VALZ        (IB) ; Z-DIRECTION OVERSET VALUES
+        901                     C INT *4   NB               ; TOTAL NUMBER OF OVERSET VALUES TO SEND
+        902                     C
+        903                     C INT *4   NRCV             ; NUMBER OF DOMAINS TO RECEIVE OVERSET VALUE
+        904                     C INT *4   LRCV      (IDOM) ; DOMAIN NUMBER     TO RECEIVE OVERSET VALUE
+        905                     C INT *4   NPTRCV    (IDOM) ; NUMBER OF OVERSET POINTS TO RECEIVE FROM
+        906                     C                            SUB-DOMAIN 'LRCV(IDOM)'
+        907                     C INT *4   NP               ; NUMBER OF THE TOTAL NODES/ELEMENTS IN THE
+        908                     C                            CALLING TASK'S SUB-DOMAIN
+        909                     C
+        910                     C INT *4   IDIM             ; SPACE DIMENSION ( 1, 2, OR 3 )
+        911                     C
+        912                     C INT *4   MPT              ; THE DIMENSION SIZE OF THE FIRST ELEMENTS
+        913                     C                            OF THE PASSED ARRAYS 'IPSET'
+        914                     C                            (I.E. THE MAXIMUM NUMBER OF THE OVERSET
+        915                     C                             POINTS FOR A SINGLE SUB-DOMAIN)
+        916                     C
+        917                     C INT *4   MAXBUF           ; LENGTH OF THE PASSED COMMUNICATION BUFFERS
+        918                     C                            'BUFSND' AND 'BUFRCV' IN WORDS. 'MAXBUF'
+        919                     C                            MUST BE NO SMALLER THAN 4 TIMES THE TOTAL
+        920                     C                            NUMBER OF OVERSET POINTS TO SEND OR RECEIVE
+        921                     C
+        922                     C INT *4   IUT0             ; FILE NUMBER TO WRITE ERROR MESSAGE
+        923                     C
+        924                     C       (2) OUTPUT
+        925                     C INT *4   IERR             ; RETURN CODE WHOSE VALUE WILL BE EITHER
+        926                     C                   0 --- INDICATING SUCCESSFUL TERMINATION
+        927                     C                OR 1 --- INDICATING OCCURRENCE OF SOME ERROR CONDITIONS
+        928                     C
+        929                     C INT *4   LIST             ; INDEX FOR OVERSET ELEMENTS
+        930                     C
+        931                     C       (3) INPUT-OUTPUT
+        932                     C COMPLEX*16   FX          (IP) ; X-DIRECTION ARRAY TO OVERSET
+        933                     C COMPLEX*16   FY          (IP) ; Y-DIRECTION ARRAY TO OVERSET
+        934                     C COMPLEX*16   FZ          (IP) ; Z-DIRECTION ARRAY TO OVERSET
+        935                     C
+        936                     C       (4) WORK
+        937                     C COMPLEX*16   BUFSND(IBUF)     ; HOLDS THE OVERSET VALUES AND OVERSET NODE/
+        938                     C                            ELEMENT NUMBERS IN THE SUB-DOMAIN RECEIVING
+        939                     C                            THEM WHEN SENDING OVERSET VALUES
+        940                     C
+        941                     C COMPLEX*16   BUFRCV(IBUF)     ; HOLDS THE OVERSET VALUES AND OVERSET NODE/
+        942                     C                            ELEMENT NUMBERS IN THE CALLING TASK'S
+        943                     C                            SUB-DOMAIN AT THE RECEIPT OF THE OVERSET
+        944                     C                            VALUES
+        945                     C
+        946                     C
+        947                           IERR = 0
+        948                     C
+        949                     C
+        950                     C
+        951                     C CHECK THE INTERNAL ARRAY SIZE
+        952                     C
+        953                     C
+        954                     C
+        955     1                     IF(NRCV+NSND.GT.MAXDOM) THEN
+        956     1                         WRITE(IUT0,*) ERMSGB
+        957     1                         WRITE(IUT0,*) EREXP1
+        958     1                         IERR = 1
+        959     1                         RETURN
+        960     1                     ENDIF
+        961                     C
+        962                     C
+        963                     C
+        964                     C POST ALL THE EXPECTED RECEIPTS
+        965                     C
+        966                     C
+        967                     C
+        968                           NSTART = 1
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LRCV, NPTRCV
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 3
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        969     1                     DO 110 IDOM = 1 , NRCV
+        970     1                         MSGTYP = 2
+        971     1                         IRECV  = LRCV(IDOM)-1
+        972     1                         MSGLEN = 4*NPTRCV(IDOM)
+        973     1               C
+        974     2                         IF(NSTART+MSGLEN-1.GT.MAXBUF) THEN
+        975     2                             WRITE(IUT0,*) ERMSGB
+        976     2                             WRITE(IUT0,*) EREXP2
+        977     2                             IERR = 1
+        978     2                             RETURN
+        979     2                         ENDIF
+        980     1               C
+        981     1                         CALL MPI_IRECV(BUFRCV(NSTART),MSGLEN,MPI_COMPLEX16,IRECV,
+        982     1                    &                   MSGTYP,MPI_COMM_WORLD,MSGIDS(IDOM),IERR)
+        983     1               C
+        984     1                         NSTART = NSTART+MSGLEN
+        985     1                 110 CONTINUE
+        986                     C
+        987                           CALL MPI_BARRIER(MPI_COMM_WORLD,IERR)
+        988                     C
+        989                     C
+        990                     C
+        991                     C SET UP SEND BUFFER AND SEND OVERSET VALUES FOR EACH DOMAIN
+        992                     C
+        993                     C
+        994                     C
+        995                           NSTART = 1
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IPSRC, IPSET, BUFSND
+                              <<< Loop-information  End >>>
+        996     1                     DO 210 IDOM = 1 , NSND
+        997     1                         MSGTYP = 2
+        998     1                         ISEND  = LSND(IDOM)-1
+        999     1                         MSGLEN = 4*NPTSND(IDOM)
+       1000     1               C
+       1001     2                         IF(NSTART+MSGLEN-1.GT.MAXBUF) THEN
+       1002     2                             WRITE(IUT0,*) ERMSGB
+       1003     2                             WRITE(IUT0,*) EREXP2
+       1004     2                             IERR = 1
+       1005     2                             RETURN
+       1006     2                         ENDIF
+       1007     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 206
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.56, ITR: 40, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      BUFSND, IPSRC, IPSET
+                              <<< Loop-information  End >>>
+       1008     2  pp    v                DO 200 IPT = 1 , NPTSND(IDOM)
+       1009     2   p    v                    BUFSND(NSTART+4*(IPT-1)  ) = IPSET(IPT,IDOM)
+       1010     2   p    v                    BUFSND(NSTART+4*(IPT-1)+1) = VALX(IPSRC(IPT,IDOM))
+       1011     2   p    v                    BUFSND(NSTART+4*(IPT-1)+2) = VALY(IPSRC(IPT,IDOM))
+       1012     2   p    v                    BUFSND(NSTART+4*(IPT-1)+3) = VALZ(IPSRC(IPT,IDOM))
+       1013     2   p    v        200     CONTINUE
+       1014     1               C
+       1015     1                         CALL MPI_ISEND(BUFSND(NSTART),MSGLEN,MPI_COMPLEX16,ISEND,
+       1016     1                    &                   MSGTYP,MPI_COMM_WORLD,MSGIDS(NRCV+IDOM),IERR)
+       1017     1               C
+       1018     1                         NSTART = NSTART+MSGLEN
+       1019     1                 210 CONTINUE
+       1020                     C
+       1021                     C
+       1022                     C
+       1023                     C WAIT FOR THE COMPLETION OF ALL THE REQUESTED COMMUNICATIONS
+       1024                     C
+       1025                     C
+       1026                     C
+       1027                           CALL MPI_WAITALL(NRCV+NSND,MSGIDS,MSGSTS,IERR)
+       1028                     C
+       1029                     C
+       1030                     C IMPORTANT NOTES!
+       1031                     C        AFTER A NON-BLOCKING SEND/RECEIVE ROUTINE, SUCH AS 'MPI_ISEND'
+       1032                     C    OR 'MPI_IRECV', IS CALLED, THE COMMUNICATION REQUEST CREATED BY
+       1033                     C    THESE ROUTINES MUST BE FREED EITHER BY EXPLICITLY OR IMPLICITLY.
+       1034                     C   'MPI_REQUEST_FREE' FREES SUCH REQUEST EXPLICITLY, WHILE A ROUTINE
+       1035                     C    WHICH IDENTIFIES COMPLETION OF THE REQUEST, SUCH AS 'MPI_WAIT',
+       1036                     C    'MPI_WAITANY', OR 'MPI_WAITALL' IMPLICITLY FREES THE REQUEST.
+       1037                     C        THIS INTERFACE PROGRAM USES 'MPI_WAITALL' ROUTINES TO FREE SUCH
+       1038                     C    REQUESTS. PAY PARTICULAR ATTENTION IF YOU WISH TO, INSTEAD, USE
+       1039                     C   'MPI_REQUEST_FREE', BECAUSE 'MPI_REQUEST_FREE' FREES THE REQUESTS
+       1040                     C    REGARDLESS OF THE STATE OF THE PREVIOUSLY CALLED COMMUNICATION
+       1041                     C    ROUTINES, THUS SOMETIMES FREES REQUESTS WHICH HAVE NOT BEEN
+       1042                     C    COMPLETED.
+       1043                     C
+       1044                     C
+       1045                     C OVERSET WITH THE RECEIVED VALUES
+       1046                     C
+       1047                     C
+       1048                     C
+       1049                           NSTART = 1
+       1050                           NSCT = 0
+       1051     1                     DO 310 IDOM = 1 , NRCV
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      BUFRCV
+                              <<< Loop-information  End >>>
+       1052     2                         DO 300 IPT = 1 , NPTRCV(IDOM)
+       1053     2                             IP = BUFRCV(NSTART)+0.1
+       1054     2                             NSCT = NSCT+1
+       1055     2               C
+       1056     3                             IF(IP.LT.1 .OR. IP.GT.NP) THEN
+       1057     3                                 WRITE(IUT0,*) ERMSGB
+       1058     3                                 WRITE(IUT0,*) EREXP3
+       1059     3                                 IERR = 1
+       1060     3                                 RETURN
+       1061     3                             ENDIF
+       1062     2               C
+       1063     2               C              LIST(IP) = NSCT
+       1064     2                                           FX(NSCT) = BUFRCV(NSTART+1)
+       1065     2                             IF(IDIM.GE.2) FY(NSCT) = BUFRCV(NSTART+2)
+       1066     2                             IF(IDIM.GE.3) FZ(NSCT) = BUFRCV(NSTART+3)
+       1067     2                             NSTART = NSTART+4
+       1068     2                 300     CONTINUE
+       1069     1                 310 CONTINUE
+       1070                     C
+       1071                     C
+       1072                           RETURN
+       1073                           END
+
+ Diagnostic messages: program name(DDSET3C)
+   jwd5131p-i  "ddcom3m1.f", line 969: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd6131s-i  "ddcom3m1.f", line 969: ループ出口が2つ以上あるため、このDOループはSIMD化できません。
+   jwd8664o-i  "ddcom3m1.f", line 969: ループ内に関数呼出しなどの最適化対象外の命令があるため、ソフトウェアパイプライニングを適用できません。
+   jwd5131p-i  "ddcom3m1.f", line 996: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd5001p-i  "ddcom3m1.f", line 1008: このDOループを並列化しました。(名前:IPT)
+   jwd6001s-i  "ddcom3m1.f", line 1008: このDOループをSIMD化しました。(名前:IPT)
+   jwd8204o-i  "ddcom3m1.f", line 1008: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "ddcom3m1.f", line 1008: ループの繰返し数が40回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5131p-i  "ddcom3m1.f", line 1051: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd5131p-i  "ddcom3m1.f", line 1052: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd6131s-i  "ddcom3m1.f", line 1052: ループ出口が2つ以上あるため、このDOループはSIMD化できません。
+   jwd8671o-i  "ddcom3m1.f", line 1052: ループの形状が最適化の対象外であるため、ソフトウェアパイプライニングを適用できません。
+
+ Procedure information
+   Lines      : 4270
+   Statements : 3330
+   Stack(byte): 281808
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 7
+   Total lines      : 25247
+   Total statements : 19872
+   Total stack(byte): 888304
+   Total prefetch num: 0
+

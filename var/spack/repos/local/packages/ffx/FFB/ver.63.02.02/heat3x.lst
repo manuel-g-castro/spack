@@ -1,0 +1,446 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:53:02 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : heat3x.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "HEAT3X"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE HEAT3X(MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+          2                          *                  ISOLT,NS,NL,ITIME,JSET,IDIAGV,
+          3                          *                  EPS,EPSRE,NITR,NMAX,RES,TSUM,
+          4                          *                  N1,N2,ME,MELM,NE,NP,MEP,NEX,
+          5                          *                  NODE,UG,VG,WG,DT,VISC,
+          6                          *                  EAP1,EAP2,EAP3,EBP,AP,MP,IENP,JENP,NEP,
+          7                          *                  SN,CM,DELTA,
+          8                          *                  A,T,RHS,A0,AR,ALPHAT,
+          9                          *                  NPTEMP,LPTEMP,TEMP,DTDT,
+         10                          *                  NEHEAT,LEHEAT,HEATE,SHEAT,
+         11                          *                  LPSET1,LPSET2,LPSET3,
+         12                          *                  COVER1,COVER2,COVER3,NPSET,
+         13                          *                  NPSND ,LPSND ,NPTSND,IPSET,IPSRC,
+         14                          *                  NPRCV ,LPRCV ,NPTRCV,
+         15                          *                  IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+         16                          *                  NUMIP,LFIX3D,RX,RY,ACRS,MWRK,WRKN,
+         17                          *                  WRK01,WRK02,WRK03,WRK04,WRK05,WRK06,WRK07,
+         18                          *                  LPFIX,NCRS,NPP,IPCRS,LTAB,
+         19                          *                  JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS,
+         20                          *                  IUT6,IUT0,IERR,RHOCP,ICRS_T)
+         21                           IMPLICIT NONE
+         22                     C
+         23                           INTEGER*4 MWRK
+         24                           REAL*4    WRKN(MWRK,4)
+         25                     C
+         26                           INTEGER*4 ISOLT,ITIME,JSET,
+         27                          *          N1,N2,ME,MELM,NE,NP,MEP,MP,NEX(12),NCRS,NITR,NMAX,
+         28                          *          IDIAGV,IOP
+         29                           REAL*4    EPS,EPSRE,RES,TSUM ,ALPHAT,DRELAX
+         30                           INTEGER*4 NODE(N2,NE)
+         31                           REAL*4    UG(NE),VG(NE),WG(NE),DT,VISC(NE)
+         32                           REAL*4    CM(NP),SN(N1,NE),DELTA(NE),
+         33                          *          A(N1,N2,NE),T(NP),RHS(NP),A0(NP),AR(NP),ARMIN,ARMINA
+         34                           REAL*4    EAP1(N2,MEP,NP),EAP2(3,N2,MEP,NP),EAP3(6,N2,MEP,NP)
+         35                           REAL*4    EBP(3,N2,MEP,NP),AP(N2,MEP,NP)
+         36                           INTEGER*4 IENP(MEP,MP),JENP(MEP,MP),NEP(MP)
+         37                           INTEGER*4 NPTEMP,LPTEMP(NPTEMP),
+         38                          *          NEHEAT,LEHEAT(2,NEHEAT)
+         39                           REAL*4    TEMP(NPTEMP),DTDT(NE),HEATE(NEHEAT),SHEAT(N1,NEHEAT)
+         40                           INTEGER*4 IPART,NDOM,MBPDOM,
+         41                          *          LDOM(NDOM),NBPDOM(NDOM),
+         42                          *          IPSLF(MBPDOM,NDOM),IPSND(MBPDOM,NDOM),NUMIP(NP)
+         43                           INTEGER*4 NPSND,NPRCV
+         44                           INTEGER*4 NPSET,LPSET1(NPSET),LPSET2(NPSET),LPSET3(NPSET),
+         45                          *          LPSND (NDOM),NPTSND(NDOM) ,LPRCV (NDOM) ,NPTRCV(NDOM),
+         46                          *          IPSET (MBPDOM,NDOM),IPSRC (MBPDOM,NDOM)
+         47                           REAL*4    COVER1(NPSET),COVER2(NPSET),COVER3(NPSET)
+         48                           INTEGER*4 NPP(NP),IPCRS(NCRS),LTAB(N1,N2,NE)
+         49                     C
+         50                     C     [FULL UNROOL]
+         51                           INTEGER*4 JUNROL
+         52                           INTEGER*4 NPPMAX,NCRS2,ITPCRS(NCRS2)
+         53                           REAL*4    TS(0:NP),TACRS(NCRS2)
+         54                     C
+         55                           INTEGER*4 LFIX3D(NP),LPFIX(NP)
+         56                           REAL*4    RX(0:N2,ME),RY(0:N2,ME),ACRS(NCRS),
+         57                          *          WRK01(NP),WRK02(NP),WRK03(NP),WRK04(NP),
+         58                          *          WRK05(NP),WRK06(NP),WRK07(NP),WRK08(NP)
+         59                           REAL*4    RHOCP(NE)
+         60                           INTEGER*4 IUT6,IUT0,IERR,IERRA
+         61                     C
+         62                           INTEGER*4 MAXBUF,IDUM,I,IE,IP,IB,ISEND,IDIM,NB,NPFIX
+         63                           REAL*4    COEF
+         64                     C
+         65                           INTEGER*4 MCOLOR,MCPART
+         66                           INTEGER*4 NCOLOR(4),NCPART(MCOLOR,4),LLOOP(MCPART,MCOLOR,4)
+         67                           REAL*4 CEB
+         68                           DATA CEB /0.0/
+         69                     C
+         70                           INTEGER*4 IBCGS
+         71                           DATA IBCGS  / 0 /
+         72                     C
+         73                           CHARACTER*60 ERMSGC
+         74                          & / ' ## SUBROUTINE HEAT3X: FATAL      ERROR REPORT   ; RETURNED' /
+         75                     C
+         76                           REAL*4 EPSE,RESR
+         77                     C
+         78                           INTEGER*4 NS,NL
+         79                           INTEGER*4 ICRS_T(NP)
+         80                     CC
+         81                     C
+         82                           IERR=0
+         83                           IF(ITIME.EQ.0) RETURN
+         84                     C
+         85                           CEB = 1.0E0
+         86                     C
+         87                     CC  [1] PREPARE FIX B.C. LIST
+         88                     CC
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1455
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPFIX, LFIX3D
+                              <<< Loop-information  End >>>
+         89     1  pp   2v            DO 100 IP = 1 , NP
+         90     1   p   2v                LFIX3D(IP) = 0
+         91     1   p   2v                LPFIX(IP) = 0
+         92     1   p   2v        100 CONTINUE
+         93                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.83, ITR: 320, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPTEMP
+                              <<< Loop-information  End >>>
+         94     1   s   4v            DO 110 IB = 1 , NPTEMP
+         95     1   m   4v                LFIX3D(LPTEMP(IB))=1
+         96     1   p   4v        110 CONTINUE
+         97                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.71, ITR: 224, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPSET1, LPSET3
+                              <<< Loop-information  End >>>
+         98     1   s   2v            DO 120 IB = 1 , NPSET
+         99     1   p   2v                ISEND = LPSET3(IB)
+        100     1   p   2v                IF(ISEND.GT.0) GO TO 120
+        101     1   m   2v                LFIX3D(LPSET1(IB))=1
+        102     1   p   2v        120 CONTINUE
+        103                     C
+        104                           NPFIX=0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LFIX3D
+                              <<< Loop-information  End >>>
+        105     1       2s            DO 200 IP = 1 , NP
+        106     1       2v                IF(LFIX3D(IP).EQ.0) GO TO 200
+        107     1       2m                NPFIX=NPFIX+1
+        108     1       2s                LPFIX(NPFIX) = IP
+        109     1       2v        200 CONTINUE
+        110                     C
+        111                           IERR=0
+        112                           MAXBUF = ME*N2
+        113                     CC
+        114                     CC  [2] CAL TIME, ADV., AND DIFF. TERM
+        115                     CC
+        116                           CALL ADVDIF(N1,N2,NE,NP,MEP,MELM,NEX,NODE,IDIAGV,
+        117                          *            UG,VG,WG,DT,VISC,CEB,
+        118                          *            EAP1,EAP2,EAP3,EBP,MP,IENP,JENP,NEP,
+        119                          *            A,T,RHS,A0,AR,RHOCP,DELTA,IERR)
+        120     1                     IF(IERR.NE.0) THEN
+        121     1                         WRITE(IUT0,*)'ERROR CODE REPORTED FROM ADVDIFF'
+        122     1                         WRITE(IUT0,*)ERMSGC
+        123     1                         RETURN
+        124     1                     ENDIF
+        125                     CC
+        126                     CC  [3] CAL HEAT SOURCE TERM
+        127                     CC
+        128                           CALL HSRC3X(N1,N2,NE,NP,NEX,NODE,DT,DTDT,RHS,SN,
+        129                          *            NEHEAT,LEHEAT,HEATE,SHEAT)
+        130                     CC
+        131                     C
+        132                     CC  [4] MATIRIX CONVET FROM ELEMENT-WIZE TO CRS
+        133                     CC
+        134                           CALL E2PMAT(MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+        135                          *            N2,N1,NE,NEX,NCRS,A,ACRS,LTAB,IUT0,IERR)
+        136     1                     IF(IERR.NE.0) THEN
+        137     1                         WRITE(IUT0,*)'ERROR CODE REPORTED FROM E2PMAT'
+        138     1                         WRITE(IUT0,*)ERMSGC
+        139     1                         RETURN
+        140     1                     ENDIF
+        141                     C
+        142                     CC  [5] DIAGONAL SCALING
+        143                     CC
+        144                           IDUM=1
+        145                           CALL DDCOMX(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        146                          *            AR,AR,AR,NP,IUT0,IERR,RX,RY,MAXBUF)
+        147     1                     IF(IERR.NE.0) THEN
+        148     1                         WRITE(IUT0,*)'ERROR CODE REPORTED FROM DDCOMX'
+        149     1                         WRITE(IUT0,*)ERMSGC
+        150     1                         RETURN
+        151     1                     ENDIF
+        152                     C
+        153                     C
+        154                           CALL DGNSCL(ACRS,AR,NP,NE,NCRS,IPCRS,NPP,ME)
+        155                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 696
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.85, ITR: 416, MVE: 6)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      RHS, AR
+                              <<< Loop-information  End >>>
+        156     1  pp   2v            DO 380 IP=1, NP
+        157     1   p   2v                RHS(IP) = RHS(IP)/AR(IP)
+        158     1   p   2v       380  CONTINUE
+        159                     C
+        160                     C
+        161                           IDUM = 1
+        162                           CALL DDCOMX(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        163                          *            RHS,RHS,RHS,NP,IUT0,IERR,RX,RY,MAXBUF)
+        164     1                     IF(IERR.NE.0) THEN
+        165     1                         WRITE(IUT0,*)
+        166     1                         WRITE(IUT0,*) ERMSGC
+        167     1                         RETURN
+        168     1                     ENDIF
+        169                     C
+        170                     CC  [6] CLEAR CRS MATRIX FOR DIRICHLET B.C.
+        171                     C
+        172                           CALL CLRCRS(IPART,ACRS,NP,NCRS,IPCRS,NPP,
+        173                          *            AR,LFIX3D,NUMIP,WRK01)
+        174                     CC
+        175                     CC  [7] SET B.C. (1)TEMP-FIX, (2)OVERSET
+        176                     CC
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.50, ITR: 224, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPTEMP, TEMP
+                              <<< Loop-information  End >>>
+        177     1   s   2v            DO 1000 IB = 1 , NPTEMP
+        178     1   p   2v                  IP=LPTEMP(IB)
+        179     1   m   2v                  T(IP) = TEMP(IB)
+        180     1   p   2v       1000 CONTINUE
+        181                     C
+        182     1                     IF (JSET.GE.1) THEN
+        183     1                         CALL OVRST1(IPART,NPSET,N1,N2,ME,NE,NP,NEX,NODE,T,
+        184     1                    *                LPSET1,LPSET2,LPSET3,COVER1,COVER2,COVER3,
+        185     1                    *                NDOM,MBPDOM,NPSND,NPRCV,
+        186     1                    *                LPSND,NPTSND,LPRCV,NPTRCV,IPSET,IPSRC,
+        187     1                    *                WRK01,WRK02,RX,RY,IUT0,IERR)
+        188     2                         IF(IERR.NE.0) THEN
+        189     2                             WRITE(IUT0,*)'ERROR CODE REPORTED FROM OVRST1'
+        190     2                             WRITE(IUT0,*)ERMSGC
+        191     2                             RETURN
+        192     2                         ENDIF
+        193     1                     ENDIF
+        194                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.80, ITR: 416, MVE: 7)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPFIX
+                              <<< Loop-information  End >>>
+        195     1   s   2v            DO 2000 IB = 1 , NPFIX
+        196     1   p   2v                  IP=LPFIX(IB)
+        197     1   p   2v                  COEF=1.0E0/CM(IP)
+        198     1               CC            RHS(IP) = T(IP)*COEF
+        199     1   m   2v                  RHS(IP) = T(IP)
+        200     1   p   2v       2000 CONTINUE
+        201                     CC
+        202                     CC  [8] SOLVE EQUATION
+        203                     CC
+        204                     C
+        205                           IF(JUNROL.EQ.1)
+        206                          *CALL CRSCVA(NP,NPPMAX,NCRS,NCRS2,NPP,ACRS,TACRS,ICRS_T)
+        207                     C
+        208     1                     IF(ISOLT.EQ.1) THEN
+        209     1                         CALL BCGSTX(
+        210     1                    *         NPP,NCRS,IPCRS,ACRS,
+        211     1                    *         RHS,T,EPS,EPSRE,
+        212     1                    *         NMAX,RES,NITR,NODE,NE,NEX,NP,ME,N2,
+        213     1                    *         IPART,LDOM,NBPDOM,NDOM,
+        214     1                    *         IPSLF,IPSND,MBPDOM,NUMIP,
+        215     1                    *         RX,RY,WRK01,WRK02,WRK03,WRK04,WRK05,WRK06,WRK07,
+        216     1                    *         JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS,
+        217     1                    *         IUT0,IERR)
+        218     1               C
+        219     1                     ELSE IF(ISOLT.EQ.3) THEN
+        220     1                         CALL IDRBCG(ME,N2,NE,NP,NS,NL,NMAX,EPS,RES,RESR,NITR,
+        221     1                    *                NCRS,NPP,ACRS,IPCRS,RHS,T,NUMIP,
+        222     1                    *                IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        223     1                    *                JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS,
+        224     1                    *                IUT0,IUT6,IERR)
+        225     1                     ELSE
+        226     1                             WRITE(IUT0,*) 'INVALID VALUE FOR ISOLT'  ,ISOLT
+        227     1                             IERR=1
+        228     1                             RETURN
+        229     1                     ENDIF
+        230                     C
+        231     1                     IF(IERR.NE.0) THEN
+        232     1                         WRITE(IUT0,*)'ERROR CODE REPORTED FROM BCGSTX'
+        233     1                         WRITE(IUT0,*)ERMSGC
+        234     1                         RETURN
+        235     1                     ENDIF
+        236                     C
+        237                           TSUM=0.0E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 54
+                              <<< Loop-information  End >>>
+        238     1  pp    s            DO 3000 IE=1,NE
+        239     2   p    m                IF(NODE(5,IE).EQ.0) THEN
+        240     2   p    m                    TSUM=TSUM+(DELTA(IE)/4.0E0)*
+        241     2                    *        ( T(NODE(1,IE))+T(NODE(2,IE))
+        242     2                    *         +T(NODE(3,IE))+T(NODE(4,IE)))
+        243     2   p    m                ELSE IF(NODE(6,IE).EQ.0) THEN
+        244     2   p    s                    TSUM=TSUM+(DELTA(IE)/5.0E0)*
+        245     2                    *        ( T(NODE(1,IE))+T(NODE(2,IE))
+        246     2                    *         +T(NODE(3,IE))+T(NODE(4,IE))
+        247     2                    *         +T(NODE(5,IE))              )
+        248     2   p    m                ELSE IF(NODE(7,IE).EQ.0) THEN
+        249     2   p    m                    TSUM=TSUM+(DELTA(IE)/6.0E0)*
+        250     2                    *        ( T(NODE(1,IE))+T(NODE(2,IE))
+        251     2                    *         +T(NODE(3,IE))+T(NODE(4,IE))
+        252     2                    *         +T(NODE(5,IE))+T(NODE(6,IE)))
+        253     2   p                     ELSE
+        254     2   p    m                    TSUM=TSUM+(DELTA(IE)/8.0E0)*
+        255     2                    *        ( T(NODE(1,IE))+T(NODE(2,IE))
+        256     2                    *         +T(NODE(3,IE))+T(NODE(4,IE))
+        257     2                    *         +T(NODE(5,IE))+T(NODE(6,IE))
+        258     2                    *         +T(NODE(7,IE))+T(NODE(8,IE)))
+        259     2   p    v                ENDIF
+        260     1   p    v       3000 CONTINUE
+        261                     C
+        262                           RETURN
+        263                           END
+
+ Diagnostic messages: program name(HEAT3X)
+   jwd2008i-i  "heat3x.f", line 1: この仮引数'ALPHAT'は、副プログラム中で使用されていません。
+   jwd8220o-i  "heat3x.f", line 1: 副作用の可能性のある最適化を行いました。
+   jwd2008i-i  "heat3x.f", line 24: この仮引数'WRKN'は、副プログラム中で使用されていません。
+   jwd2006i-i  "heat3x.f", line 26: この名前'IOP'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "heat3x.f", line 29: この名前'DRELAX'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "heat3x.f", line 32: この名前'ARMINA'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "heat3x.f", line 32: この名前'ARMIN'は、宣言だけされていて引用されていません。
+   jwd2008i-i  "heat3x.f", line 35: この仮引数'AP'は、副プログラム中で使用されていません。
+   jwd2006i-i  "heat3x.f", line 56: この名前'WRK08'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "heat3x.f", line 60: この名前'IERRA'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "heat3x.f", line 62: この名前'NB'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "heat3x.f", line 62: この名前'IDIM'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "heat3x.f", line 62: この名前'I'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "heat3x.f", line 76: この名前'EPSE'は、宣言だけされていて引用されていません。
+   jwd5001p-i  "heat3x.f", line 89: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "heat3x.f", line 89: このDOループをSIMD化しました。(名前:IP)
+   jwd8663o-i  "heat3x.f", line 89: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "heat3x.f", line 89: ループを展開数2回でアンローリングしました。
+   jwd6001s-i  "heat3x.f", line 94: このDOループをSIMD化しました。(名前:IB)
+   jwd8204o-i  "heat3x.f", line 94: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "heat3x.f", line 94: ループの繰返し数が320回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5228p-i  "heat3x.f", line 95: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd6001s-i  "heat3x.f", line 98: このDOループをSIMD化しました。(名前:IB)
+   jwd8204o-i  "heat3x.f", line 98: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "heat3x.f", line 98: ループの繰返し数が224回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5228p-i  "heat3x.f", line 101: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd5228p-i  "heat3x.f", line 105: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd6229s-i  "heat3x.f", line 105: IF文が存在するため、このDOループのSIMD化を抑止しました。
+   jwd8670o-i  "heat3x.f", line 105: ループ内に分岐命令があるため、ソフトウェアパイプライニングを適用できません。
+   jwd8202o-i  "heat3x.f", line 105: ループを展開数2回でアンローリングしました。
+   jwd5001p-i  "heat3x.f", line 156: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "heat3x.f", line 156: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "heat3x.f", line 156: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "heat3x.f", line 156: ループの繰返し数が416回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd6001s-i  "heat3x.f", line 177: このDOループをSIMD化しました。(名前:IB)
+   jwd8204o-i  "heat3x.f", line 177: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "heat3x.f", line 177: ループの繰返し数が224回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5209p-i  "heat3x.f", line 179: 配列'T'の添字式中の変数'IP'をループ中で定義しているため、このDOループは並列化できません。
+   jwd6001s-i  "heat3x.f", line 195: このDOループをSIMD化しました。(名前:IB)
+   jwd8204o-i  "heat3x.f", line 195: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "heat3x.f", line 195: ループの繰返し数が416回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5209p-i  "heat3x.f", line 199: 配列'RHS'の添字式中の変数'IP'をループ中で定義しているため、このDOループは並列化できません。
+   jwd5004p-i  "heat3x.f", line 238: リダクション演算を含むDOループを並列化しました。(名前:IE)
+   jwd6229s-i  "heat3x.f", line 238: IF文が存在するため、このDOループのSIMD化を抑止しました。
+   jwd8209o-i  "heat3x.f", line 240: 多項式の演算順序を変更しました。
+   jwd6228s-i  "heat3x.f", line 243: データの定義引用の順序が逐次実行と異なる可能性があるため、このDOループはSIMD化できません。
+   jwd8206o-i  "heat3x.f", line 244: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "heat3x.f", line 244: 多項式の演算順序を変更しました。
+   jwd8206o-i  "heat3x.f", line 249: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "heat3x.f", line 249: 多項式の演算順序を変更しました。
+   jwd8209o-i  "heat3x.f", line 254: 多項式の演算順序を変更しました。
+   jwd8209o-i  "heat3x.f", line 260: 多項式の演算順序を変更しました。
+
+ Procedure information
+   Lines      : 263
+   Statements : 139
+   Stack(byte): 16896
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 263
+   Total statements : 139
+   Total stack(byte): 16896
+   Total prefetch num: 0
+

@@ -1,0 +1,122 @@
+38d37
+<       REAL*8    P11,P12,P13,P21,P22,P23,P31,P32,P33,PP
+55a55,64
+> C     
+>       DO 1100 K =0,NG+2
+>       DO 1200 J =0,NG+2
+>       DO 1300 I =0,NG+2
+>           C1=1.0D0-CVISC(I,J,K)
+>           C2=      CVISC(I,J,K)
+>           TAU(I,J,K)=C1*TAU0+C2*TAUTGT
+>  1300 CONTINUE
+>  1200 CONTINUE
+>  1100 CONTINUE
+129c138
+<           ELSE IF(ICALSS.EQ.1) THEN 
+---
+>           ELSE
+132a142
+> C
+139c149
+<                   DO 4300 IP=1,NP
+---
+>                   DO 3300 IP=1,NP
+148,199c158,175
+<  4300             CONTINUE
+<                   S21=S12
+<                   S31=S13
+<                   S32=S23
+<                   SS=2.0D0*(S11*S11+S12*S12+S13*S13
+<      *                     +S21*S21+S22*S22+S23*S23
+<      *                     +S31*S31+S32*S32+S33*S33)
+<                   IF(SS .LT. 0.D0) THEN
+<                       SS = 0.D0
+<                   ELSE
+<                       SS = SQRT(SS)
+<                   ENDIF
+<                   VISSGS=CS*CS*SS
+<                   TAU(I,J,K)=TAU(I,J,K)+3.0D0*VISSGS
+<  4200         CONTINUE
+<  4100         CONTINUE
+<  4000         CONTINUE
+<           ELSE
+<               DO 5000 K =0,NG+2
+<               DO 5100 J =0,NG+2
+<               DO 5200 I =0,NG+2
+<                   P11=0.0D0
+<                   P22=0.0D0
+<                   P33=0.0D0
+<                   P12=0.0D0
+<                   P13=0.0D0
+<                   P23=0.0D0
+<                   DO 5300 IP=1,NP
+<                       FNEQ=F(I,J,K,IP)-FEQ(I,J,K,IP)
+<                       P11=P11-FNEQ*CVEL(1,IP)*CVEL(1,IP)
+<                       P22=P22-FNEQ*CVEL(2,IP)*CVEL(2,IP)
+<                       P33=P33-FNEQ*CVEL(3,IP)*CVEL(3,IP)
+<                       P12=P12-FNEQ*CVEL(1,IP)*CVEL(2,IP)
+<                       P13=P13-FNEQ*CVEL(1,IP)*CVEL(3,IP)
+<                       P23=P23-FNEQ*CVEL(2,IP)*CVEL(3,IP)
+<  5300             CONTINUE
+<                   P21=P12
+<                   P31=P13
+<                   P32=P23
+<                   PP=2.0D0*(P11*P11+P12*P12+P13*P13
+<      *                     +P21*P21+P22*P22+P23*P23
+<      *                     +P31*P31+P32*P32+P33*P33)
+<                   IF(PP .LT. 0.D0) THEN
+<                       PP = 0.D0
+<                   ELSE
+<                       PP = SQRT(PP)
+<                   ENDIF
+<                   BUF=4.5D0*CS*CS*PP
+<                   TAU(I,J,K)=TAU0/2.0D0+(TAU0*TAU0/4.0D0+BUF)**0.5D0
+<  5200         CONTINUE
+<  5100         CONTINUE
+<  5000         CONTINUE
+---
+>  3300             CONTINUE
+>               S21=S12
+>               S31=S13
+>               S32=S23
+>               SS=2.0D0*(S11*S11+S12*S12+S13*S13
+>      *                 +S21*S21+S22*S22+S23*S23
+>      *                 +S31*S31+S32*S32+S33*S33)
+>               IF(SS .LT. 0.D0) THEN
+>                   SS = 0.D0
+>               ELSE
+>                   SS = SQRT(SS)
+>               ENDIF
+>               VISSGS=CS*CS*SS
+>               TAU(I,J,K)=TAU(I,J,K)+3.0D0*VISSGS
+> C
+>  4200     CONTINUE
+>  4100     CONTINUE
+>  4000     CONTINUE
+204,206c180,182
+<           DO 6000 K =0,NG+2
+<           DO 6100 J =0,NG+2
+<           DO 6200 I =0,NG+2
+---
+>           DO 5000 K =0,NG+2
+>           DO 5100 J =0,NG+2
+>           DO 5200 I =0,NG+2
+208,210c184,186
+<  6200     CONTINUE
+<  6100     CONTINUE
+<  6000     CONTINUE
+---
+>  5200     CONTINUE
+>  5100     CONTINUE
+>  5000     CONTINUE
+212,221d187
+< C
+<       DO 7000 K =0,NG+2
+<       DO 7100 J =0,NG+2
+<       DO 7200 I =0,NG+2
+<           C1=1.0D0-CVISC(I,J,K)
+<           C2=      CVISC(I,J,K)
+<           TAU(I,J,K)=C1*TAU(I,J,K)+C2*TAUTGT
+<  7200 CONTINUE
+<  7100 CONTINUE
+<  7000 CONTINUE

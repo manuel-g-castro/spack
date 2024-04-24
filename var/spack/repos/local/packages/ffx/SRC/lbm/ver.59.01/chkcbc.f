@@ -1,0 +1,21 @@
+      SUBROUTINE CHKCBC(NC,MPBOUN,NPBOUN,LPBOUN,LCBOUN)
+      INTEGER*4 MPBOUN,NPBOUN(NC),LPBOUN(5,MPBOUN,NC)
+      INTEGER*4 LCBOUN(4,NC)
+C
+      INTEGER*4 IC,IB,ITYPE
+C
+C
+      DO 1000 IC=1,NC
+          LCBOUN(1,IC)=0
+          LCBOUN(2,IC)=0
+          LCBOUN(3,IC)=0
+          LCBOUN(4,IC)=0
+          DO 1100 IB=1,NPBOUN(IC)
+              ITYPE = LPBOUN(5,IB,IC)
+              IF(ITYPE.EQ.11) ITYPE=1
+              LCBOUN(ITYPE,IC)=1
+ 1100     CONTINUE   
+ 1000 CONTINUE   
+C
+      RETURN
+      END

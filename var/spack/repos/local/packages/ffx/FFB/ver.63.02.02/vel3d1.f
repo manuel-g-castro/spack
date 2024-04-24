@@ -1,0 +1,1513 @@
+      SUBROUTINE VEL3D1
+     * (MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+     *  ISOLV,NSIDR,NLIDR,IFORM,CBTD3D,TIMER,DT,
+     *  JSET,IDIAGV,THDT3D,ALPHAV,JFSPRS,JPRESS,OMEGA,
+     *  ITIME,DEVLP1,ACCELX,ACCELY,ACCELZ,ISTEP,
+     *  NMAX,EPS,EPSREV,NITRI,RESU,RESV,RESW,NITRU,NITRV,NITRW,
+     *  ME,N1,N2,NE,NP,NEX,NODE,
+     *  U,V,W,VISC,P,DT3D,UE,VE,WE,FXFFO,FYFFO,FZFFO,
+     *  MELM,
+     *  DNXYZ,CM,SN,X,Y,Z,RHO3D,GRAV,
+     *  IEATTR,IPATTR,NFRAME,UFRAME,VFRAME,WFRAME,NUMIP,
+     *  A,NPP,NCRS,IPCRS,APCRS,LTAB,LSTCLR,LSTDGN,
+     *  IALE,UMESH,VMESH,WMESH,
+     *  NPINLT,LPINLT,UINLT,VINLT,WINLT,
+     *  NPWALL,LPWALL,UWALL,VWALL,WWALL,
+     *  NPSYMT,NPSYM2,LPSYMT,XPSYMT,YPSYMT,ZPSYMT,
+     *  NPSLD1,LPSLD1, 
+     *  IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+     *  NPSET,LPSET1,LPSET2,LPSET3,LPSET4,
+     *  COVER1,COVER2,COVER3,
+     *  NPSND,LPSND,NPTSND,IPSET,IPSRC,NPRCV,LPRCV,NPTRCV,
+     *  LPFIX,LFIX3D,LEFIX,
+     *  UG,VG,WG,WRK01,WRK02,WRK03,WRK04,A0,AR,RHSU,RHSV,RHSW,
+     *  RX,RY,MWRK,WRKN,ADIAG,IFIXFL,
+     *  JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS,
+     *  NMRF,IFATTR,OMGMRF,AMRF,
+     *  IVOF,IMASS,NSP,NS,LOCAL,NFACE,LFACE,AVEC,FFA,
+     *  NFINLT,LFINLT,NFFREE,LFFREE,NPFLD2,LPFLD2,NEFLD2,LEFLD2,
+     *  NPFREE,LPFREE,XPFREE,YPFREE,ZPFREE,OSBCOE,
+     *  EAP1,EAP2,EAP3,EBP,NODP,MEP,MP,IENP,JENP,NEP,
+     *  COSBIN,COSBFR,ICAVI,IUT0,IERR, ICRS_T, AP)
+C
+      IMPLICIT NONE
+C
+      INTEGER*4 ICAVI
+      INTEGER*4 K
+      INTEGER*4 IFIXFL,ISTEP,JPRESS,IMODEO
+      DATA IMODEO /1/
+C
+      REAL*4    OSBCOE(NP)
+C
+      INTEGER*4 MCOLOR,MCPART
+      INTEGER*4 NCOLOR(4),NCPART(MCOLOR,4),LLOOP(MCPART,MCOLOR,4)
+C
+      REAL*4 EPSREV
+      INTEGER*4 ISOLV,NSIDR,NLIDR,
+     *          IFORM,ITIME,IPART,JSET,NMAX,NITRI,NUMIP,
+     *          ME,NEX,N1,N2,NE,NP,MELM,
+     *          NODE,IEATTR,IPATTR,
+     *          NFRAME,LPFIX,NCRS,
+     *          NPWALL,LPWALL,
+     *          NPINLT,LPINLT,
+     *          NPSYMT,NPSYM2,LPSYMT,NPSLD1,LPSLD1,
+     *          NDOM,LDOM,MBPDOM,NBPDOM,IPSLF,IPSND,
+     *          NPSET,LPSET1,LPSET2,LPSET3,LPSET4,LFIX3D,
+     *          NPSND,LPSND,NPTSND,NPRCV,LPRCV,NPTRCV,IPSET,IPSRC,
+     *          NPP,IPCRS,LTAB,LSTCLR,LSTDGN,
+     *          IUT0,IERR,IDIAGV,JFSPRS,IOP
+      REAL*4    CBTD3D(NE),TIMER,DT,EPS,RESU,RESV,RESW,
+     *          DEVLP1,ACCELX,ACCELY,ACCELZ,
+     *          U,V,W,X,Y,Z,RHO3D,GRAV,CM,VISC,OMEGA,P,
+     *          SN,DNXYZ,
+     *          UFRAME,VFRAME,WFRAME,UINLT,VINLT,WINLT,
+     *          UWALL,VWALL,WWALL,XPSYMT,YPSYMT,ZPSYMT,
+     *          COVER1,COVER2,COVER3,RX,RY,
+     *          A,UG,VG,WG,UE,VE,WE,FXFFO,FYFFO,FZFFO,
+     *          WRK01,WRK02,WRK03,WRK04,A0,AR,
+     *          RHSU,RHSV,RHSW,APCRS,DT3D,THDT3D,ALPHAV,DIFFA
+      INTEGER*4 IALE
+      REAL*4    UMESH(NP),VMESH(NP),WMESH(NP)
+C
+      DIMENSION NEX(12),
+     *          U(NP+1),V(NP+1),W(NP+1),UE(ME),VE(ME),WE(ME),P(NE),
+     *          FXFFO(NE),FYFFO(NE),FZFFO(NE),
+     *          NODE(N2,NE),X(NP),Y(NP),Z(NP),RHO3D(NE),GRAV(3),
+     *          CM(NP),VISC(ME),DT3D(NE),
+     *          SN(N1,NE),DNXYZ(3,N1,ME),
+     *          IEATTR(NE),IPATTR(NP),
+     *          UFRAME(2,NFRAME),VFRAME(2,NFRAME),WFRAME(2,NFRAME)
+C         
+      DIMENSION NUMIP(NP),LPFIX(NP),LPINLT(NPINLT),
+     *          LPWALL(NPWALL),LPSYMT(NPSYM2),LPSLD1(NPSLD1),
+     *          UINLT(NPINLT),VINLT(NPINLT),WINLT (NPINLT),
+     *          UWALL(NPWALL),VWALL(NPWALL),WWALL(NPWALL),
+     *          XPSYMT(NPSYM2),YPSYMT(NPSYM2),ZPSYMT(NPSYM2),
+     *          LDOM(NDOM),NBPDOM(NDOM),
+     *          IPSLF(MBPDOM,NDOM),IPSND(MBPDOM,NDOM),
+     *          LPSET1(NPSET),LPSET2(NPSET),
+     *          LPSET3(NPSET),LPSET4(NPSET),
+     *          COVER1(NPSET),COVER2(NPSET),COVER3(NPSET),
+     *          LPSND(NDOM),NPTSND(NDOM),LPRCV(NDOM),NPTRCV(NDOM),
+     *          IPSET(MBPDOM,NDOM),IPSRC(MBPDOM,NDOM)
+      REAL*4    COSBIN,COSBFR
+      REAL*4    EAP1(N2,MEP,NP),EAP2(3,N2,MEP,NP),EAP3(6,N2,MEP,NP)
+      REAL*4    EBP(3,N2,MEP,NP)
+      INTEGER*4 NODP(N2,MEP,NP),IPE,MEP,MP
+      REAL*4    AP(N2,MEP,NP),RTMPU,RTMPW,RTMPV,WTMP4
+      INTEGER*4 IENP(MEP,MP),JENP(MEP,MP),NEP(MP)
+C
+      DIMENSION RX(0:N2,ME),RY(0:N2,ME),LFIX3D(NP),
+     *          A(N1,N2,NE),UG(*),VG(*),WG(*),
+     *          WRK01(*),WRK02(*),WRK03(*),WRK04(*),A0(NP),AR(NP),
+     *          RHSU(NP),RHSV(NP),RHSW(NP)
+C
+      DIMENSION NPP(NP),IPCRS(NCRS),APCRS(NCRS),LTAB(N1,N2,NE),
+     *          LSTCLR(NCRS),LSTDGN(NCRS)
+C
+      REAL*4  DIJ(8,8)
+      DATA DIJ / 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+     &           0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+     &           0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+     &           0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0,
+     &           0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0,
+     &           0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0,
+     &           0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
+     &           0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0 /
+C
+      INTEGER*4 NETET,NEPRD,NEWED,NEHEX,NTET,NPRD,NWED,NHEX,
+     *          NSKIP1,NSKIP2,NSKIP3,NSKIP4,
+     *          IP,IE,I,J,IITRE,NB,IDIM,
+     *          IES,IEE,IES1,IEE1,IES2,IEE2,IES3,IEE3,IES4,IEE4,
+     *          IP1,IP2,IP3,IP4,IP5,IP6,IP7,IP8,IBP,
+     *          NN,
+     *          MAXBUF,ISEND,NPFIX,IDUM,NITRE,IFRAME,
+     *          NITRU,NITRV,NITRW,IRES,IRESU,IRESV,IRESW,
+     *          IERR1,IERR2,IERR3,ICRS,ICOLOR,ICPART
+      REAL*4    DTH,COEF,CEB1,CEB2,CBTD,UU,VV,WW,AT,
+     *          AT1,AT2,AT3,AT4,AT5,AT6,AT7,AT8,
+     *          AC1,AC2,AC3,AC4,AC5,AC6,AC7,AC8,
+     *          AD1,AD2,AD3,AD4,AD5,AD6,AD7,AD8,
+     *          CRHS1,CRHS2,CRHS3,CRHS4,CRHS5,CRHS6,CRHS7,CRHS8,
+     *          ABTD1,ABTD2,ABTD3,ABTD4,ABTD5,ABTD6,ABTD7,ABTD8,
+     *          UWRK1,UWRK2,UWRK3,UWRK4,UWRK5,UWRK6,UWRK7,UWRK8,
+     *          VWRK1,VWRK2,VWRK3,VWRK4,VWRK5,VWRK6,VWRK7,VWRK8,
+     *          WWRK1,WWRK2,WWRK3,WWRK4,WWRK5,WWRK6,WWRK7,WWRK8,
+     *          U1,U2,U3,U4,U5,U6,U7,U8,
+     *          V1,V2,V3,V4,V5,V6,V7,V8,
+     *          W1,W2,W3,W4,W5,W6,W7,W8,
+     *          T1,T2,T3,T4,T5,T6,T7,T8,
+     *          USHEAR,VSHEAR,WSHEAR,FX,FY,FZ,FX0,FY0,FZ0,
+     *          FX1,FY1,FZ1,FX2,FY2,FZ2,FX3,FY3,FZ3,
+     *          COEF1,COEF2,COEF3,COEF4,BUF,PWRK,
+     *          XG,YG,ZG,GP,EP,TP,COF,TH,COSTH,SINTH,UR,VR,DTMAX,DTMIN,
+     *          ARMIN,ARMINA,DTMINA,DTMAXA,
+     *          C0,S0,C1,S1,C2,S2,O1,O2,XG2,YG2,ZG2,UG2,VG2,WG2,
+     *          XBUF,YBUF,DU
+C
+      INTEGER*4 NITR
+      REAL*4    RES,VISCE,CBTDE
+C
+      INTEGER*4 MWRK
+      REAL*4    WRKN(MWRK,6)
+C
+C     [FULL UNROOL]
+      INTEGER*4 JUNROL
+      INTEGER*4 NPPMAX,NCRS2,ITPCRS(NCRS2)
+      REAL*4    TS(0:NP),TACRS(NCRS2)
+C      
+      INTEGER*4 ICRS_T(NP)
+      
+C     [INPUT:MRF]
+      INTEGER*4 NMRF
+      INTEGER*4 IFATTR(*)
+      REAL*4    OMGMRF(NMRF),AMRF(3,NMRF)
+C
+C     [INPUT:VOF]
+      INTEGER*4 IVOF,IMASS,NFACE,NSP,NS,NFINLT,NFFREE,NPFLD2,
+     *          NEFLD2,NPFREE
+      INTEGER*4 LEFIX(NE),LOCAL,LFACE,LFINLT,LFFREE,
+     *          LPFLD2(NPFLD2),LEFLD2(NEFLD2),LPFREE(NPFREE)
+      REAL*4    AVEC,FFA,XPFREE(NPFREE),YPFREE(NPFREE),ZPFREE(NPFREE)
+C
+      CHARACTER*60 ERMSGC
+     & /' ## SUBROUTINE VEL3D1: FATAL      ERROR REPORT   ; RETURNED' /
+C
+      INTEGER*4 IBCGS
+      DATA IBCGS  / 0 /
+      REAL*4 WRK05(NP)
+C
+      REAL*4 ADIAG(NP)
+C
+C
+C      CALCULATE VELOCITY PREDICTOR
+C         ( 3-D CALCULATION : SINGLE WORD & MULTI ELEMENT VERSION )
+C                                              2009.01.30 Y.YAMADE
+C
+C ************ COMPUTATIONAL COST EXCEPT FOR MATRIX SOLVER *******
+C =============================TET======================================
+C          OPERATION COUNTS:   1208 FLOP /ELEMENT
+C          DATA LOADINGS   :    623 WORDS/ELEMENT
+C                           (    23 WORDS CONTIGUOUSLY,
+C                               452 WORDS BY STRIDE, AND
+C                               148 WORDS BY LIST )
+C
+C =============================WED======================================
+C          OPERATION COUNTS:   1714 FLOP /ELEMENT
+C          DATA LOADINGS   :    888 WORDS/ELEMENT
+C                           (    32 WORDS CONTIGUOUSLY,
+C                               598 WORDS BY STRIDE, AND
+C                               452 WORDS BY LIST )
+C
+C =============================HEX======================================
+C          OPERATION COUNTS:   2656 FLOP /ELEMENT
+C          DATA LOADINGS   :   1417 WORDS/ELEMENT
+C                           (    41 WORDS CONTIGUOUSLY,
+C                               978 WORDS BY STRIDE, AND
+C                               398 WORDS BY LIST )
+C
+C     ARGUMENT LISTINGS
+C       (1) INPUT
+C          NLOOP       ;NUMBER OF LOOPS
+C          LLOOP       ;POINTER FOR SPLITTED ELEMENT LIST
+C          IFORM       ; SPECIFIES MOMENTUM EQUATIONS METHOD
+C          CBTD0       ; COEFFICIENT FOR BTD TERM (0<CBTD0<1.0)
+C
+C          TIMER       ; PRESENT TIME OF OVERSET CONDITIONS DATA
+C           NOTES ; 'TIMER' WILL BE REFERED TO FOR INTER-FLAME OVERSET.
+C          DT          ; TIME INCTREMENT
+C
+C          NMAX        ; NUMBER OF MATRIX SOLVER ITERATIONS
+C          EPS         ; MAXIMUM ALLOWABLE ERROR
+C
+C          ITIME       ; CUREENT TIME STEP
+C
+C          DEVLP1      ; DEVELOPMENT FUNCTION FOR INLET VELOCITIES
+C          DEVLP2      ; DEVELOPMENT FUNCTION FOR ALL THE OTHER VALUES
+C          ACCELX      ; X-DIR. ACCELERATION TERMS ADDED TO ALL FRAMES
+C          ACCELY      ; Y-DIR. ACCELERATION TERMS ADDED TO ALL FRAMES
+C          ACCELZ      ; Z-DIR. ACCELERATION TERMS ADDED TO ALL FRAMES
+C
+C          ME          ; MAX. NUMBER OF TOTAL ELEMENTS
+C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT
+C          NE          ; NUMBER OF TOTAL ELEMENTS
+C          NP          ; NUMBER OF TOTAL    NODES
+C          NEX(I)      ; INCLUDES NUMBER OF ELEMENTS AND NUMBER OF LOCAL NODES
+C                        AS FOLOOWS
+C          NEX(1)      ; NUMBER OF TET.    ELEMENTS
+C          NEX(2)      ; NUMBER OF PYRAMID ELEMENTS
+C          NEX(3)      ; NUMBER OF WEGDE   ELEMENTS
+C          NEX(4)      ; NUMBER OF HEX.    ELEMENTS
+C          NEX(5)      ; NUMBER OF LOCAL NODES IN A TET.    ELEMENT (=4)
+C          NEX(6)      ; NUMBER OF LOCAL NODES IN A PYRAMID ELEMENT (=5)
+C          NEX(7)      ; NUMBER OF LOCAL NODES IN A WEGDE   ELEMENT (=6)
+C          NEX(8)      ; NUMBER OF LOCAL NODES IN A HEX.    ELEMENT (=8)
+C
+C          NODE  (I,IE); NODE NO. TABLE BASED ON ELEMENT
+C          X       (IP); X-COORDINATES OF NODES
+C          Y       (IP); Y-COORDINATES OF NODES
+C          CM      (IP); INVERSED LUMPED MASS MATRIX
+C          VISC    (IE); ELEMENT VISCOSITY
+C          IEATTR  (IE); ELEMENT FRAME ATTRIBUES (IE. FRAME NUMBER)
+C
+C          UFRAME(1,IF); X-DIR. VELOCITY    OF TRANSLATING FRAME 'IF'
+C          VFRAME(1,IF); Y-DIR. VELOCITY    OF TRANSLATING FRAME 'IF'
+C          WFRAME(1,IF); Z-DIR. VELOCITY    OF TRANSLATING FRAME 'IF'
+C          UFRAME(2,IF); X-DIR. ACCELERAION OF TRANSLATING FRAME 'IF'
+C          VFRAME(2,IF); Y-DIR. ACCELERAION OF TRANSLATING FRAME 'IF'
+C          WFRAME(2,IF); Z-DIR. ACCELERAION OF TRANSLATING FRAME 'IF'
+C
+C          SN    (I,IE); INTEGRATED ELEMENT VECTOR OF N
+C
+C          NUMIP   (IP); NUMBER OF NEIGHBORING DOMAINS THAT NODE
+C                        'IP' BELONG TO
+C
+C        A. INLET BOUNDARY
+C          NPINLT      ; NUMBER OF INLET BOUNDARY NODES
+C          LPINLT (IBP); INLET BOUNDARY NODES
+C          UINLT  (IBP); INLET BOUNDARY U-VELOCITIES
+C          VINLT  (IBP); INLET BOUNDARY V-VELOCITIES
+C          WINLT  (IBP); INLET BOUNDARY W-VELOCITIES
+C
+C        B. WALL BOUNDARY
+C          NPWALL      ; NUMBER OF WALL BOUNDARY NODES
+C          LPWALL (IBP); WALL BOUNDARY NODES
+C          UWALL  (IBP); WALL BOUNDARY U-VELOCITIES
+C          VWALL  (IBP); WALL BOUNDARY V-VELOCITIES
+C          WWALL  (IBP); WALL BOUNDARY W-VELOCITIES
+C
+C        C. SYMMETRIC BOUNDARY
+C          NPSYMT      ; NUMBER OF SYMMETRIC BOUNDARY NODES
+C          LPSYMT (IBP); SYMMETRIC BOUNDARY NODES
+C          XPSYMT (IBP); X-DIR COMPONENT OF SYMMETRIC NODE NORMAL VECTOR
+C          YPSYMT (IBP); Y-DIR COMPONENT OF SYMMETRIC NODE NORMAL VECTOR
+C          ZPSYMT (IBP); Z-DIR COMPONENT OF SYMMETRIC NODE NORMAL VECTOR
+C
+C        D. INTER-CONNECT BOUNDARY
+C          IPART       ; SUB-DOMAIN NUMBER THAT THIS TASK SHOULD TAKE/IS
+C                       TAKING CARE OF. IPART BEING SET ZERO MEANS THAT
+C                       THE PROGRAM SHOULD RUN/IS RUNNING IN SERIAL 
+C                       MODE.
+C
+C          LDOM  (IDOM); NEIBERING SUB-DOMAIN NUMBER
+C          NBPDOM(IDOM); NUMBER OF INTER-CONNECT BOUNDARY NODES
+C                       SHARING WITH THE IDOM'TH NEIBERING SUB-DOMAIN,
+C                       LDOM(IDOM)
+C          NDOM        ; NUMBER OF THE NERIBERING SUB-DOMAINS
+C          IPSLF (IBP,IDOM); INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+C                           CALLING TASK'S SUB-DOMAIN, FOR THE IDOM'TH
+C                           NEIBERING SUB-DOMAIN, LDOM(IDOM)
+C          IPSND (IBP,IDOM); INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+C                           SUB-DOMAIN THAT IS RECEIVING THE CALLING
+C                           TASK'S RESIDUALS.
+C          MBPDOM      ; THE MAXIMUM NUMBER OF THE INTER-CONNECT 
+C                       BOUNDARY NODES FOR ONE NEIBERING SUB-DOMAIN
+C
+C        E. OVERSET BOUNDARY NODES
+C          NPSET       ; NUMBER OF OVERSET BOUNDARY NODES
+C          LPSET1 (IBP); OVERSET BOUNDARY NODES
+C          LPSET2 (IBP); ELEMENT NUMBER TO CALCULATE OVERSET VALUES
+C          LPSET3 (IBP); DOMAIN NUMBER TO SEND/RECEIVE OVERSET VALUES
+C                   0 --- CALCULATE AND SET OVERSET VALUE WITHIN THE
+C                         SELF-DOMAIN
+C          (POS. INT.)--- SEND    OVERSET VALUE TO   DOMAIN  LPSET3(IB)
+C                         AFTER CALCULATING IT WITHIN THE SELF-DOMAIN
+C          (NEG. INT.)--- RECEIVE OVERSET VALUE FROM DOMAIN -LPSET3(IB)
+C
+C          COVER1 (IBP); LOCAL COORDINATE IN INTERPOLATING ELEMENT
+C          COVER2 (IBP); LOCAL COORDINATE IN INTERPOLATING ELEMENT
+C          COVER3 (IBP); LOCAL COORDINATE IN INTERPOLATING ELEMENT
+C
+C          NPSND       ; NUMBER OF DOMAINS TO SEND OVERSET NODE VALUE
+C          LPSND (IDOM); DOMAIN NUMBER     TO SEND OVERSET NODE VALUE
+C          NPTSND(IDOM); NUMBER OF OVERSET NODE POINTS TO SEND TO
+C                        DOMAIN 'LPSND(IDOM)'
+C          IPSET(IPT,IDOM); OVERSET NODE NUMBER IN THE DOMAIN RECEIVING
+C                           THE OVERSET VALUES.
+C          IPSRC(IPT,IDOM); INDICATES POSITION IN THE OVERSET-VALUES
+C                           PASSING ARRAYS WHEN OVERSET NODE DATA
+C                           ARE COMPILED SEQUENTIALLY
+C
+C          NPRCV       ; NUMBER OF DOMAINS TO RECEIVE OVERSET NODE VALUE
+C          LPRCV (IDOM); DOMAIN NUMBER     TO RECEIVE OVERSET NODE VALUE
+C          NPTRCV(IDOM); NUMBER OF OVERSET POINTS TO RECEIVE FROM
+C                       DOMAIN 'LPRCV(IDOM)'
+C
+C          NPP      (IP); NUMBER OF ADJACENT NODES    TO NODE    IP
+C          NCRS    ; NUMBER OF NONZERO ELEMENTS IN MATRIX OF CRS FORMAT
+C          IPCRS  (ICRS); NODE NO. TABLE BASED ON CRS FORMAT
+C          LTAB(J1,J2,IE); CRS INDEX TABLE FOR NODE-BASE MATRIX
+C                          COEFFICIENT
+C
+C          IUT0        ; FILE NUMBER TO REPORT ERROR OCCURENCE
+C
+C       (2) OUTPUT
+C          RESU        ;RESIDUAL OF U-EQUATION
+C          RESV        ;RESIDUAL OF V-EQUATION 
+C          RESW        ;RESIDUAL OF W-EQUATION
+C
+C          NRNU        ;NUMBER OF U-EQUATION ITERATIONS 
+C          NRNV        ;NUMBER OF V-EQUATION ITERATIONS  
+C          NRNW        ;NUMBER OF W-EQUATION ITERATIONS 
+C
+C          IERR        ; RETURN CODE TO REPORT ERROR OCCURENCE
+C                   0 --- NORMAL TERMINATION
+C                   1 --- A FATAL ERROR HAS OCCURED
+C
+C       (3) INPUT-OUTPUT
+C          U       (IP); X-DIR. VELOCITY COMPONENT
+C          V       (IP); Y-DIR. VELOCITY COMPONENT
+C          W       (IP); Z-DIR. VELOCITY COMPONENT
+C
+C       (4) WORK
+C          LPFIX   (IB); VELOCITY FIX BOUNDARY CONDITION NODES WHICH ARE
+C                        COMPOSED OF INLET, WALL, SYMMETRIC AND OVERSET
+C                        BOUNDARY CONDITIONS NODES
+C          LWROK   (IP); WORK REGION TO MAKE 'LPFIX'
+C
+C          A   (I,J,IE); ELEMENT-WISE MATRIX COEFFICIENT WHICH INCLUDES 
+C                        ALL THE ERMS AND WILL BE PASSED TO THE MATROX SOLVER
+C          APCRS  (ICRS); NODE-BASE MATRIX COEFFICIENT WHICH INCLUDES
+C                  ALL THE ERMS AND WILL BE PASSED TO THE MATRIX SOLVER
+C
+C          UG      (IE); WORK REGION FOR U-VELOCITY AT ELEMENTS
+C          VG      (IE); WORK REGION FOR V-VELOCITY AT ELEMENTS
+C          WG      (IE); WORK REGION FOR W-VELOCITY AT ELEMENTS
+C
+C          RHSU    (IP); WORK REGION FOR RHS IN U-EQUATION
+C          RHSV    (IP); WORK REGION FOR RHS IN V-EQUATION
+C          RHSW    (IP); WORK REGION FOR RHS IN W-EQUATION
+      IERR=0
+C
+      IF(ALPHAV.LE.0.0E0 .OR. ALPHAV.GT.1.0E0) THEN
+          WRITE(IUT0,*)'VEL3D1:INVALID PARAMETER FOR ALPHAV'
+          WRITE(IUT0,*)ERMSGC
+          IERR=1
+          RETURN
+      ENDIF
+C
+C
+CVEL3D1 [ 1.] SET CONTROL PARAMETER
+C
+      MAXBUF = NE*(N2+1)
+      DTH=DT*0.5E0
+C
+CC    CRANCK-NICOLSON FOR CONVECTION TERM
+      CEB1 = 0.0E0
+      IF(IFORM.EQ.5)  CEB1 = 1.0E0
+C
+      IF(IFORM.EQ.1.OR.IFORM.EQ.2) THEN 
+CC    CRANCK-NICOLSON FOR DIFF. TERM
+         CEB2 = 0.0E0
+      ELSE
+CC    EULAR BACKWARD DIFF. TERM 
+         CEB2 = 1.0E0
+      END IF  
+C
+      NETET=NEX(1)
+      NEPRD=NEX(2)
+      NEWED=NEX(3)
+      NEHEX=NEX(4)
+C
+      NTET=NEX(5)
+      NPRD=NEX(6)
+      NWED=NEX(7)
+      NHEX=NEX(8)
+      NSKIP1=NEX( 9)
+      NSKIP2=NEX(10)
+      NSKIP3=NEX(11)
+      NSKIP4=NEX(12)
+C
+C   == TET. ==  
+      IES1=1
+      IEE1=NETET 
+C
+C   == PYRAMID ==  
+      IES2=NETET+1
+      IEE2=NETET+NEPRD
+C
+C   == WEDGE ==  
+      IES3=NETET+NEPRD+1
+      IEE3=NETET+NEPRD+NEWED
+C
+C   == HEX. ==  
+      IES4=NETET+NEPRD+NEWED+1
+      IEE4=NETET+NEPRD+NEWED+NEHEX 
+C
+CVEL3D1 [ 2.] MAKE FIX BOUNDARY NODES LIST (LPFIX)
+C
+      DO 1000 IP = 1 , NP
+          LFIX3D(IP) = 0
+          LPFIX(IP) = 0
+ 1000 CONTINUE
+C
+*POPTION INDEP(LFIX3D)
+C*$*ASSERT PERMUTATION ( LPINLT )
+!ocl norecurrence(LFIX3D)      
+      DO 1010 IBP = 1 , NPINLT
+          LFIX3D(LPINLT(IBP))=1
+          U(LPINLT(IBP)) = DEVLP1*UINLT(IBP)
+          V(LPINLT(IBP)) = DEVLP1*VINLT(IBP)
+          W(LPINLT(IBP)) = DEVLP1*WINLT(IBP)
+ 1010 CONTINUE
+C
+*POPTION INDEP(LFIX3D)
+C*$*ASSERT PERMUTATION ( LPWALL )
+!ocl norecurrence(LFIX3D)      
+      DO 1020 IBP = 1 , NPWALL
+          LFIX3D(LPWALL(IBP))=1
+ 1020 CONTINUE
+C
+*POPTION INDEP(LFIX3D)
+C*$*ASSERT PERMUTATION ( LPSLD1 )
+!ocl norecurrence(LFIX3D)      
+      DO 1030 IBP = 1 , NPSLD1
+          LFIX3D(LPSLD1(IBP))=1
+ 1030 CONTINUE
+C
+CCCCCC*POPTION INDEP(LFIX3D)
+CCCCCCC*$*ASSERT PERMUTATION ( LPSYMT )
+CCCCCC      DO 130 IBP = 1 , NPSYMT
+CCCCCC          LFIX3D(LPSYMT(IBP))=1
+CCCCCC  130 CONTINUE
+C
+C
+*POPTION INDEP(LFIX3D)
+C*$*ASSERT PERMUTATION ( LPSET1 )
+!ocl norecurrence(LFIX3D)      
+      DO 1040 IBP = 1 , NPSET
+          ISEND = LPSET3(IBP)
+          IF(ISEND.GT.0) GO TO 1040
+          LFIX3D(LPSET1(IBP))=1
+ 1040 CONTINUE
+C
+      DO 1050 IE=1,NE
+         LEFIX(IE)=0
+ 1050 CONTINUE
+C
+      IF (IVOF.EQ.1) THEN
+!ocl norecurrence(LEFIX)
+         DO 1055 IBP=1,NEFLD2
+            LEFIX(LEFLD2(IBP))=1
+ 1055    CONTINUE
+C
+*POPTION INDEP(LFIX3D)
+C*$*ASSERT PERMUTATION ( LPFLD2 )
+!ocl norecurrence(LFIX3D)
+         DO 1060 IBP = 1 , NPFLD2
+            LFIX3D(LPFLD2(IBP))=1
+ 1060    CONTINUE
+      ENDIF
+C
+*POPTION INDEP(LPFIX)
+C*$*ASSERT PERMUTATION ( LFIX3D )
+      NPFIX=0
+!ocl norecurrence(LFIX3D)      
+      DO 1070 IP = 1 , NP
+          IF(LFIX3D(IP).EQ.0) GO TO 1070
+          NPFIX=NPFIX+1
+          LPFIX(NPFIX) = IP
+ 1070 CONTINUE
+C
+C INITIALIZE
+      DO 1080 IP = 1 , NP
+         AR   (IP)=0.0E0
+         WRK04(IP)=0.0E0
+ 1080 CONTINUE
+      IF(ITIME.EQ.0)THEN
+          GO TO 3000
+      ENDIF
+C
+CVEL3D1 [ 3.] CAL. TIME, ADV. AND VIS. TEAM IN LHS AND RHS
+C
+      CALL CALUEL(N2,NE,NP,NEX,NODE,U,V,W,UE,VE,WE,IUT0,IERR)
+      DO 1100 IP=1,NP
+          RHSU(IP)=0.0E0
+          RHSV(IP)=0.0E0
+          RHSW(IP)=0.0E0
+          A0  (IP)=0.0E0
+ 1100 CONTINUE
+C
+      call zeroclear(A, N1*N2*NE)
+C
+      IF (IALE.GE.1) THEN
+C     OPERATION COUNTS:   12 FLOP /ELEMENT
+         COEF=1.0E0/4.0E0
+         DO 1230 IE = IES1 , IEE1
+            IF (LEFIX(IE).EQ.1) GOTO 1230
+            IP1=NODE(1,IE)
+            IP2=NODE(2,IE)
+            IP3=NODE(3,IE)
+            IP4=NODE(4,IE)
+            WRK01(IE)=COEF*(UMESH(IP1)+UMESH(IP2)+UMESH(IP3)+UMESH(IP4))
+            WRK02(IE)=COEF*(VMESH(IP1)+VMESH(IP2)+VMESH(IP3)+VMESH(IP4))
+            WRK03(IE)=COEF*(WMESH(IP1)+WMESH(IP2)+WMESH(IP3)+WMESH(IP4))
+ 1230    CONTINUE
+C     OPERATION COUNTS:   15 FLOP /ELEMENT
+         COEF=1.0E0/5.0E0
+         DO 1240 IE = IES2 , IEE2
+            IF (LEFIX(IE).EQ.1) GOTO 1240
+            IP1=NODE(1,IE)
+            IP2=NODE(2,IE)
+            IP3=NODE(3,IE)
+            IP4=NODE(4,IE)
+            IP5=NODE(5,IE)
+            WRK01(IE)=COEF*(UMESH(IP1)+UMESH(IP2)+UMESH(IP3)+UMESH(IP4)
+     *               +      UMESH(IP5))
+            WRK02(IE)=COEF*(VMESH(IP1)+VMESH(IP2)+VMESH(IP3)+VMESH(IP4)
+     *               +      VMESH(IP5))
+            WRK03(IE)=COEF*(WMESH(IP1)+WMESH(IP2)+WMESH(IP3)+WMESH(IP4)
+     *               +      WMESH(IP5))
+ 1240    CONTINUE
+C
+C     OPERATION COUNTS:   18 FLOP /ELEMENT
+         COEF=1.0E0/6.0E0
+         DO 1250 IE = IES3 , IEE3
+            IF (LEFIX(IE).EQ.1) GOTO 1250
+            IP1=NODE(1,IE)
+            IP2=NODE(2,IE)
+            IP3=NODE(3,IE)
+            IP4=NODE(4,IE)
+            IP5=NODE(5,IE)
+            IP6=NODE(6,IE)
+            WRK01(IE)=COEF*(UMESH(IP1)+UMESH(IP2)+UMESH(IP3)+UMESH(IP4)
+     *               +      UMESH(IP5)+UMESH(IP6))
+            WRK02(IE)=COEF*(VMESH(IP1)+VMESH(IP2)+VMESH(IP3)+VMESH(IP4)
+     *               +      VMESH(IP5)+VMESH(IP6))
+            WRK03(IE)=COEF*(WMESH(IP1)+WMESH(IP2)+WMESH(IP3)+WMESH(IP4)
+     *               +      WMESH(IP5)+WMESH(IP6))
+ 1250    CONTINUE
+C
+C     OPERATION COUNTS:   24 FLOP /ELEMENT
+         COEF=1.0E0/8.0E0
+         DO 1260 IE = IES4 , IEE4
+            IF (LEFIX(IE).EQ.1) GOTO 1260
+            IP1=NODE(1,IE)
+            IP2=NODE(2,IE)
+            IP3=NODE(3,IE)
+            IP4=NODE(4,IE)
+            IP5=NODE(5,IE)
+            IP6=NODE(6,IE)
+            IP7=NODE(7,IE)
+            IP8=NODE(8,IE)
+            WRK01(IE)=COEF*(UMESH(IP1)+UMESH(IP2)+UMESH(IP3)+UMESH(IP4)
+     *               +      UMESH(IP5)+UMESH(IP6)+UMESH(IP7)+UMESH(IP8))
+            WRK02(IE)=COEF*(VMESH(IP1)+VMESH(IP2)+VMESH(IP3)+VMESH(IP4)
+     *               +      VMESH(IP5)+VMESH(IP6)+VMESH(IP7)+VMESH(IP8))
+            WRK03(IE)=COEF*(WMESH(IP1)+WMESH(IP2)+WMESH(IP3)+WMESH(IP4)
+     *               +      WMESH(IP5)+WMESH(IP6)+WMESH(IP7)+WMESH(IP8))
+ 1260    CONTINUE
+      ENDIF
+C          OPERATION COUNTS:  FLOP /ELEMENT
+C          DATA LOADINGS   : 1792 WORDS/ELEMENT
+C                           (  32 WORDS CONTIGUOUSLY,
+C                             512 WORDS BY STRIDE, AND
+C                             216 WORDS BY LIST )
+C
+      U(NP+1)=0.0E0
+      V(NP+1)=0.0E0
+      W(NP+1)=0.0E0
+      CALL USTSTA(16)
+!ocl norecurrence(A0,WRK04,RHSU,RHSV,RHSW)
+!$omp parallel do  private(IPE,IE,I,K,IP1,UU,VV,WW,VISCE,CBTDE,
+!$omp+ AT,RTMPU,RTMPV,RTMPW,WTMP4,ABTD1,AT1,AC1,AD1,CRHS1)
+!$omp+ schedule(static, 4600)
+      DO 1344 IP=1,NP
+        RTMPU=RHSU(IP)
+        RTMPV=RHSV(IP)
+        RTMPW=RHSW(IP)
+        WTMP4=WRK04(IP)
+!ocl noswp
+        DO 1345 IPE=1,NEP(IP)
+            IE =IENP(IPE,IP)
+            I  =JENP(IPE,IP)
+            UU=UE(IE)
+            VV=VE(IE)
+            WW=WE(IE)
+            VISCE=VISC(IE)
+            CBTDE=CBTD3D(IE) 
+            AT =EAP1(1,IPE,IP)+EAP1(2,IPE,IP)+EAP1(3,IPE,IP)
+     *         +EAP1(4,IPE,IP)+EAP1(5,IPE,IP)+EAP1(6,IPE,IP)
+     *         +EAP1(7,IPE,IP)+EAP1(8,IPE,IP)
+C
+            DO 1346 K=1,8
+                ABTD1 = 0.5E0*DT*CBTDE
+     *                  *(UU*(UU*EAP3(1,K,IPE,IP)+VV*EAP3(4,K,IPE,IP)
+     *                       +WW*EAP3(6,K,IPE,IP))
+     *                   +VV*(UU*EBP(1,K,IPE,IP)+VV*EAP3(2,K,IPE,IP)
+     *                       +WW*EAP3(5,K,IPE,IP))
+     *                   +WW*(UU*EBP(3,K,IPE,IP)+VV*EBP(2,K,IPE,IP)
+     *                       +WW*EAP3(3,K,IPE,IP)))*DTH
+                AT1=DIJ(K,I)*AT
+                AC1=(UU*EAP2(1,K,IPE,IP)+VV*EAP2(2,K,IPE,IP)
+     *                                  +WW*EAP2(3,K,IPE,IP))*DTH
+                AD1=(EAP3(1,K,IPE,IP)+EAP3(2,K,IPE,IP)+EAP3(3,K,IPE,IP))
+     *                  *VISCE*DTH
+                AP(K,IPE,IP)=AT1+AC1*(1.0E0+CEB1)+AD1*(1.0E0+CEB2)+ABTD1
+                CRHS1=AT1-AC1*(1.0E0-CEB1)-AD1*(1.0E0-CEB2)-ABTD1
+                WTMP4=WTMP4+AP(K,IPE,IP)
+                IP1=NODP(K,IPE,IP)
+                RTMPU=RTMPU+CRHS1*U(IP1)
+                RTMPV=RTMPV+CRHS1*V(IP1)
+                RTMPW=RTMPW+CRHS1*W(IP1)
+ 1346       CONTINUE
+            A0(IP)=A0(IP)+AP(I,IPE,IP)
+C
+ 1345   CONTINUE
+        RHSU(IP)=RTMPU
+        RHSV(IP)=RTMPV
+        RHSW(IP)=RTMPW
+        WRK04(IP)=WTMP4
+ 1344 CONTINUE
+      CALL USTEND(16)
+!$omp parallel do private(IPE,J,IE,I)
+      DO IP=1,NP
+        DO IPE=1,NEP(IP)
+          DO J=1,8 ! NHEX
+            IE =IENP(IPE,IP)
+            I  =JENP(IPE,IP)
+            A(J,I,IE)=AP(J,IPE,IP)
+          ENDDO
+        ENDDO
+      ENDDO
+!$omp end parallel do
+      DO IP=1,NP
+          AR(IP)=A0(IP)
+          IF (AR(IP).EQ.0.0E0) AR(IP)=1.0E0
+      ENDDO
+C 
+C
+C
+CVEL3D1 [ 5.] CAL. ACCELERATION TERMS IN RHS
+C
+C
+      FX0=ACCELX
+      FY0=ACCELY
+      FZ0=ACCELZ
+      COEF1=1.0E0/4.0E0
+      COEF2=1.0E0/5.0E0
+      COEF3=1.0E0/6.0E0
+      COEF4=1.0E0/8.0E0
+!ocl norecurrence(WRK01,WRK02,WRK03)
+      DO 1500 IE = 1,NE
+          IF (LEFIX(IE).EQ.1) GOTO 1500
+CC        == ==
+          WRK01(IE)=FX0*DT
+          WRK02(IE)=FY0*DT
+          WRK03(IE)=FZ0*DT
+CC        ==FFO ==
+          WRK01(IE)=WRK01(IE)+FXFFO(IE)*DT
+          WRK02(IE)=WRK02(IE)+FYFFO(IE)*DT
+          WRK03(IE)=WRK03(IE)+FZFFO(IE)*DT
+C
+CC        == ==
+          IFRAME = IEATTR(IE)
+          IF(IFRAME.LE.-1) THEN
+              IP1=NODE(1,IE)
+              IP2=NODE(2,IE)
+              IP3=NODE(3,IE)
+              IP4=NODE(4,IE)
+              IF(IE.LE.IEE1) THEN
+                  XG = COEF1*(X(IP1)+X(IP2)+X(IP3)+X(IP4))
+                  YG = COEF1*(Y(IP1)+Y(IP2)+Y(IP3)+Y(IP4))
+                  ZG = COEF1*(Z(IP1)+Z(IP2)+Z(IP3)+Z(IP4))
+              ELSE IF (IE.LE.IEE2) THEN
+                  IP5=NODE(5,IE)
+                  XG = COEF2*(X(IP1)+X(IP2)+X(IP3)+X(IP4)
+     *                       +X(IP5))
+                  YG = COEF2*(Y(IP1)+Y(IP2)+Y(IP3)+Y(IP4)
+     *                       +Y(IP5))
+                  ZG = COEF2*(Z(IP1)+Z(IP2)+Z(IP3)+Z(IP4)
+     *                       +Z(IP5))
+              ELSE IF (IE.LE.IEE3) THEN
+                  IP5=NODE(5,IE)
+                  IP6=NODE(6,IE)
+                  XG = COEF3*(X(IP1)+X(IP2)+X(IP3)+X(IP4)
+     *                       +X(IP5)+X(IP6))
+                  YG = COEF3*(Y(IP1)+Y(IP2)+Y(IP3)+Y(IP4)
+     *                       +Y(IP5)+Y(IP6))
+                  ZG = COEF3*(Z(IP1)+Z(IP2)+Z(IP3)+Z(IP4)
+     *                       +Z(IP5)+Z(IP6))
+              ELSE 
+                  IP5=NODE(5,IE)
+                  IP6=NODE(6,IE)
+                  IP7=NODE(7,IE)
+                  IP8=NODE(8,IE)
+                  XG = COEF4*(X(IP1)+X(IP2)+X(IP3)+X(IP4)
+     *                       +X(IP5)+X(IP6)+X(IP7)+X(IP8))
+                  YG = COEF4*(Y(IP1)+Y(IP2)+Y(IP3)+Y(IP4)
+     *                       +Y(IP5)+Y(IP6)+Y(IP7)+Y(IP8))
+                  ZG = COEF4*(Z(IP1)+Z(IP2)+Z(IP3)+Z(IP4)
+     *                       +Z(IP5)+Z(IP6)+Z(IP7)+Z(IP8))
+              ENDIF
+C 
+             IF(IFRAME.EQ.-1) THEN
+                  FX=(OMEGA*OMEGA*XG+2.E0*OMEGA*VE(IE))*DT
+                  FY=(OMEGA*OMEGA*YG-2.E0*OMEGA*UE(IE))*DT
+                  FZ= 0.0E0
+              ELSE
+                  O1=OMEGA
+                  IF(IFRAME.GE.0) THEN  
+                      O2=0.0E0
+                      C0=0.0E0 
+                      S0=0.0E0 
+                  ELSE
+                      O2=OMGMRF(  -IFRAME)
+                      XBUF=AMRF(1,-IFRAME)
+                      YBUF=AMRF(2,-IFRAME)
+                      C0=XBUF/SQRT(XBUF*XBUF+YBUF*YBUF)
+                      S0=YBUF/SQRT(XBUF*XBUF+YBUF*YBUF)
+                  ENDIF
+                  C1=COS(O1*TIMER)
+                  S1=SIN(O1*TIMER)
+                  C2=COS(O2*TIMER)
+                  S2=SIN(O2*TIMER)
+                  XG2 = XG*C0+YG*S0
+                  YG2 =-XG*S0+YG*C0
+                  ZG2 = ZG
+                  UG2 = UE(IE)*C0+VE(IE)*S0
+                  VG2 =-UE(IE)*S0+VE(IE)*C0
+                  WG2 = WE(IE)
+                  FX1 =-O1*C2*VG2+O1*S2*WG2
+                  FY1 = O1*C2*UG2-O2*WG2
+                  FZ1 =-O1*S2*UG2+O2*VG2
+                  FX2 =-O1*O1*XG2+O1*O2*S2*YG2+O1*O2*C2*ZG2
+                  FY2 = O1*O2*S2*XG2
+     *                -(O1*O1*C2*C2-O2*O2)*YG2+O1*O1*C2*S2*ZG2
+                  FZ2 = O1*O2*C2*XG2+O1*O1*C2*S2*YG2
+     *                -(O1*O1*S2*S2-O2*O2)*ZG2
+                  FX3 = O1*O2*S2*YG2+O1*O2*C2*ZG2
+                  FY3 =-O1*O2*S2*XG2
+                  FZ3 =-O1*O2*C2*XG2
+C
+                  FX=(2.0E0*FX1+FX2+FX3)*DT
+                  FY=(2.0E0*FY1+FY2+FY3)*DT
+                  FZ=(2.0E0*FZ1+FZ2+FZ3)*DT
+          ENDIF
+CCYYMOD---
+CC        NOTE THAT 
+CC        INERTIAL FORCE IN ROTATIONAL FRAME WILL COMPUTED AT NODES
+CC        AS IN LES3C SEE LOOP-1510 
+CC
+CC            WRK01(IE)=WRK01(IE)+FX
+CC            WRK02(IE)=WRK02(IE)+FY
+CC            WRK03(IE)=WRK03(IE)+FZ
+CCYYMOD---
+          ELSE IF(IFRAME.GT.0) THEN
+              FX=UFRAME(2,IFRAME)*DT
+              FY=VFRAME(2,IFRAME)*DT
+              FZ=WFRAME(2,IFRAME)*DT
+              WRK01(IE)=WRK01(IE)+FX
+              WRK02(IE)=WRK02(IE)+FY
+              WRK03(IE)=WRK03(IE)+FZ
+          ENDIF
+C
+          IF (IVOF.EQ.0) THEN
+             WRK01(IE)=WRK01(IE)+GRAV(1)*(RHO3D(IE)-1.0E0)*DT
+             WRK02(IE)=WRK02(IE)+GRAV(2)*(RHO3D(IE)-1.0E0)*DT
+             WRK03(IE)=WRK03(IE)+GRAV(3)*(RHO3D(IE)-1.0E0)*DT
+          ELSE
+             WRK01(IE)=WRK01(IE)+GRAV(1)*DT
+             WRK02(IE)=WRK02(IE)+GRAV(2)*DT
+             WRK03(IE)=WRK03(IE)+GRAV(3)*DT
+          ENDIF
+ 1500 CONTINUE
+C
+C          OPERATION COUNTS:  24 FLOP /ELEMENT
+C          DATA LOADINGS   :  23 WORDS/ELEMENT
+C                           (  3 WORDS CONTIGUOUSLY,
+C                              8 WORDS BY STRIDE, AND
+C                             12 WORDS BY LIST )
+C
+      DO 1612 ICOLOR=1,NCOLOR(1)
+!ocl norecurrence(RHSU,RHSV,RHSW)
+      DO 1611 ICPART=1,NCPART(ICOLOR,1)
+          IES=LLOOP(ICPART  ,ICOLOR,1)
+          IEE=LLOOP(ICPART+1,ICOLOR,1)-1
+      DO 1610 IE=IES,IEE
+          IF (LEFIX(IE).EQ.1) GOTO 1610
+          IP1=NODE(1,IE)
+          IP2=NODE(2,IE)
+          IP3=NODE(3,IE)
+          IP4=NODE(4,IE)
+C
+          RHSU(IP1)=RHSU(IP1)+WRK01(IE)*SN(1,IE)
+          RHSU(IP2)=RHSU(IP2)+WRK01(IE)*SN(2,IE)
+          RHSU(IP3)=RHSU(IP3)+WRK01(IE)*SN(3,IE)
+          RHSU(IP4)=RHSU(IP4)+WRK01(IE)*SN(4,IE)
+C
+          RHSV(IP1)=RHSV(IP1)+WRK02(IE)*SN(1,IE)
+          RHSV(IP2)=RHSV(IP2)+WRK02(IE)*SN(2,IE)
+          RHSV(IP3)=RHSV(IP3)+WRK02(IE)*SN(3,IE)
+          RHSV(IP4)=RHSV(IP4)+WRK02(IE)*SN(4,IE)
+C
+          RHSW(IP1)=RHSW(IP1)+WRK03(IE)*SN(1,IE)
+          RHSW(IP2)=RHSW(IP2)+WRK03(IE)*SN(2,IE)
+          RHSW(IP3)=RHSW(IP3)+WRK03(IE)*SN(3,IE)
+          RHSW(IP4)=RHSW(IP4)+WRK03(IE)*SN(4,IE)
+ 1610 CONTINUE
+ 1611 CONTINUE
+ 1612 CONTINUE
+C
+C          OPERATION COUNTS:  30 FLOP /ELEMENT
+C          DATA LOADINGS   :  28 WORDS/ELEMENT
+C                           (  3 WORDS CONTIGUOUSLY,
+C                             10 WORDS BY STRIDE, AND
+C                             15 WORDS BY LIST )
+C
+      DO 1622 ICOLOR=1,NCOLOR(2)
+!ocl norecurrence(RHSU,RHSV,RHSW)
+      DO 1621 ICPART=1,NCPART(ICOLOR,2)
+          IES=LLOOP(ICPART  ,ICOLOR,2)
+          IEE=LLOOP(ICPART+1,ICOLOR,2)-1
+      DO 1620 IE=IES,IEE
+          IF (LEFIX(IE).EQ.1) GOTO 1620
+          IP1=NODE(1,IE)
+          IP2=NODE(2,IE)
+          IP3=NODE(3,IE)
+          IP4=NODE(4,IE)
+          IP5=NODE(5,IE)
+C
+          RHSU(IP1)=RHSU(IP1)+WRK01(IE)*SN(1,IE)
+          RHSU(IP2)=RHSU(IP2)+WRK01(IE)*SN(2,IE)
+          RHSU(IP3)=RHSU(IP3)+WRK01(IE)*SN(3,IE)
+          RHSU(IP4)=RHSU(IP4)+WRK01(IE)*SN(4,IE)
+          RHSU(IP5)=RHSU(IP5)+WRK01(IE)*SN(5,IE)
+C
+          RHSV(IP1)=RHSV(IP1)+WRK02(IE)*SN(1,IE)
+          RHSV(IP2)=RHSV(IP2)+WRK02(IE)*SN(2,IE)
+          RHSV(IP3)=RHSV(IP3)+WRK02(IE)*SN(3,IE)
+          RHSV(IP4)=RHSV(IP4)+WRK02(IE)*SN(4,IE)
+          RHSV(IP5)=RHSV(IP5)+WRK02(IE)*SN(5,IE)
+C
+          RHSW(IP1)=RHSW(IP1)+WRK03(IE)*SN(1,IE)
+          RHSW(IP2)=RHSW(IP2)+WRK03(IE)*SN(2,IE)
+          RHSW(IP3)=RHSW(IP3)+WRK03(IE)*SN(3,IE)
+          RHSW(IP4)=RHSW(IP4)+WRK03(IE)*SN(4,IE)
+          RHSW(IP5)=RHSW(IP5)+WRK03(IE)*SN(5,IE)
+ 1620 CONTINUE
+ 1621 CONTINUE
+ 1622 CONTINUE
+C
+C          OPERATION COUNTS:  36 FLOP /ELEMENT
+C          DATA LOADINGS   :  33 WORDS/ELEMENT
+C                           (  3 WORDS CONTIGUOUSLY,
+C                             12 WORDS BY STRIDE, AND
+C                             18 WORDS BY LIST )
+      DO 1632 ICOLOR=1,NCOLOR(3)
+!ocl norecurrence(RHSU,RHSV,RHSW)
+      DO 1631 ICPART=1,NCPART(ICOLOR,3)
+          IES=LLOOP(ICPART  ,ICOLOR,3)
+          IEE=LLOOP(ICPART+1,ICOLOR,3)-1
+      DO 1630 IE=IES,IEE
+          IF (LEFIX(IE).EQ.1) GOTO 1630
+          IP1=NODE(1,IE)
+          IP2=NODE(2,IE)
+          IP3=NODE(3,IE)
+          IP4=NODE(4,IE)
+          IP5=NODE(5,IE)
+          IP6=NODE(6,IE)
+C
+          RHSU(IP1)=RHSU(IP1)+WRK01(IE)*SN(1,IE)
+          RHSU(IP2)=RHSU(IP2)+WRK01(IE)*SN(2,IE)
+          RHSU(IP3)=RHSU(IP3)+WRK01(IE)*SN(3,IE)
+          RHSU(IP4)=RHSU(IP4)+WRK01(IE)*SN(4,IE)
+          RHSU(IP5)=RHSU(IP5)+WRK01(IE)*SN(5,IE)
+          RHSU(IP6)=RHSU(IP6)+WRK01(IE)*SN(6,IE)
+C
+          RHSV(IP1)=RHSV(IP1)+WRK02(IE)*SN(1,IE)
+          RHSV(IP2)=RHSV(IP2)+WRK02(IE)*SN(2,IE)
+          RHSV(IP3)=RHSV(IP3)+WRK02(IE)*SN(3,IE)
+          RHSV(IP4)=RHSV(IP4)+WRK02(IE)*SN(4,IE)
+          RHSV(IP5)=RHSV(IP5)+WRK02(IE)*SN(5,IE)
+          RHSV(IP6)=RHSV(IP6)+WRK02(IE)*SN(6,IE)
+C
+          RHSW(IP1)=RHSW(IP1)+WRK03(IE)*SN(1,IE)
+          RHSW(IP2)=RHSW(IP2)+WRK03(IE)*SN(2,IE)
+          RHSW(IP3)=RHSW(IP3)+WRK03(IE)*SN(3,IE)
+          RHSW(IP4)=RHSW(IP4)+WRK03(IE)*SN(4,IE)
+          RHSW(IP5)=RHSW(IP5)+WRK03(IE)*SN(5,IE)
+          RHSW(IP6)=RHSW(IP6)+WRK03(IE)*SN(6,IE)
+ 1630 CONTINUE
+ 1631 CONTINUE
+ 1632 CONTINUE
+C
+C          OPERATION COUNTS:  48 FLOP /ELEMENT
+C          DATA LOADINGS   :  43 WORDS/ELEMENT
+C                           (  3 WORDS CONTIGUOUSLY,
+C                             16 WORDS BY STRIDE, AND
+C                             24 WORDS BY LIST )
+C
+      DO 1642 ICOLOR=1,NCOLOR(4)
+!ocl norecurrence(RHSU,RHSV,RHSW)
+      DO 1641 ICPART=1,NCPART(ICOLOR,4)
+          IES=LLOOP(ICPART  ,ICOLOR,4)
+          IEE=LLOOP(ICPART+1,ICOLOR,4)-1
+      DO 1640 IE=IES,IEE
+          IF (LEFIX(IE).EQ.1) GOTO 1640
+          IP1=NODE(1,IE)
+          IP2=NODE(2,IE)
+          IP3=NODE(3,IE)
+          IP4=NODE(4,IE)
+          IP5=NODE(5,IE)
+          IP6=NODE(6,IE)
+          IP7=NODE(7,IE)
+          IP8=NODE(8,IE)
+C
+          RHSU(IP1)=RHSU(IP1)+WRK01(IE)*SN(1,IE)
+          RHSU(IP2)=RHSU(IP2)+WRK01(IE)*SN(2,IE)
+          RHSU(IP3)=RHSU(IP3)+WRK01(IE)*SN(3,IE)
+          RHSU(IP4)=RHSU(IP4)+WRK01(IE)*SN(4,IE)
+          RHSU(IP5)=RHSU(IP5)+WRK01(IE)*SN(5,IE)
+          RHSU(IP6)=RHSU(IP6)+WRK01(IE)*SN(6,IE)
+          RHSU(IP7)=RHSU(IP7)+WRK01(IE)*SN(7,IE)
+          RHSU(IP8)=RHSU(IP8)+WRK01(IE)*SN(8,IE)
+C
+          RHSV(IP1)=RHSV(IP1)+WRK02(IE)*SN(1,IE)
+          RHSV(IP2)=RHSV(IP2)+WRK02(IE)*SN(2,IE)
+          RHSV(IP3)=RHSV(IP3)+WRK02(IE)*SN(3,IE)
+          RHSV(IP4)=RHSV(IP4)+WRK02(IE)*SN(4,IE)
+          RHSV(IP5)=RHSV(IP5)+WRK02(IE)*SN(5,IE)
+          RHSV(IP6)=RHSV(IP6)+WRK02(IE)*SN(6,IE)
+          RHSV(IP7)=RHSV(IP7)+WRK02(IE)*SN(7,IE)
+          RHSV(IP8)=RHSV(IP8)+WRK02(IE)*SN(8,IE)
+C
+          RHSW(IP1)=RHSW(IP1)+WRK03(IE)*SN(1,IE)
+          RHSW(IP2)=RHSW(IP2)+WRK03(IE)*SN(2,IE)
+          RHSW(IP3)=RHSW(IP3)+WRK03(IE)*SN(3,IE)
+          RHSW(IP4)=RHSW(IP4)+WRK03(IE)*SN(4,IE)
+          RHSW(IP5)=RHSW(IP5)+WRK03(IE)*SN(5,IE)
+          RHSW(IP6)=RHSW(IP6)+WRK03(IE)*SN(6,IE)
+          RHSW(IP7)=RHSW(IP7)+WRK03(IE)*SN(7,IE)
+          RHSW(IP8)=RHSW(IP8)+WRK03(IE)*SN(8,IE)
+ 1640 CONTINUE
+ 1641 CONTINUE
+ 1642 CONTINUE
+C
+      IF (JFSPRS.EQ.0) GOTO 3050
+C
+      DO 1650 IP=1,NP
+         WRK01(IP)=0.0E0
+         WRK02(IP)=0.0E0
+         WRK03(IP)=0.0E0
+ 1650 CONTINUE
+C
+      DO 1662 ICOLOR=1,NCOLOR(1)
+!ocl norecurrence(UG,VG,WG)
+      DO 1661 ICPART=1,NCPART(ICOLOR,1)
+          IES=LLOOP(ICPART  ,ICOLOR,1)
+          IEE=LLOOP(ICPART+1,ICOLOR,1)-1
+!ocl nosimd
+!ocl noswp
+      DO 1660 IE=IES,IEE
+          IF (LEFIX(IE).EQ.1) GOTO 1660
+          IP1=NODE(1,IE)
+          IP2=NODE(2,IE)
+          IP3=NODE(3,IE)
+          IP4=NODE(4,IE)
+C
+          IF (IVOF.GE.1. OR. ICAVI.GE.1) THEN
+             PWRK=P(IE)/RHO3D(IE)*DT
+          ELSE
+             PWRK=P(IE)*DT
+          ENDIF
+C
+          WRK01(IP1)=WRK01(IP1)+PWRK*DNXYZ(1,1,IE)
+          WRK02(IP1)=WRK02(IP1)+PWRK*DNXYZ(2,1,IE)
+          WRK03(IP1)=WRK03(IP1)+PWRK*DNXYZ(3,1,IE)
+C
+          WRK01(IP2)=WRK01(IP2)+PWRK*DNXYZ(1,2,IE)
+          WRK02(IP2)=WRK02(IP2)+PWRK*DNXYZ(2,2,IE)
+          WRK03(IP2)=WRK03(IP2)+PWRK*DNXYZ(3,2,IE)
+C
+          WRK01(IP3)=WRK01(IP3)+PWRK*DNXYZ(1,3,IE)
+          WRK02(IP3)=WRK02(IP3)+PWRK*DNXYZ(2,3,IE)
+          WRK03(IP3)=WRK03(IP3)+PWRK*DNXYZ(3,3,IE)
+C
+          WRK01(IP4)=WRK01(IP4)+PWRK*DNXYZ(1,4,IE)
+          WRK02(IP4)=WRK02(IP4)+PWRK*DNXYZ(2,4,IE)
+          WRK03(IP4)=WRK03(IP4)+PWRK*DNXYZ(3,4,IE)
+ 1660 CONTINUE
+ 1661 CONTINUE
+ 1662 CONTINUE
+C
+      DO 1672 ICOLOR=1,NCOLOR(2)
+!ocl norecurrence(UG,VG,WG)
+      DO 1671 ICPART=1,NCPART(ICOLOR,2)
+          IES=LLOOP(ICPART  ,ICOLOR,2)
+          IEE=LLOOP(ICPART+1,ICOLOR,2)-1
+!ocl nosimd
+!ocl noswp
+      DO 1670 IE=IES,IEE
+          IF (LEFIX(IE).EQ.1) GOTO 1670
+          IP1=NODE(1,IE)
+          IP2=NODE(2,IE)
+          IP3=NODE(3,IE)
+          IP4=NODE(4,IE)
+          IP5=NODE(5,IE)
+C
+          IF (IVOF.GE.1. OR. ICAVI.GE.1) THEN
+             PWRK=P(IE)/RHO3D(IE)*DT
+          ELSE
+             PWRK=P(IE)*DT
+          ENDIF
+C
+          WRK01(IP1)=WRK01(IP1)+PWRK*DNXYZ(1,1,IE)
+          WRK02(IP1)=WRK02(IP1)+PWRK*DNXYZ(2,1,IE)
+          WRK03(IP1)=WRK03(IP1)+PWRK*DNXYZ(3,1,IE)
+C
+          WRK01(IP2)=WRK01(IP2)+PWRK*DNXYZ(1,2,IE)
+          WRK02(IP2)=WRK02(IP2)+PWRK*DNXYZ(2,2,IE)
+          WRK03(IP2)=WRK03(IP2)+PWRK*DNXYZ(3,2,IE)
+C
+          WRK01(IP3)=WRK01(IP3)+PWRK*DNXYZ(1,3,IE)
+          WRK02(IP3)=WRK02(IP3)+PWRK*DNXYZ(2,3,IE)
+          WRK03(IP3)=WRK03(IP3)+PWRK*DNXYZ(3,3,IE)
+C
+          WRK01(IP4)=WRK01(IP4)+PWRK*DNXYZ(1,4,IE)
+          WRK02(IP4)=WRK02(IP4)+PWRK*DNXYZ(2,4,IE)
+          WRK03(IP4)=WRK03(IP4)+PWRK*DNXYZ(3,4,IE)
+C
+          WRK01(IP5)=WRK01(IP5)+PWRK*DNXYZ(1,5,IE)
+          WRK02(IP5)=WRK02(IP5)+PWRK*DNXYZ(2,5,IE)
+          WRK03(IP5)=WRK03(IP5)+PWRK*DNXYZ(3,5,IE)
+ 1670 CONTINUE
+ 1671 CONTINUE
+ 1672 CONTINUE
+C
+      DO 1682 ICOLOR=1,NCOLOR(3)
+!ocl norecurrence(UG,VG,WG)
+      DO 1681 ICPART=1,NCPART(ICOLOR,3)
+          IES=LLOOP(ICPART  ,ICOLOR,3)
+          IEE=LLOOP(ICPART+1,ICOLOR,3)-1
+!ocl nosimd
+!ocl noswp
+      DO 1680 IE=IES,IEE
+          IF (LEFIX(IE).EQ.1) GOTO 1680
+          IP1=NODE(1,IE)
+          IP2=NODE(2,IE)
+          IP3=NODE(3,IE)
+          IP4=NODE(4,IE)
+          IP5=NODE(5,IE)
+          IP6=NODE(6,IE)
+C
+          IF (IVOF.GE.1. OR. ICAVI.GE.1) THEN
+             PWRK=P(IE)/RHO3D(IE)*DT
+          ELSE
+             PWRK=P(IE)*DT
+          ENDIF
+C
+          WRK01(IP1)=WRK01(IP1)+PWRK*DNXYZ(1,1,IE)
+          WRK02(IP1)=WRK02(IP1)+PWRK*DNXYZ(2,1,IE)
+          WRK03(IP1)=WRK03(IP1)+PWRK*DNXYZ(3,1,IE)
+C
+          WRK01(IP2)=WRK01(IP2)+PWRK*DNXYZ(1,2,IE)
+          WRK02(IP2)=WRK02(IP2)+PWRK*DNXYZ(2,2,IE)
+          WRK03(IP2)=WRK03(IP2)+PWRK*DNXYZ(3,2,IE)
+C
+          WRK01(IP3)=WRK01(IP3)+PWRK*DNXYZ(1,3,IE)
+          WRK02(IP3)=WRK02(IP3)+PWRK*DNXYZ(2,3,IE)
+          WRK03(IP3)=WRK03(IP3)+PWRK*DNXYZ(3,3,IE)
+C
+          WRK01(IP4)=WRK01(IP4)+PWRK*DNXYZ(1,4,IE)
+          WRK02(IP4)=WRK02(IP4)+PWRK*DNXYZ(2,4,IE)
+          WRK03(IP4)=WRK03(IP4)+PWRK*DNXYZ(3,4,IE)
+C
+          WRK01(IP5)=WRK01(IP5)+PWRK*DNXYZ(1,5,IE)
+          WRK02(IP5)=WRK02(IP5)+PWRK*DNXYZ(2,5,IE)
+          WRK03(IP5)=WRK03(IP5)+PWRK*DNXYZ(3,5,IE)
+C
+          WRK01(IP6)=WRK01(IP6)+PWRK*DNXYZ(1,6,IE)
+          WRK02(IP6)=WRK02(IP6)+PWRK*DNXYZ(2,6,IE)
+          WRK03(IP6)=WRK03(IP6)+PWRK*DNXYZ(3,6,IE)
+ 1680 CONTINUE
+ 1681 CONTINUE
+ 1682 CONTINUE
+C
+      DO 1692 ICOLOR=1,NCOLOR(4)
+!ocl norecurrence(UG,VG,WG)
+      DO 1691 ICPART=1,NCPART(ICOLOR,4)
+          IES=LLOOP(ICPART  ,ICOLOR,4)
+          IEE=LLOOP(ICPART+1,ICOLOR,4)-1
+!ocl nosimd
+!ocl noswp
+      DO 1690 IE=IES,IEE
+          IF (LEFIX(IE).EQ.1) GOTO 1690
+          IP1=NODE(1,IE)
+          IP2=NODE(2,IE)
+          IP3=NODE(3,IE)
+          IP4=NODE(4,IE)
+          IP5=NODE(5,IE)
+          IP6=NODE(6,IE)
+          IP7=NODE(7,IE)
+          IP8=NODE(8,IE)
+C
+          IF (IVOF.GE.1. OR. ICAVI.GE.1) THEN
+             PWRK=P(IE)/RHO3D(IE)*DT
+          ELSE
+             PWRK=P(IE)*DT
+          ENDIF
+C
+          WRK01(IP1)=WRK01(IP1)+PWRK*DNXYZ(1,1,IE)
+          WRK02(IP1)=WRK02(IP1)+PWRK*DNXYZ(2,1,IE)
+          WRK03(IP1)=WRK03(IP1)+PWRK*DNXYZ(3,1,IE)
+C
+          WRK01(IP2)=WRK01(IP2)+PWRK*DNXYZ(1,2,IE)
+          WRK02(IP2)=WRK02(IP2)+PWRK*DNXYZ(2,2,IE)
+          WRK03(IP2)=WRK03(IP2)+PWRK*DNXYZ(3,2,IE)
+C
+          WRK01(IP3)=WRK01(IP3)+PWRK*DNXYZ(1,3,IE)
+          WRK02(IP3)=WRK02(IP3)+PWRK*DNXYZ(2,3,IE)
+          WRK03(IP3)=WRK03(IP3)+PWRK*DNXYZ(3,3,IE)
+C
+          WRK01(IP4)=WRK01(IP4)+PWRK*DNXYZ(1,4,IE)
+          WRK02(IP4)=WRK02(IP4)+PWRK*DNXYZ(2,4,IE)
+          WRK03(IP4)=WRK03(IP4)+PWRK*DNXYZ(3,4,IE)
+C
+          WRK01(IP5)=WRK01(IP5)+PWRK*DNXYZ(1,5,IE)
+          WRK02(IP5)=WRK02(IP5)+PWRK*DNXYZ(2,5,IE)
+          WRK03(IP5)=WRK03(IP5)+PWRK*DNXYZ(3,5,IE)
+C
+          WRK01(IP6)=WRK01(IP6)+PWRK*DNXYZ(1,6,IE)
+          WRK02(IP6)=WRK02(IP6)+PWRK*DNXYZ(2,6,IE)
+          WRK03(IP6)=WRK03(IP6)+PWRK*DNXYZ(3,6,IE)
+C
+          WRK01(IP7)=WRK01(IP7)+PWRK*DNXYZ(1,7,IE)
+          WRK02(IP7)=WRK02(IP7)+PWRK*DNXYZ(2,7,IE)
+          WRK03(IP7)=WRK03(IP7)+PWRK*DNXYZ(3,7,IE)
+C
+          WRK01(IP8)=WRK01(IP8)+PWRK*DNXYZ(1,8,IE)
+          WRK02(IP8)=WRK02(IP8)+PWRK*DNXYZ(2,8,IE)
+          WRK03(IP8)=WRK03(IP8)+PWRK*DNXYZ(3,8,IE)
+ 1690 CONTINUE
+ 1691 CONTINUE
+ 1692 CONTINUE
+C
+      IF (IVOF.GE.1 ) THEN
+!ocl norecurrence(WRK01,WRK02,WRK03)
+         DO 2000 IBP = 1 , NPSYM2
+            COF= XPSYMT(IBP)*WRK01(LPSYMT(IBP))
+     *          +YPSYMT(IBP)*WRK02(LPSYMT(IBP))
+     *          +ZPSYMT(IBP)*WRK03(LPSYMT(IBP))
+            WRK01(LPSYMT(IBP)) = WRK01(LPSYMT(IBP))-COF*XPSYMT(IBP)
+            WRK02(LPSYMT(IBP)) = WRK02(LPSYMT(IBP))-COF*YPSYMT(IBP)
+            WRK03(LPSYMT(IBP)) = WRK03(LPSYMT(IBP))-COF*ZPSYMT(IBP)
+ 2000    CONTINUE
+C
+!ocl norecurrence(WRK01,WRK02,WRK03)
+         DO 2100 IBP = 1, NPFREE
+            COF= XPFREE(IBP)*WRK01(LPFREE(IBP))
+     *          +YPFREE(IBP)*WRK02(LPFREE(IBP))
+     *          +ZPFREE(IBP)*WRK03(LPFREE(IBP))
+            WRK01(LPFREE(IBP)) = WRK01(LPFREE(IBP))-COF*XPFREE(IBP)
+            WRK02(LPFREE(IBP)) = WRK02(LPFREE(IBP))-COF*YPFREE(IBP)
+            WRK03(LPFREE(IBP)) = WRK03(LPFREE(IBP))-COF*ZPFREE(IBP)            
+ 2100    CONTINUE
+      ENDIF
+C
+      DO 2200 IP=1,NP
+         RHSU(IP)=RHSU(IP)+WRK01(IP)
+         RHSV(IP)=RHSV(IP)+WRK02(IP)
+         RHSW(IP)=RHSW(IP)+WRK03(IP)
+ 2200 CONTINUE
+C
+ 3050 CONTINUE
+C
+C
+C SUPERIMPOSE RHS (RHSU,RHSV,RHSW)
+C
+C
+CVEL3D1 [ 6.] MAKE CRS MATIRX
+      CALL E2PMATR(MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+     *             N2,N1,NE,NEX,NCRS,A,APCRS,LTAB,IUT0,IERR)
+      IF (IERR.NE.0) THEN
+          WRITE(IUT0,*)
+          WRITE(IUT0,*) ERMSGC
+          RETURN
+      ENDIF
+C
+C
+C     //SKIP RELAXTION AND DT3D CALCULATION IN TRANSIENT MODE
+C
+C
+C SUPERIMPOSE DIAGONAL TERM (AR)
+C
+      IDUM=1
+      CALL DDCOMX(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+     *            AR,AR,AR,NP,IUT0,IERR,RX,RY,MAXBUF)
+      IF(IERR.NE.0) THEN
+          WRITE(IUT0,*)
+          WRITE(IUT0,*) ERMSGC
+          RETURN
+      ENDIF
+C
+CVEL3D1 [10.] DIAGONAL SCALING OF CRS MATRIX AND RHS
+C
+C
+      IF(ITIME.EQ.1) THEN
+         CALL STLCLR(LSTCLR,LSTDGN,NP,NCRS,IPCRS,NPP,LFIX3D)
+      ENDIF
+      CALL DGNSCL2(APCRS,AR,NP,NCRS,LSTDGN)
+      DO 4100 IP=1, NP
+          RHSU(IP) = RHSU(IP)/AR(IP)
+          RHSV(IP) = RHSV(IP)/AR(IP)
+          RHSW(IP) = RHSW(IP)/AR(IP)
+ 4100 CONTINUE
+C
+      IDUM = 3
+      CALL DDCOMX(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+     *            RHSU,RHSV,RHSW,NP,IUT0,IERR,RX,RY,MAXBUF)
+      IF(IERR.NE.0) THEN
+          WRITE(IUT0,*)
+          WRITE(IUT0,*) ERMSGC
+          RETURN
+      ENDIF
+C
+      DO 1510 IP = 1 , NP 
+          IF(IPATTR(IP).GT.-1) GO TO 1510
+          FX = OMEGA*OMEGA*X(IP)+2.E0*OMEGA*V(IP)
+          FY = OMEGA*OMEGA*Y(IP)-2.E0*OMEGA*U(IP)
+          RHSU(IP) = RHSU(IP)+DT*FX/CM(IP)/AR(IP)
+          RHSV(IP) = RHSV(IP)+DT*FY/CM(IP)/AR(IP)
+ 1510 CONTINUE
+C
+CVEL3D1 [11.] CLEAR CRS MATRIX FOR DIRICHLET B.C.
+C
+      CALL CLRCRS2(APCRS,NP,NCRS,LSTCLR,NUMIP)
+C
+CVEL3D1 [12.] ITERATIONS FOR SOLVING MOMENTUM EQUATIONS
+C
+ 3000 CONTINUE
+C
+      IF(ITIME.EQ.0) THEN
+         NITRE=0
+      ELSE IF(JSET.EQ.0) THEN
+         NITRE=1
+      ELSE
+         NITRE=NMAX/NITRI
+         NMAX=NITRI
+      END IF
+C
+      NITRU=0
+      NITRV=0
+      NITRW=0
+C
+      IRESU=0
+      IRESV=0
+      IRESW=0
+C
+      DO 5000 IITRE=0,NITRE
+          IF(IITRE.EQ.0) GOTO 5100
+C
+C          OPERATION COUNTS:   4  FLOP /NODE/NPPAVE/ITERATION
+C          DATA LOADINGS   :   6  WORDS/NODE/NPPAVE/ITERATION
+C                           (  4  WORDS CONTIGUOUSLY,
+C                              0  WORDS BY 4-WORD STRIDE, AND
+C                              2  WORDS BY LIST )
+C           NPPAVE: AVE. NUMBER OF ADJACENT NODES AT A NODE
+C           --> 15 (TET), 20 (PRD,WED), 27(HEX.) 
+C
+C-----------------------------------------------------------------------
+C
+C
+C
+CVEL3D1 [12.1] CALL MATRIX SOLVER
+C
+C      DO IP=1, NP
+C          WRK01(IP)=ADIAG(IP)*CM(IP)
+C      ENDDO
+C
+       IF(IFIXFL.EQ.1) THEN
+          RETURN
+       ENDIF
+C
+      IERR1=1
+      IERR2=1
+      IERR3=1
+C
+      IF(JUNROL.EQ.1) THEN
+         CALL CRSCVA(NP,NPPMAX,NCRS,NCRS2,NPP,APCRS,TACRS, ICRS_T)
+      ENDIF
+C
+      IF(JUNROL.EQ.1) THEN
+         CALL CRSCVA(NP,NPPMAX,NCRS,NCRS2,NPP,APCRS,TACRS, ICRS_T)
+      ENDIF
+C
+      CALL BCGS3X(IBCGS,IPART,NMAX,EPS,ME,N2,NE,NEX,NP,
+     *            NPP,NCRS,IPCRS,APCRS,NODE,RHSU,U,NITRU,RESU,
+     *            NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,NUMIP,
+     *            UG,VG,WG,WRK01,WRK02,WRK03,WRK04,WRK05,RX,RY,
+     *            MWRK,WRKN,IUT0,IERR1,AR,LFIX3D,
+     *            JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS)
+      IF(NITRU.LT.NMAX) IRESU=1
+      CALL BCGS3X(IBCGS,IPART,NMAX,EPS,ME,N2,NE,NEX,NP,
+     *            NPP,NCRS,IPCRS,APCRS,NODE,RHSV,V,NITRV,RESV,
+     *            NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,NUMIP,
+     *            UG,VG,WG,WRK01,WRK02,WRK03,WRK04,WRK05,RX,RY,
+     *            MWRK,WRKN,IUT0,IERR2,AR,LFIX3D,
+     *            JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS)
+      IF(NITRV.LT.NMAX) IRESV=1
+      CALL BCGS3X(IBCGS,IPART,NMAX,EPS,ME,N2,NE,NEX,NP,
+     *            NPP,NCRS,IPCRS,APCRS,NODE,RHSW,W,NITRW,RESW,
+     *            NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,NUMIP,
+     *            UG,VG,WG,WRK01,WRK02,WRK03,WRK04,WRK05,RX,RY,
+     *            MWRK,WRKN,IUT0,IERR3,AR,LFIX3D,
+     *            JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS)
+      IF(NITRW.LT.NMAX) IRESW=1
+C
+      IF(IERR1.NE.0 .OR. IERR2.NE.0 .OR. IERR3.NE.0) THEN
+         WRITE(IUT0,*)
+         WRITE(IUT0,*) ERMSGC
+         RETURN
+      ENDIF
+C
+       IF(IERR.NE.0) THEN
+          WRITE(IUT0,*)
+          WRITE(IUT0,*) ERMSGC
+          RETURN
+       ENDIF
+C
+CVEL3D1 [12.2] SET BOUNDARY CONDITIONS
+C
+ 5100    CONTINUE
+C
+C
+CCYY   A. INLET BOUNDARY CONDITIONS
+C
+*POPTION INDEP(U,V,W)
+C*$*ASSERT PERMUTATION ( LPINLT )
+!ocl norecurrence(U,V,W)
+         DO 6010 IBP = 1 , NPINLT
+            U(LPINLT(IBP)) = DEVLP1*UINLT(IBP)
+            V(LPINLT(IBP)) = DEVLP1*VINLT(IBP)
+            W(LPINLT(IBP)) = DEVLP1*WINLT(IBP)
+ 6010    CONTINUE
+C
+C
+CCYY   B. WALL BOUNDARY CONDITIONS
+C
+C
+*POPTION INDEP(U,V,W)
+C*$*ASSERT PERMUTATION ( LPWALL )
+!ocl norecurrence(U,V,W)
+         DO 6020 IBP = 1 , NPWALL
+            U(LPWALL(IBP)) = DEVLP1*UWALL(IBP)
+            V(LPWALL(IBP)) = DEVLP1*VWALL(IBP)
+            W(LPWALL(IBP)) = DEVLP1*WWALL(IBP)
+ 6020    CONTINUE
+C
+C
+CCYY   B'. SOLID NODES
+C
+C
+*POPTION INDEP(U,V,W)
+C*$*ASSERT PERMUTATION ( LPSLD1 )
+!ocl norecurrence(U,V,W)
+         DO 6030 IBP = 1 , NPSLD1
+            U(LPSLD1(IBP)) = 0.0E0
+            V(LPSLD1(IBP)) = 0.0E0
+            W(LPSLD1(IBP)) = 0.0E0
+ 6030    CONTINUE
+C
+C
+CCYY   C. SYMMETRIC BOUNDARY CONDITIONS
+C
+C
+*POPTION INDEP(U,V,W)
+C*$*ASSERT PERMUTATION ( LPSYMT )
+!ocl norecurrence(U,V,W)
+         DO 6040 IBP = 1 , NPSYMT
+            COF = XPSYMT(IBP)*U(LPSYMT(IBP))
+     *           +YPSYMT(IBP)*V(LPSYMT(IBP))
+     *           +ZPSYMT(IBP)*W(LPSYMT(IBP))
+            U(LPSYMT(IBP)) = U(LPSYMT(IBP))-COF*XPSYMT(IBP)
+            V(LPSYMT(IBP)) = V(LPSYMT(IBP))-COF*YPSYMT(IBP)
+            W(LPSYMT(IBP)) = W(LPSYMT(IBP))-COF*ZPSYMT(IBP)
+ 6040    CONTINUE
+C
+C
+CCHY   NON-FLUID NODE
+C
+C
+*POPTION INDEP(U,V,W)
+C*$*ASSERT PERMUTATION ( LPFLD2 )
+!ocl norecurrence(U,V,W)
+         IF (IVOF.EQ.1) THEN
+            DO 6050 IBP = 1 , NPFLD2
+               U(LPFLD2(IBP)) = 0.0E0
+               V(LPFLD2(IBP)) = 0.0E0
+               W(LPFLD2(IBP)) = 0.0E0
+ 6050       CONTINUE
+         ENDIF
+C
+C     
+CCYY   D. OVERSET NODAL VELOCITIES
+C
+C
+CC       IF(JSET.GE.1) THEN
+         IF(JSET.GE.1.AND. COSBIN.EQ.1.0E0 .AND. COSBIN.EQ.1.0E0) THEN
+             DO 6051 IP=1,NP
+                 WRKN(IP,1)=U(IP)  
+                 WRKN(IP,2)=V(IP)  
+                 WRKN(IP,3)=W(IP)  
+ 6051        CONTINUE
+             CALL OVRST3(IMODEO,IPART,NPSET,N1,N2,ME,NE,NP,NEX,NODE,
+     *                   X,Y,Z,OMEGA,TIMER,
+     *                   NFRAME,IEATTR,IPATTR,UFRAME,VFRAME,WFRAME,
+     *                   U,V,W,
+     *                   LPSET1,LPSET2,LPSET3,LPSET4,
+     *                   COVER1,COVER2,COVER3,
+     *                   NDOM,MBPDOM,NPSND,NPRCV,
+     *                   LPSND,NPTSND,LPRCV,NPTRCV,IPSET,IPSRC,
+     *                   WRK01,WRK02,WRK03,UG,VG,WG,RX,RY,
+     *                   NMRF,IFATTR,OMGMRF,AMRF,IUT0,IERR)
+             DO 6052 IP=1,NP
+                 COEF1=OSBCOE(IP)
+                 COEF2=1.0E0-COEF1
+                 U(IP)=COEF1*U(IP)+COEF2*WRKN(IP,1)  
+                 V(IP)=COEF1*V(IP)+COEF2*WRKN(IP,2)  
+                 W(IP)=COEF1*W(IP)+COEF2*WRKN(IP,3)  
+ 6052        CONTINUE
+         ENDIF
+C
+C
+CCHY  MODIFY THE FLOW RATE AT OVERSET BOUNDARY
+C     MODIFY THE VELOCITY AT THE FLOW-RATE CHECKING SURFACE.
+C
+
+         IF (ITIME.NE.0.AND.IVOF.GE.1.AND.IMASS.EQ.1) THEN
+            CALL CALDLU(IPART,NE,NP,NFACE,N2,NSP,NS,NODE,
+     *                  LOCAL,LFACE,NFINLT,NFFREE,LFINLT,LFFREE,
+     *                  U,V,W,AVEC,FFA,DU,IERR)
+            DO 6060 IBP=1,NPFREE
+               IP=LPFREE(IBP)
+               U(IP)=U(IP)+DU*XPFREE(IBP)
+               V(IP)=V(IP)+DU*YPFREE(IBP)
+               W(IP)=W(IP)+DU*ZPFREE(IBP)
+ 6060       CONTINUE
+         ENDIF
+C
+C        - RETURN IF ALL THREE EQUATIONS ARE CONVERGED -
+C
+         IF(IRESU*IRESV*IRESW.EQ.1) THEN
+            RETURN
+         ENDIF
+C
+C
+CCC    SET R.H.S THAT CORRESPONDS TO THE DIRECLET BOUNDARY NODES
+C
+C
+*POPTION INDEP(RHSU,RHSV,RHSW)
+C*$*ASSERT PERMUTATION ( LPFIX )
+!ocl norecurrence(RHSU,RHSV,RHSW)
+         DO 6200 IBP = 1 , NPFIX
+            IP=LPFIX(IBP)
+            RHSU(IP) = U(IP)
+            RHSV(IP) = V(IP)
+            RHSW(IP) = W(IP)
+ 6200    CONTINUE
+C
+ 5000 CONTINUE
+C
+      RETURN
+      END

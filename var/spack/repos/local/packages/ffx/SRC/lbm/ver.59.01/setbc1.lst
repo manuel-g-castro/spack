@@ -1,0 +1,270 @@
+
+ Fujitsu Fortran Version 4.8.1  Thu Nov 24 16:46:02 2022
+
+ Compilation information
+   Current directory : /vol0005/mdt2/home/u10588/SRC/lbm/ver.59.01
+   Source file       : setbc1.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -Nlst=t -Cpp -Cfpp -c -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Knointentopt
+   Cpp options          : -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Dcputime -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=8 -D__FRT_patchlevel__=1 -D__FRT_version__="4.8.1" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Knoarray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nlibomp -Nline -Nlst -Nlst=p -Nlst=t
+                          -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "SETBC1"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE SETBC1(ITIME,NG,NP,MBC,MBC1,MBC2,MBC3,
+          2                          *                  ILVL,LBC,TAU3,LVEL,
+          3                          *                  F,FEQ,NBC1,NBC2,NBC3,
+          4                          *                  FBC1,FBC1W,FBC2,FBC2W,FBC3,FBC3W,IUT6)
+          5                           IMPLICIT NONE
+          6                           INTEGER*4 ITIME,NG,NP,MBC,MBC1,MBC2,MBC3,ILVL,LBC(5),LVEL(3,NP),
+          7                          *          NBC1,NBC2,NBC3,IUT6
+          8                           REAL*8    F  (0:NG+2,0:NG+2,0:NG+2,NP)
+          9                           REAL*8    FEQ(0:NG+2,0:NG+2,0:NG+2,NP)
+         10                           REAL*8    TAU3(3)
+         11                           REAL*8    FBC1 (NP,NG+1,NG+1,MBC1),
+         12                          *          FBC1W(NP,NG+1,NG+1,MBC1),
+         13                          *          FBC2 (NP,NG+1,     MBC2),
+         14                          *          FBC2W(NP,NG+1,     MBC2),
+         15                          *          FBC3 (NP,          MBC3),
+         16                          *          FBC3W(NP,          MBC3)
+         17                     C
+         18                     C     ====FUNCTION====
+         19                     C     SET CUBE-B.C. DATA TO WORK REIGION FBC[1,2,3]
+         20                     C
+         21                     C     ====VARIABLES LIST====
+         22                     C[IN]
+         23                     C     ITIME          :TIME STEP
+         24                     C     NG             :CUBE SIZE (=2^N)
+         25                     C     NP             :NUMBER OF PARTICLES (=15)
+         26                     C     NC             :NUMBER OF CUBES IN SUB-DOMAIN
+         27                     C     MBC            :MAX. NUMBER OF B.C GROUPS IN CUBES (=152)
+         28                     C     MBC1           :MAX. NUMBER OF FACE-TYPE  B.C. GROUPS (=24)
+         29                     C     MBC2           :MAX. NUMBER OF EDGE-TYPE  B.C. GROUPS (=24)
+         30                     C     MBC3           :MAX. NUMBER OF POINT-TYPE B.C. GROUPS (= 8)
+         31                     C     ILVL           :LEVEL OF CUBES, WHICH INDICATE THE GRID RESOLUTION.
+         32                     C                     LEVEL=1 CORRESPONTDS THE FINEST GRID SIZE. A GRID SIZE
+         33                     C                     WILL BE TWICE WITH ONE INCREMENT OF THE LEVEL.
+         34                     C     LBC(II,IBC,IC) :ATTRIBUTE DATA OF B.C. GROUPS
+         35                     C                      II=1 B.C. GROUP ID (1-26) IN AN ADJACENT CUBE
+         36                     C                      II=2 SUB-DOMAIN NUMBER OF AN ADJACENT CUBE
+         37                     C                      II=3 CUBE NUMBER OF AN ADJACENT CUBE IN A DOMAIN
+         38                     C                      II=4 RELATIVE LEVEL OF AN ADJACENT CUBE
+         39                     C                       (-1: FINE, 0:SAME, 1:COARSE)
+         40                     C                      II=5 POSITION IN COARSER CUBE
+         41                     C     LVEL(3,NP)     :NORMALIZED VELOCITY OF PARTCLES (INTEGER)
+         42                     C     F  (I,J,K,IP)  :PARTICLE DISTRIBUTION FUNCTION
+         43                     C     FEQ(I,J,K,IP)  :PARTICLE EQUILIBRIUM DISTRIBUTION FUNCTION
+         44                     C     TAU3(1)        :RELAXTATION TIME OF A FINER  CUBE
+         45                     C     TAU3(2)        :RELAXTATION TIME OF A SELF   CUBE
+         46                     C     TAU3(3)        :RELAXTATION TIME OF A COARSE CUBE
+         47                     C
+         48                     C[IN-OUT]
+         49                     C     NBC1 :NUMBER OF SOTRED FACE-TYPE  B.C. DATA
+         50                     C     NBC2 :NUMBER OF SOTRED EDGE-TYPE  B.C. DATA
+         51                     C     NBC3 :NUMBER OF SOTRED POINT-TYPE B.C. DATA
+         52                     C     FBC1 (IP,I,J,IB,IC) :WORK REGION FOR FACE-TYPE  B.C. GROUPS
+         53                     C     FBC2 (IP,I,  IB,IC) :WORK REGION FOR EDGE-TYPE  B.C. GROUPS
+         54                     C     FBC3 (IP,    IB,IC) :WORK REGION FOR POINT-TYPE B.C. GROUPS
+         55                     C     FBC1W(IP,I,J,IB,IC) :WORK REGION FOR FACE-TYPE  B.C. GROUPS
+         56                     C     FBC2W(IP,I,J IB,IC) :WORK REGION FOR EDGE-TYPE  B.C. GROUPS
+         57                     C     FBC3W(IP,    IB,IC) :WORK REGION FOR POINT-TYPE B.C. GROUPS
+         58                     
+         59                            INTEGER  ID,JC,ILVL2,ILEVEL,IPOSI,I,J,K,IP
+         60                     C
+         61                           ID    = LBC(1)
+         62                           JC    = LBC(3)
+         63                           ILVL2 = LBC(4)
+         64                           IPOSI = LBC(5)
+         65                     C
+         66     1                     IF(ID.LE.6) THEN
+         67     1                        NBC1=NBC1+1
+         68     1                     ELSE IF(ID.GE.7 .AND. ID.LE.18) THEN
+         69     1                        NBC2=NBC2+1
+         70     1                     ELSE
+         71     1                        NBC3=NBC3+1
+         72     1                     ENDIF
+         73                     C
+         74                     CCCC [FACE-TYPE B.C.]
+         75                           IF(ID.EQ.  1)
+         76                          * CALL CBC001(ITIME,NG,NP,ILVL,ILVL2,IPOSI,F,FEQ,
+         77                          *             TAU3,LVEL,
+         78                          *             FBC1(1,1,1,NBC1),FBC1W(1,1,1,NBC1))
+         79                           IF(ID.EQ.  2)
+         80                          * CALL CBC002(ITIME,NG,NP,ILVL,ILVL2,IPOSI,F,FEQ,
+         81                          *             TAU3,LVEL,
+         82                          *             FBC1(1,1,1,NBC1),FBC1W(1,1,1,NBC1))
+         83                           IF(ID.EQ.  3)
+         84                          * CALL CBC003(ITIME,NG,NP,ILVL,ILVL2,IPOSI,F,FEQ,
+         85                          *             TAU3,LVEL,
+         86                          *             FBC1(1,1,1,NBC1),FBC1W(1,1,1,NBC1))
+         87                           IF(ID.EQ.  4)
+         88                          * CALL CBC004(ITIME,NG,NP,ILVL,ILVL2,IPOSI,F,FEQ,
+         89                          *             TAU3,LVEL,
+         90                          *             FBC1(1,1,1,NBC1),FBC1W(1,1,1,NBC1))
+         91                           IF(ID.EQ.  5)
+         92                          * CALL CBC005(ITIME,NG,NP,ILVL,ILVL2,IPOSI,F,FEQ,
+         93                          *             TAU3,LVEL,
+         94                          *             FBC1(1,1,1,NBC1),FBC1W(1,1,1,NBC1))
+         95                           IF(ID.EQ.  6)
+         96                          * CALL CBC006(ITIME,NG,NP,ILVL,ILVL2,IPOSI,F,FEQ,
+         97                          *             TAU3,LVEL,
+         98                          *             FBC1(1,1,1,NBC1),FBC1W(1,1,1,NBC1))
+         99                     C
+        100                     CCCC [EDGE-TYPE B.C.]
+        101                           IF(ID.EQ.  7)
+        102                          * CALL CBC007(ITIME,NG,NP,ILVL,ILVL2,IPOSI,F,FEQ,
+        103                          *             TAU3,LVEL,
+        104                          *             FBC2(1,1,NBC2),FBC2W(1,1,NBC2))
+        105                           IF(ID.EQ.  8)
+        106                          * CALL CBC008(ITIME,NG,NP,ILVL,ILVL2,IPOSI,F,FEQ,
+        107                          *             TAU3,LVEL,
+        108                          *             FBC2(1,1,NBC2),FBC2W(1,1,NBC2))
+        109                           IF(ID.EQ.  9)
+        110                          * CALL CBC009(ITIME,NG,NP,ILVL,ILVL2,IPOSI,F,FEQ,
+        111                          *             TAU3,LVEL,
+        112                          *             FBC2(1,1,NBC2),FBC2W(1,1,NBC2))
+        113                           IF(ID.EQ. 10)
+        114                          * CALL CBC010(ITIME,NG,NP,ILVL,ILVL2,IPOSI,F,FEQ,
+        115                          *             TAU3,LVEL,
+        116                          *             FBC2(1,1,NBC2),FBC2W(1,1,NBC2))
+        117                           IF(ID.EQ. 11)
+        118                          * CALL CBC011(ITIME,NG,NP,ILVL,ILVL2,IPOSI,F,FEQ,
+        119                          *             TAU3,LVEL,
+        120                          *             FBC2(1,1,NBC2),FBC2W(1,1,NBC2))
+        121                           IF(ID.EQ. 12)
+        122                          * CALL CBC012(ITIME,NG,NP,ILVL,ILVL2,IPOSI,F,FEQ,
+        123                          *             TAU3,LVEL,
+        124                          *             FBC2(1,1,NBC2),FBC2W(1,1,NBC2))
+        125                           IF(ID.EQ. 13)
+        126                          * CALL CBC013(ITIME,NG,NP,ILVL,ILVL2,IPOSI,F,FEQ,
+        127                          *             TAU3,LVEL,
+        128                          *             FBC2(1,1,NBC2),FBC2W(1,1,NBC2))
+        129                           IF(ID.EQ. 14)
+        130                          * CALL CBC014(ITIME,NG,NP,ILVL,ILVL2,IPOSI,F,FEQ,
+        131                          *             TAU3,LVEL,
+        132                          *             FBC2(1,1,NBC2),FBC2W(1,1,NBC2))
+        133                           IF(ID.EQ. 15)
+        134                          * CALL CBC015(ITIME,NG,NP,ILVL,ILVL2,IPOSI,F,FEQ,
+        135                          *             TAU3,LVEL,
+        136                          *             FBC2(1,1,NBC2),FBC2W(1,1,NBC2))
+        137                           IF(ID.EQ. 16)
+        138                          * CALL CBC016(ITIME,NG,NP,ILVL,ILVL2,IPOSI,F,FEQ,
+        139                          *             TAU3,LVEL,
+        140                          *             FBC2(1,1,NBC2),FBC2W(1,1,NBC2))
+        141                           IF(ID.EQ. 17)
+        142                          * CALL CBC017(ITIME,NG,NP,ILVL,ILVL2,IPOSI,F,FEQ,
+        143                          *             TAU3,LVEL,
+        144                          *             FBC2(1,1,NBC2),FBC2W(1,1,NBC2))
+        145                           IF(ID.EQ. 18)
+        146                          * CALL CBC018(ITIME,NG,NP,ILVL,ILVL2,IPOSI,F,FEQ,
+        147                          *             TAU3,LVEL,
+        148                          *             FBC2(1,1,NBC2),FBC2W(1,1,NBC2))
+        149                     C
+        150                     CCCC [POINT-TYPE B.C.]
+        151                           IF(ID.EQ. 19)
+        152                          * CALL CBC019(ITIME,NG,NP,ILVL,ILVL2,IPOSI,F,FEQ,
+        153                          *             TAU3,LVEL,
+        154                          *             FBC3(1,NBC3),FBC3W(1,NBC3))
+        155                           IF(ID.EQ. 20)
+        156                          * CALL CBC020(ITIME,NG,NP,ILVL,ILVL2,IPOSI,F,FEQ,
+        157                          *             TAU3,LVEL,
+        158                          *             FBC3(1,NBC3),FBC3W(1,NBC3))
+        159                           IF(ID.EQ. 21)
+        160                          * CALL CBC021(ITIME,NG,NP,ILVL,ILVL2,IPOSI,F,FEQ,
+        161                          *             TAU3,LVEL,
+        162                          *             FBC3(1,NBC3),FBC3W(1,NBC3))
+        163                           IF(ID.EQ. 22)
+        164                          * CALL CBC022(ITIME,NG,NP,ILVL,ILVL2,IPOSI,F,FEQ,
+        165                          *             TAU3,LVEL,
+        166                          *             FBC3(1,NBC3),FBC3W(1,NBC3))
+        167                           IF(ID.EQ. 23)
+        168                          * CALL CBC023(ITIME,NG,NP,ILVL,ILVL2,IPOSI,F,FEQ,
+        169                          *             TAU3,LVEL,
+        170                          *             FBC3(1,NBC3),FBC3W(1,NBC3))
+        171                           IF(ID.EQ. 24)
+        172                          * CALL CBC024(ITIME,NG,NP,ILVL,ILVL2,IPOSI,F,FEQ,
+        173                          *             TAU3,LVEL,
+        174                          *             FBC3(1,NBC3),FBC3W(1,NBC3))
+        175                           IF(ID.EQ. 25)
+        176                          * CALL CBC025(ITIME,NG,NP,ILVL,ILVL2,IPOSI,F,FEQ,
+        177                          *             TAU3,LVEL,
+        178                          *             FBC3(1,NBC3),FBC3W(1,NBC3))
+        179                           IF(ID.EQ. 26)
+        180                          * CALL CBC026(ITIME,NG,NP,ILVL,ILVL2,IPOSI,F,FEQ,
+        181                          *             TAU3,LVEL,
+        182                          *             FBC3(1,NBC3),FBC3W(1,NBC3))
+        183                     C
+        184                           RETURN
+        185                           END
+
+ Diagnostic messages: program name(SETBC1)
+   jwd2008i-i  "setbc1.f", line 1: Dummy argument 'IUT6' not used in this subprogram.
+   jwd2008i-i  "setbc1.f", line 1: Dummy argument 'MBC' not used in this subprogram.
+   jwd2006i-i  "setbc1.f", line 59: 'IP' is declared but never referenced.
+   jwd2006i-i  "setbc1.f", line 59: 'K' is declared but never referenced.
+   jwd2006i-i  "setbc1.f", line 59: 'J' is declared but never referenced.
+   jwd2006i-i  "setbc1.f", line 59: 'I' is declared but never referenced.
+   jwd2006i-i  "setbc1.f", line 59: 'ILEVEL' is declared but never referenced.
+
+ Procedure information
+   Lines      : 185
+   Statements : 47
+   Stack(byte): 480
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 185
+   Total statements : 47
+   Total stack(byte): 480
+   Total prefetch num: 0
+

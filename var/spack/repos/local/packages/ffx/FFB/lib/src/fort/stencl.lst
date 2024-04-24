@@ -1,0 +1,195 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:54:31 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : stencl.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "STENCL"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    STENCL                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE STENCL(LTYPE,NE,LSTEN,MD,ND,IUT0,IERR)
+         14                           IMPLICIT REAL*4(A-H,O-Z)
+         15                           DIMENSION LTYPE(NE),LSTEN(MD)
+         16                     C
+         17                           CHARACTER*60 ERMSGB
+         18                          & / ' ## SUBROUTINE STENCL: FATAL      ERROR OCCURENCE; RETURNED' /
+         19                           CHARACTER*60 EREXP1
+         20                          & / ' AN ILLEGAL ELEMENT TYPE NUMBER WAS SPECIFIED FOR IE ='      /
+         21                           CHARACTER*60 EREXP2
+         22                          & / ' NUMBER OF DIFFERENT (STENCIL) ELEMENTS EXCEEDED LIMIT OF'   /
+         23                           CHARACTER*60 EREXP3
+         24                          & / ' NO STENCIL ELEMENT IS DEFINED FOR ELEMENT TYPE NUMNER ID =' /
+         25                     C
+         26                     C
+         27                     C      DETERMINE STENCIL ELEMENT
+         28                     C         ( 3-D ; SINGLE PRECISION, REFERING ELEMENT BY TYPE LIST )
+         29                     C
+         30                     C
+         31                     C     ARGUMENT LISTINGS
+         32                     C       (1) INPUT
+         33                     C          LTYPE  (IE) ; ELEMENT TYPE SPECIFYING LIST ( ID = LTYPE(IE) )
+         34                     C          NE          ; NUMBER OF TOTAL     ELEMENTS
+         35                     C          MD          ; MAX. NUMBER OF DIFFERENT ELEMENTS
+         36                     C          IUT0        ; FILE NUMBER TO REPORT ERROR OCCURENCE
+         37                     C
+         38                     C       (2) OUTPUT
+         39                     C          LSTEN  (ID) ; STENCIL ELEMENT SPECIFYING LIST( IE=LSTEN(ID) )
+         40                     C          ND          ; NUMBER OF DIFFERENT ELEMENTS
+         41                     C          IERR        ; RETURN CODE TO REPORT ERROR OCCURENCE
+         42                     C                   0 --- NORMAL TERMINATION
+         43                     C                   1 --- A FATAL ERROR HAS OCCURED
+         44                     C
+         45                     C
+         46                           IERR = 0
+         47                     C
+         48                     C CLEAR STENCIL ELEMENT NUMBER
+         49                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LSTEN
+                              <<< Loop-information  End >>>
+         50     1  pp   4v            DO 100 ID = 1 , MD
+         51     1   p   4v                LSTEN(ID) = 0
+         52     1   p   4v        100 CONTINUE
+         53                     C
+         54                     C DETERMINE STENCIL ELEMENTS
+         55                     C
+         56                           ND = 0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LTYPE
+                              <<< Loop-information  End >>>
+         57     1                     DO 110 IE = 1 , NE
+         58     1                         ID = LTYPE(IE)
+         59     2                         IF(ID.LE.0 .OR. ID.GT.NE) THEN
+         60     2                             WRITE(IUT0,*) ERMSGB
+         61     2                             WRITE(IUT0,*) EREXP1, IE
+         62     2                             IERR = 1
+         63     2                             RETURN
+         64     2                         ENDIF
+         65     1               C
+         66     1                         ND = MAX0(ID,ND)
+         67     2                         IF(ND.GT.MD) THEN
+         68     2                             WRITE(IUT0,*) ERMSGB
+         69     2                             WRITE(IUT0,*) EREXP2, MD
+         70     2                             IERR = 1
+         71     2                             RETURN
+         72     2                         ENDIF
+         73     1                         IF(LSTEN(ID).EQ.0) LSTEN(ID) = IE
+         74     1                 110 CONTINUE
+         75                     C
+         76                     C SCAN STENCIL ELEMENT SPECIFYING LIST
+         77                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LSTEN
+                              <<< Loop-information  End >>>
+         78     1                     DO 120 ID = 1 , ND
+         79     2                         IF(LSTEN(ID).EQ.0) THEN
+         80     2                             WRITE(IUT0,*) ERMSGB
+         81     2                             WRITE(IUT0,*) EREXP3, ID
+         82     2                             IERR = 1
+         83     2                             RETURN
+         84     2                         ENDIF
+         85     1                 120 CONTINUE
+         86                     C
+         87                     C
+         88                           RETURN
+         89                           END
+
+ Diagnostic messages: program name(STENCL)
+   jwd5001p-i  "stencl.f", line 50: DO loop with DO variable 'ID' is parallelized.
+   jwd6001s-i  "stencl.f", line 50: SIMD conversion is applied to DO loop with DO variable 'ID'.
+   jwd8663o-i  "stencl.f", line 50: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "stencl.f", line 50: Loop unrolled 4 times.
+   jwd5131p-i  "stencl.f", line 57: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "stencl.f", line 57: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "stencl.f", line 57: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+   jwd5131p-i  "stencl.f", line 78: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "stencl.f", line 78: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "stencl.f", line 78: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+
+ Procedure information
+   Lines      : 89
+   Statements : 39
+   Stack(byte): 1408
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 89
+   Total statements : 39
+   Total stack(byte): 1408
+   Total prefetch num: 0
+

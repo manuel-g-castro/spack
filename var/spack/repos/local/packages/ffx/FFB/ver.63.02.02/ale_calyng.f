@@ -1,0 +1,107 @@
+      SUBROUTINE ALE_CALYNG(NP,NE,NPMVB,LPMVB,
+     *                      STPWR,EJ,DELTA,
+     *                      NLYNG,EYNG,ME,N2,NODE,NPBODY,LPBODY,
+     *                      LEWRK,LPWRK,AWRK,
+     *                      IPART,NDOM,MBPDOM,LDOM,NBPDOM,
+     *                      IPSLF,IPSND,RX,RY,MAXBUF,IUT0,IERR)
+C
+      IMPLICIT NONE
+C
+      INTEGER*4 NP,NE,ME,N2,NODE(N2,NE),NPMVB
+      INTEGER*4 LPMVB(3,NPMVB),NLYNG,NPBODY,LPBODY(NPBODY)
+      REAL*4    STPWR,DELTA(NE),EJ(NE),EYNG
+C
+      INTEGER*4 IPART,NDOM,MBPDOM,MAXBUF
+      INTEGER*4 LDOM(NDOM),NBPDOM(NDOM),
+     *          IPSLF(MBPDOM,NDOM),IPSND(MBPDOM,NDOM),
+     *          RX(ME*8),RY(ME*8)
+      INTEGER*4 IUT0,IERR
+
+C     WORK
+      INTEGER*4 I,J,IBP,IP,IE,IDUM,LEWRK(NE),LPWRK(NP)
+      REAL*4    AVOL,AWRK(NP)
+      CHARACTER*60 ERMSGC
+     & /' ## SUBROUTINE ALE_CALYNG: ERROR OCCURED         ; RETURNED' /
+C
+      AVOL=0.0E0
+      DO 100 IE=1,NE
+         AVOL=AVOL+DELTA(IE)/FLOAT(NE)
+ 100  CONTINUE
+C
+      DO 200 IE=1,NE
+         EJ(IE)=(AVOL/DELTA(IE))**STPWR
+ 200  CONTINUE
+C
+      IF (NLYNG.EQ.0) GOTO 3000
+C
+      DO 1000 IE=1,NE
+         LEWRK(IE)=0
+ 1000 CONTINUE
+C
+      DO 1100 IP=1,NP
+         LPWRK(IP)=0
+ 1100 CONTINUE
+C
+      DO 1200 IBP=1,NPBODY
+         IP=LPBODY(IBP)
+         LPWRK(IP)=1
+ 1200 CONTINUE
+C
+      DO 2000 J=1,NLYNG
+CC
+CC    FIND ELEMENTS ATTACHED TO BODY BOUNDARY NODE
+CC
+         DO 2100 IE=1,NE
+            IF(LEWRK(IE).EQ.1) GOTO 2100 
+            DO 2200 I=1,8
+               IP=NODE(I,IE)
+               IF(IP.EQ.0)       GOTO 2200
+               IF(LPWRK(IP).EQ.0) GOTO 2200
+               LEWRK(IE)=1
+               GOTO 2100
+ 2200       CONTINUE
+ 2100    CONTINUE
+CC
+CC    UPDATE BODY BOUNDARY NODE
+CC
+         DO 2300 IE=1,NE
+            IF(LEWRK(IE).EQ.0) GOTO 2300
+            DO 2400 I=1,8
+               IP=NODE(I,IE)
+               IF(IP.EQ.0) GOTO 2400
+               LPWRK(IP)=1
+ 2400       CONTINUE
+ 2300    CONTINUE
+C
+         DO 2500 IP=1,NP
+            AWRK(IP)=FLOAT(LPWRK(IP))
+ 2500    CONTINUE
+C
+         IDUM=1
+         CALL DDCOMX(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+     *               AWRK,AWRK,AWRK,NP,IUT0,IERR,RX,RY,MAXBUF)
+         IF(IERR.NE.0) THEN
+            WRITE(IUT0,*)
+            WRITE(IUT0,*) ERMSGC
+            RETURN
+         ENDIF
+C
+         DO 2600 IP=1,NP
+            IF (AWRK(IP).GT.0.0) THEN
+               LPWRK(IP)=1
+            ELSE
+               LPWRK(IP)=0
+            ENDIF
+ 2600    CONTINUE
+C
+ 2000 CONTINUE
+C
+      DO 2700 IE=1,NE
+         IF (LEWRK(IE).EQ.0) GOTO 2700
+         EJ(IE)=EYNG
+ 2700 CONTINUE
+C
+ 3000 CONTINUE
+C
+      RETURN
+      END

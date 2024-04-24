@@ -1,0 +1,142 @@
+
+ Fujitsu Fortran Version 4.8.1  Thu Nov 24 16:46:01 2022
+
+ Compilation information
+   Current directory : /vol0005/mdt2/home/u10588/SRC/lbm/ver.59.01
+   Source file       : calmcr.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -Nlst=t -Cpp -Cfpp -c -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Knointentopt
+   Cpp options          : -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Dcputime -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=8 -D__FRT_patchlevel__=1 -D__FRT_version__="4.8.1" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Knoarray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nlibomp -Nline -Nlst -Nlst=p -Nlst=t
+                          -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "CALMCR"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE CALMCR(NG,NP,CVEL,F,V3D)
+          2                           IMPLICIT NONE
+          3                           INTEGER*4 NG,NP
+          4                           REAL*8 CVEL(3,NP),
+          5                          *       F   (   0:NG+2,0:NG+2,0:NG+2,NP),
+          6                          *       V3D ( 4,0:NG+2,0:NG+2,0:NG+2)
+          7                     C
+          8                           INTEGER*4 I,J,K,IP
+          9                           REAL*8    RHO,U0,V0,W0,FBUF
+         10                     C
+         11                     CCCC
+         12                     CCCC[1] MACRO VARIABLES
+         13                     CCCC
+         14                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<< Loop-information  End >>>
+         15     1  pp                 DO 1000 K =0,NG+2
+         16     2   p                 DO 1100 J =0,NG+2
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      CVEL
+                              <<< Loop-information  End >>>
+         17     3   p                 DO 1200 I =0,NG+2
+         18     3   p                     RHO=0.0D0
+         19     3   p                     U0 =0.0D0
+         20     3   p                     V0 =0.0D0
+         21     3   p                     W0 =0.0D0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.72, ITR: 80, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      CVEL
+                              <<< Loop-information  End >>>
+         22     4   p   2v                DO 1300 IP=1,NP
+         23     4   p   2v                    FBUF=F(I,J,K,IP)
+         24     4   p   2v                    RHO=RHO+FBUF
+         25     4   p   2v                    U0 =U0 +FBUF*CVEL(1,IP)
+         26     4   p   2v                    V0 =V0 +FBUF*CVEL(2,IP)
+         27     4   p   2v                    W0 =W0 +FBUF*CVEL(3,IP)
+         28     4   p   2v       1300     CONTINUE
+         29     3   p                     U0=U0/RHO
+         30     3   p                     V0=V0/RHO
+         31     3   p                     W0=W0/RHO
+         32     3   p                     V3D(1,I,J,K)=RHO
+         33     3   p                     V3D(2,I,J,K)=U0
+         34     3   p                     V3D(3,I,J,K)=V0
+         35     3   p                     V3D(4,I,J,K)=W0
+         36     3   p            1200 CONTINUE
+         37     2   p            1100 CONTINUE
+         38     1   p            1000 CONTINUE
+         39                     C
+         40                           RETURN
+         41                           END
+
+ Diagnostic messages: program name(CALMCR)
+   jwd8220o-i  "calmcr.f", line 1: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd5001p-i  "calmcr.f", line 15: DO loop with DO variable 'K' is parallelized.
+   jwd6004s-i  "calmcr.f", line 22: SIMD conversion is applied to DO loop with DO variable 'IP'. The DO loop contains a reduction operation.
+   jwd8204o-i  "calmcr.f", line 22: This loop is software pipelined.
+   jwd8205o-i  "calmcr.f", line 22: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 80.
+   jwd8208o-i  "calmcr.f", line 25: Method of calculating sum or product is changed.
+   jwd8208o-i  "calmcr.f", line 26: Method of calculating sum or product is changed.
+
+ Procedure information
+   Lines      : 41
+   Statements : 32
+   Stack(byte): 832
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 41
+   Total statements : 32
+   Total stack(byte): 832
+   Total prefetch num: 0
+

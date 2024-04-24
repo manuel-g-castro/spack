@@ -1,0 +1,189 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:53:49 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : dragf1.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "DRAGF1"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    DRAGF1                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE DRAGF1(VS,A,U,V,P,DSB,ASB,ACB,DNXB,DNYB,LEB,NODE,NEB,N,
+         14                          *                  CDN,CDS,CD,CLN,CLS,CL)
+         15                           IMPLICIT REAL*8(A-H,O-Z)
+         16                           DIMENSION U(*),V(*),P(*),
+         17                          1          DSB(NEB),ASB(NEB),ACB(NEB),DNXB(N,NEB),DNYB(N,NEB),
+         18                          2          LEB(NEB),NODE(N,*)
+         19                     C
+         20                     C
+         21                     C      CALCULATE DRAG & LIFT COEFFICIENT OF A BODY ; DRAG CALCULATION 1
+         22                     C         ( 2-D CALCULATION )
+         23                     C
+         24                     C
+         25                     C     ARGUMENT LISTINGS
+         26                     C       (1) INPUT
+         27                     C          VS          ; VISCOSITY
+         28                     C          A           ; FRONTAL PROJECTIVE AREA OF THE BODY
+         29                     C          U (IP)      ; X-DIR. VELOCITY COMPONENT DEFINED AT NODE
+         30                     C          V (IP)      ; Y-DIR. VELOCITY COMPONENT DEFINED AT NODE
+         31                     C          P (IE)      ; PRESSURE                  DEFINED AT ELEMENT
+         32                     C          DSB   (IB)  ; LENGTH      OF BOUNDARY SIDE
+         33                     C          ASB   (IB)  ; ANGLE BETWEEN THE SIDE AND X-AXIS (   SINE )
+         34                     C          ACB   (IB)  ; ANGLE BETWEEN THE SIDE AND X-AXIS ( COSINE )
+         35                     C          DNXB(I,IB)  ; X-DIRIVERTIVE  AT THE SIDE'S CENTER POINT
+         36                     C          DNYB(I,IB)  ; Y-DIRIVERTIVE  AT THE SIDE'S CENTER POINT
+         37                     C          LEB   (IB)  ; ELEMENT NO.        FACING ON THE BODY
+         38                     C          NODE(I,IE)  ; NODE NUMBER TABLE
+         39                     C          NEB         ; NUMBER OF ELEMENTS FACING ON THE BODY
+         40                     C          N           ; NUMBER OF NODE ASSIGNED TO ONE ELEMENT
+         41                     C
+         42                     C       (2) OUTPUT
+         43                     C          CDN         ; DRAG COEFFICIENT CAUSED BY NORMAL   STRESS
+         44                     C          CDS         ; DRAG COEFFICIENT CAUSED BY SHEARING STRESS
+         45                     C          CD          ; DRAG COEFFICIENT CAUSED BY TOTAL    STRESS
+         46                     C          CLN         ; LIFT COEFFICIENT CAUSED BY NORMAL   STRESS
+         47                     C          CLS         ; LIFT COEFFICIENT CAUSED BY SHEARING STRESS
+         48                     C          CL          ; LIFT COEFFICIENT CAUSED BY TOTAL    STRESS
+         49                     C
+         50                     C
+         51                           FSX = 0.D0
+         52                           FSY = 0.D0
+         53                           FNX = 0.D0
+         54                           FNY = 0.D0
+         55                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 94
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<< Loop-information  End >>>
+         56     1  pp    v            DO 100 IB = 1 , NEB
+         57     1   p    v                A1 = U(NODE(1,LEB(IB)))*ACB(IB)+V(NODE(1,LEB(IB)))*ASB(IB)
+         58     1   p    v                A2 = U(NODE(2,LEB(IB)))*ACB(IB)+V(NODE(2,LEB(IB)))*ASB(IB)
+         59     1   p    v                A3 = U(NODE(3,LEB(IB)))*ACB(IB)+V(NODE(3,LEB(IB)))*ASB(IB)
+         60     1   p    v                A4 = U(NODE(4,LEB(IB)))*ACB(IB)+V(NODE(4,LEB(IB)))*ASB(IB)
+         61     1   p    v                B1 =-U(NODE(1,LEB(IB)))*ASB(IB)+V(NODE(1,LEB(IB)))*ACB(IB)
+         62     1   p    v                B2 =-U(NODE(2,LEB(IB)))*ASB(IB)+V(NODE(2,LEB(IB)))*ACB(IB)
+         63     1   p    v                B3 =-U(NODE(3,LEB(IB)))*ASB(IB)+V(NODE(3,LEB(IB)))*ACB(IB)
+         64     1   p    v                B4 =-U(NODE(4,LEB(IB)))*ASB(IB)+V(NODE(4,LEB(IB)))*ACB(IB)
+         65     1               C
+         66     1   p    v                USX = DNXB(1,IB)*A1+DNXB(2,IB)*A2+DNXB(3,IB)*A3+DNXB(4,IB)*A4
+         67     1   p    v                USY = DNYB(1,IB)*A1+DNYB(2,IB)*A2+DNYB(3,IB)*A3+DNYB(4,IB)*A4
+         68     1   p    v                UNX = DNXB(1,IB)*B1+DNXB(2,IB)*B2+DNXB(3,IB)*B3+DNXB(4,IB)*B4
+         69     1   p    v                UNY = DNYB(1,IB)*B1+DNYB(2,IB)*B2+DNYB(3,IB)*B3+DNYB(4,IB)*B4
+         70     1               C
+         71     1   p    v                USN =-USX*ASB(IB)+USY*ACB(IB)
+         72     1   p    v                UNS = UNX*ACB(IB)+UNY*ASB(IB)
+         73     1   p    v                UNN =-UNX*ASB(IB)+UNY*ACB(IB)
+         74     1               C
+         75     1   p    v                FS  = DSB(IB)*(VS*(USN+UNS))
+         76     1   p    v                FN  = DSB(IB)*(VS*(UNN+UNN)-P(LEB(IB)))
+         77     1               C
+         78     1   p    v                FSX = FSX+FS*ACB(IB)
+         79     1   p    v                FSY = FSY+FS*ASB(IB)
+         80     1   p    v                FNX = FNX-FN*ASB(IB)
+         81     1   p    v                FNY = FNY+FN*ACB(IB)
+         82     1   p    v        100 CONTINUE
+         83                     C
+         84                           CDS = FSX/(0.5D0*A)
+         85                           CLS = FSY/(0.5D0*A)
+         86                           CDN = FNX/(0.5D0*A)
+         87                           CLN = FNY/(0.5D0*A)
+         88                           CD  = CDS+CDN
+         89                           CL  = CLS+CLN
+         90                     C
+         91                     C
+         92                           RETURN
+         93                           END
+
+ Diagnostic messages: program name(DRAGF1)
+   jwd8220o-i  "dragf1.f", line 13: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd5004p-i  "dragf1.f", line 56: DO loop with DO variable 'IB' is parallelized. The DO loop contains the reduction operation.
+   jwd6004s-i  "dragf1.f", line 56: SIMD conversion is applied to DO loop with DO variable 'IB'. The DO loop contains a reduction operation.
+   jwd8209o-i  "dragf1.f", line 61: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "dragf1.f", line 62: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "dragf1.f", line 63: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "dragf1.f", line 64: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "dragf1.f", line 68: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "dragf1.f", line 69: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "dragf1.f", line 71: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "dragf1.f", line 73: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "dragf1.f", line 75: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+
+ Procedure information
+   Lines      : 93
+   Statements : 38
+   Stack(byte): 54160
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 93
+   Total statements : 38
+   Total stack(byte): 54160
+   Total prefetch num: 0
+

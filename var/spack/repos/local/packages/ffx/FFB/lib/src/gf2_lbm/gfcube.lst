@@ -1,0 +1,360 @@
+
+ Fujitsu Fortran Version 4.3.0a  Sat Dec 19 20:45:27 2020
+
+ Compilation information
+   Current directory : /vol0001/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/gf2_lbm
+   Source file       : gfcube.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0001/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI021-01/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI021-01/lib64 -Knointentopt
+   Cpp options          : -I/vol0001/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI021-01/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI021-01/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=3 -D__FRT_patchlevel__=0 -D__FRT_version__="4.3.0a" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "GFCUBE"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE GFCUBE(IMODE,MC,MBC,FILECB,
+          2                          *                  NG,NC,LLEVEL,LPOSI,NBC,LBC,
+          3                          *                  MCOM,NCOMFL,NCOMST,COMFLE,COMSET,
+          4                          *                  IUT6,IUT0,IUTCB,IERR)
+          5                           IMPLICIT NONE
+          6                           INTEGER*4    IMODE,MC,MBC,NG,NC
+          7                           INTEGER*4    LLEVEL(MC),LPOSI(3,MC),
+          8                          *             NBC(MC),LBC(5,MBC,MC)
+          9                           INTEGER*4    IUT6,IUT0,IUTCB,IERR
+         10                     C
+         11                           INTEGER*4    MCOM,NCOMFL,NCOMST
+         12                           CHARACTER*60 FILECB,COMFLE(MCOM),COMSET(MCOM)
+         13                     C
+         14                           INTEGER*4 IACT,ITARGT,IRESV,IWRITE,INAME,
+         15                          *          ICAST,ICAST1,IDATA0,IALL,ISKIP,ISKIP1,ICHECK
+         16                           INTEGER*4 LCOWRK(26),LBCWRK(5,MBC)
+         17                           INTEGER*4 MAXPRN
+         18                           CHARACTER*30 NAME
+         19                           DATA IWRITE / 2 /
+         20                           DATA INAME  / 1 /
+         21                           DATA MAXPRN / 200 /
+         22                           DATA ICAST  /0/
+         23                           DATA ICAST1 /1/
+         24                           DATA IDATA0 /0/
+         25                           DATA IALL   /0/
+         26                           DATA ISKIP  /0/
+         27                           DATA ISKIP1 /1/
+         28                           DATA ICHECK /999999/
+         29                     C
+         30                           INTEGER*4 N03,N05,N26
+         31                           DATA N03   / 3/
+         32                           DATA N05   / 5/
+         33                           DATA N26   /26/
+         34                     C
+         35                           INTEGER*4 IC,IB,NDUM
+         36                     C
+         37                     C[INPUT]
+         38                     C     IMODE : SPECIFY ACTION MODE (0:CHECK SIZE, 1:READ, 2:WRITE)
+         39                     C     MC    : MAX NUMBER OF CUBES IN SUB-DOMAIN
+         40                     C     MBC   : MAX. NUMBER OF B.C GROUPS IN CUBES (=152)
+         41                     C     IUT6  : UNIT NUMBER OF STANDARD OUTPUT
+         42                     C     IUT0  : UNIT NUMBER OF ERROR OUTPUT
+         43                     C     IUTCB : UNIT NUMBER OF GF-CUBE FILE
+         44                     C
+         45                     C[INPUT&OUTPUT]
+         46                     C     NC             : NUMBER OF CUBES IN SUB-DOMAIN
+         47                     C     NG             : CUBE SIZE (=2^N)
+         48                     C     LLEVEL(IC)     : LEVEL OF CUBES, WHICH INDICATE THE GRID RESOLUTION.
+         49                     C     LPOSI(3,IC)    : INDICATES THE POSITIONS OF CUBES, WHICH ARE NORMALIZED
+         50                     C                      BY THE MINIMUM CUBE SIZE.
+         51                     C     NBC(IC)        : NUMBER OF B.C. GROUPS IN CUBES
+         52                     C     LBC(II,IBC,IC) : ATTRIBUTE DATA OF B.C. GROUPS
+         53                     C                      II=1 B.C. GROUP ID (1-26) IN AN ADJACENT CUBE
+         54                     C                      II=2 SUB-DOMAIN NUMBER OF AN ADJACENT CUBE
+         55                     C                      II=3 CUBE NUMBER OF AN ADJACENT CUBE IN A DOMAIN
+         56                     C                      II=4 RELATIVE LEVEL OF AN ADJACENT CUBE
+         57                     C                       (-1: FINE, 0:SAME, 1:COARSE)
+         58                     C                      II=5 POSITION IN COARSER CUBE
+         59                     C
+         60                     C[OUTPUT]
+         61                     C     IERR   : ERROR FLAG
+         62                     C
+         63                           IERR=0
+         64                     C
+         65     1                     IF(IMODE.EQ.0) THEN
+         66     1                         WRITE(IUT6,*)
+         67     1                         WRITE(IUT6,*) '  GFCUBE :: CHECKING SIZE OF GF-CUBE FILE   '
+         68     1                     ELSE IF(IMODE.EQ.1) THEN
+         69     1                         WRITE(IUT6,*)
+         70     1                         WRITE(IUT6,*) '  GFCUBE :: READING GF-CUBE FILE   '
+         71     1                         GOTO 1000
+         72     1                     ELSE IF(IMODE.EQ.2) THEN
+         73     1                         WRITE(IUT6,*)
+         74     1                         WRITE(IUT6,*) '  GFCUBE :: WRITING GF-CUBE FILE   '
+         75     1                         GOTO 2000
+         76     1                     ELSE IF(IMODE.EQ.4) THEN
+         77     1                         WRITE(IUT6,*)
+         78     1                         WRITE(IUT6,*) '  GFCUBE :: WRITING GF-CUBE FILE  (OPEN) '
+         79     1                         GOTO 2000
+         80     1                     ELSE IF(IMODE.EQ.6) THEN
+         81     1                         WRITE(IUT6,*)
+         82     1                         WRITE(IUT6,*) '  GFCUBE :: WRITING GF-CUBE FILE  (APPEND) '
+         83     1                         GOTO 2200
+         84     1                     ELSE IF(IMODE.EQ.8) THEN
+         85     1                         WRITE(IUT6,*)
+         86     1                         WRITE(IUT6,*) '  GFCUBE :: WRITING GF-CUBE FILE  (CLOSE) '
+         87     1                         GOTO 2100
+         88     1                     ELSE
+         89     1                         IERR=1
+         90     1                         RETURN
+         91     1                     ENDIF
+         92                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+         93                     C                                                      C
+         94                     C    IMODE=0: CHECK MODE                               C
+         95                     C                                                      C
+         96                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+         97                     C
+         98                     CCC OPEN GF-CUBE FILE TO BE READ
+         99                     C
+        100                           IACT = 3
+        101                           CALL GFALL(IUT0,IUT6,IUTCB,FILECB,
+        102                          *           MCOM,NCOMFL,COMFLE,
+        103                          *           MCOM,NCOMST,COMSET,
+        104                          *           IACT,IWRITE,INAME,IRESV,
+        105                          *           ICAST,IDATA0,IALL,ISKIP,IERR,
+        106                          *           ' !',ICHECK)
+        107                           IF(IERR.NE.0) RETURN
+        108                     C
+        109                           NC=0
+        110                     C
+        111                       100 CONTINUE
+        112                     C
+        113                     CCC CHECK SIZE CUBE DATA
+        114                     C
+        115                           IACT = 5
+        116                           CALL GFALL(IUT0,IUT6,IUTCB,FILECB,
+        117                          *           MCOM,NCOMFL,COMFLE,
+        118                          *           MCOM,NCOMST,COMSET,
+        119                          *           IACT,IWRITE,INAME,IRESV,
+        120                          *           ICAST,IDATA0,IALL,ISKIP,IERR,
+        121                          *           '*LBM_CSZ !',
+        122                          *           NAME,NG,
+        123                          *           ICHECK)
+        124     1                     IF(IACT.NE.7) THEN
+        125     1                         NC=NC+1
+        126     1                         GOTO 100
+        127     1                     ENDIF
+        128                     C
+        129                     CCC CLOSE GF-CUBE FILE
+        130                     C
+        131                           CALL GFALL(IUT0,IUT6,IUTCB,FILECB,
+        132                          *           MCOM,NCOMFL,COMFLE,
+        133                          *           MCOM,NCOMST,COMSET,
+        134                          *           IACT,IWRITE,INAME,IRESV,
+        135                          *           ICAST,IDATA0,IALL,ISKIP,IERR,
+        136                          *           ' !',ICHECK)
+        137                     C
+        138                           RETURN
+        139                     C
+        140                      1000 CONTINUE
+        141                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+        142                     C                                                      C
+        143                     C    IMODE=1: READ MODE                                C
+        144                     C                                                      C
+        145                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+        146                     C
+        147                     CCC OPEN GF-CUBE FILE TO BE READ
+        148                     C
+        149                           IACT = 3
+        150                           CALL GFALL(IUT0,IUT6,IUTCB,FILECB,
+        151                          *           MCOM,NCOMFL,COMFLE,
+        152                          *           MCOM,NCOMST,COMSET,
+        153                          *           IACT,IWRITE,INAME,IRESV,
+        154                          *           ICAST,IDATA0,IALL,ISKIP,IERR,
+        155                          *           ' !',ICHECK)
+        156                           IF(IERR.NE.0) RETURN
+        157                     C
+        158                     CCC READ CUBE DATA
+        159                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 1  FILL 11
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        160     1                     DO 1100 IC=1,NC
+        161     1                         IACT = 5
+        162     1                         CALL GFALL(IUT0,IUT6,IUTCB,FILECB,
+        163     1                    *               MCOM,NCOMFL,COMFLE,
+        164     1                    *               MCOM,NCOMST,COMSET,
+        165     1                    *               IACT,IWRITE,INAME,IRESV,
+        166     1                    *               ICAST,IDATA0,IALL,ISKIP,IERR,
+        167     1                    *               '*LBM_CSZ *LBM_LEV *LBM_POS *LBM_LCB !',
+        168     1                    *               NAME,NG,
+        169     1                    *               NAME,LLEVEL(IC),
+        170     1                    *               NAME,N03,NDUM,LPOSI(1,IC),
+        171     1                    *               NAME,MBC,N05,NBC(IC),N05,LBC(1,1,IC),
+        172     1                    *               ICHECK)
+        173     1                         IF(IERR.NE.0) RETURN
+        174     1               C
+        175     1                1100 CONTINUE
+        176                     C
+        177                     CCC CLOSE GF-CUBE FILE
+        178                     C
+        179                           IACT = 7
+        180                           CALL GFALL(IUT0,IUT6,IUTCB,FILECB,
+        181                          *           MCOM,NCOMFL,COMFLE,
+        182                          *           MCOM,NCOMST,COMSET,
+        183                          *           IACT,IWRITE,INAME,IRESV,
+        184                          *           ICAST,IDATA0,IALL,ISKIP,IERR,
+        185                          *           ' !',ICHECK)
+        186                     C
+        187                           RETURN
+        188                     C
+        189                      2000 CONTINUE
+        190                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+        191                     C                                                      C
+        192                     C    IMODE=2: WRITE MODE                               C
+        193                     C                                                      C
+        194                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+        195                     C
+        196                     C
+        197                     CCC OPEN GF-CUBE FILE TO BE WRITTEN
+        198                     C
+        199                           IACT = 4
+        200                           CALL GFALL(IUT0,IUT6,IUTCB,FILECB,
+        201                          *           MCOM,NCOMFL,COMFLE,
+        202                          *           MCOM,NCOMST,COMSET,
+        203                          *           IACT,IWRITE,INAME,IRESV,
+        204                          *           ICAST,IDATA0,IALL,ISKIP,IERR,
+        205                          *           ' !',ICHECK)
+        206                     C
+        207                           IF(IMODE.EQ.4) RETURN
+        208                     C
+        209                     CCC WRITE CUBE DATA
+        210                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 1  FILL 11
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        211     1                     DO 2010 IC=1,NC
+        212     1                         IACT = 6
+        213     1                         CALL GFALL(IUT0,IUT6,IUTCB,FILECB,
+        214     1                    *               MCOM,NCOMFL,COMFLE,
+        215     1                    *               MCOM,NCOMST,COMSET,
+        216     1                    *               IACT,IWRITE,INAME,IRESV,
+        217     1                    *               ICAST,IDATA0,IALL,ISKIP,IERR,
+        218     1                    *               '*LBM_CSZ *LBM_LEV *LBM_POS *LBM_LCB !',
+        219     1                    *               NAME,NG,
+        220     1                    *               NAME,LLEVEL(IC),
+        221     1                    *               NAME,N03,N03,LPOSI(1,IC),
+        222     1                    *               NAME,MBC,N05,NBC(IC),N05,LBC(1,1,IC),
+        223     1                    *               ICHECK)
+        224     1                2010 CONTINUE
+        225                     C
+        226                     CCC CLOSE GF-CUBE FILE
+        227                     C
+        228                      2100 CONTINUE
+        229                           IACT=8
+        230                           CALL GFALL(IUT0,IUT6,IUTCB,FILECB,
+        231                          *           MCOM,NCOMFL,COMFLE,
+        232                          *           MCOM,NCOMST,COMSET,
+        233                          *           IACT,IWRITE,INAME,IRESV,
+        234                          *           ICAST,IDATA0,IALL,ISKIP,IERR,
+        235                          *           ' !',ICHECK)
+        236                           RETURN
+        237                     C
+        238                      2200 CONTINUE
+        239                           IACT = 6
+        240                           CALL GFALL(IUT0,IUT6,IUTCB,FILECB,
+        241                          *           MCOM,NCOMFL,COMFLE,
+        242                          *           MCOM,NCOMST,COMSET,
+        243                          *           IACT,IWRITE,INAME,IRESV,
+        244                          *           ICAST,IDATA0,IALL,ISKIP,IERR,
+        245                          *           '*LBM_CSZ *LBM_LEV *LBM_POS *LBM_LCB !',
+        246                          *           NAME,NG,
+        247                          *           NAME,LLEVEL,
+        248                          *           NAME,N03,N03,LPOSI,
+        249                          *           NAME,MBC,N05,NBC,N05,LBC,
+        250                          *           ICHECK)
+        251                     C
+        252                           RETURN
+        253                           END
+        254                     
+
+ Diagnostic messages: program name(GFCUBE)
+   jwd2006i-i  "gfcube.f", line 14: 'ITARGT' is declared but never referenced.
+   jwd2006i-i  "gfcube.f", line 16: 'LBCWRK' is declared but never referenced.
+   jwd2006i-i  "gfcube.f", line 16: 'LCOWRK' is declared but never referenced.
+   jwd2006i-i  "gfcube.f", line 35: 'IB' is declared but never referenced.
+   jwd5132p-i  "gfcube.f", line 111: Loop is not parallelized: cannot parallelize DO WHILE constructs, DO UNTIL constructs, or loops by IF/GO TO statements.
+   jwd6132s-i  "gfcube.f", line 111: SIMD conversion cannot be applied to DO WHILE constructs, DO UNTIL constructs, or loops by IF/GO TO statements.
+   jwd5131p-i  "gfcube.f", line 160: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "gfcube.f", line 160: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8664o-i  "gfcube.f", line 160: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5123p-i  "gfcube.f", line 211: DO loop is not parallelized: a character or structure type data was found in the loop.
+   jwd6165s-i  "gfcube.f", line 211: SIMD conversion cannot be applied to DO loop: one or more data with character type or derived type were found in the DO loop.
+   jwd8664o-i  "gfcube.f", line 211: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+
+ Procedure information
+   Lines      : 254
+   Statements : 96
+   Stack(byte): 1680
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 254
+   Total statements : 96
+   Total stack(byte): 1680
+   Total prefetch num: 0
+

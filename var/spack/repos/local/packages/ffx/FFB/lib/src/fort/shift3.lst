@@ -1,0 +1,309 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:54:28 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : shift3.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "SHIFT3"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    SHIFT3                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE SHIFT3(IFORM,DELTA,VISC,DT,U,V,W,NODE,NE,NP,N,
+         14                          *                  LEWALL,NEWALL,SX,SY,SZ,VABS,PEC,GZAI,TAU)
+         15                           IMPLICIT REAL*4(A-H,O-Z)
+         16                           DIMENSION DELTA(NE),VISC(NE),U(NP),V(NP),W(NP),
+         17                          1          NODE(N,NE),LEWALL(2,NEWALL),SX(NE),SY(NE),SZ(NE),
+         18                          2          VABS(NE),PEC(NE),GZAI(NE),TAU(NE)
+         19                           DATA D / 1.E-30 /
+         20                     C
+         21                     C
+         22                     C      CALCULATE UPWIND VECTORS
+         23                     C         ( 3-D CALCULATION : SINGLE WORD VERSION )
+         24                     C
+         25                     C
+         26                     C     ARGUMENT LISTINGS
+         27                     C       (1) INPUT
+         28                     C          IFORM       ; SPECIFIES UPWIND VECTORS TO BE CALCULATED
+         29                     C                   3 --- ELEMENT PECLET NO. DEPENDENT UPWIND VECTOR
+         30                     C                   4 --- TIME INCREMENT     DEPENDENT UPWIND VECTOR
+         31                     C           NOTES ; FOR WALL FACING ELEMENTS SPECIFIED BY ARGUMENT
+         32                     C                  'LEWALL(1,IEWALL)', ELEMENT PECLET NUMBER DEPENDING
+         33                     C                  UPWIND VECTOR WILL BE SET, REGARDLESS OF THE VALUE
+         34                     C                  OF 'IFORM'.
+         35                     C          DELTA   (IE); ELEMENT CHARACTERISTIC DIMENSION
+         36                     C          VISC    (IE); ELEMENT DIFFUSION COEFFICIENT
+         37                     C          DT          ; TIME INCREMENT
+         38                     C          U       (IP); X-DIR. VELOCITY COMPONENT
+         39                     C          V       (IP); Y-DIR. VELOCITY COMPONENT
+         40                     C          W       (IP); Z-DIR. VELOCITY COMPONENT
+         41                     C          NODE  (I,IE); NODE NO. TABLE BASED ON ELEMENT
+         42                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+         43                     C          NP          ; NUMBER OF TOTAL     NODES
+         44                     C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT ( N=4 )
+         45                     C          LEWALL(I,IBE); WALL BOUNDARY ELEMENT AND ITS SURFACE
+         46                     C          NEWALL      ; NUMBER OF WALL BOUNDARY SURFACES
+         47                     C
+         48                     C       (2) OUTPUT
+         49                     C          SX      (IE); UPWIND VECTOR IN X-DIR.
+         50                     C          SY      (IE); UPWIND VECTOR IN Y-DIR.
+         51                     C          SZ      (IE); UPWIND VECTOR IN Z-DIR.
+         52                     C
+         53                     C       (3) WORK
+         54                     C          VABS    (IE); VELOCITY MAGNITUDE CALCULATION
+         55                     C          PEC     (IE); ELEMENT PECLET NUMBER
+         56                     C          GZAI    (IE); UPWINDING PARAMETER
+         57                     C          TAU     (IE); UPWINDING PARAMETER
+         58                     C
+         59                     C
+         60                     C
+         61                     C      (1) UPWIND VECTOR BASED ON ELEMENT PECLET NUMBER
+         62                     C
+         63                     C
+         64     1                     IF(IFORM.EQ.3) THEN
+         65     1                         COEFF = 0.125E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 83
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED(lines: 66,83)
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 0.91, ITR: 80, MVE: 2, POL: L)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      VISC, DELTA, PEC, VABS, SZ, SY, SX
+                              <<< Loop-information  End >>>
+         66     2  pp    v                DO 300 IE = 1 , NE
+         67     2   p    v                    SX(IE) = COEFF*(U(NODE(1,IE))+U(NODE(5,IE))
+         68     2                    &                       +U(NODE(2,IE))+U(NODE(6,IE))
+         69     2                    &                       +U(NODE(3,IE))+U(NODE(7,IE))
+         70     2                    &                       +U(NODE(4,IE))+U(NODE(8,IE)))
+         71     2               C
+         72     2   p    v                    SY(IE) = COEFF*(V(NODE(1,IE))+V(NODE(5,IE))
+         73     2                    &                       +V(NODE(2,IE))+V(NODE(6,IE))
+         74     2                    &                       +V(NODE(3,IE))+V(NODE(7,IE))
+         75     2                    &                       +V(NODE(4,IE))+V(NODE(8,IE)))
+         76     2               C
+         77     2   p    v                    SZ(IE) = COEFF*(W(NODE(1,IE))+W(NODE(5,IE))
+         78     2                    &                       +W(NODE(2,IE))+W(NODE(6,IE))
+         79     2                    &                       +W(NODE(3,IE))+W(NODE(7,IE))
+         80     2                    &                       +W(NODE(4,IE))+W(NODE(8,IE)))
+         81     2   p    v        300     CONTINUE
+         82     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED
+                              <<< Loop-information  End >>>
+         83     2                         DO 400 IE = 1 , NE
+         84     2                             VABS(IE) = SX(IE)*SX(IE)+SY(IE)*SY(IE)+SZ(IE)*SZ(IE)+D
+         85     2                             VABS(IE) = SQRT(VABS(IE))
+         86     2                             PEC (IE) = VABS(IE)*DELTA(IE)/(VISC(IE)+D)+D
+         87     2                 400     CONTINUE
+         88     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 39
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    MULTI-OPERATION FUNCTION
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      PEC, SZ, SY, SX, VABS, DELTA, GZAI, TAU
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 1  FILL 1
+                              <<<      SIMD&FP   : SPILL 16  FILL 16
+                              <<<      SCALABLE  : SPILL 8  FILL 7
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+         89     2  pp    v                DO 500 IE = 1 , NE
+         90     2   p    v                    GZAI(IE) = TANH(PEC(IE))
+         91     2   p    v                    GZAI(IE) = 1.E0/GZAI(IE)-1.E0/PEC(IE)
+         92     2   p    v                    TAU (IE) = 0.5E0*GZAI(IE)*DELTA(IE)/(VABS(IE))
+         93     2               C
+         94     2   p    v                    SX(IE) = TAU(IE)*SX(IE)
+         95     2   p    v                    SY(IE) = TAU(IE)*SY(IE)
+         96     2   p    v                    SZ(IE) = TAU(IE)*SZ(IE)
+         97     2   p    v        500     CONTINUE
+         98     1                     ENDIF
+         99                     C
+        100                     C      (2) UPWIND VECTOR BASED ON TIME INCREMENT
+        101                     C
+        102     1                     IF(IFORM.EQ.4) THEN
+        103     1                         COEFF = 0.125E0*0.5E0*DT
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 101
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.36, ITR: 64, MVE: 2, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      SX, SY, SZ
+                              <<< Loop-information  End >>>
+        104     2  pp    v                DO 600 IE = 1 , NE
+        105     2   p    v                    SX(IE) = COEFF*(U(NODE(1,IE))+U(NODE(5,IE))
+        106     2                    &                       +U(NODE(2,IE))+U(NODE(6,IE))
+        107     2                    &                       +U(NODE(3,IE))+U(NODE(7,IE))
+        108     2                    &                       +U(NODE(4,IE))+U(NODE(8,IE)))
+        109     2               C
+        110     2   p    v                    SY(IE) = COEFF*(V(NODE(1,IE))+V(NODE(5,IE))
+        111     2                    &                       +V(NODE(2,IE))+V(NODE(6,IE))
+        112     2                    &                       +V(NODE(3,IE))+V(NODE(7,IE))
+        113     2                    &                       +V(NODE(4,IE))+V(NODE(8,IE)))
+        114     2               C
+        115     2   p    v                    SZ(IE) = COEFF*(W(NODE(1,IE))+W(NODE(5,IE))
+        116     2                    &                       +W(NODE(2,IE))+W(NODE(6,IE))
+        117     2                    &                       +W(NODE(3,IE))+W(NODE(7,IE))
+        118     2                    &                       +W(NODE(4,IE))+W(NODE(8,IE)))
+        119     2   p    v        600     CONTINUE
+        120     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LEWALL
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 4
+                              <<<      SIMD&FP   : SPILL 1  FILL 1
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        121     2   s    s                DO 700 IEWALL = 1 , NEWALL
+        122     2   p    v                    IE = LEWALL(1,IEWALL)
+        123     2               C
+        124     2   m    m                    SX(IE)   = SX(IE)/(0.5E0*DT)
+        125     2   s    s                    SY(IE)   = SY(IE)/(0.5E0*DT)
+        126     2   s    s                    SZ(IE)   = SZ(IE)/(0.5E0*DT)
+        127     2               C
+        128     2   s    s                    VABS(IE) = SX(IE)*SX(IE)+SY(IE)*SY(IE)+SZ(IE)*SZ(IE)+D
+        129     2   s    s                    VABS(IE) = SQRT(VABS(IE))
+        130     2   m    m                    PEC (IE) = VABS(IE)*DELTA(IE)/(VISC(IE)+D)+D
+        131     2   s    s                    GZAI(IE) = TANH(PEC(IE))
+        132     2   s    s                    GZAI(IE) = 1.E0/GZAI(IE)-1.E0/PEC(IE)
+        133     2   m    m                    TAU (IE) = 0.5E0*GZAI(IE)*DELTA(IE)/(VABS(IE))
+        134     2               C
+        135     2   s    s                    SX(IE) = TAU(IE)*SX(IE)
+        136     2   s    s                    SY(IE) = TAU(IE)*SY(IE)
+        137     2   s    s                    SZ(IE) = TAU(IE)*SZ(IE)
+        138     2   p    v        700     CONTINUE
+        139     1                     ENDIF
+        140                     C
+        141                     C
+        142                           RETURN
+        143                           END
+
+ Diagnostic messages: program name(SHIFT3)
+   jwd8220o-i  "shift3.f", line 13: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd8210o-i  "shift3.f", line 66: Loops fused at line 83.
+   jwd5001p-i  "shift3.f", line 66: DO loop with DO variable 'IE' is parallelized.
+   jwd6001s-i  "shift3.f", line 66: SIMD conversion is applied to DO loop with DO variable 'IE'.
+   jwd8204o-i  "shift3.f", line 66: This loop is software pipelined.
+   jwd8205o-i  "shift3.f", line 66: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 80.
+   jwd8209o-i  "shift3.f", line 72: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "shift3.f", line 77: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "shift3.f", line 84: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "shift3.f", line 86: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5001p-i  "shift3.f", line 89: DO loop with DO variable 'IE' is parallelized.
+   jwd8300o-i  "shift3.f", line 89: The intrinsic function was changed to a multi-operation function.
+   jwd6001s-i  "shift3.f", line 89: SIMD conversion is applied to DO loop with DO variable 'IE'.
+   jwd8664o-i  "shift3.f", line 89: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd8209o-i  "shift3.f", line 92: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5001p-i  "shift3.f", line 104: DO loop with DO variable 'IE' is parallelized.
+   jwd6001s-i  "shift3.f", line 104: SIMD conversion is applied to DO loop with DO variable 'IE'.
+   jwd8204o-i  "shift3.f", line 104: This loop is software pipelined.
+   jwd8205o-i  "shift3.f", line 104: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 64.
+   jwd8209o-i  "shift3.f", line 110: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "shift3.f", line 115: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd6302s-i  "shift3.f", line 121: SIMD conversion is not applied to DO loop: the performance of a partial SIMD execution may not be improved.
+   jwd8664o-i  "shift3.f", line 121: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd8206o-i  "shift3.f", line 124: Division is changed to multiplication by reciprocal.
+   jwd5209p-i  "shift3.f", line 124: DO loop is not parallelized: the variable 'IE' referenced in the subscript expression of array 'SX' is assigned to in DO loop.
+   jwd6209s-i  "shift3.f", line 124: SIMD conversion cannot be applied to DO loop: the variable 'IE' referenced in the subscript expression of array 'SX' is assigned to in DO loop.
+   jwd8206o-i  "shift3.f", line 125: Division is changed to multiplication by reciprocal.
+   jwd5209p-i  "shift3.f", line 125: DO loop is not parallelized: the variable 'IE' referenced in the subscript expression of array 'SY' is assigned to in DO loop.
+   jwd6209s-i  "shift3.f", line 125: SIMD conversion cannot be applied to DO loop: the variable 'IE' referenced in the subscript expression of array 'SY' is assigned to in DO loop.
+   jwd8206o-i  "shift3.f", line 126: Division is changed to multiplication by reciprocal.
+   jwd5209p-i  "shift3.f", line 126: DO loop is not parallelized: the variable 'IE' referenced in the subscript expression of array 'SZ' is assigned to in DO loop.
+   jwd6209s-i  "shift3.f", line 126: SIMD conversion cannot be applied to DO loop: the variable 'IE' referenced in the subscript expression of array 'SZ' is assigned to in DO loop.
+   jwd8209o-i  "shift3.f", line 128: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5209p-i  "shift3.f", line 129: DO loop is not parallelized: the variable 'IE' referenced in the subscript expression of array 'VABS' is assigned to in DO loop.
+   jwd8209o-i  "shift3.f", line 129: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "shift3.f", line 130: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5209p-i  "shift3.f", line 130: DO loop is not parallelized: the variable 'IE' referenced in the subscript expression of array 'PEC' is assigned to in DO loop.
+   jwd6209s-i  "shift3.f", line 130: SIMD conversion cannot be applied to DO loop: the variable 'IE' referenced in the subscript expression of array 'PEC' is assigned to in DO loop.
+   jwd5209p-i  "shift3.f", line 132: DO loop is not parallelized: the variable 'IE' referenced in the subscript expression of array 'GZAI' is assigned to in DO loop.
+   jwd8209o-i  "shift3.f", line 133: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5209p-i  "shift3.f", line 133: DO loop is not parallelized: the variable 'IE' referenced in the subscript expression of array 'TAU' is assigned to in DO loop.
+
+ Procedure information
+   Lines      : 143
+   Statements : 50
+   Stack(byte): 2096
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 143
+   Total statements : 50
+   Total stack(byte): 2096
+   Total prefetch num: 0
+

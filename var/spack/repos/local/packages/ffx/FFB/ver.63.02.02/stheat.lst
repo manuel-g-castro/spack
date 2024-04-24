@@ -1,0 +1,251 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:53:26 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : stheat.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "STHEAT"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE STHEAT(N2,NE,NP,NSP,NS,LOCAL,NODE,
+          2                          *                  NEHSRC,NPHFIX,NPHTRS,NPHEAT,NEHEAT,
+          3                          *                  LEHSRC,LPHEAT,LEHEAT,RHOS,CPS,
+          4                          *                  T,TREF,HSRC,HFIX,HTRS,DTDT,HEAT,HEATE,
+          5                          *                  RHOCP,WRK)
+          6                           IMPLICIT NONE
+          7                           INTEGER*4 N2,NE,NP,NSP,NS,LOCAL(NSP,NS,4),
+          8                          *          NEHSRC,NPHFIX,NPHTRS,NPHEAT,NEHEAT
+          9                           INTEGER*4 NODE(N2,NE),
+         10                          *          LEHSRC(NEHSRC),LPHFIX(NPHFIX),
+         11                          *          LPHEAT(NPHEAT),LEHEAT(2,NEHEAT)
+         12                           REAL*4    T(NP),TREF,
+         13                          *          HSRC(NEHSRC),HFIX(NPHFIX),
+         14                          *          HTRS(NPHTRS),DTDT(NE),
+         15                          *          HEAT(NPHEAT),HEATE(NEHEAT),RHOCP(NE)
+         16                           REAL*4    RHOS,CPS
+         17                           INTEGER*4 IE,IP,IS,IBE,IBP,IETYPE,NNPS,I
+         18                           REAL*4    WRK(NP),BUF
+         19                     CC
+         20                     CC [2] SET HEAT SOURCE
+         21                     CC
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      DTDT
+                              <<< Loop-information  End >>>
+         22     1  pp   4v            DO 2000 IE=1,NE
+         23     1   p   4v                DTDT(IE)=0.0E0
+         24     1   p   4v       2000 CONTINUE
+         25                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.50, ITR: 224, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LEHSRC, HSRC
+                              <<< Loop-information  End >>>
+         26     1   s   2v            DO 2100 IBE=1,NEHSRC
+         27     1   p   2v                IE=LEHSRC(IBE)
+         28     1   m   2v                DTDT(IE)=HSRC(IBE)
+         29     1   p   2v       2100 CONTINUE
+         30                     CC
+         31                     CC [3] SET HEAT FLUX AT BOUNDARY
+         32                     CC
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1455
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.00, ITR: 320, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      HFIX, HEAT
+                              <<< Loop-information  End >>>
+         33     1  pp   4v            DO 3000 IBP=1,NPHFIX
+         34     1   p   4v                HEAT(IBP)=HFIX(IBP)
+         35     1   p   4v       3000 CONTINUE
+         36                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 640
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.85, ITR: 320, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPHEAT, HTRS, HEAT
+                              <<< Loop-information  End >>>
+         37     1  pp   2v            DO 3100 IBP=1,NPHTRS
+         38     1   p   2v                IP=LPHEAT(NPHFIX+IBP)
+         39     1   p   2v                HEAT(NPHFIX+IBP)=HTRS(IBP)*(TREF-T(IP))*RHOS*CPS
+         40     1   p   2v       3100 CONTINUE
+         41                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WRK
+                              <<< Loop-information  End >>>
+         42     1  pp   4v            DO 3200 IP=1,NP
+         43     1   p   4v                WRK(IP)=0.0E0
+         44     1   p   4v       3200 CONTINUE
+         45                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.50, ITR: 224, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPHEAT, HEAT
+                              <<< Loop-information  End >>>
+         46     1   s   2v            DO 3300 IBP=1,NPHEAT
+         47     1   p   2v                IP=LPHEAT(IBP)
+         48     1   m   2v                WRK(IP)=HEAT(IBP)
+         49     1   p   2v       3300 CONTINUE
+         50                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LOCAL
+                              <<< Loop-information  End >>>
+         51     1  pp                 DO 3400 IBE=1,NEHEAT
+         52     1   p                     IE=LEHEAT(1,IBE)
+         53     1   p                     IS=LEHEAT(2,IBE)
+         54     2   p                     IF(     NODE(8,IE).GE.1) THEN ! HEX
+         55     2   p                         IETYPE = 4
+         56     2   p                     ELSE IF(NODE(6,IE).GE.1) THEN ! PRS
+         57     2   p                         IETYPE = 3
+         58     2   p                     ELSE IF(NODE(5,IE).GE.1) THEN ! PYR
+         59     2   p                         IETYPE = 2
+         60     2   p                     ELSE                          ! TET
+         61     2   p                         IETYPE = 1
+         62     2   p                     ENDIF
+         63     2   p                     IF(LOCAL(4,IS,IETYPE).GE.1) THEN ! QUADRILATERAL
+         64     2   p                         NNPS = 4
+         65     2   p                     ELSE                             ! TRIANGLE
+         66     2   p                         NNPS = 3
+         67     2   p                     ENDIF
+         68     1   p                     HEATE(IBE)=0.0E0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.16, ITR: 512, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LOCAL
+                              <<< Loop-information  End >>>
+         69     2   p   8v                DO 3500 I=1,NNPS
+         70     2   p   8v                    BUF=WRK(NODE(LOCAL(I,IS,IETYPE),IE))
+         71     2   p   8v                    BUF=BUF/RHOCP(IE)
+         72     2   p   8v                    HEATE(IBE)=HEATE(IBE)+BUF
+         73     2   p   8v       3500     CONTINUE
+         74     1   p                     HEATE(IBE) = HEATE(IBE)/FLOAT(NNPS)
+         75     1   p            3400 CONTINUE
+         76                     C
+         77                           RETURN
+         78                           END
+
+ Diagnostic messages: program name(STHEAT)
+   jwd8220o-i  "stheat.f", line 1: 副作用の可能性のある最適化を行いました。
+   jwd2006i-i  "stheat.f", line 9: この名前'LPHFIX'は、宣言だけされていて引用されていません。
+   jwd5001p-i  "stheat.f", line 22: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "stheat.f", line 22: このDOループをSIMD化しました。(名前:IE)
+   jwd8663o-i  "stheat.f", line 22: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "stheat.f", line 22: ループを展開数4回でアンローリングしました。
+   jwd6001s-i  "stheat.f", line 26: このDOループをSIMD化しました。(名前:IBE)
+   jwd8204o-i  "stheat.f", line 26: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "stheat.f", line 26: ループの繰返し数が224回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5209p-i  "stheat.f", line 28: 配列'DTDT'の添字式中の変数'IE'をループ中で定義しているため、このDOループは並列化できません。
+   jwd5001p-i  "stheat.f", line 33: このDOループを並列化しました。(名前:IBP)
+   jwd6001s-i  "stheat.f", line 33: このDOループをSIMD化しました。(名前:IBP)
+   jwd8204o-i  "stheat.f", line 33: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "stheat.f", line 33: ループの繰返し数が320回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "stheat.f", line 37: このDOループを並列化しました。(名前:IBP)
+   jwd6001s-i  "stheat.f", line 37: このDOループをSIMD化しました。(名前:IBP)
+   jwd8204o-i  "stheat.f", line 37: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "stheat.f", line 37: ループの繰返し数が320回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "stheat.f", line 39: 多項式の演算順序を変更しました。
+   jwd5001p-i  "stheat.f", line 42: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "stheat.f", line 42: このDOループをSIMD化しました。(名前:IP)
+   jwd8663o-i  "stheat.f", line 42: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "stheat.f", line 42: ループを展開数4回でアンローリングしました。
+   jwd6001s-i  "stheat.f", line 46: このDOループをSIMD化しました。(名前:IBP)
+   jwd8204o-i  "stheat.f", line 46: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "stheat.f", line 46: ループの繰返し数が224回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5209p-i  "stheat.f", line 48: 配列'WRK'の添字式中の変数'IP'をループ中で定義しているため、このDOループは並列化できません。
+   jwd5001p-i  "stheat.f", line 51: このDOループを並列化しました。(名前:IBE)
+   jwd6004s-i  "stheat.f", line 69: リダクション演算を含むDOループをSIMD化しました。(名前:I)
+   jwd8204o-i  "stheat.f", line 69: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "stheat.f", line 69: ループの繰返し数が512回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "stheat.f", line 70: 多項式の演算順序を変更しました。
+   jwd8206o-i  "stheat.f", line 71: 除算を逆数の乗算に変更しました。
+   jwd8208o-i  "stheat.f", line 72: ループ内の総和または乗積演算の計算方法を変更しました。
+
+ Procedure information
+   Lines      : 78
+   Statements : 56
+   Stack(byte): 1648
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 78
+   Total statements : 56
+   Total stack(byte): 1648
+   Total prefetch num: 0
+

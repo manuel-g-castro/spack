@@ -1,0 +1,959 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:53:20 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : rcmelm.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "RCMELM"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE RCMELM(MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+          2                          *                  ME,MP,N1,N2,NEX,NE,NP,NMAX,EPS,EPSRE,
+          3                          *                  MRCM,NMAXB,
+          4                          *                  NODE,CM,DNXYZP,DNXI,DNYI,DNZI,
+          5                          *                  B,PG,NPFIX,LPFIX,LEFIX,NPSYMT,LPSYMT,
+          6                          *                  XPSYMT,YPSYMT,ZPSYMT,NITRCM,RESR,S,
+          7                          *                  IPART,NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,
+          8                          *                  FXYZ,WRK01,WRK02,WRK03,WRK04,
+          9                          *                  WRK05,WRK06,RRCM, W1RCM,W2RCM,PRCM,APRCM,
+         10                          *                  RX,RY,MWRK,WRKN,
+         11                          *                  ADIAG,
+         12                          *                  JSET,NFRAME,IEATTR,IPATTR,
+         13                          *                  X,Y,Z,OMEGA,TIMER,UFRAME,VFRAME,WFRAME,
+         14                          *                  NPSET,LPSET1,LPSET2,LPSET3,LPSET4,
+         15                          *                  COVER1,COVER2,COVER3,
+         16                          *                  NPSND,LPSND,NPTSND,NPRCV,LPRCV,NPTRCV,
+         17                          *                  IPSET,IPSRC,IPRES,DT,FSMACH,
+         18                          *                  NMRF,IFATTR,OMGMRF,AMRF,
+         19                          *                  IVOF,IMASS,RHO3D,NSP,NS,LOCAL,
+         20                          *                  NFACE,LFACE,AVEC,FFA,NFINLT,LFINLT,
+         21                          *                  NFFREE,LFFREE,NPFREE,LPFREE,
+         22                          *                  XPFREE,YPFREE,ZPFREE,
+         23                          *                  NESET,NESND,NERCV,NBESET,LBESET,
+         24                          *                  LESET1,LESET2,LESET3,
+         25                          *                  EOVER1,EOVER2,EOVER3,
+         26                          *                  LESND,NETSND,LERCV,NETRCV,IESET,IESRC,
+         27                          *                  SN,SNESET,OSBCOE,XNESET,YNESET,ZNESET,
+         28                          *                  SOSP,SOSWRK,WRKOS1,WRKOS2,FESRC,FLE,
+         29                          *                  MEP,NEP,IENP,JENP,
+         30                          *                  IUT0,IERR,DNXYZ,NUMVALID,LSTVALID)
+         31                           IMPLICIT NONE
+         32                     C
+         33                           REAL*4    FESRC(NE),FLE(NE)
+         34                     C
+         35                     CCC   [LOOP]
+         36                           INTEGER*4 MCOLOR,MCPART
+         37                           INTEGER*4 NCOLOR(4),NCPART(MCOLOR,4),LLOOP(MCPART,MCOLOR,4)
+         38                     C
+         39                     CCC   [FOR MID.NODES]
+         40                     C
+         41                     CCC   [INPUT]
+         42                           INTEGER*4 ME,MP,N1,N2,NEX(8),NE,NP,NMAX,MRCM,NMAXB,IUT0
+         43                           REAL*4    EPS,EPSRE
+         44                           INTEGER*4 NODE(N2,NE)
+         45                           INTEGER*4 MEP,NEP(NP),IENP(MEP,NP),JENP(MEP,NP)
+         46                           REAL*4    CM(NP),
+         47                          *          DNXYZP(MEP,3,NP),
+         48                          *          DNXI(N1,ME),DNYI(N1,ME),DNZI(N1,ME),
+         49                          *          B(NE),PG(NE)
+         50                           REAL*4    XPSYMT(NPSYMT),YPSYMT(NPSYMT),ZPSYMT(NPSYMT)
+         51                           INTEGER*4 NPFIX,LPFIX(NPFIX),LEFIX(NE),
+         52                          *          NPSYMT,LPSYMT(NPSYMT)
+         53                           INTEGER*4 IPART,NDOM,MBPDOM,
+         54                          *          LDOM(NDOM),NBPDOM(NDOM),
+         55                          *          IPSLF(MBPDOM,NDOM),IPSND(MBPDOM,NDOM)
+         56                     C
+         57                           INTEGER*4 IPRES,JSET,NFRAME,IEATTR(NE),IPATTR(NP)
+         58                           REAL*4    DT,FSMACH,X(NP),Y(NP),Z(NP),OMEGA,TIMER,
+         59                          *          UFRAME(NFRAME),VFRAME(NFRAME),WFRAME(NFRAME)
+         60                     C
+         61                     CCCC  [INPUT:OVERSET ELEMENT DATA]
+         62                           INTEGER*4 NPSET,NPSND,NPRCV,
+         63                          *          LPSET1(NPSET),LPSET2(NPSET),
+         64                          *          LPSET3(NPSET),LPSET4(NPSET),
+         65                          *          LPSND(NDOM),NPTSND(NDOM),LPRCV(NDOM),NPTRCV(NDOM),
+         66                          *          IPSET(MBPDOM,NDOM),IPSRC(MBPDOM,NDOM)
+         67                           REAL*4    COVER1(NPSET),COVER2(NPSET),COVER3(NPSET)
+         68                     C
+         69                     CCCC  [INPUT:OVERSET ELEMENT DATA]
+         70                           INTEGER*4 NESET,NESND,NERCV,NBESET,LBESET(2,NBESET),
+         71                          *          LESET1(NESET),LESET2(NESET),LESET3(NESET),
+         72                          *          LESND(NDOM),NETSND(NDOM),LERCV(NDOM),NETRCV(NDOM),
+         73                          *          IESET(MBPDOM,NDOM),IESRC(MBPDOM,NDOM)
+         74                           REAL*4    EOVER1(NESET),EOVER2(NESET),EOVER3(NESET),
+         75                          *          SN(N1,NE),SNESET(N1,NE),OSBCOE(NP),
+         76                          *          XNESET(NBESET),YNESET(NBESET),ZNESET(NBESET),
+         77                          *          SOSP(NP),SOSWRK(NE),WRKOS1(NE),WRKOS2(NE)
+         78                     C
+         79                     C     [INPUT:VOF]
+         80                           INTEGER*4 IVOF,IMASS,NFACE,NSP,NS,NFINLT,NFFREE,NPFREE
+         81                           INTEGER*4 LOCAL,LFACE,LFINLT,LFFREE,LPFREE
+         82                           REAL*4    RHO3D,AVEC,FFA,
+         83                          *          XPFREE,YPFREE,ZPFREE
+         84                     C
+         85                     C     [INPUT:MRF]
+         86                           INTEGER*4 NMRF
+         87                           INTEGER*4 IFATTR(*)
+         88                           REAL*4    OMGMRF(NMRF),AMRF(3,NMRF)
+         89                     C
+         90                     CCC [INPUT/OUTPUT]
+         91                           REAL*4    S(NE)
+         92                           REAL*4    RES
+         93                     C
+         94                     CCC [OUTPUT]
+         95                           INTEGER*4 NITR,IERR
+         96                     C
+         97                     CCC [WORK]
+         98                           REAL*4    RX(0:N2,ME),RY(0:N2,ME),
+         99                          *          FXYZ(3,NP),WRK01(NE),WRK02(NE),
+        100                          *          WRK03(NE),WRK04(NE),WRK05(NE),WRK06(NE),
+        101                          *          RRCM(NE),PRCM(ME,MRCM),APRCM(ME,MRCM),
+        102                          *          W1RCM(NE),W2RCM(NE)
+        103                           INTEGER*4 MWRK
+        104                           REAL*4    WRKN(MWRK,9)
+        105                     
+        106                           REAL*4    DNXYZ(8,3,ME)
+        107                     C
+        108                           INTEGER*4 LSTVALID(MP)
+        109                           INTEGER*4 NUMVALID
+        110                     CCCC  [LOCL]
+        111                           INTEGER*4 IE
+        112                           REAL*4    BDOT,BDOTA,RESR,RSDOT,RSDOTA
+        113                           INTEGER*4 LRCM(MRCM)
+        114                           REAL*4    ARCM(MRCM,MRCM),BRCM(MRCM)
+        115                     C
+        116                           INTEGER*4 MRCMAX
+        117                           DATA MRCMAX / 10 /
+        118                           REAL*4    EPS0,EPSB
+        119                           DATA EPS0 / 1.E-30 /
+        120                           DATA EPSB / -1.0E0 /
+        121                     C
+        122                           INTEGER*4 I,J,NITRCM,NITRB,NMAXRCM,NRCM
+        123                           REAL*4    ATEMP,BTEMP,BUF,RESB
+        124                     C
+        125                           CHARACTER*60 ERMSGC
+        126                          & /' ## SUBROUTINE RESCUT: FATAL      ERROR REPORT   ; RETURNED' /
+        127                     C
+        128                           CHARACTER*60 ERMSG1
+        129                          & /' ## SUBROUTINE RESCUT: INVALID PARAMETER         ; RETURNED' /
+        130                     C
+        131                     CCTT 110317 ADDITION OF ARUMENT ADIAG
+        132                           REAL*4    ADIAG(NP)
+        133                     CCTT 110317
+        134                     C
+        135                     C      SOLVE MATRIX EQUATION AT ELEMENTS BY BI-CGSTAB METHOS
+        136                     C         ( 3-D CALCULATION : SINGLE WORD & MULTI ELEMENT VERSION )
+        137                     C
+        138                     C       WRITTEN BY Y. YAMADE 2011.01.20
+        139                     C
+        140                     C          OPERATION COUNTS:    FLOP /ELEMENT/ITERATION
+        141                     C          DATA LOADINGS   :    WORDS/ELEMENT/ITERATION
+        142                     C                           (   WORDS CONTIGUOUSLY,
+        143                     C                               WORDS BY 4-WORD STRIDE, AND
+        144                     C                               WORDS BY LIST )
+        145                     C
+        146                     C     ARGUMENT LISTINGS
+        147                     C (1) INPUT
+        148                     C INT *4 ME           ; MAX. NUMBER OF TOTAL ELEMENTS
+        149                     C INT *4 N1           ; THE DIMENSION SIZE OF THE FIRST ELEMENTS OF THE
+        150                     C                       PASSED ARRAYS 'NODET'
+        151                     C INT *4 NE           ; NUMBER OF ELEMENTS
+        152                     C INT *4 NP           ; NUMBER OF NODES
+        153                     C INT *4 NEX       (I); INCLUDES NUMBER OF ELEMENTS AND NUMBER OF LOCAL NODES
+        154                     C INT *4 NE           ; NUMBER OF ELEMENTS
+        155                     C INT *4 NP           ; NUMBER OF NODES
+        156                     C INT *4 NMAX         ; NUMBER OF MATRIX SOLVER ITERATIONS
+        157                     C INT *4 IUT0         ; FILE NUMBER TO REPORT ERROR OCCURENCE
+        158                     C REAL*4 EPS          ; MAXIMUM ALLOWABLE ERROR
+        159                     C INT *4 NODE   (I,IE); NODE TABLE
+        160                     C REAL*4 CM       (IP); INVERSED LUMPED MASS MATRIX
+        161                     C REAL*4 DNX    (I,IE); ELEMENT CENTER VALUE OF NX
+        162                     C REAL*4 DNY    (I,IE); ELEMENT CENTER VALUE OF NY
+        163                     C REAL*4 DNZ    (I,IE); ELEMENT CENTER VALUE OF NZ
+        164                     C REAL*4 DNXI   (I,IE); ELEMENT CENTER VALUE OF NX
+        165                     C REAL*4 DNYI   (I,IE); ELEMENT CENTER VALUE OF NX
+        166                     C REAL*4 DNZI   (I,IE); ELEMENT CENTER VALUE OF NX
+        167                     C
+        168                     C REAL*4 B        (IE); GLOBAL FORCE VECTOR
+        169                     C INT *4 NFIX         ; NUMBER OF FIX BOUNDARY NODES
+        170                     C INT *4 LPFIX    (IB); FIX BOUNDARY NODES
+        171                     C
+        172                     C INT *4 IPART        ; SUB-DOMAIN NUMBER THAT THIS TASK SHOULD TAKE/IS
+        173                     C                       TAKING CARE OF. IPART BEING SET ZERO MEANS THAT
+        174                     C                       THE PROGRAM SHOULD RUN/IS RUNNING IN SERIAL
+        175                     C                       MODE.
+        176                     C INT *4 NDOM         ; NUMBER OF THE NERIBERING SUB-DOMAINS
+        177                     C INT*4  MBPDOM       ; THE MAXIMUM NUMBER OF THE INTER-CONNECT
+        178                     C                       BOUNDARY NODES FOR ONE NEIBERING SUB-DOMAIN
+        179                     C INT *4 LDOM   (IDOM); NEIBERING SUB-DOMAIN NUMBER
+        180                     C INT *4 NBPDOM (IDOM); NUMBER OF INTER-CONNECT BOUNDARY NODES
+        181                     C                       SHARING WITH THE IDOM'TH NEIBERING SUB-DOMAIN,
+        182                     C                       LDOM(IDOM)
+        183                     C INT *4 IPSLF(I,IDOM); INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+        184                     C                       CALLING TASK'S SUB-DOMAIN, FOR THE IDOM'TH
+        185                     C                       NEIBERING SUB-DOMAIN, LDOM(IDOM)
+        186                     C INT *4 IPSND(I,IDOM); INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+        187                     C                       SUB-DOMAIN THAT IS RECEIVING THE CALLING
+        188                     C                       TASK'S RESIDUALS.
+        189                     C
+        190                     C (2) INPUT/OUTPUT
+        191                     C REAL*4 S        (IE); GLOBAL SOLUTION VECTOR (PROVIDE INITIAL GUESS)
+        192                     C
+        193                     C (3) OUTPUT
+        194                     C INT *4 NITR         ; NUMBER OF ITERATIONS DONE
+        195                     C REAL*4 RES          ; L2-NORM RESIDUAL OF THE FINAL SOLUTION VECTOR
+        196                     C INT *4 IERR         ; RETURN CODE TO REPORT ERROR OCCURRENCE
+        197                     C                   0 --- NORMAL TERMINATION
+        198                     C                   1 --- A FATAL ERROR HAS OCCURRED
+        199                     C
+        200                     C (4) WORK
+        201                     C REAL*4 RX     (I,IE); WORK REGION PASSED FOR CALLAP
+        202                     C REAL*4 RY     (I,IE); WORK REGION PASSED FOR CALLAP
+        203                     C REAL*4 R0       (IE); WORK REGION
+        204                     C REAL*4 RK       (IE); WORK REGION
+        205                     C REAL*4 PK       (IE); WORK REGION
+        206                     C REAL*4 APK      (IE); WORK REGION
+        207                     C REAL*4 ATK      (IE); WORK REGION
+        208                     C REAL*4 TK       (IE); WORK REGION
+        209                     C
+        210                     C
+        211                           IERR = 0
+        212                     C
+        213     1                     IF(MRCM.GE.MRCMAX) THEN
+        214     1                         WRITE(IUT0,*) ERMSG1
+        215     1                         IERR = 1
+        216     1                         RETURN
+        217     1                     ENDIF
+        218                     C
+        219                           NMAXRCM = NMAX/NMAXB
+        220     1                     IF(NMAXRCM.EQ.0) then
+        221     1                        RETURN
+        222     1                     ENDIF
+        223                     C
+        224                     C
+        225                     C
+        226                     C
+        227                     C
+        228                     C SET INITIAL RESIDUAL :RRCM
+        229                     C
+        230                           CALL USTSTA(24)
+        231                           CALL CALLAP(MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+        232                          *            JSET,IPRES,
+        233                          *            ME,MP,N1,N2,NE,NP,NEX,NODE,IEATTR,IPATTR,
+        234                          *            S,RRCM,PG,DNXYZP,DNXI,DNYI,DNZI,
+        235                          *            CM,X,Y,Z,OMEGA,TIMER,DT,FSMACH,ADIAG,
+        236                          *            NFRAME,UFRAME,VFRAME,WFRAME,
+        237                          *            IPART,NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,
+        238                          *            NPFIX,LPFIX,LEFIX,
+        239                          *            NPSYMT,LPSYMT,XPSYMT,YPSYMT,ZPSYMT,
+        240                          *            NPSET,LPSET1,LPSET2,LPSET3,LPSET4,
+        241                          *            COVER1,COVER2,COVER3,
+        242                          *            NPSND,LPSND,NPTSND,NPRCV,LPRCV,NPTRCV,IPSET,IPSRC,
+        243                          *            FXYZ,RX,RY,MWRK,WRKN,
+        244                          *            NMRF,IFATTR,OMGMRF,AMRF,
+        245                          *            IVOF,IMASS,RHO3D,NSP,NS,LOCAL,
+        246                          *            NFACE,LFACE,AVEC,FFA,NFINLT,LFINLT,
+        247                          *            NFFREE,LFFREE,NPFREE,LPFREE,
+        248                          *            XPFREE,YPFREE,ZPFREE,
+        249                          *            NESET,NESND,NERCV,NBESET,LBESET,
+        250                          *            LESET1,LESET2,LESET3,
+        251                          *            EOVER1,EOVER2,EOVER3,
+        252                          *            LESND,NETSND,LERCV,NETRCV,IESET,IESRC,
+        253                          *            SN,SNESET,OSBCOE,XNESET,YNESET,ZNESET,
+        254                          *            SOSP,SOSWRK,WRKOS1,WRKOS2,FESRC,FLE,
+        255                          *            MEP,NEP,IENP,JENP,
+        256                          *            IUT0,IERR, DNXYZ,NUMVALID,LSTVALID)
+        257                           CALL USTEND(24)
+        258                     C
+        259     1                     IF(IERR.NE.0) THEN
+        260     1                         WRITE(IUT0,*)
+        261     1                         WRITE(IUT0,*) ERMSGC
+        262     1                         RETURN
+        263     1                     ENDIF
+        264                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 889
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.50, ITR: 320, MVE: 6)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      RRCM, B, W1RCM
+                              <<< Loop-information  End >>>
+        265     1  pp   2v            DO 100 IE = 1 , NE
+        266     1   p   2v                RRCM(IE)   = B(IE)-RRCM(IE)
+        267     1   p   2v                W1RCM(IE)  = 0.E0
+        268     1   p   2v        100 CONTINUE
+        269                           NITR   = 0
+        270                           NITRCM = 0
+        271                     C
+        272                     C CALCULATE MAGNITUDE OF B
+        273                           BDOT = 0.E0
+        274                     C 2F/1W(1C)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1600
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        275     1  pp    v            DO 200 IE = 1 , NE
+        276     1   p    v                BDOT = BDOT+B(IE)*B(IE)
+        277     1   p    v        200 CONTINUE
+        278                     C
+        279     1                     IF(IPART.GE.1) THEN
+        280     1                         CALL DDCOM2(BDOT,BDOTA)
+        281     1                         BDOT = BDOTA
+        282     1                     ENDIF
+        283                     C
+        284                           IF(ABS(BDOT).LE.EPS0) BDOT = 1.0E0
+        285                     C
+        286                           RSDOT = 0.E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1600
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        287     1  pp    v            DO 300 IE = 1 , NE
+        288     1   p    v                RSDOT = RSDOT+RRCM(IE)*RRCM(IE)
+        289     1   p    v        300 CONTINUE
+        290                     C
+        291     1                     IF(IPART.GE.1) THEN
+        292     1                         CALL DDCOM2(RSDOT,RSDOTA)
+        293     1                         RSDOT = RSDOTA
+        294     1                     ENDIF
+        295                     C
+        296                           RES  = SQRT(RSDOT)
+        297                           RESR = RES/SQRT(BDOT)
+        298                     CCYYDEB---
+        299                     CC    WRITE(90,'(I8,2E13.5)') NITR,RES,RESR
+        300                     C     WRITE(90,*) 'RES',NITRCM,RES,RESR
+        301                     CCYYDEB---
+        302     1                     IF(RESR.LE.EPSRE) then
+        303     1                        RETURN
+        304     1                     ENDIF
+        305                     C
+        306                       350 CONTINUE
+        307                           NITR = NITR+1
+        308                     C
+        309     1                     IF(NITR.GE.MRCM) THEN
+        310     1                         NRCM = MRCM
+        311     1                     ELSE
+        312     1                         NRCM = NITR
+        313     1                     ENDIF
+        314                     C
+        315                     C
+        316                     C    COMPUTE PRODUCT OF COEFFICIENT MATRIX AND SEARCH-DIRECTION VECTOR
+        317                     C    AND INNER PRODUCT OF COMPUTED PRODUCT AND SEARCH-DIRECTION VECTOR
+        318                     C
+        319                     C
+        320                     C
+        321                     C
+        322                     C COMPUTE TEMPORARY SOLUTION OF RESIDUAL EQUATION :
+        323                     C
+        324                           CALL USTSTA(23)
+        325                           CALL BCGSXE(MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+        326                          *            ME,MP,N1,N2,NEX,NE,NP,NMAXB,EPSB,EPSRE,
+        327                          *            NODE,CM,DNXYZP,DNXI,DNYI,DNZI,
+        328                          *            RRCM,PG,
+        329                          *            NPFIX,LPFIX,LEFIX,NPSYMT,LPSYMT,XPSYMT,YPSYMT,ZPSYMT,
+        330                          *            NITRB,RESB,W1RCM,
+        331                          *            IPART,NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,
+        332                          *            WRK01,WRK02,WRK03,WRK04,WRK05,WRK06,
+        333                          *            FXYZ,RX,RY,MWRK,WRKN,
+        334                          *            ADIAG,
+        335                          *            JSET,NFRAME,IEATTR,IPATTR,
+        336                          *            X,Y,Z,OMEGA,TIMER,UFRAME,VFRAME,WFRAME,
+        337                          *            NPSET,LPSET1,LPSET2,LPSET3,LPSET4,
+        338                          *            COVER1,COVER2,COVER3,
+        339                          *            NPSND,LPSND,NPTSND,NPRCV,LPRCV,NPTRCV,
+        340                          *            IPSET,IPSRC,IPRES,DT,FSMACH,
+        341                          *            NMRF,IFATTR,OMGMRF,AMRF,
+        342                          *            IVOF,IMASS,RHO3D,NSP,NS,LOCAL,
+        343                          *            NFACE,LFACE,AVEC,FFA,NFINLT,LFINLT,
+        344                          *            NFFREE,LFFREE,NPFREE,LPFREE,
+        345                          *            XPFREE,YPFREE,ZPFREE,
+        346                          *            NESET,NESND,NERCV,NBESET,LBESET,
+        347                          *            LESET1,LESET2,LESET3,
+        348                          *            EOVER1,EOVER2,EOVER3,
+        349                          *            LESND,NETSND,LERCV,NETRCV,IESET,IESRC,
+        350                          *            SN,SNESET,OSBCOE,XNESET,YNESET,ZNESET,
+        351                          *            SOSP,SOSWRK,WRKOS1,WRKOS2,FESRC,FLE,
+        352                          *            MEP,NEP,IENP,JENP,
+        353                          *            IUT0,IERR,DNXYZ,NUMVALID,LSTVALID)
+        354                           CALL USTEND(23)
+        355     1                     IF(IERR.NE.0) THEN
+        356     1                         WRITE(IUT0,*)
+        357     1                         WRITE(IUT0,*) ERMSGC
+        358     1                         RETURN
+        359     1                     ENDIF
+        360                     C
+        361                           CALL USTSTA(24)
+        362                           CALL CALLAP(MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+        363                          *            JSET,IPRES,
+        364                          *            ME,MP,N1,N2,NE,NP,NEX,NODE,IEATTR,IPATTR,
+        365                          *            W1RCM,W2RCM,PG,DNXYZP,DNXI,DNYI,DNZI,
+        366                          *            CM,X,Y,Z,OMEGA,TIMER,DT,FSMACH,ADIAG,
+        367                          *            NFRAME,UFRAME,VFRAME,WFRAME,
+        368                          *            IPART,NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,
+        369                          *            NPFIX,LPFIX,LEFIX,
+        370                          *            NPSYMT,LPSYMT,XPSYMT,YPSYMT,ZPSYMT,
+        371                          *            NPSET,LPSET1,LPSET2,LPSET3,LPSET4,
+        372                          *            COVER1,COVER2,COVER3,
+        373                          *            NPSND,LPSND,NPTSND,NPRCV,LPRCV,NPTRCV,IPSET,IPSRC,
+        374                          *            FXYZ,RX,RY,MWRK,WRKN,
+        375                          *            NMRF,IFATTR,OMGMRF,AMRF,
+        376                          *            IVOF,IMASS,RHO3D,NSP,NS,LOCAL,
+        377                          *            NFACE,LFACE,AVEC,FFA,NFINLT,LFINLT,
+        378                          *            NFFREE,LFFREE,NPFREE,LPFREE,
+        379                          *            XPFREE,YPFREE,ZPFREE,
+        380                          *            NESET,NESND,NERCV,NBESET,LBESET,
+        381                          *            LESET1,LESET2,LESET3,
+        382                          *            EOVER1,EOVER2,EOVER3,
+        383                          *            LESND,NETSND,LERCV,NETRCV,IESET,IESRC,
+        384                          *            SN,SNESET,OSBCOE,XNESET,YNESET,ZNESET,
+        385                          *            SOSP,SOSWRK,WRKOS1,WRKOS2,FESRC,FLE,
+        386                          *            MEP,NEP,IENP,JENP,
+        387                          *            IUT0,IERR,DNXYZ,NUMVALID,LSTVALID)
+        388                           CALL USTEND(24)
+        389                     C
+        390     1                     IF(IERR.NE.0) THEN
+        391     1                         WRITE(IUT0,*)
+        392     1                         WRITE(IUT0,*) ERMSGC
+        393     1                         RETURN
+        394     1                     ENDIF
+        395                     C
+        396                     C
+        397                     C  UPDATE SEARCH VECTORS AND PRODUCTION OF MATRIX AND SERACH VECTORS
+        398                     C
+        399                     C
+        400                     C 0F/6W(6S)
+        401                     !CDIR LOOPCNT=6
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      APRCM, PRCM
+                              <<< Loop-information  End >>>
+        402     1                     DO 410 J = NRCM, 2, -1
+        403     1               !CDIR VECTOR
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 843
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.33, ITR: 160, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      APRCM, PRCM
+                              <<< Loop-information  End >>>
+        404     2  pp   2v                DO 400 IE = 1 , NE
+        405     2   p   2v                    PRCM (IE,J) = PRCM (IE,J-1)
+        406     2   p   2v                    APRCM(IE,J) = APRCM(IE,J-1)
+        407     2   p   2v        400     CONTINUE
+        408     1                 410 CONTINUE
+        409                     C
+        410                     C     J = 1
+        411                     C 0F/2W(2C)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 942
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.33, ITR: 160, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      W2RCM, W1RCM, APRCM, PRCM
+                              <<< Loop-information  End >>>
+        412     1  pp   2v            DO 500 IE = 1 , NE
+        413     1   p   2v                PRCM (IE,1) = W1RCM(IE)
+        414     1   p   2v                APRCM(IE,1) = W2RCM(IE)
+        415     1   p   2v        500 CONTINUE
+        416                     C
+        417                     C
+        418                     C  INITIALIZE FOR RESIDUAL MINIMIZE EQUATION
+        419                     C
+        420                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      ARCM
+                              <<< Loop-information  End >>>
+        421     1   p   4v            DO 610 I = 1 , NRCM
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 5
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<< Loop-information  End >>>
+        422     2  pp   4                 DO 600 J = 1 , NRCM
+        423     2   p   4v                    ARCM(I,J) = 0.E0
+        424     2   p   4         600     CONTINUE
+        425     1   p             610 CONTINUE
+        426                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      BRCM
+                              <<< Loop-information  End >>>
+        427     1  pp   4v            DO 700 I = 1 , NRCM
+        428     1   p   4v                BRCM(I) = 0.E0
+        429     1   p   4v        700 CONTINUE
+        430                     C
+        431                     C
+        432                     C  COMPUTE COEFFICIENTS OF RESIDUAL MINIMIZE EQUATION
+        433                     C
+        434                     C
+        435                     C 34F/36W(32S+4C)
+        436                     !CDIR NOVECTOR
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<< Loop-information  End >>>
+        437     1  pp                 DO 820 I = 1 , NRCM
+        438     1               !CDIR NOVECTOR
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      APRCM
+                              <<< Loop-information  End >>>
+        439     2   p                     DO 810 J = 1 , NRCM
+        440     2   p                         ATEMP = 0.E0
+        441     2               !CDIR VECTOR
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.81, ITR: 384, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      APRCM
+                              <<< Loop-information  End >>>
+        442     3   p   8v                    DO 800 IE = 1 , NE
+        443     3   p   8v                         ATEMP = ATEMP+APRCM(IE,I)*APRCM(IE,J)
+        444     3   p   8v        800         CONTINUE
+        445     2   p                         ARCM(I,J) = ATEMP
+        446     2   p             810     CONTINUE
+        447     1   p             820 CONTINUE
+        448                     C  I == 1
+        449                     !CDIR NOVECTOR
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 4
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      RRCM, APRCM
+                              <<< Loop-information  End >>>
+        450     1  pp                 DO 910 J = 1 , NRCM
+        451     1   p                     BTEMP = 0.E0
+        452     1               !CDIR VECTOR
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.81, ITR: 384, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      RRCM, APRCM
+                              <<< Loop-information  End >>>
+        453     2   p   8v                DO 900 IE = 1 , NE
+        454     2   p   8v                     BTEMP = BTEMP+APRCM(IE,J)*RRCM(IE)
+        455     2   p   8v        900     CONTINUE
+        456     1   p                     BRCM(J) = BTEMP
+        457     1   p             910 CONTINUE
+        458                     C
+        459     1                     IF(IPART.GE.1) THEN
+        460     2                         DO 1020 J = 1 , NRCM
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      ARCM
+                              <<< Loop-information  End >>>
+        461     3   s    s                    DO 1010 I = 1 , NRCM
+        462     3   s    s                        CALL DDCOM2(ARCM(I,J),BUF)
+        463     3   s    s                        ARCM(I,J) = BUF
+        464     3   s    s       1010         CONTINUE
+        465     2                             CALL DDCOM2(BRCM(J),BUF)
+        466     2                             BRCM(J) = BUF
+        467     2                1020     CONTINUE
+        468     1                     ENDIF
+        469                     C
+        470                     C
+        471                     C  SOLVE RESIDUAL MINIMIZE EQUATION :BRCM
+        472                     C
+        473                     C
+        474                           CALL MATGAU(MRCM,NRCM,ARCM,BRCM,W1RCM,LRCM,IUT0,IERR)
+        475                     C
+        476     1                     IF(IERR.NE.0) THEN
+        477     1                         WRITE(IUT0,*)ERMSGC
+        478     1                         RETURN
+        479     1                     ENDIF
+        480                     C
+        481                     C
+        482                     C  UPDATE SEAECH VECTOR
+        483                     C
+        484                     C
+        485                     C J == 1
+        486                     C 1F/1W(1S)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1334
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.00, ITR: 512, MVE: 9)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      PRCM
+                              <<< Loop-information  End >>>
+        487     1  pp   2v            DO 1100 IE = 1 , NE
+        488     1   p   2v                PRCM(IE,1) = BRCM(1)*PRCM(IE,1)
+        489     1   p   2v       1100 CONTINUE
+        490                     C
+        491                     C 6F/6W(6S)
+        492                     *POPTION INDEP(PRCM,BRCM)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 889
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      PRCM
+                              <<< Loop-information  End >>>
+        493     1  pp   2v            DO 1210 IE = 1 , NE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<< Loop-information  End >>>
+        494     2       2                 DO 1200 J = 2, NRCM
+        495     2   p   2v                    PRCM(IE,1) = PRCM(IE,1)+BRCM(J)*PRCM(IE,J)
+        496     2       2        1200     CONTINUE
+        497     1       2v       1210 CONTINUE
+        498                     C
+        499                     C
+        500                     C  UPDATE SOLUTION VECTOR
+        501                     C
+        502                     C
+        503                     C 1F/2W(1C+1S)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1067
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.00, ITR: 384, MVE: 7)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      PRCM, S
+                              <<< Loop-information  End >>>
+        504     1  pp   2v            DO 1300 IE = 1 , NE
+        505     1   p   2v                S(IE) = S(IE)+PRCM(IE,1)
+        506     1   p   2v       1300 CONTINUE
+        507                     C
+        508                     C
+        509                     C
+        510                     C  COMPUTE RESIDUAL
+        511                     C
+        512                     C
+        513                           CALL USTSTA(24)
+        514                           CALL CALLAP(MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+        515                          *            JSET,IPRES,
+        516                          *            ME,MP,N1,N2,NE,NP,NEX,NODE,IEATTR,IPATTR,
+        517                          *            S,RRCM,PG,DNXYZP,DNXI,DNYI,DNZI,
+        518                          *            CM,X,Y,Z,OMEGA,TIMER,DT,FSMACH,ADIAG,
+        519                          *            NFRAME,UFRAME,VFRAME,WFRAME,
+        520                          *            IPART,NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,
+        521                          *            NPFIX,LPFIX,LEFIX,
+        522                          *            NPSYMT,LPSYMT,XPSYMT,YPSYMT,ZPSYMT,
+        523                          *            NPSET,LPSET1,LPSET2,LPSET3,LPSET4,
+        524                          *            COVER1,COVER2,COVER3,
+        525                          *            NPSND,LPSND,NPTSND,NPRCV,LPRCV,NPTRCV,IPSET,IPSRC,
+        526                          *            FXYZ,RX,RY,MWRK,WRKN,
+        527                          *            NMRF,IFATTR,OMGMRF,AMRF,
+        528                          *            IVOF,IMASS,RHO3D,NSP,NS,LOCAL,
+        529                          *            NFACE,LFACE,AVEC,FFA,NFINLT,LFINLT,
+        530                          *            NFFREE,LFFREE,NPFREE,LPFREE,
+        531                          *            XPFREE,YPFREE,ZPFREE,
+        532                          *            NESET,NESND,NERCV,NBESET,LBESET,
+        533                          *            LESET1,LESET2,LESET3,
+        534                          *            EOVER1,EOVER2,EOVER3,
+        535                          *            LESND,NETSND,LERCV,NETRCV,IESET,IESRC,
+        536                          *            SN,SNESET,OSBCOE,XNESET,YNESET,ZNESET,
+        537                          *            SOSP,SOSWRK,WRKOS1,WRKOS2,FESRC,FLE,
+        538                          *            MEP,NEP,IENP,JENP,
+        539                          *            IUT0,IERR, DNXYZ,NUMVALID,LSTVALID)
+        540                           CALL USTEND(24)
+        541                     C
+        542     1                     IF(IERR.NE.0) THEN
+        543     1                         WRITE(IUT0,*)
+        544     1                         WRITE(IUT0,*) ERMSGC
+        545     1                         RETURN
+        546     1                     ENDIF
+        547                     C
+        548                     C
+        549                     C 1F/2W(2C)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1067
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.00, ITR: 384, MVE: 7)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      RRCM, B
+                              <<< Loop-information  End >>>
+        550     1  pp   2v            DO 1400 IE = 1 , NE
+        551     1   p   2v                RRCM(IE) = B(IE)-RRCM(IE)
+        552     1   p   2v       1400 CONTINUE
+        553                     C
+        554                     C 2F/1W(1C)
+        555                           RSDOT = 0.E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1600
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        556     1  pp    v            DO 1500 IE = 1 , NE
+        557     1   p    v                RSDOT = RSDOT+RRCM(IE)*RRCM(IE)
+        558     1   p    v       1500 CONTINUE
+        559                     C
+        560     1                     IF(IPART.GE.1) THEN
+        561     1                         CALL DDCOM2(RSDOT,RSDOTA)
+        562     1                         RSDOT = RSDOTA
+        563     1                     ENDIF
+        564                     C
+        565                     C
+        566                     C
+        567                           RES  = SQRT(RSDOT)
+        568                           RESR = RES/SQRT(BDOT)
+        569                     CCYYDEB---
+        570                     CC    WRITE(90,'(I8,2E13.5)') NITR,RES,RESR
+        571                     C      WRITE(90,*) 'RES',NITRCM,RES,RESR
+        572                     CCYYDEB---
+        573                     C
+        574                           NITRCM = NITRCM+NITRB
+        575     1                     IF(RESR.LE.EPSRE.OR.RES.LE.EPS) then
+        576     1                        RETURN
+        577     1                     ENDIF
+        578     1                     IF(NITR.EQ.NMAXRCM) then
+        579     1                        RETURN
+        580     1                     ENDIF
+        581                     C
+        582                     C
+        583                     C  COMPUTE PRODUCTION OF MATRIX AND TEPORARY SOLUTION
+        584                     C
+        585                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1455
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.00, ITR: 320, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      PRCM, W1RCM
+                              <<< Loop-information  End >>>
+        586     1  pp   4v            DO 1600 IE = 1 , NE
+        587     1   p   4v                W1RCM(IE) = PRCM(IE,1)
+        588     1   p   4v       1600 CONTINUE
+        589                     C
+        590                           CALL USTSTA(24)
+        591                           CALL CALLAP(MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+        592                          *            JSET,IPRES,
+        593                          *            ME,MP,N1,N2,NE,NP,NEX,NODE,IEATTR,IPATTR,
+        594                          *            W1RCM,W2RCM,PG,DNXYZP,DNXI,DNYI,DNZI,
+        595                          *            CM,X,Y,Z,OMEGA,TIMER,DT,FSMACH,ADIAG,
+        596                          *            NFRAME,UFRAME,VFRAME,WFRAME,
+        597                          *            IPART,NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,
+        598                          *            NPFIX,LPFIX,LEFIX,
+        599                          *            NPSYMT,LPSYMT,XPSYMT,YPSYMT,ZPSYMT,
+        600                          *            NPSET,LPSET1,LPSET2,LPSET3,LPSET4,
+        601                          *            COVER1,COVER2,COVER3,
+        602                          *            NPSND,LPSND,NPTSND,NPRCV,LPRCV,NPTRCV,IPSET,IPSRC,
+        603                          *            FXYZ,RX,RY,MWRK,WRKN,
+        604                          *            NMRF,IFATTR,OMGMRF,AMRF,
+        605                          *            IVOF,IMASS,RHO3D,NSP,NS,LOCAL,
+        606                          *            NFACE,LFACE,AVEC,FFA,NFINLT,LFINLT,
+        607                          *            NFFREE,LFFREE,NPFREE,LPFREE,
+        608                          *            XPFREE,YPFREE,ZPFREE,
+        609                          *            NESET,NESND,NERCV,NBESET,LBESET,
+        610                          *            LESET1,LESET2,LESET3,
+        611                          *            EOVER1,EOVER2,EOVER3,
+        612                          *            LESND,NETSND,LERCV,NETRCV,IESET,IESRC,
+        613                          *            SN,SNESET,OSBCOE,XNESET,YNESET,ZNESET,
+        614                          *            SOSP,SOSWRK,WRKOS1,WRKOS2,FESRC,FLE,
+        615                          *            MEP,NEP,IENP,JENP,
+        616                          *            IUT0,IERR,DNXYZ,NUMVALID,LSTVALID)
+        617                           CALL USTEND(24)
+        618                     C
+        619     1                     IF(IERR.NE.0) THEN
+        620     1                         WRITE(IUT0,*)
+        621     1                         WRITE(IUT0,*) ERMSGC
+        622     1                         RETURN
+        623     1                     ENDIF
+        624                     C 0F/1W(1C)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1143
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.20, ITR: 160, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      W2RCM, APRCM, W1RCM
+                              <<< Loop-information  End >>>
+        625     1  pp   2v            DO 1700 IE = 1 , NE
+        626     1   p   2v                APRCM(IE,1) = W2RCM(IE)
+        627     1   p   2v                W1RCM(IE)   = 0.E0
+        628     1   p   2v       1700 CONTINUE
+        629                     C
+        630                     C     RETURN IF ITERATION NUMBER HAS REACHED THE GIVEN MAXIMUM NUMBER,
+        631                     C    OTHERWISE CONTINUE ITERATIONS UNTIL SOLUTION IS CONVERGED
+        632                     C
+        633                     C
+        634                           GO TO 350
+        635                     C
+        636                           END
+
+ Diagnostic messages: program name(RCMELM)
+   jwd8220o-i  "rcmelm.f", line 1: 副作用の可能性のある最適化を行いました。
+   jwd5001p-i  "rcmelm.f", line 265: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "rcmelm.f", line 265: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "rcmelm.f", line 265: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "rcmelm.f", line 265: ループの繰返し数が320回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5004p-i  "rcmelm.f", line 275: リダクション演算を含むDOループを並列化しました。(名前:IE)
+   jwd6004s-i  "rcmelm.f", line 275: リダクション演算を含むDOループをSIMD化しました。(名前:IE)
+   jwd5004p-i  "rcmelm.f", line 287: リダクション演算を含むDOループを並列化しました。(名前:IE)
+   jwd6004s-i  "rcmelm.f", line 287: リダクション演算を含むDOループをSIMD化しました。(名前:IE)
+   jwd8206o-i  "rcmelm.f", line 297: 除算を逆数の乗算に変更しました。
+   jwd5132p-i  "rcmelm.f", line 306: DO WHILE文、DO UNTIL文、およびIF/GO TO文によるループは並列化できません。
+   jwd5208p-i  "rcmelm.f", line 402: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:PRCM)
+   jwd5208p-i  "rcmelm.f", line 402: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:APRCM)
+   jwd5201p-i  "rcmelm.f", line 402: データの引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:PRCM)
+   jwd5201p-i  "rcmelm.f", line 402: データの引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:APRCM)
+   jwd5001p-i  "rcmelm.f", line 404: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "rcmelm.f", line 404: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "rcmelm.f", line 404: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "rcmelm.f", line 404: ループの繰返し数が160回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "rcmelm.f", line 412: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "rcmelm.f", line 412: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "rcmelm.f", line 412: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "rcmelm.f", line 412: ループの繰返し数が160回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8211o-i  "rcmelm.f", line 421: ループを入れ換えました。(行:422)
+   jwd6001s-i  "rcmelm.f", line 421: このDOループをSIMD化しました。(名前:I)
+   jwd8663o-i  "rcmelm.f", line 421: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "rcmelm.f", line 421: ループを展開数4回でアンローリングしました。
+   jwd8211o-i  "rcmelm.f", line 422: ループを入れ換えました。(行:421)
+   jwd5001p-i  "rcmelm.f", line 422: このDOループを並列化しました。(名前:J)
+   jwd5001p-i  "rcmelm.f", line 427: このDOループを並列化しました。(名前:I)
+   jwd6001s-i  "rcmelm.f", line 427: このDOループをSIMD化しました。(名前:I)
+   jwd8663o-i  "rcmelm.f", line 427: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "rcmelm.f", line 427: ループを展開数4回でアンローリングしました。
+   jwd5001p-i  "rcmelm.f", line 437: このDOループを並列化しました。(名前:I)
+   jwd6004s-i  "rcmelm.f", line 442: リダクション演算を含むDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "rcmelm.f", line 442: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "rcmelm.f", line 442: ループの繰返し数が384回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8208o-i  "rcmelm.f", line 443: ループ内の総和または乗積演算の計算方法を変更しました。
+   jwd5001p-i  "rcmelm.f", line 450: このDOループを並列化しました。(名前:J)
+   jwd6004s-i  "rcmelm.f", line 453: リダクション演算を含むDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "rcmelm.f", line 453: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "rcmelm.f", line 453: ループの繰返し数が384回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8208o-i  "rcmelm.f", line 454: ループ内の総和または乗積演算の計算方法を変更しました。
+   jwd5122p-i  "rcmelm.f", line 460: DOループ内に、自動並列化の制約となる手続引用が存在します。
+   jwd8664o-i  "rcmelm.f", line 461: ループ内に関数呼出しなどの最適化対象外の命令があるため、ソフトウェアパイプライニングを適用できません。
+   jwd5208p-i  "rcmelm.f", line 462: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:BUF)
+   jwd5208p-i  "rcmelm.f", line 462: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:ARCM)
+   jwd5122p-i  "rcmelm.f", line 462: DOループ内に、自動並列化の制約となる手続引用が存在します。
+   jwd6208s-i  "rcmelm.f", line 462: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループはSIMD化できません。(名前:BUF)
+   jwd6208s-i  "rcmelm.f", line 462: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループはSIMD化できません。(名前:ARCM)
+   jwd6122s-i  "rcmelm.f", line 462: DOループ内に、SIMD化の制約となる手続引用が存在します。
+   jwd6202s-i  "rcmelm.f", line 464: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:I)
+   jwd5001p-i  "rcmelm.f", line 487: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "rcmelm.f", line 487: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "rcmelm.f", line 487: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "rcmelm.f", line 487: ループの繰返し数が512回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8211o-i  "rcmelm.f", line 493: ループを入れ換えました。(行:494)
+   jwd5001p-i  "rcmelm.f", line 493: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "rcmelm.f", line 493: このDOループをSIMD化しました。(名前:IE)
+   jwd8663o-i  "rcmelm.f", line 493: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "rcmelm.f", line 493: ループを展開数2回でアンローリングしました。
+   jwd8211o-i  "rcmelm.f", line 494: ループを入れ換えました。(行:493)
+   jwd5208p-i  "rcmelm.f", line 494: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:PRCM)
+   jwd5001p-i  "rcmelm.f", line 504: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "rcmelm.f", line 504: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "rcmelm.f", line 504: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "rcmelm.f", line 504: ループの繰返し数が384回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "rcmelm.f", line 550: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "rcmelm.f", line 550: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "rcmelm.f", line 550: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "rcmelm.f", line 550: ループの繰返し数が384回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5004p-i  "rcmelm.f", line 556: リダクション演算を含むDOループを並列化しました。(名前:IE)
+   jwd6004s-i  "rcmelm.f", line 556: リダクション演算を含むDOループをSIMD化しました。(名前:IE)
+   jwd8206o-i  "rcmelm.f", line 568: 除算を逆数の乗算に変更しました。
+   jwd5001p-i  "rcmelm.f", line 586: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "rcmelm.f", line 586: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "rcmelm.f", line 586: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "rcmelm.f", line 586: ループの繰返し数が320回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "rcmelm.f", line 625: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "rcmelm.f", line 625: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "rcmelm.f", line 625: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "rcmelm.f", line 625: ループの繰返し数が160回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+
+ Procedure information
+   Lines      : 636
+   Statements : 222
+   Stack(byte): 46320
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 636
+   Total statements : 222
+   Total stack(byte): 46320
+   Total prefetch num: 0
+

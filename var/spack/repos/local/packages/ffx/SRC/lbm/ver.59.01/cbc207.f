@@ -1,0 +1,17 @@
+      SUBROUTINE CBC207(NG,NP,BUFSND,FBC2)
+      IMPLICIT NONE
+      INTEGER*4 NG,NP
+      REAL*8    FBC2(NP,NG+1)
+      REAL*8    BUFSND(*)
+      INTEGER*4 I,IP,II
+C
+      II=0
+      DO 1000 I =1,NG+1
+      DO 1100 IP=1,NP
+          II=II+1
+          BUFSND(II)=FBC2(IP,I)
+ 1100 CONTINUE
+ 1000 CONTINUE
+C
+      RETURN
+      END

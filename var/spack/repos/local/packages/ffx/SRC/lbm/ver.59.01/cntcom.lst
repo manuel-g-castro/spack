@@ -1,0 +1,208 @@
+
+ Fujitsu Fortran Version 4.8.1  Thu Nov 24 16:46:03 2022
+
+ Compilation information
+   Current directory : /vol0005/mdt2/home/u10588/SRC/lbm/ver.59.01
+   Source file       : cntcom.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -Nlst=t -Cpp -Cfpp -c -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Knointentopt
+   Cpp options          : -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Dcputime -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=8 -D__FRT_patchlevel__=1 -D__FRT_version__="4.8.1" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Knoarray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nlibomp -Nline -Nlst -Nlst=p -Nlst=t
+                          -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "CNTCOM"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE CNTCOM(IPART,NG,NP,NC,MBC,NBC,LBC,
+          2                          *                  MPB,NDOM,LDOM,NBPSND,NBPRCV,IUT6)
+          3                           IMPLICIT NONE
+          4                           INTEGER*4 IPART,NG,NP,NC,MBC,NBC(NC),LBC(5,MBC,NC),MPB,NDOM,
+          5                          *          LDOM(NDOM),IUT6
+          6                           INTEGER*4 NBPSND(NDOM),NBPRCV(NDOM)
+          7                     C
+          8                           INTEGER*4 IBC,IC,ID,JPART,IDOM,IERR
+          9                     C
+         10                     C     ====FUNCTION====
+         11                     C     COUNT NUMBER OF B.C. DATA
+         12                     C
+         13                     C     ====VARIABLES LIST====
+         14                     C[IN]
+         15                     C     IPART          :DOMAIN NUMBER THAT THIS TASK SHOULD COMPUTE/IS COMPUTING.
+         16                     C                     IPART BEING SET ZERO MEANS THAT THE PROGRAM SHOULD RUN/IS
+         17                     C                     RUNNING IN SERIAL MODE.
+         18                     C     NG             :CUBE SIZE (=2^N)
+         19                     C     NP             :NUMBER OF PARTICLES (=15)
+         20                     C     NC             :NUMBER OF CUBES IN SUB-DOMAIN
+         21                     C     MBC            :MAX. NUMBER OF B.C GROUPS IN CUBES (=152)
+         22                     C     NBC(IC)        :NUMBER OF B.C. GROUPS IN CUBES
+         23                     C     LLEVEL(IC)     :LEVEL OF CUBES, WHICH INDICATE THE GRID RESOLUTION.
+         24                     C                     LEVEL=1 CORRESPONTDS THE FINEST GRID SIZE. A GRID SIZE
+         25                     C                     WILL BE TWICE WITH ONE INCREMENT OF THE LEVEL.
+         26                     C     LBC(II,IBC,IC) :ATTRIBUTE DATA OF B.C. GROUPS
+         27                     C                      II=1 B.C. GROUP ID (1-26) IN AN ADJACENT CUBE
+         28                     C                      II=2 SUB-DOMAIN NUMBER OF AN ADJACENT CUBE
+         29                     C                      II=3 CUBE NUMBER OF AN ADJACENT CUBE IN A DOMAIN
+         30                     C                      II=4 RELATIVE LEVEL OF AN ADJACENT CUBE
+         31                     C                       (-1: FINE, 0:SAME, 1:COARSE)
+         32                     C                      II=5 POSITION IN COARSER CUBE
+         33                     C     NDOM           :NUMBER OF THE NEIGHBORING SUB-DOMAINS
+         34                     C     LDOM(IDOM)     :NEIGHBORING SUB-DOMAIN NUMBER
+         35                     C
+         36                     C[OUT]
+         37                     C    MPB             :MAX. OF NPBRCV(IDOM) AND NBPSND(IDOM)
+         38                     C    NBPRCV(IDOM)    :NUMBER OF DATA TO BE RECEIVED FROM THE NEIGHBORING SUB-DOMAINS
+         39                     C    NBPSND(IDOM)    :NUMBER OF DATA TO BE RECEIVED FROM THE NEIGHBORING SUB-DOMAINS
+         40                     C
+         41                     
+         42                           IERR=0
+         43                     C
+         44                           IF(IPART.EQ.0) RETURN
+         45                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NBPSND
+                              <<< Loop-information  End >>>
+         46     1  pp   4v            DO 100 IDOM=1,NDOM
+         47     1   p   4v                NBPSND(IDOM)=1
+         48     1   p   4v        100 CONTINUE
+         49                     C
+         50                     C
+         51     1                     DO 1000 IC=1,NC
+         52     2                     DO 1100 IBC=1,NBC(IC)
+         53     2                         ID    =LBC(1,IBC,IC)
+         54     2                         JPART =LBC(2,IBC,IC)
+         55     2               C
+         56     2                         IF(IPART.EQ.JPART)  GOTO 1100
+         57     2               C
+         58     2               CC[OTHER DOMAIN]
+         59     2               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LDOM
+                              <<< Loop-information  End >>>
+         60     3                          DO 1200 IDOM=1,NDOM
+         61     3                              IF(LDOM(IDOM).EQ.JPART) GOTO 1300
+         62     3                1200      CONTINUE
+         63     2                1300      CONTINUE
+         64     2               C
+         65     2                             NBPSND(IDOM)=NBPSND(IDOM)+4
+         66     2               C
+         67     3                             IF(ID.LE.6) THEN
+         68     3               C             FACE-CONNECTION
+         69     3                                 NBPSND(IDOM)=NBPSND(IDOM)+NP*(NG+1)*(NG+1)
+         70     3                             ELSE IF (ID.GE.7 .AND. ID.LE.18) THEN
+         71     3               C             EDGE-CONNECTION
+         72     3                                 NBPSND(IDOM)=NBPSND(IDOM)+NP*(NG+1)
+         73     3                             ELSE
+         74     3               C             POINT-CONNECTION
+         75     3                                 NBPSND(IDOM)=NBPSND(IDOM)+NP
+         76     3                             ENDIF
+         77     2               C
+         78     2                1100      CONTINUE
+         79     1                1000  CONTINUE
+         80                     C
+         81                               MPB=0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 800
+                              <<< Loop-information  End >>>
+         82     1  pp    s                DO 2000 IDOM=1,NDOM
+         83     1   p    v                    IF(MPB.LT.NBPSND(IDOM)) MPB=NBPSND(IDOM)
+         84     1   p    s       2000     CONTINUE
+         85                     C
+         86                               CALL DDCOM1(NDOM,LDOM,NBPSND,NBPRCV,IERR)
+         87                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 800
+                              <<< Loop-information  End >>>
+         88     1  pp    s                DO 2100 IDOM=1,NDOM
+         89     1   p    v                    IF(MPB.LT.NBPRCV(IDOM)) MPB=NBPRCV(IDOM)
+         90     1   p    s       2100     CONTINUE
+         91                     C
+         92                           RETURN
+         93                           END
+
+ Diagnostic messages: program name(CNTCOM)
+   jwd2008i-i  "cntcom.f", line 1: Dummy argument 'IUT6' not used in this subprogram.
+   jwd5001p-i  "cntcom.f", line 46: DO loop with DO variable 'IDOM' is parallelized.
+   jwd6001s-i  "cntcom.f", line 46: SIMD conversion is applied to DO loop with DO variable 'IDOM'.
+   jwd8663o-i  "cntcom.f", line 46: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "cntcom.f", line 46: Loop unrolled 4 times.
+   jwd5208p-i  "cntcom.f", line 51: DO loop is not parallelized: the assign-refer order of 'NBPSND' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "cntcom.f", line 52: DO loop is not parallelized: the assign-refer order of 'NBPSND' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5131p-i  "cntcom.f", line 60: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "cntcom.f", line 60: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "cntcom.f", line 60: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+   jwd5004p-i  "cntcom.f", line 82: DO loop with DO variable 'IDOM' is parallelized. The DO loop contains the reduction operation.
+   jwd6229s-i  "cntcom.f", line 82: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd6228s-i  "cntcom.f", line 83: SIMD conversion cannot be applied to DO loop: an assign-refer order of data in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5004p-i  "cntcom.f", line 88: DO loop with DO variable 'IDOM' is parallelized. The DO loop contains the reduction operation.
+   jwd6229s-i  "cntcom.f", line 88: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd6228s-i  "cntcom.f", line 89: SIMD conversion cannot be applied to DO loop: an assign-refer order of data in a SIMD execution may differ from the assign-refer order in the serial execution.
+
+ Procedure information
+   Lines      : 93
+   Statements : 39
+   Stack(byte): 28144
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 93
+   Total statements : 39
+   Total stack(byte): 28144
+   Total prefetch num: 0
+

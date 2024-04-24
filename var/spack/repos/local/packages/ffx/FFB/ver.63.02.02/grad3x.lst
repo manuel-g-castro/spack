@@ -1,0 +1,690 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:53:03 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : grad3x.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "GRAD3X"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE GRAD3X(MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+          2                          *                  JSET,ICAVI,
+          3                          *                  ME,MP,N1,N2,NE,NP,NEX,NODE,IEATTR,IPATTR,
+          4                          *                  S,DNXYZP,CM,X,Y,Z,OMEGA,TIMER,ADIAG,
+          5                          *                  NFRAME,UFRAME,VFRAME,WFRAME,
+          6                          *                  IPART,NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,
+          7                          *                  NPFIX,LPFIX,LEFIX,
+          8                          *                  NPSYMT,LPSYMT,XPSYMT,YPSYMT,ZPSYMT,
+          9                          *                  NPSET,LPSET1,LPSET2,LPSET3,LPSET4,
+         10                          *                  COVER1,COVER2,COVER3,
+         11                          *                  NPSND,LPSND,NPTSND,
+         12                          *                  NPRCV,LPRCV,NPTRCV,IPSET,IPSRC,
+         13                          *                  FXYZ,RX,RY,MWRK,WRKN,
+         14                          *                  NMRF,IFATTR,OMGMRF,AMRF,
+         15                          *                  IVOF,IMASS,RHO3D,NSP,NS,LOCAL,
+         16                          *                  NFACE,LFACE,AVEC,FFA,NFINLT,LFINLT,
+         17                          *                  NFFREE,LFFREE,NPFREE,LPFREE,
+         18                          *                  XPFREE,YPFREE,ZPFREE,
+         19                          *                  NESET,NESND,NERCV,NBESET,LBESET,
+         20                          *                  LESET1,LESET2,LESET3,
+         21                          *                  EOVER1,EOVER2,EOVER3,
+         22                          *                  LESND,NETSND,LERCV,NETRCV,IESET,IESRC,
+         23                          *                  SN,SNESET,OSBCOE,XNESET,YNESET,ZNESET,
+         24                          *                  SOSP,SOSWRK,WRKOS1,WRKOS2,
+         25                          *                  MEP,NEP,IENP,JENP,
+         26                          *                  IUT0,IERR,NUMVALID,LSTVALID)
+         27                           IMPLICIT NONE
+         28                     C
+         29                     CCCC  [INPUT:LOOP]
+         30                           INTEGER*4 MCOLOR,MCPART
+         31                           INTEGER*4 NCOLOR(4),NCPART(MCOLOR,4),LLOOP(MCPART,MCOLOR,4)
+         32                     C
+         33                     CCCC  [INPUT]
+         34                           INTEGER*4 JSET,ICAVI,
+         35                          *          ME,MP,N1,N2,NE,NP,NEX(8),NODE(N2,NE),
+         36                          *          NFRAME,IEATTR(NE),IPATTR(NP),IUT0
+         37                           INTEGER*4 MEP,NEP(NP),IENP(MEP,NP),JENP(MEP,NP)
+         38                           REAL*4    S(ME),DNXYZP(MEP,3,NP),CM(NP),
+         39                          *          X(NP),Y(NP),Z(NP),OMEGA,TIMER,ADIAG(NP),
+         40                          *          UFRAME(NFRAME),VFRAME(NFRAME),WFRAME(NFRAME)
+         41                     C
+         42                     CCC [INPUT:INTER CONNECT NODES]
+         43                           INTEGER*4 IPART,NDOM,MBPDOM,
+         44                          *          LDOM(NDOM),NBPDOM(NDOM),
+         45                          *          IPSLF(MBPDOM,NDOM),IPSND(MBPDOM,NDOM)
+         46                     C
+         47                     CCCC  [INPUT:OVERSET NODE DATA]
+         48                           INTEGER*4  NPSET,NPSND,NPRCV,
+         49                          *           LPSET1(NPSET),LPSET2(NPSET),
+         50                          *           LPSET3(NPSET),LPSET4(NPSET),
+         51                          *           LPSND(NDOM),NPTSND(NDOM),LPRCV(NDOM),NPTRCV(NDOM),
+         52                          *           IPSET(MBPDOM,NDOM),IPSRC(MBPDOM,NDOM)
+         53                           REAL*4     COVER1(NPSET),COVER2(NPSET),COVER3(NPSET)
+         54                     C
+         55                     CCCC  [INPUT:OVERSET ELEMENT DATA]
+         56                           INTEGER*4 NESET,NESND,NERCV,NBESET,LBESET(2,NBESET),
+         57                          *          LESET1(NESET),LESET2(NESET),LESET3(NESET),
+         58                          *          LESND(NDOM),NETSND(NDOM),LERCV(NDOM),NETRCV(NDOM),
+         59                          *          IESET(MBPDOM,NDOM),IESRC(MBPDOM,NDOM)
+         60                           REAL*4    EOVER1(NESET),EOVER2(NESET),EOVER3(NESET),
+         61                          *          SN(N1,NE),SNESET(N1,NE),OSBCOE(NP),
+         62                          *          XNESET(NBESET),YNESET(NBESET),ZNESET(NBESET),
+         63                          *          SOSP(NP),SOSWRK(NE),WRKOS1(NE),WRKOS2(NE)
+         64                     C
+         65                     CCC [INPUT:B.C. NODES]
+         66                           INTEGER*4 NPFIX,LPFIX(NPFIX),LEFIX(NE),
+         67                          *          NPSYMT,LPSYMT(NPSYMT)
+         68                           REAL*4    XPSYMT(NPSYMT),YPSYMT(NPSYMT),ZPSYMT(NPSYMT)
+         69                     C
+         70                     C     [INPUT:VOF]
+         71                           INTEGER*4 IVOF,IMASS,NFACE,NSP,NS,NFINLT,NFFREE,NPFREE
+         72                           INTEGER*4 LOCAL,LFACE,LFINLT,LFFREE,LPFREE(NPFREE)
+         73                           REAL*4    RHO3D(NE),AVEC,FFA,
+         74                          *          XPFREE(NPFREE),YPFREE(NPFREE),ZPFREE(NPFREE)
+         75                     C
+         76                     C     [INPUT:MRF]
+         77                           INTEGER*4 NMRF
+         78                           INTEGER*4 IFATTR(*)
+         79                           REAL*4    OMGMRF(NMRF),AMRF(3,NMRF)
+         80                     C
+         81                     CCC [OUTPUT]
+         82                           INTEGER*4 IERR
+         83                           REAL*4    FXYZ(3,NP)
+         84                     C
+         85                     CCC [WORK]
+         86                           REAL*4    RX(0:N2,ME),RY(0:N2,ME)
+         87                           INTEGER*4 MWRK
+         88                           REAL*4    WRKN(MWRK,9)
+         89                     C
+         90                     CCC [LOCAL]
+         91                           INTEGER*4 NETET,NEPRD,NEWED,NEHEX,
+         92                          *          ICOLOR,ICPART,IEE,IES,
+         93                          *          IP1,IP2,IP3,IP4,IP5,IP6,IP7,IP8,
+         94                          *          MAXBUF,IP,IE,IBP,I,J,IPL,IETYPE,IS,IBE
+         95                           REAL*4    SWRK,COEF,DU,DPX,DPY,DPZ,COEF1,COEF2,FXBUF,FYBUF,FZBUF
+         96                     C
+         97                           INTEGER*4 IMODE,IMODEO,IDIM
+         98                           DATA IMODE   / 1 /
+         99                           DATA IMODEO  / 0 /
+        100                           DATA IDIM    / 3 /
+        101                     C
+        102                           CHARACTER*60 ERMSGC
+        103                          & /' ## SUBROUTINE GRAD3X: FATAL      ERROR REPORT   ; RETURNED' /
+        104                     C
+        105                           INTEGER*4 LOCALT(4,6,4)
+        106                           DATA LOCALT /
+        107                          *     1,2,4,0,  2,3,4,0,  3,1,4,0,  1,3,2,0,  0,0,0,0,  0,0,0,0, ! TET
+        108                          *     1,2,5,0,  2,3,5,0,  3,4,5,0,  4,1,5,0,  1,4,3,2,  0,0,0,0, ! PYR
+        109                          *     1,3,2,0,  4,5,6,0,  1,2,5,4,  2,3,6,5,  3,1,4,6,  0,0,0,0, ! PRS
+        110                          *     1,5,8,4,  2,3,7,6,  1,2,6,5,  3,4,8,7,  1,4,3,2,  5,6,7,8  ! HEX
+        111                          *           /
+        112                     C
+        113                           INTEGER*4 LSTVALID(MP)
+        114                           INTEGER*4 NUMVALID
+        115                     C
+        116                     C     CAL. GRADIENT OF SCALAR VARIABLE
+        117                     C     THIS ROUTINE SUPPORTS OVERSET NODES AND MID NODES.
+        118                     C
+        119                     C     WRITTEN BY Y.YAMADE 2012.07.18
+        120                     C
+        121                     C
+        122                     C     ARGUMENT LISTINGS
+        123                     C
+        124                     C (1) INPUT
+        125                     C INT *4 MLOOP        ; MAX. NUMBER OF COLORS
+        126                     C INT *4 NLOOP        ; NUMBER OF COLORS
+        127                     C INT *4 LLOOP(I,4)   ; ADRESS OF COLOR LOOPS
+        128                     C INT *4 JSET         ; OVERSET FLAG (0:OFF,LARGER THAN 1:ON)
+        129                     C INT *4 ME           ; MAX. NUMBER OF TOTAL ELEMENTS
+        130                     C INT *4 N            ; =8
+        131                     C INT *4 N1           ; THE DIMENSION SIZE OF THE FIRST ELEMENTS OF THE
+        132                     C INT *4 NE           ; NUMBER OF ELEMENTS
+        133                     C INT *4 NP           ; NUMBER OF NODES
+        134                     C INT *4 NEX       (I); INCLUDES NUMBER OF ELEMENTS AND NUMBER OF LOCAL NODES
+        135                     C INT *4 NE           ; NUMBER OF ELEMENTS
+        136                     C INT *4 NP           ; NUMBER OF NODES
+        137                     C INT *4 NODE   (I,IE); NODE TABLE
+        138                     C INT *4 NFRAME       ; NUMBER OF FRAMES
+        139                     C INT *4 IEATTR   (IE); ELEMENT ATTIRBUTE DATA (-1:ROTATING, 0:STATIC)
+        140                     C INT *4 IPATTR   (IP); NODE    ATTIRBUTE DATA (-1:ROTATING, 0:STATIC)
+        141                     C INT *4 IUT0         ; FILE NUMBER TO REPORT ERROR OCCURENCE
+        142                     C REAL*4 S        (IP); INPUT DATA
+        143                     C REAL*4 DNX    (I,IE); INTEGRATED ELEMENT VECTOR OF NX
+        144                     C REAL*4 DNY    (I,IE); INTEGRATED ELEMENT VECTOR OF NY
+        145                     C REAL*4 DNZ    (I,IE); INTEGRATED ELEMENT VECTOR OF NZ
+        146                     C REAL*4 CM       (IP); INVERSED LUMPED MASS MATRIX
+        147                     C REAL*4 X        (IP); X-CORDINATE
+        148                     C REAL*4 Y        (IP); Y-CORDINATE
+        149                     C REAL*4 OMEGA        ; ANGULAR MOMENTUM
+        150                     C REAL*4 TIMER        ; CURRENT TIME
+        151                     C REAL*4 ADIAG    (NP); DIAGONAL TERM IN MOMENTUM EQ. (IN STEADY MODE)
+        152                     C REAL*4 UFRAME (1,IF); X-DIR. VELOCITY    OF TRANSLATING FRAME 'IF'
+        153                     C REAL*4 VFRAME (1,IF); Y-DIR. VELOCITY    OF TRANSLATING FRAME 'IF'
+        154                     C REAL*4 WFRAME (1,IF); Z-DIR. VELOCITY    OF TRANSLATING FRAME 'IF'
+        155                     C REAL*4 UFRAME (2,IF); X-DIR. ACCELERAION OF TRANSLATING FRAME 'IF'
+        156                     C REAL*4 VFRAME (2,IF); Y-DIR. ACCELERAION OF TRANSLATING FRAME 'IF'
+        157                     C REAL*4 WFRAME (2,IF); Z-DIR. ACCELERAION OF TRANSLATING FRAME 'IF'
+        158                     C
+        159                     C === B.C.-[1] ===    ; INTERCONNECT B.C.
+        160                     C INT *4 IPART        ; SUB-DOMAIN NUMBER THAT THIS TASK SHOULD TAKE/IS
+        161                     C                       TAKING CARE OF. IPART BEING SET ZERO MEANS THAT
+        162                     C                       THE PROGRAM SHOULD RUN/IS RUNNING IN SERIAL
+        163                     C                       MODE.
+        164                     C INT *4 NDOM         ; NUMBER OF THE NERIBERING SUB-DOMAINS
+        165                     C INT*4  MBPDOM       ; THE MAXIMUM NUMBER OF THE INTER-CONNECT
+        166                     C                       BOUNDARY NODES FOR ONE NEIBERING SUB-DOMAIN
+        167                     C INT *4 LDOM   (IDOM); NEIBERING SUB-DOMAIN NUMBER
+        168                     C INT *4 NBPDOM (IDOM); NUMBER OF INTER-CONNECT BOUNDARY NODES
+        169                     C                       SHARING WITH THE IDOM'TH NEIBERING SUB-DOMAIN,
+        170                     C                       LDOM(IDOM)
+        171                     C INT *4 IPSLF(I,IDOM); INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+        172                     C                       CALLING TASK'S SUB-DOMAIN, FOR THE IDOM'TH
+        173                     C                       NEIBERING SUB-DOMAIN, LDOM(IDOM)
+        174                     C INT *4 IPSND(I,IDOM); INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+        175                     C                       SUB-DOMAIN THAT IS RECEIVING THE CALLING
+        176                     C                       TASK'S RESIDUALS.
+        177                     C
+        178                     C === B.C.-[2] ===    ; GRADIENT-ZETO B.C.
+        179                     C INT *4 NPFIX        ; NUMBER OF FIX BOUNDARY NODES
+        180                     C INT *4 LPFIX    (IB); FIX BOUNDARY NODES
+        181                     C
+        182                     C === B.C.-[3] ===    ; SYMMETRIC B.C.
+        183                     C INT *4 NPSYMT       ; NUMBER OF SYMMETRIC BOUNDARY NODES
+        184                     C INT *4 LPSYMT   (IB); SYMMETRIC BOUNDARY NODES
+        185                     C REAL*4 XPSYMT   (IB); X-DIR COMPONENT OF SYMMETRIC NODE NORMAL VECTOR
+        186                     C REAL*4 YPSYMT   (IB); Y-DIR COMPONENT OF SYMMETRIC NODE NORMAL VECTOR
+        187                     C REAL*4 ZPSYMT   (IB); Z-DIR COMPONENT OF SYMMETRIC NODE NORMAL VECTOR
+        188                     C
+        189                     C === B.C.-[4] ===    ; OVERSET B.C.
+        190                     C INT *4 NPSET        : NUMBER OF OVERSET BOUNDARY NODES
+        191                     C INT *4 NPSND        ; NUMBER OF DOMAINS TO SEND OVERSET NODE VALUE
+        192                     C INT *4 NPRCV        ; NUMBER OF DOMAINS TO RECEIVE OVERSET NODE VALUE
+        193                     C INT *4 LPSET1  (IBP); OVERSET BOUNDARY NODES
+        194                     C INT *4 LPSET2  (IBP); ELEMENT NUMBER TO CALCULATE OVERSET VALUES
+        195                     C INT *4 LPSET3  (IBP); DOMAIN NUMBER TO SEND/RECEIVE OVERSET VALUES
+        196                     C                   0 --- CALCULATE AND SET OVERSET VALUE WITHIN THE
+        197                     C                         SELF-DOMAIN
+        198                     C          (POS. INT.)--- SEND    OVERSET VALUE TO   DOMAIN  LPSET3(IB)
+        199                     C                         AFTER CALCULATING IT WITHIN THE SELF-DOMAIN
+        200                     C          (NEG. INT.)--- RECEIVE OVERSET VALUE FROM DOMAIN -LPSET3(IB)
+        201                     C
+        202                     C INT *4 LPSND  (IDOM); DOMAIN NUMBER     TO SEND OVERSET NODE VALUE
+        203                     C INT *4 NPTSND (IDOM); NUMBER OF OVERSET NODE POINTS TO SEND TO
+        204                     C                     ; DOMAIN 'LPSND(IDOM)'
+        205                     C INT *4 LPRCV  (IDOM); DOMAIN NUMBER     TO RECEIVE OVERSET NODE VALUE
+        206                     C INT *4 NPTRCV (IDOM); NUMBER OF OVERSET POINTS TO RECEIVE FROM
+        207                     C                       DOMAIN 'LPRCV(IDOM)'
+        208                     C INT *4 IPSET(IPT,IDOM); OVERSET NODE NUMBER IN THE DOMAIN RECEIVING
+        209                     C                         THE OVERSET VALUES.
+        210                     C INT *4 IPSRC(IPT,IDOM); INDICATES POSITION IN THE OVERSET-VALUES
+        211                     C                         PASSING ARRAYS WHEN OVERSET NODE DATA
+        212                     C                         ARE COMPILED SEQUENTIALLY
+        213                     C REAL*4  COVER1 (IBP); LOCAL COORDINATE IN INTERPOLATING ELEMENT
+        214                     C REAL*4  COVER2 (IBP); LOCAL COORDINATE IN INTERPOLATING ELEMENT
+        215                     C REAL*4  COVER3 (IBP); LOCAL COORDINATE IN INTERPOLATING ELEMENT
+        216                     C
+        217                     C (2) OUTPUT
+        218                     C REAL*4 FX       (IP); X-COMPONET OF GRADIENT OF S
+        219                     C REAL*4 FY       (IP); Y-COMPONET OF GRADIENT OF S
+        220                     C REAL*4 FZ       (IP); Z-COMPONET OF GRADIENT OF S
+        221                     C INT *4 IERR         ; RETURN CODE TO REPORT ERROR OCCURRENCE
+        222                     C                   0 --- NORMAL TERMINATION
+        223                     C                   1 --- A FATAL ERROR HAS OCCURRED
+        224                     C
+        225                     C (3) WORK
+        226                     C REAL*4 RX     (I,IE); WORK REGION PASSED FOR CALLAP
+        227                     C REAL*4 RY     (I,IE); WORK REGION PASSED FOR CALLAP
+        228                     C
+        229                           IERR=0
+        230                           MAXBUF = NE*(N2+1)
+        231                     C
+        232                           NETET=NEX(1)
+        233                           NEPRD=NEX(2)
+        234                           NEWED=NEX(3)
+        235                           NEHEX=NEX(4)
+        236                     C
+        237                           CALL USTSTA(81)
+        238                     #ifndef __AIX__
+        239                     !ocl CACHE_SECTOR_SIZE(1,11)
+        240                     !ocl CACHE_SUBSECTOR_ASSIGN(S)
+        241                     #endif
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 42
+                              <<<  [OPTIMIZATION]
+                              <<<    SOFTWARE PIPELINING(IPC: 2.36, ITR: 80, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FXYZ, CM
+                              <<< Loop-information  End >>>
+        242     1  pp                 DO 1000 IP = 1 , NP
+        243     1   p                     FXBUF=0.0E0
+        244     1   p                     FYBUF=0.0E0
+        245     1   p                     FZBUF=0.0E0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<< Loop-information  End >>>
+        246     2   p    v                DO 1100 I = 1 , 8
+        247     2   p    v                    IE=IENP(I,IP)
+        248     2   p    v                    SWRK = S(IE)
+        249     2   p    v                    FXBUF=FXBUF-SWRK*DNXYZP(I,1,IP)
+        250     2   p    v                    FYBUF=FYBUF-SWRK*DNXYZP(I,2,IP)
+        251     2   p    v                    FZBUF=FZBUF-SWRK*DNXYZP(I,3,IP)
+        252     2   p    v       1100     CONTINUE
+        253     1   p                     FXYZ(1,IP)=FXBUF*CM(IP)
+        254     1   p                     FXYZ(2,IP)=FYBUF*CM(IP)
+        255     1   p                     FXYZ(3,IP)=FZBUF*CM(IP)
+        256     1   p            1000 CONTINUE
+        257                     
+        258                           CALL USTEND(81)
+        259                     C
+        260                           CALL USTSTA(82)
+        261                     c!ocl norecurrence(FXYZ)
+        262     1                     DO 1200 J=1,NUMVALID
+        263     1                        IP = LSTVALID(J)
+        264     1                        FXBUF=0.0E0
+        265     1                        FYBUF=0.0E0
+        266     1                        FZBUF=0.0E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 534
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        267     2  pp    v               DO 1300 I=9,NEP(IP)
+        268     2   p    v                  IE=IENP(I,IP)
+        269     2   p    v                  SWRK = S(IE)
+        270     2   p    v                  FXBUF=FXBUF-SWRK*DNXYZP(I,1,IP)
+        271     2   p    v                  FYBUF=FYBUF-SWRK*DNXYZP(I,2,IP)
+        272     2   p    v                  FZBUF=FZBUF-SWRK*DNXYZP(I,3,IP)
+        273     2   p    v       1300    CONTINUE
+        274     1                        FXYZ(1,IP)=FXYZ(1,IP)+FXBUF*CM(IP)
+        275     1                        FXYZ(2,IP)=FXYZ(2,IP)+FYBUF*CM(IP)
+        276     1                        FXYZ(3,IP)=FXYZ(3,IP)+FZBUF*CM(IP)
+        277     1                1200 ENDDO
+        278                           CALL USTEND(82)
+        279                     C
+        280                     C
+        281                     C
+        282                     C OVERSET ELEMENT PRESSURE
+        283                     C
+        284     1                     IF(JSET.GE.1) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1455
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.00, ITR: 320, MVE: 3)
+                              <<<    UNSWITCHING
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      S, SOSWRK
+                              <<< Loop-information  End >>>
+        285     2  pp   4v                DO 2011 IE=1,NE
+        286     3   p   4v                   IF (IVOF.GE.1.OR.ICAVI.GE.1) THEN
+        287     3       4                       SOSWRK(IE) = S(IE)/RHO3D(IE)
+        288     3   p   4v                   ELSE
+        289     3   p   4v                      SOSWRK(IE) = S(IE)
+        290     3   p   4v                   ENDIF
+        291     2   p   4v       2011     CONTINUE
+        292     1                         CALL NDLEX2 (MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+        293     1                    *                 NODE,ME,NP,NE,NP,N1,N2,NEX,SN,
+        294     1                    *                IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        295     1                    *                SOSWRK,SOSP,CM,IUT0,IERR,RX,RY,MAXBUF,LEFIX)
+        296     1               C
+        297     1                         CALL OVRSTE(IPART,NESET,N1,N2,ME,NE,NP,NEX,NODE,SOSWRK,SOSP,
+        298     1                    *                LESET1,LESET2,LESET3,
+        299     1                    *                EOVER1,EOVER2,EOVER3,
+        300     1                    *                NDOM,MBPDOM,NESND,NERCV,
+        301     1                    *                LESND,NETSND,LERCV,NETRCV,IESET,IESRC,
+        302     1                    *                WRKOS1,WRKOS2,RX,RY,IUT0,IERR)
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LBESET
+                              <<< Loop-information  End >>>
+        303     2                          DO 2012 IBE=1,NBESET
+        304     2                              IE=LBESET(1,IBE)
+        305     2                              IS=LBESET(2,IBE)
+        306     2               C
+        307     3                              IF(     NODE(8,IE).GE.1) THEN ! HEX
+        308     3                                  IETYPE = 4
+        309     3                              ELSE IF(NODE(6,IE).GE.1) THEN ! PRS
+        310     3                                  IETYPE = 3
+        311     3                              ELSE IF(NODE(5,IE).GE.1) THEN ! PYR
+        312     3                                  IETYPE = 2
+        313     3                              ELSE                          ! TET
+        314     3                                  IETYPE = 1
+        315     3                              ENDIF
+        316     2               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FULL UNROLLING
+                              <<< Loop-information  End >>>
+        317     3   s   fs                     DO 2013 I=1,4
+        318     3   p   fv                         IPL= LOCALT(I,IS,IETYPE)
+        319     3   p   fv                         IP = NODE(IPL,IE)
+        320     3   p   fs                         IF(IP.EQ.0) GOTO 2013
+        321     3   p   fs                         DPX=-SOSWRK(IE)*XNESET(IBE)*SNESET(IPL,IBE)
+        322     3   p   fs                         DPY=-SOSWRK(IE)*YNESET(IBE)*SNESET(IPL,IBE)
+        323     3   p   fs                         DPZ=-SOSWRK(IE)*ZNESET(IBE)*SNESET(IPL,IBE)
+        324     3   m   fs                         WRKN(IP,4)=WRKN(IP,4)+DPX
+        325     3   s   fs                         WRKN(IP,5)=WRKN(IP,5)+DPY
+        326     3   s   fs                         WRKN(IP,6)=WRKN(IP,6)+DPZ
+        327     3   p   fv       2013          CONTINUE
+        328     2                2012      CONTINUE
+        329     1               C
+        330     1                     ENDIF
+        331                     C
+        332                     
+        333                           CALL USTSTA(83)
+        334                     C
+        335                     C SUPERIMPOSE NEIBERING ELEMENT CONTRIBUTIONS
+        336                     C
+        337                           CALL DDCOMY(IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        338                          *            FXYZ,NP,IUT0,IERR,RX,RY,MAXBUF)
+        339     1                     IF(IERR.NE.0) THEN
+        340     1                         WRITE(IUT0,*)
+        341     1                         WRITE(IUT0,*) ERMSGC
+        342     1                         RETURN
+        343     1                     ENDIF
+        344                           CALL USTEND(83)
+        345                     C
+        346                           CALL USTSTA(84)
+        347                     C
+        348     1                     DO 2100 IP=1,NP
+        349     1               C          FXYZ(1,IP)=FXYZ(1,IP)*CM(IP)
+        350     1               C          FXYZ(2,IP)=FXYZ(2,IP)*CM(IP)
+        351     1               C          FXYZ(3,IP)=FXYZ(3,IP)*CM(IP)
+        352     1                2100 CONTINUE
+        353                     C
+        354                     !ocl norecurrence(FXYZ)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 762
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.85, ITR: 224, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPFIX
+                              <<< Loop-information  End >>>
+        355     1  pp   2v            DO 3000 IBP=1,NPFIX
+        356     1   p   2v                IP=LPFIX(IBP)
+        357     1   p   2v                FXYZ(1,IP)=0.0E0
+        358     1   p   2v                FXYZ(2,IP)=0.0E0
+        359     1   p   2v                FXYZ(3,IP)=0.0E0
+        360     1   p   2v       3000 CONTINUE
+        361                     C
+        362                     !ocl norecurrence(FXYZ)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 320
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.46, ITR: 160, MVE: 5)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      ZPSYMT, LPSYMT, XPSYMT, YPSYMT
+                              <<< Loop-information  End >>>
+        363     1  pp    v            DO 3100 IBP = 1 , NPSYMT
+        364     1   p    v                  COEF= XPSYMT(IBP)*FXYZ(1,LPSYMT(IBP))
+        365     1                    *           +YPSYMT(IBP)*FXYZ(2,LPSYMT(IBP))
+        366     1                    *           +ZPSYMT(IBP)*FXYZ(3,LPSYMT(IBP))
+        367     1   p    v                  FXYZ(1,LPSYMT(IBP)) = FXYZ(1,LPSYMT(IBP))-COEF*XPSYMT(IBP)
+        368     1   p    v                  FXYZ(2,LPSYMT(IBP)) = FXYZ(2,LPSYMT(IBP))-COEF*YPSYMT(IBP)
+        369     1   p    v                  FXYZ(3,LPSYMT(IBP)) = FXYZ(3,LPSYMT(IBP))-COEF*ZPSYMT(IBP)
+        370     1   p    v       3100 CONTINUE
+        371                           CALL USTEND(84)
+        372                     C
+        373     1                     IF (IVOF.GE.1.OR.ICAVI.GE.1) THEN
+        374     1               !ocl norecurrence(FXYZ)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 320
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.46, ITR: 160, MVE: 5)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      ZPFREE, LPFREE, XPFREE, YPFREE
+                              <<< Loop-information  End >>>
+        375     2  pp    v               DO 3200 IBP = 1, NPFREE
+        376     2   p    v                  COEF= XPFREE(IBP)*FXYZ(1,LPFREE(IBP))
+        377     2                    *           +YPFREE(IBP)*FXYZ(2,LPFREE(IBP))
+        378     2                    *           +ZPFREE(IBP)*FXYZ(3,LPFREE(IBP))
+        379     2   p    v                  FXYZ(1,LPFREE(IBP)) = FXYZ(1,LPFREE(IBP))-COEF*XPFREE(IBP)
+        380     2   p    v                  FXYZ(2,LPFREE(IBP)) = FXYZ(2,LPFREE(IBP))-COEF*YPFREE(IBP)
+        381     2   p    v                  FXYZ(3,LPFREE(IBP)) = FXYZ(3,LPFREE(IBP))-COEF*ZPFREE(IBP)
+        382     2   p    v       3200    CONTINUE
+        383     1                     ENDIF
+        384                     C
+        385                     C
+        386                     CCYY   D. OVERSET NODAL VELOCITIES
+        387                     C
+        388                     C
+        389     1                     IF(JSET.GE.1) THEN
+        390     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 667
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.30, ITR: 128, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WRKN, FXYZ
+                              <<< Loop-information  End >>>
+        391     2  pp   2v                DO 3310 IP=1,NP
+        392     2   p   2v                   WRKN(IP,1)=FXYZ(1,IP)
+        393     2   p   2v                   WRKN(IP,2)=FXYZ(2,IP)
+        394     2   p   2v                   WRKN(IP,3)=FXYZ(3,IP)
+        395     2   p   2v       3310     CONTINUE
+        396     1                         CALL OVRST3(IMODEO,IPART,NPSET,N1,N2,ME,NE,NP,NEX,NODE,
+        397     1                    *                X,Y,Z,OMEGA,TIMER,
+        398     1                    *                NFRAME,IEATTR,IPATTR,UFRAME,VFRAME,WFRAME,
+        399     1                    *                WRKN(1,1),WRKN(1,2),WRKN(1,3),
+        400     1                    *                LPSET1,LPSET2,LPSET3,LPSET4,
+        401     1                    *                COVER1,COVER2,COVER3,
+        402     1                    *                NDOM,MBPDOM,NPSND,NPRCV,
+        403     1                    *                LPSND,NPTSND,LPRCV,NPTRCV,IPSET,IPSRC,
+        404     1                    *                WRKN(1,4),WRKN(1,5),WRKN(1,6),
+        405     1                    *                WRKN(1,7),WRKN(1,8),WRKN(1,9),
+        406     1                    *                RX,RY,NMRF,IFATTR,OMGMRF,AMRF,IUT0,IERR)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 348
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.62, ITR: 176, MVE: 6)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FXYZ, WRKN, OSBCOE
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 0
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 1  FILL 1
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        407     2  pp    v                DO 3320 IP=1,NP
+        408     2   p    v                   COEF1=OSBCOE(IP)
+        409     2   p    v                   COEF2=1.0E0-COEF1
+        410     2   p    v                   FXYZ(1,IP)=COEF1*WRKN(IP,1)+COEF2*FXYZ(1,IP)
+        411     2   p    v                   FXYZ(2,IP)=COEF1*WRKN(IP,2)+COEF2*FXYZ(2,IP)
+        412     2   p    v                   FXYZ(3,IP)=COEF1*WRKN(IP,3)+COEF2*FXYZ(3,IP)
+        413     2   p    v       3320     CONTINUE
+        414     1                     ENDIF
+        415                     C
+        416                     C
+        417                     CCHY  MODIFY THE FLOW RATE AT OVERSET BOUNDARY
+        418                     C     MODIFY THE VELOCITY AT THE FLOW-RATE CHECKING SURFACE.
+        419                     C
+        420                     
+        421     1                     IF (IVOF.GE.1.AND.IMASS.EQ.1) THEN
+        422     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 667
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.30, ITR: 128, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WRKN, FXYZ
+                              <<< Loop-information  End >>>
+        423     2  pp   2v               DO 4000 IP=1,NP
+        424     2   p   2v                  WRKN(IP,1)=FXYZ(1,IP)
+        425     2   p   2v                  WRKN(IP,2)=FXYZ(2,IP)
+        426     2   p   2v                  WRKN(IP,3)=FXYZ(3,IP)
+        427     2   p   2v       4000    CONTINUE
+        428     1                        CALL CALDLU(IPART,NE,NP,NFACE,N2,NSP,NS,NODE,
+        429     1                    *               LOCAL,LFACE,NFINLT,NFFREE,LFINLT,LFFREE,
+        430     1                    *               WRKN(1,1),WRKN(1,2),WRKN(1,3),AVEC,FFA,DU,IERR)
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SOFTWARE PIPELINING(IPC: 0.33, ITR: 3, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      XPFREE, YPFREE, ZPFREE, LPFREE
+                              <<< Loop-information  End >>>
+        431     2   s    s               DO 4100 IBP=1,NPFREE
+        432     2   p    v                  IP=LPFREE(IBP)
+        433     2   m    m                  FXYZ(1,IP)=FXYZ(1,IP)+DU*XPFREE(IBP)
+        434     2   m    m                  FXYZ(2,IP)=FXYZ(2,IP)+DU*YPFREE(IBP)
+        435     2   m    m                  FXYZ(3,IP)=FXYZ(3,IP)+DU*ZPFREE(IBP)
+        436     2   p    v       4100    CONTINUE
+        437     1                     ENDIF
+        438                     C
+        439                           RETURN
+        440                           END
+
+ Diagnostic messages: program name(GRAD3X)
+   jwd8220o-i  "grad3x.f", line 1: 副作用の可能性のある最適化を行いました。
+   jwd2008i-i  "grad3x.f", line 37: この仮引数'JENP'は、副プログラム中で使用されていません。
+   jwd2008i-i  "grad3x.f", line 38: この仮引数'ADIAG'は、副プログラム中で使用されていません。
+   jwd2006i-i  "grad3x.f", line 91: この名前'IP8'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "grad3x.f", line 91: この名前'IP7'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "grad3x.f", line 91: この名前'IP6'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "grad3x.f", line 91: この名前'IP5'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "grad3x.f", line 91: この名前'IP4'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "grad3x.f", line 91: この名前'IP3'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "grad3x.f", line 91: この名前'IP2'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "grad3x.f", line 91: この名前'IP1'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "grad3x.f", line 91: この名前'IES'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "grad3x.f", line 91: この名前'IEE'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "grad3x.f", line 91: この名前'ICPART'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "grad3x.f", line 91: この名前'ICOLOR'は、宣言だけされていて引用されていません。
+   jwd1202i-i  "grad3x.f", line 239: 最適化制御行において最適化指示子の指定が正しくありません。
+   jwd1202i-i  "grad3x.f", line 240: 最適化制御行において最適化指示子の指定が正しくありません。
+   jwd5001p-i  "grad3x.f", line 242: このDOループを並列化しました。(名前:IP)
+   jwd8204o-i  "grad3x.f", line 242: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "grad3x.f", line 242: ループの繰返し数が80回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd6004s-i  "grad3x.f", line 246: リダクション演算を含むDOループをSIMD化しました。(名前:I)
+   jwd5208p-i  "grad3x.f", line 262: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:FXYZ)
+   jwd5004p-i  "grad3x.f", line 267: リダクション演算を含むDOループを並列化しました。(名前:I)
+   jwd6004s-i  "grad3x.f", line 267: リダクション演算を含むDOループをSIMD化しました。(名前:I)
+   jwd8321o-i  "grad3x.f", line 285: ループをループアンスイッチングしました。
+   jwd5001p-i  "grad3x.f", line 285: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "grad3x.f", line 285: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "grad3x.f", line 285: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "grad3x.f", line 285: ループの繰返し数が320回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5208p-i  "grad3x.f", line 303: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:WRKN)
+   jwd8670o-i  "grad3x.f", line 303: ループ内に分岐命令があるため、ソフトウェアパイプライニングを適用できません。
+   jwd6229s-i  "grad3x.f", line 317: IF文が存在するため、このDOループのSIMD化を抑止しました。
+   jwd8203o-i  "grad3x.f", line 317: ループをフルアンローリングしました。
+   jwd8209o-i  "grad3x.f", line 322: 多項式の演算順序を変更しました。
+   jwd8209o-i  "grad3x.f", line 323: 多項式の演算順序を変更しました。
+   jwd8209o-i  "grad3x.f", line 324: 多項式の演算順序を変更しました。
+   jwd5209p-i  "grad3x.f", line 324: 配列'WRKN'の添字式中の変数'IP'をループ中で定義しているため、このDOループは並列化できません。
+   jwd6209s-i  "grad3x.f", line 324: 配列'WRKN'の添字式中の変数'IP'をループ中で定義しているため、このDOループはSIMD化できません。
+   jwd8209o-i  "grad3x.f", line 325: 多項式の演算順序を変更しました。
+   jwd8209o-i  "grad3x.f", line 326: 多項式の演算順序を変更しました。
+   jwd5001p-i  "grad3x.f", line 355: このDOループを並列化しました。(名前:IBP)
+   jwd6001s-i  "grad3x.f", line 355: このDOループをSIMD化しました。(名前:IBP)
+   jwd8204o-i  "grad3x.f", line 355: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "grad3x.f", line 355: ループの繰返し数が224回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "grad3x.f", line 363: このDOループを並列化しました。(名前:IBP)
+   jwd6001s-i  "grad3x.f", line 363: このDOループをSIMD化しました。(名前:IBP)
+   jwd8204o-i  "grad3x.f", line 363: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "grad3x.f", line 363: ループの繰返し数が160回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "grad3x.f", line 364: 多項式の演算順序を変更しました。
+   jwd5001p-i  "grad3x.f", line 375: このDOループを並列化しました。(名前:IBP)
+   jwd6001s-i  "grad3x.f", line 375: このDOループをSIMD化しました。(名前:IBP)
+   jwd8204o-i  "grad3x.f", line 375: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "grad3x.f", line 375: ループの繰返し数が160回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "grad3x.f", line 376: 多項式の演算順序を変更しました。
+   jwd5001p-i  "grad3x.f", line 391: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "grad3x.f", line 391: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "grad3x.f", line 391: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "grad3x.f", line 391: ループの繰返し数が128回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "grad3x.f", line 407: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "grad3x.f", line 407: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "grad3x.f", line 407: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "grad3x.f", line 407: ループの繰返し数が176回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "grad3x.f", line 423: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "grad3x.f", line 423: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "grad3x.f", line 423: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "grad3x.f", line 423: ループの繰返し数が128回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd6302s-i  "grad3x.f", line 431: 部分的なSIMD化による性能向上が得られない可能性があるため、このDOループのSIMD化を抑止しました。
+   jwd8204o-i  "grad3x.f", line 431: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "grad3x.f", line 431: ループの繰返し数が3回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5209p-i  "grad3x.f", line 433: 配列'FXYZ'の添字式中の変数'IP'をループ中で定義しているため、このDOループは並列化できません。
+   jwd6209s-i  "grad3x.f", line 433: 配列'FXYZ'の添字式中の変数'IP'をループ中で定義しているため、このDOループはSIMD化できません。
+
+ Procedure information
+   Lines      : 440
+   Statements : 175
+   Stack(byte): 45568
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 440
+   Total statements : 175
+   Total stack(byte): 45568
+   Total prefetch num: 0
+

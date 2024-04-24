@@ -1,0 +1,392 @@
+      SUBROUTINE ALE_BCGSTX
+     *                 (NPP,NCRS,IPCRS,APCRS,B,S,EPS,EPSRE,
+     *                  NMAX,RES,NITR,NODE,NE,NEX,NP,ME,N2,
+     *                  IPART,LDOM,NBPDOM,NDOM,
+     *                  IPSLF,IPSND,MBPDOM,NUMIP,
+     *                  RX,RY,WEIGHT,R0,RK,PK,APK,ATK,TK,SB,
+     *                  MRSALE,IALEDB,IUTAL,IUT0,IERR)
+      IMPLICIT NONE
+C
+      INTEGER*4 NPP,NCRS,IPCRS,
+     *          NMAX,RES,NITR,NODE,NE,NEX,NP,ME,N2,
+     *          IPART,LDOM,NBPDOM,NDOM,
+     *          IPSLF,IPSND,MBPDOM,NUMIP,
+     *          MRSALE,IALEDB,IUTAL,IUT0,IERR
+C
+      REAL*4    APCRS,B,S,EPS,EPSRE,
+     *          RX,RY,WEIGHT,R0,RK,PK,APK,ATK,TK,SB
+C
+      INTEGER*4 IP
+C
+      REAL*4    EPS0,RESMIN,RKDOT,BDOT,RKDOTA,BDOTA,RESR,APDOT,APDOTA,
+     *          ALFA,ATTDOT,AT2DOT,ATTDTA,AT2DTA,QK,RKDOTP,RSDOT,
+     *          RSDOTA,BETA
+C
+      DIMENSION NPP(NP),IPCRS(NCRS),APCRS(NCRS*9)
+      DIMENSION B(NP*3),S(NP*3),NODE(N2,NE),SB(NP*3)
+C
+      DIMENSION LDOM(NDOM),NBPDOM(NDOM),
+     1          IPSLF(MBPDOM,NDOM),IPSND(MBPDOM,NDOM),
+     2          NUMIP(NP*3)
+C
+      DIMENSION RX(0:N2,ME),RY(0:N2,ME),WEIGHT(NP),
+     1          R0(NP*3),RK(NP*3),PK(NP*3),APK(NP*3),ATK(NP*3),TK(NP*3)
+C
+      DATA EPS0 / 1.E-30 /
+C
+      CHARACTER*60 ERMSGC
+CC   & /' ## SUBROUTINE BCGSTT: FATAL      ERROR REPORT   ; RETURNED' /
+     & /' ## SUBROUTINE BCGSTX: FATAL      ERROR REPORT   ; RETURNED' /
+C
+C      SOLVE MATRIX EQUATION BY BI-CGSTAB METHOS
+C         ( 3-D CALCULATION : SINGLE WORD & MULTI ELEMENT VERSION )
+C                                           CODED BASED ON 'BCGSTB'
+C
+C          OPERATION COUNTS:   77 FLOP /ELEMENT/ITERATION
+C          DATA LOADINGS   :  101 WORDS/ELEMENT/ITERATION
+C                           (  69 WORDS CONTIGUOUSLY,
+C                               8 WORDS BY 4-WORD STRIDE, AND
+C                              24 WORDS BY LIST )
+C
+C
+C     ARGUMENT LISTINGS
+C
+C       (1) INPUT
+C          A   (I,J,IE); ELEMENT-WISE COEFFICIENT MATRIX
+C          NPP     (IP); NUMBER OF ADJACENT NODES    TO NODE    IP
+C          NCRS    ; NUMBER OF NONZERO ELEMENTS IN MATRIX OF CRS FORMAT
+C          IPCRS (ICRS); NODE NO. TABLE BASED ON CRS FORMAT
+C          APCRS (ICRS); NODE-BASE MATRIX COEFFICIENT
+C          B       (IP); GLOBAL FORCE VECTOR
+C
+C           NOTES ; THE BOUNDARY CONDITIONS MUST HAVE BEEN APPROPRIATELY
+C                  PRESET TO THE ELEMENT-WISE COEFFICIENT MATRIX AND
+C                  GLOBAL FORCE VECTOR BEFORE THIS SUBROUTINE IS CALLED.
+C
+C           NOTES ; FOR PARALLEL COMPUTATIONS, CONTRIBUTIONS FROM THE
+C                  NEIGHBORING DOMAINS MUST HAVE BEEN SUPERIMPOSED
+C                  TO THE GLOBAL FORCE VECTOR BEFORE THIS SUBROUTINE IS
+C                  CALLED.
+C
+C          EPS         ; CONVERGENCE CRITERIA (L2-NORM RESIDUAL)
+C          NMAX        ; MAXIMUM NUMBER OF ITERATIONS
+C
+C          NODE  (I,IE); NODE NO. TABLE BASED ON ELEMENT
+C          ME          ; MAX. NUMBER OF TOTAL ELEMENTS
+C          NE          ; NUMBER OF TOTAL ELEMENTS
+C          NP          ; NUMBER OF TOTAL    NODES
+C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT
+C
+C          IPART       ; SUB-DOMAIN NUMBER THAT THIS TASK SHOULD TAKE/IS
+C                       TAKING CARE OF. IPART BEING SET ZERO MEANS THAT
+C                       THE PROGRAM SHOULD RUN/IS RUNNING IN SERIAL 
+C                       MODE.
+C          LDOM  (IDOM); NEIBERING SUB-DOMAIN NUMBER
+C          NBPDOM(IDOM); NUMBER OF INTER-CONNECT BOUNDARY NODES
+C                       SHARING WITH THE IDOM'TH NEIBERING SUB-DOMAIN,
+C                       LDOM(IDOM)
+C          NDOM        ; NUMBER OF THE NERIBERING SUB-DOMAINS
+C          IPSLF (IBP,IDOM); INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+C                           CALLING TASK'S SUB-DOMAIN, FOR THE IDOM'TH
+C                           NEIBERING SUB-DOMAIN, LDOM(IDOM)
+C          IPSND (IBP,IDOM); INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+C                           SUB-DOMAIN THAT IS RECEIVING THE CALLING
+C                           TASK'S RESIDUALS.
+C          MBPDOM      ; THE MAXIMUM NUMBER OF THE INTER-CONNECT 
+C                       BOUNDARY NODES FOR ONE NEIBERING SUB-DOMAIN
+C          NUMIP   (IP); NUMBER OF NEIGHBORING DOMAINS THAT NODE 'IP'
+C                       BELONGS TO
+C
+C          IUT0        ; FILE NUMBER TO REPORT ERROR OCCURRENCE
+C
+C
+C       (2) OUTPUT
+C          RES         ; L2-NORM RESIDUAL OF THE FINAL SOLUTION VECTOR
+C          NITR        ; NUMBER OF ITERATIONS DONE
+C          IERR        ; RETURN CODE TO REPORT ERROR OCCURRENCE
+C                   0 --- NORMAL TERMINATION
+C                   1 --- A FATAL ERROR HAS OCCURRED
+C
+C       (3) INPUT-OUTPUT
+C          S       (IP); GLOBAL SOLUTION VECTOR (PROVIDE INITIAL GUESS)
+C
+C
+C       (4) WORK
+C          RX    (I,IE); HOLDS ELEMENT RESIDUAL VECTOR,
+C                        USED IN DDCOMX AS WELL
+C          RY    (I,IE); USED IN DDCOMX
+C
+C          R0      (IP); HOLDS GLOBAL INITIAL RESIDUAL VECTOR
+C          RK      (IP); HOLDS GLOBAL RESIDUAL VECTOR
+C          PK      (IP); HOLDS GLOBAL SEARCH-DIRECTION VECTOR
+C          APK     (IP); HOLDS GLOBAL PRODUCTION OF MATRIX AND
+C                        SEARCH-DIRECTION VECTOR
+C          TK      (IP); HOLDS T(NITE) 
+C          ATK     (IP); HOLDS GLOBAL PRODUCTION OF MATRIX AND 'TK'
+C          WEIGHT  (IP); HOLDS WEIGHT FUNCTION OF THE NODE OR ELEMENT
+C
+      IF(NMAX.EQ.0) RETURN
+C
+      RESMIN=1.0E10
+      NITR=0
+C
+C
+CCC   1. SET WEIGHTING FUNCTION FOR COMPUTING AN INNER PRODUCT
+C
+C
+      DO 200 IP = 1 , NP
+          WEIGHT(IP) = 1.E0/(FLOAT(NUMIP(IP))+1.E0)
+ 200  CONTINUE
+C
+C
+CCC   2. SET INITIAL RESIDUAL VECTOR AND SEARCH-DIRECTION VECTOR
+C
+C   
+C          OPERATION COUNTS:   36 FLOP /ELEMENT
+C          DATA LOADINGS   :   48 WORDS/ELEMENT
+C                           (  32 WORDS CONTIGUOUSLY,
+C                               4 WORDS BY 4-WORD STRIDE, AND
+C                              12 WORDS BY LIST )
+      CALL ALE_CALAX
+     *           (APCRS, S, RK, NP, NE, NCRS, IPCRS, NPP,
+     *            N2,ME,IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+     *            RX,RY,IUT0,IERR)
+C
+      IF(IERR.EQ.1) THEN
+          WRITE(IUT0,*) ERMSGC
+          RETURN
+      ENDIF
+C 
+      RKDOT = 0.E0
+      BDOT = 0.E0
+      DO 300 IP = 1 , NP
+          RK (IP+NP*0) = B (IP+NP*0)-RK (IP+NP*0)
+          RK (IP+NP*1) = B (IP+NP*1)-RK (IP+NP*1)
+          RK (IP+NP*2) = B (IP+NP*2)-RK (IP+NP*2)
+C
+          R0 (IP+NP*0) = RK(IP+NP*0)
+          R0 (IP+NP*1) = RK(IP+NP*1)
+          R0 (IP+NP*2) = RK(IP+NP*2)
+C
+          PK (IP+NP*0) = RK(IP+NP*0)
+          PK (IP+NP*1) = RK(IP+NP*1)
+          PK (IP+NP*2) = RK(IP+NP*2)
+C
+          TK (IP+NP*0) = 0.E0
+          TK (IP+NP*1) = 0.E0
+          TK (IP+NP*1) = 0.E0
+C
+          RKDOT = RKDOT+WEIGHT(IP)*R0(IP+NP*0)*RK(IP+NP*0)
+     *                +WEIGHT(IP)*R0(IP+NP*1)*RK(IP+NP*1)
+     *                +WEIGHT(IP)*R0(IP+NP*2)*RK(IP+NP*2)
+          BDOT  = BDOT +WEIGHT(IP)*B (IP+NP*0)*B (IP+NP*0)
+     *                +WEIGHT(IP)*B (IP+NP*1)*B (IP+NP*1)
+     *                +WEIGHT(IP)*B (IP+NP*2)*B (IP+NP*2)
+ 300  CONTINUE
+C
+      IF(IPART.GE.1) THEN
+          CALL DDCOM2(RKDOT,RKDOTA)
+          CALL DDCOM2(BDOT,BDOTA)
+          RKDOT = RKDOTA
+          BDOT = BDOTA
+      ENDIF
+C
+      IF(ABS(BDOT).LE.EPS0) BDOT = 1.0E0
+C
+      RES  = SQRT(RKDOT)
+      RESR = RES/SQRT(BDOT)
+C
+C     IF(RES.LE.EPS.OR.RESR.LE.EPS) RETURN
+C     USE RELATIVE RESIDUAL
+      IF(RESR.LE.EPS) RETURN
+C
+C
+CCC   3. COMPUTE PRODUCT OF COEFFICIENT MATRIX AND SEARCH-DIRECTION VECTOR
+CCC      AND INNER PRODUCT OF COMPUTED PRODUCT AND SEARCH-DIRECTION VECTOR
+C
+C 
+ 10   CONTINUE
+C
+      NITR=NITR+1
+C
+C
+CCC   3.1 COMPUTE APK,ALFA
+C
+C
+C          OPERATION COUNTS:   36 FLOP /ELEMENT
+C          DATA LOADINGS   :   48 WORDS/ELEMENT
+C                           (  32 WORDS CONTIGUOUSLY,
+C                               4 WORDS BY 4-WORD STRIDE, AND
+C                              12 WORDS BY LIST )
+      CALL ALE_CALAX
+     *           (APCRS, PK, APK, NP, NE, NCRS, IPCRS, NPP,
+     *            N2,ME,IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+     *            RX,RY,IUT0,IERR)
+C
+      IF(IERR.EQ.1) THEN
+          WRITE(IUT0,*) ERMSGC
+          RETURN
+      ENDIF
+C
+      APDOT = 0.E0
+      DO 400 IP = 1 , NP
+          APDOT = APDOT+WEIGHT(IP)*R0(IP+NP*0)*APK(IP+NP*0)
+     *                 +WEIGHT(IP)*R0(IP+NP*1)*APK(IP+NP*1)  
+     *                 +WEIGHT(IP)*R0(IP+NP*2)*APK(IP+NP*2)  
+ 400  CONTINUE
+C
+      IF(IPART.GE.1) THEN
+          CALL DDCOM2(APDOT,APDOTA)
+          APDOT = APDOTA
+      ENDIF
+C
+      IF(APDOT .EQ. 0.0E0) RETURN
+      ALFA = RKDOT/APDOT
+C
+C
+CCC   3.2 COMPUTE TK=RK-ALFA*APK     
+C
+C
+      DO 500 IP = 1 , NP*3
+          TK (IP) = RK(IP)-ALFA*APK(IP) 
+ 500  CONTINUE 
+C
+C
+CCC   3.3 COMPUTE ATK
+C
+C
+C          OPERATION COUNTS:   36 FLOP /ELEMENT
+C          DATA LOADINGS   :   48 WORDS/ELEMENT
+C                           (  32 WORDS CONTIGUOUSLY,
+C                               4 WORDS BY 4-WORD STRIDE, AND
+C                              12 WORDS BY LIST )
+      CALL ALE_CALAX
+     *           (APCRS, TK, ATK, NP, NE, NCRS, IPCRS, NPP,
+     *            N2,ME,IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+     *            RX,RY,IUT0,IERR)
+C
+      IF(IERR.EQ.1) THEN
+          WRITE(IUT0,*) ERMSGC
+          RETURN
+      ENDIF
+C
+C
+CCC   3.4 COMPUTE QK
+C
+C
+      ATTDOT  = 0.E0
+      AT2DOT  = 0.E0
+      DO 600 IP = 1 , NP
+          ATTDOT = ATTDOT+WEIGHT(IP)*ATK(IP+NP*0)* TK(IP+NP*0)
+     *                   +WEIGHT(IP)*ATK(IP+NP*1)* TK(IP+NP*1)
+     *                   +WEIGHT(IP)*ATK(IP+NP*2)* TK(IP+NP*2)
+          AT2DOT = AT2DOT+WEIGHT(IP)*ATK(IP+NP*0)*ATK(IP+NP*0)
+     *                   +WEIGHT(IP)*ATK(IP+NP*1)*ATK(IP+NP*1)
+     *                   +WEIGHT(IP)*ATK(IP+NP*2)*ATK(IP+NP*2)
+ 600  CONTINUE
+C
+      IF(IPART.GE.1) THEN
+          CALL DDCOM2(ATTDOT,ATTDTA)
+          CALL DDCOM2(AT2DOT,AT2DTA)
+          ATTDOT = ATTDTA
+          AT2DOT = AT2DTA
+      ENDIF
+C
+      IF(AT2DOT .EQ. 0.E0) RETURN
+      QK = ATTDOT/AT2DOT
+C
+C
+CCC   3.5 UPDATE SOLUTION VECTOR AND RESIDUAL VECTOR
+CCC   3.6 RETURN IF L2-NORM OF UPDATED SOLUTION VECTOR IS LESS THAN CRITERIA
+C
+C
+      RKDOTP = RKDOT
+      RKDOT  = 0.E0
+      RSDOT  = 0.E0
+      DO 700 IP = 1 , NP
+          S  (IP+NP*0) = S (IP+NP*0)+ ALFA*PK(IP+NP*0) + QK*TK (IP+NP*0)
+          S  (IP+NP*1) = S (IP+NP*1)+ ALFA*PK(IP+NP*1) + QK*TK (IP+NP*1)
+          S  (IP+NP*2) = S (IP+NP*2)+ ALFA*PK(IP+NP*2) + QK*TK (IP+NP*2)
+C
+          RK (IP+NP*0) = TK(IP+NP*0)- QK*ATK(IP+NP*0) 
+          RK (IP+NP*1) = TK(IP+NP*1)- QK*ATK(IP+NP*1) 
+          RK (IP+NP*2) = TK(IP+NP*2)- QK*ATK(IP+NP*2) 
+C
+          RKDOT = RKDOT+WEIGHT(IP)*R0(IP+NP*0)*RK(IP+NP*0)
+     *                 +WEIGHT(IP)*R0(IP+NP*1)*RK(IP+NP*1)
+     *                 +WEIGHT(IP)*R0(IP+NP*2)*RK(IP+NP*2)
+          RSDOT = RSDOT+WEIGHT(IP)*RK(IP+NP*0)*RK(IP+NP*0)
+     *                 +WEIGHT(IP)*RK(IP+NP*1)*RK(IP+NP*1)
+     *                 +WEIGHT(IP)*RK(IP+NP*2)*RK(IP+NP*2)
+ 700  CONTINUE
+C
+C
+      IF(IPART.GE.1) THEN
+          CALL DDCOM2(RKDOT,RKDOTA)
+          CALL DDCOM2(RSDOT,RSDOTA)
+          RKDOT = RKDOTA
+          RSDOT = RSDOTA
+      ENDIF
+C
+      RES  = SQRT(RSDOT)
+      RESR = RES/SQRT(BDOT)
+C
+CCHY_TMP
+      IF(IALEDB.GE.1.AND.IPART.EQ.1) WRITE(IUTAL,*)NITR,RES,RESR
+CCHY_TMP
+      IF(RES.LE.EPS.OR.RESR.LE.EPSRE) RETURN
+C
+CCHY_TMP
+CC    USE MINIMUM RESIDUAL
+      IF (MRSALE.EQ.1.AND.RES.LT.RESMIN) THEN
+         RESMIN=RES
+         DO IP=1,NP
+            SB(IP+NP*0)=S(IP+NP*0)
+            SB(IP+NP*1)=S(IP+NP*1)
+            SB(IP+NP*2)=S(IP+NP*2)
+         ENDDO
+      ENDIF
+CCHY_TMP
+C
+C
+C
+CCC   3.7 UPDATE SEARCH-DIRECTION VECTOR
+C     
+C
+      IF(QK     .EQ. 0.E0) RETURN
+      IF(RKDOTP .EQ. 0.E0) RETURN
+      BETA = (ALFA/QK)*(RKDOT/RKDOTP)
+C 
+      DO 800 IP = 1 , NP*3
+          PK (IP) = RK(IP)+BETA*(PK(IP)-QK*APK(IP))
+ 800  CONTINUE
+C
+C
+CCC   3.7 RETURN IF ITERATION NUMBER HAS REACHED THE GIVEN MAXIMUM NUMBER,
+CCC       OTHERWISE CONTINUE ITERATIONS UNTIL SOLUTION IS CONVERGED
+C
+C
+      IF(NITR.EQ.NMAX) THEN
+CCHY_TMP
+          IF (MRSALE.EQ.1) THEN
+             RES=RESMIN
+             DO IP=1,NP
+                S(IP+NP*0)=SB(IP+NP*0)
+                S(IP+NP*1)=SB(IP+NP*1)
+                S(IP+NP*2)=SB(IP+NP*2)
+             ENDDO
+          ENDIF
+C
+          IF (IALEDB.EQ.1) THEN
+             WRITE(IUT0,*)'ALE EQ. DOES NOT CONVERGE'
+             IERR=2
+             RETURN
+          ENDIF
+CCHY_TMP
+C
+          RETURN
+      END IF  
+C
+      GO TO 10
+C
+      END

@@ -1,0 +1,181 @@
+
+ Fujitsu Fortran Version 4.8.1  Thu Nov 24 16:45:43 2022
+
+ Compilation information
+   Current directory : /vol0005/mdt2/home/u10588/SRC/lbm/ver.59.01
+   Source file       : partcl.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -Nlst=t -Cpp -Cfpp -c -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Knointentopt
+   Cpp options          : -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Dcputime -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=8 -D__FRT_patchlevel__=1 -D__FRT_version__="4.8.1" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Knoarray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nlibomp -Nline -Nlst -Nlst=p -Nlst=t
+                          -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "PARTCL"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE PARTCL(NP,LVEL,CVEL,LREV,WF)
+          2                           IMPLICIT NONE
+          3                           INTEGER*4 NP,LVEL(3,NP),LREV(NP)
+          4                           REAL*8    CVEL(3,NP),WF(NP)
+          5                           INTEGER*4 I,J
+          6                     C
+          7                     C[IN]
+          8                     C  NP       : NUMBER OF PARTICLES
+          9                     C
+         10                     C[OUT]
+         11                     C  LVEL(NP) : NORMALIZED VELOCITY OF PARTCLES (INTEGER)
+         12                     C  CVEL(NP) : NORMALIZED VELOCITY OF PARTCLES (FLOAT)
+         13                     C  LREV(NP) : INVERSE LIST OF PARTICLES
+         14                     C  WF  (NP) : COEEFICIENTS TO CALCULATE PARTICLE DISTRIBUTION FUNCTION
+         15                     C
+         16                           INTEGER*4 IP
+         17                           REAL*8    C1,C2,C3
+         18                     C
+         19                           LVEL(1, 1)= 0; LVEL(2, 1)= 0; LVEL(3, 1)= 0; LREV( 1)= 1
+         20                           LVEL(1, 2)= 1; LVEL(2, 2)= 0; LVEL(3, 2)= 0; LREV( 2)= 4
+         21                           LVEL(1, 3)= 0; LVEL(2, 3)= 1; LVEL(3, 3)= 0; LREV( 3)= 5
+         22                           LVEL(1, 4)=-1; LVEL(2, 4)= 0; LVEL(3, 4)= 0; LREV( 4)= 2
+         23                           LVEL(1, 5)= 0; LVEL(2, 5)=-1; LVEL(3, 5)= 0; LREV( 5)= 3
+         24                           LVEL(1, 6)= 0; LVEL(2, 6)= 0; LVEL(3, 6)= 1; LREV( 6)= 7
+         25                           LVEL(1, 7)= 0; LVEL(2, 7)= 0; LVEL(3, 7)=-1; LREV( 7)= 6
+         26                           LVEL(1, 8)= 1; LVEL(2, 8)= 1; LVEL(3, 8)= 1; LREV( 8)=14
+         27                           LVEL(1, 9)=-1; LVEL(2, 9)= 1; LVEL(3, 9)= 1; LREV( 9)=15
+         28                           LVEL(1,10)=-1; LVEL(2,10)=-1; LVEL(3,10)= 1; LREV(10)=12
+         29                           LVEL(1,11)= 1; LVEL(2,11)=-1; LVEL(3,11)= 1; LREV(11)=13
+         30                           LVEL(1,12)= 1; LVEL(2,12)= 1; LVEL(3,12)=-1; LREV(12)=10
+         31                           LVEL(1,13)=-1; LVEL(2,13)= 1; LVEL(3,13)=-1; LREV(13)=11
+         32                           LVEL(1,14)=-1; LVEL(2,14)=-1; LVEL(3,14)=-1; LREV(14)= 8
+         33                           LVEL(1,15)= 1; LVEL(2,15)=-1; LVEL(3,15)=-1; LREV(15)= 9
+         34                     C
+         35     1                     IF(NP.EQ.27) THEN
+         36     1                     LVEL(1,16)= 1; LVEL(2,16)= 1; LVEL(3,16)= 0; LREV(16)=18
+         37     1                     LVEL(1,17)=-1; LVEL(2,17)= 1; LVEL(3,17)= 0; LREV(17)=19
+         38     1                     LVEL(1,18)=-1; LVEL(2,18)=-1; LVEL(3,18)= 0; LREV(18)=16
+         39     1                     LVEL(1,19)= 1; LVEL(2,19)=-1; LVEL(3,19)= 0; LREV(19)=17
+         40     1                     LVEL(1,20)= 1; LVEL(2,20)= 0; LVEL(3,20)= 1; LREV(20)=22
+         41     1                     LVEL(1,21)=-1; LVEL(2,21)= 0; LVEL(3,21)= 1; LREV(21)=23
+         42     1                     LVEL(1,22)=-1; LVEL(2,22)= 0; LVEL(3,22)=-1; LREV(22)=20
+         43     1                     LVEL(1,23)= 1; LVEL(2,23)= 0; LVEL(3,23)=-1; LREV(23)=21
+         44     1                     LVEL(1,24)= 0; LVEL(2,24)= 1; LVEL(3,24)= 1; LREV(24)=26
+         45     1                     LVEL(1,25)= 0; LVEL(2,25)=-1; LVEL(3,25)= 1; LREV(25)=27
+         46     1                     LVEL(1,26)= 0; LVEL(2,26)=-1; LVEL(3,26)=-1; LREV(26)=24
+         47     1                     LVEL(1,27)= 0; LVEL(2,27)= 1; LVEL(3,27)=-1; LREV(27)=25
+         48     1                     ENDIF
+         49                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 334
+                              <<<  [OPTIMIZATION]
+                              <<<    UNSWITCHING
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LVEL, CVEL
+                              <<< Loop-information  End >>>
+         50     1  pp    s            DO 1000 IP=1,NP
+         51     1   p    v                C1=DBLE(LVEL(1,IP))
+         52     1   p    v                C2=DBLE(LVEL(2,IP))
+         53     1   p    v                C3=DBLE(LVEL(3,IP))
+         54     1   p    v                CVEL(1,IP)=C1
+         55     1   p    v                CVEL(2,IP)=C2
+         56     1   p    v                CVEL(3,IP)=C3
+         57     1               C         CVEL(4,IP)=C1*C1
+         58     1               C         CVEL(5,IP)=C2*C2
+         59     1               C         CVEL(6,IP)=C3*C3
+         60     1               C         CVEL(7,IP)=C2*C3
+         61     1               C         CVEL(8,IP)=C3*C1
+         62     1               C         CVEL(9,IP)=C1*C2
+         63     1               C
+         64     2   p    v                IF(NP.EQ.15) THEN
+         65     3                             IF(IP.EQ.1) THEN
+         66     3                                 WF(IP)=2.0D0/9.0D0
+         67     3                             ELSE IF (2.LE.IP .AND. IP.LE.7) THEN
+         68     3                                 WF(IP)=1.0D0/9.0D0
+         69     3                             ELSE IF (8.LE.IP .AND. IP.LE.15) THEN
+         70     3                                 WF(IP)=1.0D0/72.0D0
+         71     3                             ENDIF
+         72     2   p    v                ELSE IF(NP.EQ.27) THEN
+         73     3   p    v                    IF(IP.EQ.1) THEN
+         74     3   s    s                        WF(IP)=64.0D0/216.0D0
+         75     3   p    v                    ELSE IF (2.LE.IP .AND. IP.LE.7) THEN
+         76     3   m    v                        WF(IP)=16.0D0/216.0D0
+         77     3   p    v                    ELSE IF (8.LE.IP .AND. IP.LE.15) THEN
+         78     3   m    v                        WF(IP)=1.0D0/216.0D0
+         79     3   p    v                    ELSE IF (16.LE.IP .AND. IP.LE.27) THEN
+         80     3   m    v                        WF(IP)=4.0D0/216.0D0
+         81     3                             ENDIF
+         82     2   p    v                ENDIF
+         83     1   p    v       1000 CONTINUE
+         84                     C
+         85                           RETURN
+         86                           END
+
+ Diagnostic messages: program name(PARTCL)
+   jwd2006i-i  "partcl.f", line 5: 'J' is declared but never referenced.
+   jwd2006i-i  "partcl.f", line 5: 'I' is declared but never referenced.
+   jwd8321o-i  "partcl.f", line 50: Loop unswitched.
+   jwd5001p-i  "partcl.f", line 50: DO loop with DO variable 'IP' is parallelized.
+   jwd6229s-i  "partcl.f", line 50: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8670o-i  "partcl.f", line 50: This loop cannot be software pipelined because the loop contains a branch instruction.
+   jwd5202p-i  "partcl.f", line 74: DO loop is not parallelized: data dependency of variable 'WF' may cause different results from serial execution for loop.
+   jwd5208p-i  "partcl.f", line 74: DO loop is not parallelized: the assign-refer order of 'WF' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6202s-i  "partcl.f", line 74: SIMD conversion cannot be applied to DO loop: data dependency of variable 'WF' may cause different results from serial execution for loop.
+
+ Procedure information
+   Lines      : 86
+   Statements : 146
+   Stack(byte): 752
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 86
+   Total statements : 146
+   Total stack(byte): 752
+   Total prefetch num: 0
+

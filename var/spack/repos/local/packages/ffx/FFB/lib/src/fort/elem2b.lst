@@ -1,0 +1,333 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:53:52 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : elem2b.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "ELEM2B"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    ELEM2B                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE ELEM2B(X,Y,NODE,N,LEB,LSB,NEB,
+         14                          *                  DSB,DCOSB,SNIB,DNXIB,DNYIB,DXG,DXE,DYG,DYE,DET)
+         15                           IMPLICIT REAL*8(A-H,O-Z)
+         16                           DIMENSION X(*),Y(*),NODE(N,*),LEB(NEB),LSB(NEB),DSB(NEB),
+         17                          1          DCOSB(2,NEB),SNIB(N,NEB),DNXIB(N,NEB),DNYIB(N,NEB),
+         18                          2          DXG(NEB),DXE(NEB),DYG(NEB),DYE(NEB),DET(NEB)
+         19                     C
+         20                           DIMENSION G(4),E(4),SN(4,4),DNG(4,4),DNE(4,4)
+         21                           DATA      G /  0.D0 ,  1.D0 ,  0.D0 , -1.D0 /
+         22                           DATA      E / -1.D0 ,  0.D0 ,  1.D0 ,  0.D0 /
+         23                     C
+         24                     C
+         25                     C      CALCULATE LENGTH, OUTWARD DIRECTIONAL COSINE, SHAPE FUNCTION
+         26                     C     AND ITS X,Y DERIVATIVES ON SPECIFIED SIDE OF SPECIFIED ELEMENTS
+         27                     C         ( 2-D CALCULATION )
+         28                     C
+         29                     C
+         30                     C     ARGUMENT LISTINGS
+         31                     C       (1) INPUT
+         32                     C          X      (IP) ; X-COORDINATE OF NODE ' IP '
+         33                     C          Y      (IP) ; Y-COORDINATE OF NODE ' IP '
+         34                     C          NODE (I,IE) ; NODE NO. TABLE BASED ON ELEMENT
+         35                     C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT
+         36                     C          LEB    (IB) ; ELEMENT  SPECIFYING LIST VECTOR
+         37                     C          LSB    (IB) ; SIDE NO. SPECIFYING LIST VECTOR
+         38                     C          NEB         ; NUMBER OF THE SIDES
+         39                     C
+         40                     C       (2) OUTPUT
+         41                     C          DSB    (IB) ; LENGTH              OF BOUNDARY SIDE
+         42                     C          DCOSB(I,IB) ; DIRECTIONAL COSINES OF BOUNDARY SIDE
+         43                     C          SNIB (I,IB) ; SHAPE FUNCTION AT THE SIDE'S CENTER POINT
+         44                     C          DNXIB(I,IB) ; X-DIRIVERTIVE  AT THE SIDE'S CENTER POINT
+         45                     C          DNYIB(I,IB) ; Y-DIRIVERTIVE  AT THE SIDE'S CENTER POINT
+         46                     C
+         47                     C       (3) WORK
+         48                     C          DET   (IB)  ; DETERMINANT OF JACOBIAN MATRIX
+         49                     C          DXG   (IB)  ; G-DIR. DERIVERTIVE OF X
+         50                     C          DXE   (IB)  ; E-DIR. DERIVERTIVE OF X
+         51                     C          DYG   (IB)  ; G-DIR. DERIVERTIVE OF Y
+         52                     C          DYE   (IB)  ; E-DIR. DERIVERTIVE OF Y
+         53                     C
+         54                     C      (1) CALCULATE  DSB(IB) , DCOSB(I,IB)
+         55                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 119
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 0.73, ITR: 40, MVE: 2, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LEB, DCOSB, LSB, DSB
+                              <<< Loop-information  End >>>
+         56     1  pp    v            DO 100 IB = 1 , NEB
+         57     1   p    v                IE  = LEB(IB)
+         58     1   p    v                IS = LSB(IB)
+         59     1   p    v                X1 = X(NODE(MOD(IS  ,N)+1,IE))-X(NODE(IS,IE))
+         60     1   p    v                Y1 = Y(NODE(MOD(IS  ,N)+1,IE))-Y(NODE(IS,IE))
+         61     1   p    v                X2 = X(NODE(MOD(IS+1,N)+1,IE))-X(NODE(IS,IE))
+         62     1   p    v                Y2 = Y(NODE(MOD(IS+1,N)+1,IE))-Y(NODE(IS,IE))
+         63     1               
+         64     1   p    v                DSB(IB) = DSQRT(X1*X1+Y1*Y1)
+         65     1               C
+         66     1   p    v                DCOSB(1,IB) = Y1/DSB(IB)
+         67     1   p    v                DCOSB(2,IB) =-X1/DSB(IB)
+         68     1   p    v                CHECK  = X2*DCOSB(1,IB)+Y2*DCOSB(2,IB)
+         69     2   p    v                IF(CHECK.GT.0.D0) THEN
+         70     2   p    v                    DCOSB(1,IB) =-DCOSB(1,IB)
+         71     2   p    v                    DCOSB(2,IB) =-DCOSB(2,IB)
+         72     2   p    v                ENDIF
+         73     1   p    v        100 CONTINUE
+         74                     C
+         75                     C      (2) CALCULATE  DNXIB(IB) DNYIB(IB)
+         76                     C
+         77                     C          SETTING SHAPE FUNCTION AND ITS DERIVERTIVES AT ALL SIDES
+         78                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      (unknown)
+                              <<< Loop-information  End >>>
+         79     1   s    s            DO 110 IS = 1 , N
+         80     1   s    s                SN (1,IS) = SHAPE2(1,G(IS),E(IS),1)
+         81     1   s    s                SN (2,IS) = SHAPE2(2,G(IS),E(IS),1)
+         82     1   s    s                SN (3,IS) = SHAPE2(3,G(IS),E(IS),1)
+         83     1   s    s                SN (4,IS) = SHAPE2(4,G(IS),E(IS),1)
+         84     1               C
+         85     1   s    s                DNG(1,IS) = SHAPE2(1,G(IS),E(IS),2)
+         86     1   s    s                DNG(2,IS) = SHAPE2(2,G(IS),E(IS),2)
+         87     1   s    s                DNG(3,IS) = SHAPE2(3,G(IS),E(IS),2)
+         88     1   s    s                DNG(4,IS) = SHAPE2(4,G(IS),E(IS),2)
+         89     1               C
+         90     1   s    s                DNE(1,IS) = SHAPE2(1,G(IS),E(IS),3)
+         91     1   s    s                DNE(2,IS) = SHAPE2(2,G(IS),E(IS),3)
+         92     1   s    s                DNE(3,IS) = SHAPE2(3,G(IS),E(IS),3)
+         93     1   s    s                DNE(4,IS) = SHAPE2(4,G(IS),E(IS),3)
+         94     1   s    s        110 CONTINUE
+         95                     C
+         96                     C          CALCULATION  OF SHAPE FUNCTTION
+         97                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 433
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.00, ITR: 80, MVE: 4, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LSB
+                              <<< Loop-information  End >>>
+         98     1  pp    v            DO 200 IB = 1 , NEB
+         99     1   p    v                IS = LSB(IB)
+        100     1   p    v                SNIB(1,IB) = SN(1,IS)
+        101     1   p    v                SNIB(2,IB) = SN(2,IS)
+        102     1   p    v                SNIB(3,IB) = SN(3,IS)
+        103     1   p    v                SNIB(4,IB) = SN(4,IS)
+        104     1   p    v        200 CONTINUE
+        105                     C
+        106                     C          CALCULATION  OF  G , E  DERIVERTIVES OF X , Y
+        107                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 117
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED(lines: 108,124)
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.30, ITR: 32, MVE: 2, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LEB, LSB, DXE, DXG, DYE, DET, DYG
+                              <<< Loop-information  End >>>
+        108     1  pp    v            DO 300 IB = 1 , NEB
+        109     1   p    v                IE  = LEB(IB)
+        110     1   p    v                IS = LSB(IB)
+        111     1   p    v                DXG(IB) = X(NODE(1,IE))*DNG(1,IS)+X(NODE(2,IE))*DNG(2,IS)
+        112     1                    &             +X(NODE(3,IE))*DNG(3,IS)+X(NODE(4,IE))*DNG(4,IS)
+        113     1   p    v                DYG(IB) = Y(NODE(1,IE))*DNG(1,IS)+Y(NODE(2,IE))*DNG(2,IS)
+        114     1                    &             +Y(NODE(3,IE))*DNG(3,IS)+Y(NODE(4,IE))*DNG(4,IS)
+        115     1               C
+        116     1   p    v                DXE(IB) = X(NODE(1,IE))*DNE(1,IS)+X(NODE(2,IE))*DNE(2,IS)
+        117     1                    &             +X(NODE(3,IE))*DNE(3,IS)+X(NODE(4,IE))*DNE(4,IS)
+        118     1   p    v                DYE(IB) = Y(NODE(1,IE))*DNE(1,IS)+Y(NODE(2,IE))*DNE(2,IS)
+        119     1                    &             +Y(NODE(3,IE))*DNE(3,IS)+Y(NODE(4,IE))*DNE(4,IS)
+        120     1   p    v        300 CONTINUE
+        121                     C
+        122                     C          CALCULATION OF DETERMINANT OF JACOBIAN MATRIX
+        123                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED
+                              <<< Loop-information  End >>>
+        124     1                     DO 400 IB = 1 , NEB
+        125     1                         DET(IB) = DXG(IB)*DYE(IB)-DYG(IB)*DXE(IB)
+        126     1                 400 CONTINUE
+        127                     C
+        128                     C          CALCULATION OF X , Y DERIVERTIVES OF SHAPE FUNCTION
+        129                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 135
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.35, ITR: 32, MVE: 2, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      DXG, LSB, DET, DYE, DXE, DYG
+                              <<< Loop-information  End >>>
+        130     1  pp    v            DO 500 IB = 1 , NEB
+        131     1   p    v                IS = LSB(IB)
+        132     1   p    v                DNXIB(1,IB) =( DYE(IB)*DNG(1,IS)-DYG(IB)*DNE(1,IS))/DET(IB)
+        133     1   p    v                DNXIB(2,IB) =( DYE(IB)*DNG(2,IS)-DYG(IB)*DNE(2,IS))/DET(IB)
+        134     1   p    v                DNXIB(3,IB) =( DYE(IB)*DNG(3,IS)-DYG(IB)*DNE(3,IS))/DET(IB)
+        135     1   p    v                DNXIB(4,IB) =( DYE(IB)*DNG(4,IS)-DYG(IB)*DNE(4,IS))/DET(IB)
+        136     1               C
+        137     1   p    v                DNYIB(1,IB) =(-DXE(IB)*DNG(1,IS)+DXG(IB)*DNE(1,IS))/DET(IB)
+        138     1   p    v                DNYIB(2,IB) =(-DXE(IB)*DNG(2,IS)+DXG(IB)*DNE(2,IS))/DET(IB)
+        139     1   p    v                DNYIB(3,IB) =(-DXE(IB)*DNG(3,IS)+DXG(IB)*DNE(3,IS))/DET(IB)
+        140     1   p    v                DNYIB(4,IB) =(-DXE(IB)*DNG(4,IS)+DXG(IB)*DNE(4,IS))/DET(IB)
+        141     1   p    v        500 CONTINUE
+        142                     C
+        143                     C
+        144                           RETURN
+        145                           END
+
+ Diagnostic messages: program name(ELEM2B)
+   jwd8220o-i  "elem2b.f", line 13: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd5001p-i  "elem2b.f", line 56: DO loop with DO variable 'IB' is parallelized.
+   jwd6001s-i  "elem2b.f", line 56: SIMD conversion is applied to DO loop with DO variable 'IB'.
+   jwd8204o-i  "elem2b.f", line 56: This loop is software pipelined.
+   jwd8205o-i  "elem2b.f", line 56: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 40.
+   jwd8206o-i  "elem2b.f", line 66: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "elem2b.f", line 67: Division is changed to multiplication by reciprocal.
+   jwd8664o-i  "elem2b.f", line 79: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5208p-i  "elem2b.f", line 80: DO loop is not parallelized: the assign-refer order of 'E' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "elem2b.f", line 80: DO loop is not parallelized: the assign-refer order of 'G' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "elem2b.f", line 80: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "elem2b.f", line 80: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'E' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "elem2b.f", line 80: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'G' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "elem2b.f", line 80: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5122p-i  "elem2b.f", line 81: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6122s-i  "elem2b.f", line 81: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5122p-i  "elem2b.f", line 82: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6122s-i  "elem2b.f", line 82: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5122p-i  "elem2b.f", line 83: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6122s-i  "elem2b.f", line 83: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5122p-i  "elem2b.f", line 85: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6122s-i  "elem2b.f", line 85: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5122p-i  "elem2b.f", line 86: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6122s-i  "elem2b.f", line 86: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5122p-i  "elem2b.f", line 87: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6122s-i  "elem2b.f", line 87: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5122p-i  "elem2b.f", line 88: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6122s-i  "elem2b.f", line 88: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5122p-i  "elem2b.f", line 90: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6122s-i  "elem2b.f", line 90: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5122p-i  "elem2b.f", line 91: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6122s-i  "elem2b.f", line 91: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5122p-i  "elem2b.f", line 92: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6122s-i  "elem2b.f", line 92: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5122p-i  "elem2b.f", line 93: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6122s-i  "elem2b.f", line 93: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5001p-i  "elem2b.f", line 98: DO loop with DO variable 'IB' is parallelized.
+   jwd6001s-i  "elem2b.f", line 98: SIMD conversion is applied to DO loop with DO variable 'IB'.
+   jwd8204o-i  "elem2b.f", line 98: This loop is software pipelined.
+   jwd8205o-i  "elem2b.f", line 98: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 80.
+   jwd8210o-i  "elem2b.f", line 108: Loops fused at line 124.
+   jwd5001p-i  "elem2b.f", line 108: DO loop with DO variable 'IB' is parallelized.
+   jwd6001s-i  "elem2b.f", line 108: SIMD conversion is applied to DO loop with DO variable 'IB'.
+   jwd8204o-i  "elem2b.f", line 108: This loop is software pipelined.
+   jwd8205o-i  "elem2b.f", line 108: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 32.
+   jwd8209o-i  "elem2b.f", line 113: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "elem2b.f", line 116: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "elem2b.f", line 118: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5001p-i  "elem2b.f", line 130: DO loop with DO variable 'IB' is parallelized.
+   jwd6001s-i  "elem2b.f", line 130: SIMD conversion is applied to DO loop with DO variable 'IB'.
+   jwd8204o-i  "elem2b.f", line 130: This loop is software pipelined.
+   jwd8205o-i  "elem2b.f", line 130: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 32.
+   jwd8206o-i  "elem2b.f", line 132: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "elem2b.f", line 133: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "elem2b.f", line 134: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "elem2b.f", line 135: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "elem2b.f", line 137: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "elem2b.f", line 137: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "elem2b.f", line 138: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "elem2b.f", line 138: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "elem2b.f", line 139: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "elem2b.f", line 139: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "elem2b.f", line 140: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "elem2b.f", line 140: Division is changed to multiplication by reciprocal.
+
+ Procedure information
+   Lines      : 145
+   Statements : 67
+   Stack(byte): 2032
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 145
+   Total statements : 67
+   Total stack(byte): 2032
+   Total prefetch num: 0
+

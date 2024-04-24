@@ -1,0 +1,335 @@
+
+ Fujitsu Fortran Version 4.8.1  Thu Nov 24 16:45:52 2022
+
+ Compilation information
+   Current directory : /vol0005/mdt2/home/u10588/SRC/lbm/ver.59.01
+   Source file       : lbmini.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -Nlst=t -Cpp -Cfpp -c -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Knointentopt
+   Cpp options          : -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Dcputime -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=8 -D__FRT_patchlevel__=1 -D__FRT_version__="4.8.1" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Knoarray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nlibomp -Nline -Nlst -Nlst=p -Nlst=t
+                          -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "LBMINI"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE LBMINI(ISTART,ICOLLI,IRFNF,
+          2                          *                  NC,NG,NG3,RHO0,VSCALE,FILEVF,
+          3                          *                  NP,CVEL,WF,NTIME0,TIME,F,FWRK,V3D,
+          4                          *                  MPBOUN,NPBOUN,LPBOUN,
+          5                          *                  MCOM,NCOMFL,NCOMST,COMFLE,COMSET,
+          6                          *                  WRK1,WRK2,WRK3,WRK4,
+          7                          *                  IUT6,IUT0,IUTFF,IERR)
+          8                           IMPLICIT NONE
+          9                     C
+         10                           INTEGER*4    ISTART,ICOLLI,IRFNF,NC,NG,NG3,NTIME0,NP,
+         11                          *             MPBOUN,NPBOUN(NC),LPBOUN(5,MPBOUN,NC),
+         12                          *             IUT6,IUT0,IUTFF,IERR
+         13                           REAL*8       RHO0,VSCALE,TIME,CVEL(3,NP),WF(NP),
+         14                          *             F(0:NG+2,0:NG+2,0:NG+2,NP,NC),
+         15                          *             FWRK(NP,0:NG+2,0:NG+2,0:NG+2),
+         16                          *             V3D(4,0:NG+2,0:NG+2,0:NG+2)
+         17                           REAL*4       WRK1(NG3),WRK2(NG3),WRK3(NG3),WRK4(NG3)
+         18                           INTEGER*4    MCOM,NCOMFL,NCOMST
+         19                           CHARACTER*60 FILEVF,COMFLE(MCOM),COMSET(MCOM)
+         20                     C
+         21                           INTEGER*4    IP,NC1
+         22                           REAL*8       U0,V0,W0,UU,CU,JX,JY,JZ,EE
+         23                           DATA NC1 /1/
+         24                     C
+         25                           INTEGER*4 LMAT(15,15)
+         26                           DATA LMAT /  1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
+         27                          *            -2,-1,-1,-1,-1,-1,-1, 1, 1, 1, 1, 1, 1, 1, 1,
+         28                          *            16,-4,-4,-4,-4,-4,-4, 1, 1, 1, 1, 1, 1, 1, 1,
+         29                          *             0, 1, 0,-1, 0, 0, 0, 1,-1,-1, 1, 1,-1,-1, 1,
+         30                          *             0,-4, 0, 4, 0, 0, 0, 1,-1,-1, 1, 1,-1,-1, 1,
+         31                          *             0, 0, 1, 0,-1, 0, 0, 1, 1,-1,-1, 1, 1,-1,-1,
+         32                          *             0, 0,-4, 0, 4, 0, 0, 1, 1,-1,-1, 1, 1,-1,-1,
+         33                          *             0, 0, 0, 0, 0, 1,-1, 1, 1, 1, 1,-1,-1,-1,-1,
+         34                          *             0, 0, 0, 0, 0,-4, 4, 1, 1, 1, 1,-1,-1,-1,-1,
+         35                          *             0, 2,-1, 2,-1,-1,-1, 0, 0, 0, 0, 0, 0, 0, 0,
+         36                          *             0, 0, 1, 0, 1,-1,-1, 0, 0, 0, 0, 0, 0, 0, 0,
+         37                          *             0, 0, 0, 0, 0, 0, 0, 1,-1, 1,-1, 1,-1, 1,-1,
+         38                          *             0, 0, 0, 0, 0, 0, 0, 1, 1,-1,-1,-1,-1, 1, 1,
+         39                          *             0, 0, 0, 0, 0, 0, 0, 1,-1,-1, 1,-1, 1, 1,-1,
+         40                          *             0, 0, 0, 0, 0, 0, 0, 1,-1, 1,-1,-1, 1,-1, 1 /
+         41                           REAL*8 SD(15)
+         42                     C
+         43                     C[IN]
+         44                     C     ISTART : RESTART FLAG (0:OFF, 1:ON)
+         45                     C     NC     : NUMBER OF CUBES IN SUB-DOMAIN
+         46                     C     NG     : CUBE SIZE (=2^N)
+         47                     C     RHO0   : INITIAL DENSITY
+         48                     C     FILEBF : FILE NAME OF GF-FUNC FILE
+         49                     C     IUT6   : UNIT NUMBER OF STANDARD OUTPUT
+         50                     C     IUT0   : UNIT NUMBER OF ERROR OUTPUT
+         51                     C     IUTFF  : UNIT NUMBER OF GF-FLOW FILE
+         52                     C
+         53                     C[OUT]
+         54                     C     NTIME0         : CURRENT TIME STEP
+         55                     C     TIME           : TIME
+         56                     C     F(I,J,K,IP,IC) :PARTICLE DISTRIBUTION FUNCTION
+         57                     C     IERR           : ERROR FLAG
+         58                     C
+         59                     C
+         60                     C
+         61                           INTEGER*4 I,J,K,IC,IMODE,II
+         62                           REAL*8    FBUF,FWRK2(15)
+         63                     C
+         64                           SD( 1)=1.0D0/1.5D1
+         65                           SD( 2)=1.0D0/1.8D1
+         66                           SD( 3)=1.0D0/3.6D2
+         67                           SD( 4)=1.0D0/1.0D1
+         68                           SD( 5)=1.0D0/4.0D1
+         69                           SD( 6)=1.0D0/1.0D1
+         70                           SD( 7)=1.0D0/4.0D1
+         71                           SD( 8)=1.0D0/1.0D1
+         72                           SD( 9)=1.0D0/4.0D1
+         73                           SD(10)=1.0D0/1.2D1
+         74                           SD(11)=1.0D0/4.0D1
+         75                           SD(12)=1.0D0/8.0D0
+         76                           SD(13)=1.0D0/8.0D0
+         77                           SD(14)=1.0D0/8.0D0
+         78                           SD(15)=1.0D0/8.0D0
+         79                     C
+         80     1                     IF(ISTART.EQ.0) THEN
+         81     1                         NTIME0=0
+         82     1                         TIME=0.0D0
+         83     1                         U0=0.0D0
+         84     1                         V0=0.0D0
+         85     1                         W0=0.0D0
+         86     1                         UU=U0*U0+V0*V0+W0*W0
+         87     1                         JX =RHO0*U0
+         88     1                         JY =RHO0*V0
+         89     1                         JZ =RHO0*W0
+         90     1                         EE =JX*JX+JY*JY+JZ*JZ
+         91     2                         DO 1000 IC=1,NC
+         92     3                             DO 1100 IP=1,NP
+         93     4                             DO 1200 K=0,NG+2
+         94     5                             DO 1300 J=0,NG+2
+         95     6                             DO 1400 I=0,NG+2
+         96     7                                 IF(ICOLLI.EQ.1) THEN
+         97     7                                     CU=U0*CVEL(1,IP)+V0*CVEL(2,IP)+W0*CVEL(3,IP)
+         98     7                                     F (I,J,K,IP,IC)=WF(IP)*RHO0*
+         99     7                    *                (1.0D0+3.0D0*CU+4.5D0*CU*CU-1.5D0*UU)
+        100     7                                 ELSE IF(ICOLLI.EQ.2) THEN
+        101     7                                     FWRK2( 1)= RHO0
+        102     7                                     FWRK2( 2)=-RHO0+EE
+        103     7                                     FWRK2( 3)=-RHO0
+        104     7                                     FWRK2( 4)= JX
+        105     7                                     FWRK2( 5)=-JX*7.0D0/3.0D0
+        106     7                                     FWRK2( 6)= JY
+        107     7                                     FWRK2( 7)=-JY*7.0D0/3.0D0
+        108     7                                     FWRK2( 8)= JZ
+        109     7                                     FWRK2( 9)=-JZ*7.0D0/3.0D0
+        110     7                                     FWRK2(10)= 2.0D0*JX*JX-JY*JY-JZ*JZ
+        111     7                                     FWRK2(11)=             JY*JY-JZ*JZ
+        112     7                                     FWRK2(12)= JX*JY
+        113     7                                     FWRK2(13)= JY*JZ
+        114     7                                     FWRK2(14)= JZ*JX
+        115     7                                     FWRK2(15)= 0.0D0
+        116     7                                     FBUF=0.0D0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 616
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<< Loop-information  End >>>
+        117     8   s    v                            DO 1500 II = 1,15
+        118     8   p    v                                FBUF=FBUF+SD(II)*DBLE(LMAT(IP,II))*FWRK2(II)
+        119     8   p    v       1500                 CONTINUE
+        120     7                                     F(I,J,K,IP,IC)=FBUF
+        121     7                                 ENDIF
+        122     6                1400         CONTINUE
+        123     5                1300         CONTINUE
+        124     4                1200         CONTINUE
+        125     3                1100         CONTINUE
+        126     2                1000     CONTINUE
+        127     1                     ELSE IF(ISTART.EQ.1) THEN
+        128     1                         IMODE=1
+        129     1                         CALL GFFUNC(IMODE,IRFNF,NC,FILEVF,
+        130     1                    *                NG,NC,NP,NTIME0,TIME,F,FWRK,
+        131     1                    *                MCOM,NCOMFL,NCOMST,COMFLE,COMSET,
+        132     1                    *                IUT6,IUT0,IUTFF,IERR)
+        133     1                     ELSE IF(ISTART.EQ.2) THEN
+        134     1                         IMODE=3
+        135     1                         CALL GFFLW3(IMODE,FILEVF,
+        136     1                    *                NG,NC,NP,NTIME0,CVEL,VSCALE,TIME,V3D,
+        137     1                    *                MPBOUN,NPBOUN,LPBOUN,
+        138     1                    *                MCOM,NCOMFL,NCOMST,COMFLE,COMSET,
+        139     1                    *                IUT6,IUT0,IUTFF,IERR,
+        140     1                    *                NG3,WRK1,WRK2,WRK3,WRK4)
+        141     1                         NTIME0=0
+        142     1                         TIME=0.0D0
+        143     1               
+        144     2                         DO 4000 IC=1,NC
+        145     2                             IMODE=5
+        146     2                             CALL GFFLW3(IMODE,FILEVF,
+        147     2                    *                    NG,NC1,NP,NTIME0,CVEL,VSCALE,TIME,V3D,
+        148     2                    *                    MPBOUN,NPBOUN,LPBOUN,
+        149     2                    *                    MCOM,NCOMFL,NCOMST,COMFLE,COMSET,
+        150     2                    *                    IUT6,IUT0,IUTFF,IERR,
+        151     2                    *                    NG3,WRK1,WRK2,WRK3,WRK4)
+        152     3                             DO 3100 IP=1,NP
+        153     4                             DO 3200 K=0,NG+2
+        154     5                             DO 3300 J=0,NG+2
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      V3D
+                              <<< Loop-information  End >>>
+        155     6                             DO 3400 I=0,NG+2
+        156     6                             U0=V3D(2,I,J,K)
+        157     6                             V0=V3D(3,I,J,K)
+        158     6                             W0=V3D(4,I,J,K)
+        159     6                             UU=U0*U0+V0*V0+W0*W0
+        160     6                             JX =RHO0*U0
+        161     6                             JY =RHO0*V0
+        162     6                             JZ =RHO0*W0
+        163     6                             EE =JX*JX+JY*JY+JZ*JZ
+        164     7                             IF(ICOLLI.EQ.1) THEN
+        165     7                                 CU= U0*CVEL(1,IP)+V0*CVEL(2,IP)+W0*CVEL(3,IP)
+        166     7                                 F (I,J,K,IP,IC)=WF(IP)*RHO0*
+        167     7                    *            (1.0D0+3.0D0*CU+4.5D0*CU*CU-1.5D0*UU)
+        168     7                             ELSE IF(ICOLLI.EQ.2) THEN
+        169     7                                 FWRK2( 1)= RHO0
+        170     7                                 FWRK2( 2)=-RHO0+EE
+        171     7                                 FWRK2( 3)=-RHO0
+        172     7                                 FWRK2( 4)= JX
+        173     7                                 FWRK2( 5)=-JX*7.0D0/3.0D0
+        174     7                                 FWRK2( 6)= JY
+        175     7                                 FWRK2( 7)=-JY*7.0D0/3.0D0
+        176     7                                 FWRK2( 8)= JZ
+        177     7                                 FWRK2( 9)=-JZ*7.0D0/3.0D0
+        178     7                                 FWRK2(10)= 2.0D0*JX*JX-JY*JY-JZ*JZ
+        179     7                                 FWRK2(11)=             JY*JY-JZ*JZ
+        180     7                                 FWRK2(12)= JX*JY
+        181     7                                 FWRK2(13)= JY*JZ
+        182     7                                 FWRK2(14)= JZ*JX
+        183     7                                 FWRK2(15)= 0.0D0
+        184     7                                 FBUF=0.0D0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 616
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<< Loop-information  End >>>
+        185     8   s    v                        DO 3500 II = 1,15
+        186     8   p    v                            FBUF=FBUF+SD(II)*DBLE(LMAT(IP,II))*FWRK2(II)
+        187     8   p    v       3500             CONTINUE
+        188     7                                 F(I,J,K,IP,IC)=FBUF
+        189     7                             ENDIF
+        190     6               C
+        191     6                3400         CONTINUE
+        192     5                3300         CONTINUE
+        193     4                3200         CONTINUE
+        194     3                3100         CONTINUE
+        195     2               C
+        196     2                4000     CONTINUE
+        197     1               C
+        198     1                         IMODE=7
+        199     1                         CALL GFFLW3(IMODE,FILEVF,
+        200     1                    *                NG,NC1,NP,NTIME0,CVEL,VSCALE,TIME,V3D,
+        201     1                    *                MPBOUN,NPBOUN,LPBOUN,
+        202     1                    *                MCOM,NCOMFL,NCOMST,COMFLE,COMSET,
+        203     1                    *                IUT6,IUT0,IUTFF,IERR,
+        204     1                    *                NG3,WRK1,WRK2,WRK3,WRK4)
+        205     1               C
+        206     1                      ENDIF
+        207                     C
+        208                           RETURN
+        209                           END
+
+ Diagnostic messages: program name(LBMINI)
+   jwd8220o-i  "lbmini.f", line 1: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd5208p-i  "lbmini.f", line 91: DO loop is not parallelized: the assign-refer order of 'FWRK2' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbmini.f", line 92: DO loop is not parallelized: the assign-refer order of 'FWRK2' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbmini.f", line 93: DO loop is not parallelized: the assign-refer order of 'FWRK2' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbmini.f", line 94: DO loop is not parallelized: the assign-refer order of 'FWRK2' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbmini.f", line 95: DO loop is not parallelized: the assign-refer order of 'FWRK2' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd8670o-i  "lbmini.f", line 95: This loop cannot be software pipelined because the loop contains a branch instruction.
+   jwd5143p-i  "lbmini.f", line 117: DO loop is not parallelized: the value of its iteration count is insufficient to make parallelization worthwhile.
+   jwd6004s-i  "lbmini.f", line 117: SIMD conversion is applied to DO loop with DO variable 'II'. The DO loop contains a reduction operation.
+   jwd8209o-i  "lbmini.f", line 118: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5123p-i  "lbmini.f", line 144: DO loop is not parallelized: a character or structure type data was found in the loop.
+   jwd5208p-i  "lbmini.f", line 152: DO loop is not parallelized: the assign-refer order of 'FWRK2' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbmini.f", line 153: DO loop is not parallelized: the assign-refer order of 'FWRK2' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbmini.f", line 154: DO loop is not parallelized: the assign-refer order of 'FWRK2' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbmini.f", line 155: DO loop is not parallelized: the assign-refer order of 'FWRK2' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd8670o-i  "lbmini.f", line 155: This loop cannot be software pipelined because the loop contains a branch instruction.
+   jwd8209o-i  "lbmini.f", line 159: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "lbmini.f", line 163: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "lbmini.f", line 165: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "lbmini.f", line 166: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "lbmini.f", line 170: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "lbmini.f", line 173: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "lbmini.f", line 173: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "lbmini.f", line 175: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "lbmini.f", line 175: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "lbmini.f", line 177: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "lbmini.f", line 177: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "lbmini.f", line 178: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5143p-i  "lbmini.f", line 185: DO loop is not parallelized: the value of its iteration count is insufficient to make parallelization worthwhile.
+   jwd6004s-i  "lbmini.f", line 185: SIMD conversion is applied to DO loop with DO variable 'II'. The DO loop contains a reduction operation.
+   jwd8209o-i  "lbmini.f", line 186: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+
+ Procedure information
+   Lines      : 209
+   Statements : 134
+   Stack(byte): 848
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 209
+   Total statements : 134
+   Total stack(byte): 848
+   Total prefetch num: 0
+

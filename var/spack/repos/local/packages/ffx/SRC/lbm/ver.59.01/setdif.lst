@@ -1,0 +1,521 @@
+
+ Fujitsu Fortran Version 4.8.1  Fri Nov 25 09:21:50 2022
+
+ Compilation information
+   Current directory : /vol0005/mdt2/home/u10588/SRC/lbm/ver.59.01
+   Source file       : setdif.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -Nlst=t -Cpp -Cfpp -c -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Knointentopt
+   Cpp options          : -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Dcputime -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=8 -D__FRT_patchlevel__=1 -D__FRT_version__="4.8.1" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Knoarray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nlibomp -Nline -Nlst -Nlst=p -Nlst=t
+                          -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "SETDIF"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE SETDIF(IMODEL,ICALSS,NG,NP,LEVEL,VISCM,
+          2                          *                  CS,TAUMIN,WF,CVEL,
+          3                          *                  DSCALE,VSCALE,F,TAU,
+          4                          *                  LPOSI,NTFIX,LTFIX,TAUFIX,
+          5                          *                  LCBOUN,TAINLT,TAFREE,VAL3D,FEQ,CVISC,TAUTGT)
+          6                           IMPLICIT NONE
+          7                           INTEGER*4 IMODEL,ICALSS,ICNSTD,NG,NP,LEVEL,LPOSI(3),LCBOUN(4)
+          8                           REAL*8    VISCM,CS,TAUMIN,WF(NP),CVEL(3,NP),DSCALE,VSCALE
+          9                           REAL*8    TAINLT,TAFREE
+         10                           REAL*8    F(0:NG+2,0:NG+2,0:NG+2,NP)
+         11                           REAL*8    TAU(0:NG+2,0:NG+2,0:NG+2)
+         12                           REAL*8    VAL3D(4,0:NG+2,0:NG+2,0:NG+2)
+         13                           REAL*8    FEQ(0:NG+2,0:NG+2,0:NG+2,NP)
+         14                           REAL*8    CVISC(0:NG+2,0:NG+2,0:NG+2),TAUTGT
+         15                     C
+         16                           INTEGER*4 NTFIX,LTFIX(2,NTFIX)
+         17                           REAL*8    TAUFIX(NTFIX)
+         18                     C
+         19                     C  IMODEL=0: NON-SGS MODEL
+         20                     C  IMODEL=1: STANDARD SMAGORINSKY MODEL
+         21                     C
+         22                     C  ICALSS=0: CAL. STRAIN BY MACRO VARIAVLES
+         23                     C  ICALSS=1: CAL. STRAIN BY DISRIBUTION FUNCTAION
+         24                     C
+         25                     C  ICNSTD=0: USE LOCAL   GRID SCALE FOR COMPUTING TURBULENT VISCOCITY
+         26                     C  ICNSTD=1: USE MINIMUM GRID SCALE FOR COMPUTING TURBULENT VISCOCITY
+         27                     C
+         28                     C  MTFIX       :MAX. NUMBER OF TAU-FIX INPUT
+         29                     C  NTFIX       :     NUMBER OF TAU-FIX INPUT
+         30                     C  LTFIX(1,I)  :SPECIFY DIRECTION OF TAU-FIX (1:X, 2:Y, 3:Z)
+         31                     C  LTFIX(2,I)  :POSITION OF TAU-FIX CELL (1--> NC[X,Y,Z])
+         32                     C  TAUFIX(I)   :RELAXATION COEF. TAU OF TAU-FIX CELL
+         33                     C
+         34                           INTEGER*4 I,J,K,IFIX,IDIR,IPOSI,IP
+         35                           REAL*8    DX,TAU0,VIS0,VISSGS,C1,C2
+         36                           REAL*8    RHO,FBUF,U0,V0,W0,UU,CU
+         37                           REAL*8    S11,S12,S13,S21,S22,S23,S31,S32,S33,SS,BUF,FNEQ
+         38                           REAL*8    P11,P12,P13,P21,P22,P23,P31,P32,P33,PP
+         39                           REAL*8    DUDX,DUDY,DUDZ,DVDX,DVDY,DVDZ,DWDX,DWDY,DWDZ
+         40                     C
+         41                           CALL USTSTA(22)
+         42                     C
+         43                           DX=2.0E0**FLOAT(LEVEL)/FLOAT(NG)
+         44                     C
+         45                           VIS0= VISCM*(VSCALE/DSCALE)*DBLE(NG)/(2.0E0**FLOAT(LEVEL-1))
+         46                           TAU0= 0.5D0+3.0D0*VIS0
+         47                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 593
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<< Loop-information  End >>>
+         48     1  pp    v            DO 1000 IFIX=1,NTFIX
+         49     1   p    v                IDIR =LTFIX(1,IFIX)
+         50     1   p    v                IPOSI=LTFIX(2,IFIX)
+         51     1   p                     IF(LPOSI(IDIR).EQ.IPOSI) TAU0=TAUFIX(IFIX)
+         52     1   p    v       1000 CONTINUE
+         53                     C
+         54                           IF(LCBOUN(4).EQ.1 .AND. TAFREE.GT.0.5D0) TAU0=TAFREE
+         55                           IF(LCBOUN(2).EQ.1 .AND. TAINLT.GT.0.5D0) TAU0=TAINLT
+         56                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1455
+                              <<<  [OPTIMIZATION]
+                              <<<    COLLAPSED
+                              <<<    SIMD(VL: 8)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      TAU
+                              <<< Loop-information  End >>>
+         57     1  pp   4v            DO 1100 K =0,NG+2
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    COLLAPSED
+                              <<< Loop-information  End >>>
+         58     2   p   4             DO 1200 J =0,NG+2
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    COLLAPSED
+                              <<< Loop-information  End >>>
+         59     3   p   4             DO 1300 I =0,NG+2
+         60     3   p   4v                TAU(I,J,K)=TAU0
+         61     3   p   4v       1300 CONTINUE
+         62     2   p            1200 CONTINUE
+         63     1   p            1100 CONTINUE
+         64                     
+         65     1                     IF(IMODEL.EQ.1) THEN
+         66     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<< Loop-information  End >>>
+         67     2  pp                     DO 2000 K =0,NG+2
+         68     3   p                     DO 2100 J =0,NG+2
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      CVEL, WF
+                              <<< Loop-information  End >>>
+         69     4   p                     DO 2200 I =0,NG+2
+         70     4   p                         RHO=0.0D0
+         71     4   p                         U0 =0.0D0
+         72     4   p                         V0 =0.0D0
+         73     4   p                         W0 =0.0D0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.72, ITR: 80, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      CVEL
+                              <<< Loop-information  End >>>
+         74     5   p   2v                    DO 2300 IP=1,NP
+         75     5   p   2v                        FBUF=F(I,J,K,IP)
+         76     5   p   2v                        RHO=RHO+FBUF
+         77     5   p   2v                        U0 =U0 +FBUF*CVEL(1,IP)
+         78     5   p   2v                        V0 =V0 +FBUF*CVEL(2,IP)
+         79     5   p   2v                        W0 =W0 +FBUF*CVEL(3,IP)
+         80     5   p   2v       2300         CONTINUE
+         81     4   p                         U0=U0/RHO
+         82     4   p                         V0=V0/RHO
+         83     4   p                         W0=W0/RHO
+         84     4   p                         VAL3D(1,I,J,K)=RHO
+         85     4   p                         VAL3D(2,I,J,K)=U0
+         86     4   p                         VAL3D(3,I,J,K)=V0
+         87     4   p                         VAL3D(4,I,J,K)=W0
+         88     4               C
+         89     5   p                         IF(ICALSS.EQ.1) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.33, ITR: 72, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WF, CVEL
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 0
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 3  FILL 3
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+         90     6   p    v                    DO 2400 IP=1,NP
+         91     6   p    v                        CU= U0*CVEL(1,IP)+V0*CVEL(2,IP)+W0*CVEL(3,IP)
+         92     6   p    v                        UU=U0*U0+V0*V0+W0*W0
+         93     6   p    v                        FEQ(I,J,K,IP)=WF(IP)*RHO*
+         94     6                    *            (1.0D0+3.0D0*CU+4.5D0*CU*CU-1.5D0*UU)
+         95     6   p    v       2400         CONTINUE
+         96     5   p                         ENDIF
+         97     4               C
+         98     4   p            2200     CONTINUE
+         99     3   p            2100     CONTINUE
+        100     2   p            2000     CONTINUE
+        101     1               C
+        102     2                         IF(ICALSS.EQ.0) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<< Loop-information  End >>>
+        103     3  pp                         DO 3000 K =1,NG+1
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      VAL3D, TAU
+                              <<< Loop-information  End >>>
+        104     4   p                         DO 3100 J =1,NG+1
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.57, ITR: 48, MVE: 2, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      VAL3D, TAU
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 2
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        105     5   p    v                    DO 3200 I =1,NG+1
+        106     5   p    v                        DUDX=(VAL3D(2,I+1,J  ,K  )-VAL3D(2,I-1,J  ,K  ))/2.0D0
+        107     5   p    v                        DUDY=(VAL3D(2,I  ,J+1,K  )-VAL3D(2,I  ,J-1,K  ))/2.0D0
+        108     5   p    v                        DUDZ=(VAL3D(2,I  ,J  ,K+1)-VAL3D(2,I  ,J  ,K-1))/2.0D0
+        109     5   p    v                        DVDX=(VAL3D(3,I+1,J  ,K  )-VAL3D(3,I-1,J  ,K  ))/2.0D0
+        110     5   p    v                        DVDY=(VAL3D(3,I  ,J+1,K  )-VAL3D(3,I  ,J-1,K  ))/2.0D0
+        111     5   p    v                        DVDZ=(VAL3D(3,I  ,J  ,K+1)-VAL3D(3,I  ,J  ,K-1))/2.0D0
+        112     5   p    v                        DWDX=(VAL3D(4,I+1,J  ,K  )-VAL3D(4,I-1,J  ,K  ))/2.0D0
+        113     5   p    v                        DWDY=(VAL3D(4,I  ,J+1,K  )-VAL3D(4,I  ,J-1,K  ))/2.0D0
+        114     5   p    v                        DWDZ=(VAL3D(4,I  ,J  ,K+1)-VAL3D(4,I  ,J  ,K-1))/2.0D0
+        115     5   p    v                        S11 =(DUDX+DUDX)/2.0D0
+        116     5   p    v                        S12 =(DUDY+DVDX)/2.0D0
+        117     5   p    v                        S13 =(DUDZ+DWDX)/2.0D0
+        118     5   p    v                        S21 =(DVDX+DUDY)/2.0D0
+        119     5   p    v                        S22 =(DVDY+DVDY)/2.0D0
+        120     5   p    v                        S23 =(DVDZ+DWDY)/2.0D0
+        121     5   p    v                        S31 =(DWDX+DUDZ)/2.0D0
+        122     5   p    v                        S32 =(DWDY+DVDZ)/2.0D0
+        123     5   p    v                        S33 =(DWDZ+DWDZ)/2.0D0
+        124     5   p    v                        SS=2.0D0*(S11*S11+S12*S12+S13*S13
+        125     5                    *                     +S21*S21+S22*S22+S23*S23
+        126     5                    *                     +S31*S31+S32*S32+S33*S33)
+        127     6   p    v                        IF(SS .LT. 0.D0) THEN
+        128     6   p    v                            SS = 0.D0
+        129     6   p    v                        ELSE
+        130     6   p    v                            SS = SQRT(SS)
+        131     6   p    v                        ENDIF
+        132     5   p    v                        VISSGS=CS*CS*SS
+        133     5   p    v                        TAU(I,J,K)=TAU(I,J,K)+3.0D0*VISSGS
+        134     5   p    v       3200         CONTINUE
+        135     4   p            3100         CONTINUE
+        136     3   p            3000         CONTINUE
+        137     2                         ELSE IF(ICALSS.EQ.1) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<< Loop-information  End >>>
+        138     3  pp                         DO 4000 K =0,NG+2
+        139     4   p                         DO 4100 J =0,NG+2
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      CVEL
+                              <<< Loop-information  End >>>
+        140     5   p                         DO 4200 I =0,NG+2
+        141     5   p                             S11=0.0D0
+        142     5   p                             S22=0.0D0
+        143     5   p                             S33=0.0D0
+        144     5   p                             S12=0.0D0
+        145     5   p                             S13=0.0D0
+        146     5   p                             S23=0.0D0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.57, ITR: 40, MVE: 2, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      CVEL
+                              <<< Loop-information  End >>>
+        147     6   p    v                        DO 4300 IP=1,NP
+        148     6   p    v                            FNEQ=F(I,J,K,IP)-FEQ(I,J,K,IP)
+        149     6   p    v                            BUF=(1.5D0/TAU(I,J,K))*FNEQ
+        150     6   p    v                            S11=S11-BUF*CVEL(1,IP)*CVEL(1,IP)
+        151     6   p    v                            S22=S22-BUF*CVEL(2,IP)*CVEL(2,IP)
+        152     6   p    v                            S33=S33-BUF*CVEL(3,IP)*CVEL(3,IP)
+        153     6   p    v                            S12=S12-BUF*CVEL(1,IP)*CVEL(2,IP)
+        154     6   p    v                            S13=S13-BUF*CVEL(1,IP)*CVEL(3,IP)
+        155     6   p    v                            S23=S23-BUF*CVEL(2,IP)*CVEL(3,IP)
+        156     6   p    v       4300             CONTINUE
+        157     5   p                             S21=S12
+        158     5   p                             S31=S13
+        159     5   p                             S32=S23
+        160     5   p                             SS=2.0D0*(S11*S11+S12*S12+S13*S13
+        161     5                    *                     +S21*S21+S22*S22+S23*S23
+        162     5                    *                     +S31*S31+S32*S32+S33*S33)
+        163     6   p                             IF(SS .LT. 0.D0) THEN
+        164     6   p                                 SS = 0.D0
+        165     6   p                             ELSE
+        166     6   p                                 SS = SQRT(SS)
+        167     6   p                             ENDIF
+        168     5   p                             VISSGS=CS*CS*SS
+        169     5   p                             TAU(I,J,K)=TAU(I,J,K)+3.0D0*VISSGS
+        170     5   p            4200         CONTINUE
+        171     4   p            4100         CONTINUE
+        172     3   p            4000         CONTINUE
+        173     2                         ELSE
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<< Loop-information  End >>>
+        174     3  pp                         DO 5000 K =0,NG+2
+        175     4   p                         DO 5100 J =0,NG+2
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      CVEL
+                              <<< Loop-information  End >>>
+        176     5   p                         DO 5200 I =0,NG+2
+        177     5   p                             P11=0.0D0
+        178     5   p                             P22=0.0D0
+        179     5   p                             P33=0.0D0
+        180     5   p                             P12=0.0D0
+        181     5   p                             P13=0.0D0
+        182     5   p                             P23=0.0D0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.75, ITR: 48, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      CVEL
+                              <<< Loop-information  End >>>
+        183     6   p    v                        DO 5300 IP=1,NP
+        184     6   p    v                            FNEQ=F(I,J,K,IP)-FEQ(I,J,K,IP)
+        185     6   p    v                            P11=P11-FNEQ*CVEL(1,IP)*CVEL(1,IP)
+        186     6   p    v                            P22=P22-FNEQ*CVEL(2,IP)*CVEL(2,IP)
+        187     6   p    v                            P33=P33-FNEQ*CVEL(3,IP)*CVEL(3,IP)
+        188     6   p    v                            P12=P12-FNEQ*CVEL(1,IP)*CVEL(2,IP)
+        189     6   p    v                            P13=P13-FNEQ*CVEL(1,IP)*CVEL(3,IP)
+        190     6   p    v                            P23=P23-FNEQ*CVEL(2,IP)*CVEL(3,IP)
+        191     6   p    v       5300             CONTINUE
+        192     5   p                             P21=P12
+        193     5   p                             P31=P13
+        194     5   p                             P32=P23
+        195     5   p                             PP=2.0D0*(P11*P11+P12*P12+P13*P13
+        196     5                    *                     +P21*P21+P22*P22+P23*P23
+        197     5                    *                     +P31*P31+P32*P32+P33*P33)
+        198     6   p                             IF(PP .LT. 0.D0) THEN
+        199     6   p                                 PP = 0.D0
+        200     6   p                             ELSE
+        201     6   p                                 PP = SQRT(PP)
+        202     6   p                             ENDIF
+        203     5   p                             BUF=4.5D0*CS*CS*PP
+        204     5   p                             TAU(I,J,K)=TAU0/2.0D0+(TAU0*TAU0/4.0D0+BUF)**0.5D0
+        205     5   p            5200         CONTINUE
+        206     4   p            5100         CONTINUE
+        207     3   p            5000         CONTINUE
+        208     2                         ENDIF
+        209     1                     ENDIF
+        210                     C
+        211     1                     IF(TAUMIN.GT.0.5D0) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 728
+                              <<<  [OPTIMIZATION]
+                              <<<    COLLAPSED
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.00, ITR: 208, MVE: 7, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      TAU
+                              <<< Loop-information  End >>>
+        212     2  pp   2v                DO 6000 K =0,NG+2
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    COLLAPSED
+                              <<< Loop-information  End >>>
+        213     3   p   2                 DO 6100 J =0,NG+2
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    COLLAPSED
+                              <<< Loop-information  End >>>
+        214     4   p   2                 DO 6200 I =0,NG+2
+        215     4   p   2v                    TAU(I,J,K)=MAX(TAU(I,J,K),TAUMIN)
+        216     4   p   2v       6200     CONTINUE
+        217     3   p            6100     CONTINUE
+        218     2   p            6000     CONTINUE
+        219     1                     ENDIF
+        220                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 762
+                              <<<  [OPTIMIZATION]
+                              <<<    COLLAPSED
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.66, ITR: 192, MVE: 6, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      TAU, CVISC
+                              <<< Loop-information  End >>>
+        221     1  pp   2v            DO 7000 K =0,NG+2
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    COLLAPSED
+                              <<< Loop-information  End >>>
+        222     2   p   2             DO 7100 J =0,NG+2
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    COLLAPSED
+                              <<< Loop-information  End >>>
+        223     3   p   2             DO 7200 I =0,NG+2
+        224     3   p   2v                C1=1.0D0-CVISC(I,J,K)
+        225     3   p   2v                C2=      CVISC(I,J,K)
+        226     3   p   2v                TAU(I,J,K)=C1*TAU(I,J,K)+C2*TAUTGT
+        227     3   p   2v       7200 CONTINUE
+        228     2   p            7100 CONTINUE
+        229     1   p            7000 CONTINUE
+        230                     C
+        231                           CALL USTEND(22)
+        232                     C
+        233                           RETURN
+        234                           END
+
+ Diagnostic messages: program name(SETDIF)
+   jwd8220o-i  "setdif.f", line 1: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd2006i-i  "setdif.f", line 7: 'ICNSTD' is declared but never referenced.
+   jwd8209o-i  "setdif.f", line 45: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "setdif.f", line 46: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5001p-i  "setdif.f", line 48: DO loop with DO variable 'IFIX' is parallelized.
+   jwd6001s-i  "setdif.f", line 48: SIMD conversion is applied to DO loop with DO variable 'IFIX'.
+   jwd6002s-i  "setdif.f", line 57: SIMD conversion is applied to DO loop.
+   jwd8663o-i  "setdif.f", line 57: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "setdif.f", line 57: Loop unrolled 4 times.
+   jwd5002p-i  "setdif.f", line 59: DO loop is parallelized.
+   jwd8330o-i  "setdif.f", line 60: Nested DO loops were coalesced into a single loop by DO variables K,...,I.
+   jwd5001p-i  "setdif.f", line 67: DO loop with DO variable 'K' is parallelized.
+   jwd6004s-i  "setdif.f", line 74: SIMD conversion is applied to DO loop with DO variable 'IP'. The DO loop contains a reduction operation.
+   jwd8204o-i  "setdif.f", line 74: This loop is software pipelined.
+   jwd8205o-i  "setdif.f", line 74: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 80.
+   jwd8208o-i  "setdif.f", line 77: Method of calculating sum or product is changed.
+   jwd8208o-i  "setdif.f", line 78: Method of calculating sum or product is changed.
+   jwd8209o-i  "setdif.f", line 90: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd6001s-i  "setdif.f", line 90: SIMD conversion is applied to DO loop with DO variable 'IP'.
+   jwd8204o-i  "setdif.f", line 90: This loop is software pipelined.
+   jwd8205o-i  "setdif.f", line 90: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 72.
+   jwd8209o-i  "setdif.f", line 91: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "setdif.f", line 93: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5001p-i  "setdif.f", line 103: DO loop with DO variable 'K' is parallelized.
+   jwd6001s-i  "setdif.f", line 105: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8209o-i  "setdif.f", line 105: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8204o-i  "setdif.f", line 105: This loop is software pipelined.
+   jwd8205o-i  "setdif.f", line 105: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 48.
+   jwd8209o-i  "setdif.f", line 116: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "setdif.f", line 117: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "setdif.f", line 120: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "setdif.f", line 124: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "setdif.f", line 133: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5001p-i  "setdif.f", line 138: DO loop with DO variable 'K' is parallelized.
+   jwd6004s-i  "setdif.f", line 147: SIMD conversion is applied to DO loop with DO variable 'IP'. The DO loop contains a reduction operation.
+   jwd8204o-i  "setdif.f", line 147: This loop is software pipelined.
+   jwd8205o-i  "setdif.f", line 147: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 40.
+   jwd8209o-i  "setdif.f", line 149: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "setdif.f", line 150: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "setdif.f", line 151: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "setdif.f", line 152: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "setdif.f", line 153: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "setdif.f", line 154: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "setdif.f", line 155: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "setdif.f", line 160: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "setdif.f", line 169: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5001p-i  "setdif.f", line 174: DO loop with DO variable 'K' is parallelized.
+   jwd6004s-i  "setdif.f", line 183: SIMD conversion is applied to DO loop with DO variable 'IP'. The DO loop contains a reduction operation.
+   jwd8204o-i  "setdif.f", line 183: This loop is software pipelined.
+   jwd8205o-i  "setdif.f", line 183: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 48.
+   jwd8209o-i  "setdif.f", line 185: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "setdif.f", line 186: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "setdif.f", line 187: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "setdif.f", line 188: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "setdif.f", line 189: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "setdif.f", line 190: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "setdif.f", line 195: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8213o-i  "setdif.f", line 204: Exponentiation method is changed.
+   jwd8209o-i  "setdif.f", line 204: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd6002s-i  "setdif.f", line 212: SIMD conversion is applied to DO loop.
+   jwd8204o-i  "setdif.f", line 212: This loop is software pipelined.
+   jwd8205o-i  "setdif.f", line 212: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 208.
+   jwd5002p-i  "setdif.f", line 214: DO loop is parallelized.
+   jwd8330o-i  "setdif.f", line 215: Nested DO loops were coalesced into a single loop by DO variables K,...,I.
+   jwd6002s-i  "setdif.f", line 221: SIMD conversion is applied to DO loop.
+   jwd8204o-i  "setdif.f", line 221: This loop is software pipelined.
+   jwd8205o-i  "setdif.f", line 221: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 192.
+   jwd5002p-i  "setdif.f", line 223: DO loop is parallelized.
+   jwd8330o-i  "setdif.f", line 224: Nested DO loops were coalesced into a single loop by DO variables K,...,I.
+
+ Procedure information
+   Lines      : 234
+   Statements : 191
+   Stack(byte): 30480
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 234
+   Total statements : 191
+   Total stack(byte): 30480
+   Total prefetch num: 0
+

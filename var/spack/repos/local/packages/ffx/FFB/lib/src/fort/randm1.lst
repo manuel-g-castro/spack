@@ -1,0 +1,282 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:54:22 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : randm1.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "RANDM1"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    RANDM1                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE RANDM1(IMODE,LTABLE,IARY,FARY,MAX,MAX2,
+         14                          *                  IWRK,FWRK,IUT0,IERR)
+         15                           IMPLICIT REAL*4(A-H,O-Z)
+         16                           DIMENSION LTABLE(MAX),IARY(MAX2,MAX),FARY(MAX2,MAX),
+         17                          1          IWRK(MAX),FWRK(MAX)
+         18                     C
+         19                           CHARACTER*60 ERMSGB
+         20                          & / ' ## SUBROUTINE RANDM1: FATAL      ERROR OCCURENCE; RETURNED' /
+         21                           CHARACTER*60 EREXP1
+         22                          & / ' AN ILLEGAL VALUE WAS SPECIFIED FOR CONTROL PARAMETER IMODE' /
+         23                     C
+         24                     C
+         25                     C      PERMUTE AN ARRAY
+         26                     C
+         27                     C
+         28                     C     ARGUMENT LISTINGS
+         29                     C          IMODE       ; SPECIFIES TARGET ARRAY & PERMUTATION DIRECTION
+         30                     C                   1 --- FORWARD -PERMUTE INTEGER ARRAY
+         31                     C                   2 --- FORWARD -PERMUTE FLOAT   ARRAY
+         32                     C                  -1 --- BACKWARD-PERMUTE INTEGER ARRAY
+         33                     C                  -2 --- BACKWARD-PERMUTE FLOAT   ARRAY
+         34                     C          LTABLE   (I); PERMUTATION TABLE
+         35                     C          MAX         ; NUMBER OF ELEMENTS        IN TARGET ARRAY
+         36                     C          MAX2        ; ADJUSTABLE DIMENSION SIZE OF TARGET ARRAY
+         37                     C          IUT0        ; FILE NUMBER TO REPORT ERROR OCCURENCE
+         38                     C
+         39                     C       (2) OUTPUT
+         40                     C          IERR        ; RETURN CODE TO REPORT ERROR OCCURENCE
+         41                     C                   0 --- NORMAL TERMINATION
+         42                     C                   1 --- A FATAL ERROR HAS OCCURED
+         43                     C
+         44                     C       (3) INPUT-OUTPUT
+         45                     C          IARY   (J,I); INTEGER ARRAY TO BE PERMUTED
+         46                     C          FARY   (J,I); FLOAT   ARRAY TO BE PERMUTED
+         47                     C
+         48                     C       (4) WORK
+         49                     C          IWRK     (I); WORK AREA STORING INTEGER ARRAY CONTENTS
+         50                     C          FWRK     (I); WORK AREA STORING FLOAT   ARRAY CONTENTS
+         51                     C
+         52                     C
+         53                           IERR = 0
+         54                     C
+         55                     C
+         56                     C CHECK SPECIFIED CONTROL PARAMETER
+         57                     C
+         58                     C
+         59     1                     IF(IMODE.NE. 1 .AND. IMODE.NE. 2 .AND.
+         60     1                    &   IMODE.NE.-1 .AND. IMODE.NE.-2 ) THEN
+         61     1                         WRITE(IUT0,*) ERMSGB
+         62     1                         WRITE(IUT0,*) EREXP1
+         63     1                         IERR = 1
+         64     1                         RETURN
+         65     1                     ENDIF
+         66                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LTABLE, IWRK, FWRK
+                              <<< Loop-information  End >>>
+         67     1                     DO 610 J = 1 , MAX2
+         68     1               C
+         69     1               C
+         70     1               C STORE CONTENTS OF ARRAY
+         71     1               C
+         72     1               C
+         73     2                         IF(IMODE.EQ.1 .OR. IMODE.EQ.-1) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1231
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.55, ITR: 384, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IWRK
+                              <<< Loop-information  End >>>
+         74     3  pp   4v                    DO 100 I = 1 , MAX
+         75     3   p   4v                        IWRK(I) = IARY(J,I)
+         76     3   p   4v        100         CONTINUE
+         77     2                         ELSE
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1231
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.55, ITR: 384, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FWRK
+                              <<< Loop-information  End >>>
+         78     3  pp   4v                    DO 200 I = 1 , MAX
+         79     3   p   4v                        FWRK(I) = FARY(J,I)
+         80     3   p   4v        200         CONTINUE
+         81     2                         ENDIF
+         82     1               C
+         83     1               C
+         84     1               C PERFORM FORWARD-PERMUTATION
+         85     1               C
+         86     1               C
+         87     2                         IF(IMODE.EQ.1) THEN
+         88     2               C*$*ASSERT PERMUTATION ( LTABLE )
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.00, ITR: 320, MVE: 4, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IWRK, LTABLE
+                              <<< Loop-information  End >>>
+         89     3   s   2v                    DO 300 I = 1 , MAX
+         90     3   m   2v                        IARY(J,LTABLE(I)) = IWRK(I)
+         91     3   p   2v        300         CONTINUE
+         92     2                         ENDIF
+         93     1               C
+         94     2                         IF(IMODE.EQ.2) THEN
+         95     2               C*$*ASSERT PERMUTATION ( LTABLE )
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.00, ITR: 320, MVE: 4, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FWRK, LTABLE
+                              <<< Loop-information  End >>>
+         96     3   s   2v                    DO 400 I = 1 , MAX
+         97     3   m   2v                        FARY(J,LTABLE(I)) = FWRK(I)
+         98     3   p   2v        400         CONTINUE
+         99     2                         ENDIF
+        100     1               C
+        101     1               C
+        102     1               C PERFORM BACKWARD-PERMUTATION
+        103     1               C
+        104     1               C
+        105     2                         IF(IMODE.EQ.-1) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 843
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.00, ITR: 352, MVE: 4, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LTABLE
+                              <<< Loop-information  End >>>
+        106     3  pp   2v                    DO 500 I = 1 , MAX
+        107     3   p   2v                        IARY(J,I) = IWRK(LTABLE(I))
+        108     3   p   2v        500         CONTINUE
+        109     2                         ENDIF
+        110     1               C
+        111     2                         IF(IMODE.EQ.-2) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 843
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.00, ITR: 352, MVE: 4, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LTABLE
+                              <<< Loop-information  End >>>
+        112     3  pp   2v                    DO 600 I = 1 , MAX
+        113     3   p   2v                        FARY(J,I) = FWRK(LTABLE(I))
+        114     3   p   2v        600         CONTINUE
+        115     2                         ENDIF
+        116     1               C
+        117     1                 610 CONTINUE
+        118                     C
+        119                     C
+        120                           RETURN
+        121                           END
+
+ Diagnostic messages: program name(RANDM1)
+   jwd5208p-i  "randm1.f", line 67: DO loop is not parallelized: the assign-refer order of 'FWRK' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "randm1.f", line 67: DO loop is not parallelized: the assign-refer order of 'FARY' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "randm1.f", line 67: DO loop is not parallelized: the assign-refer order of 'IWRK' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "randm1.f", line 67: DO loop is not parallelized: the assign-refer order of 'IARY' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5001p-i  "randm1.f", line 74: DO loop with DO variable 'I' is parallelized.
+   jwd6001s-i  "randm1.f", line 74: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8204o-i  "randm1.f", line 74: This loop is software pipelined.
+   jwd8205o-i  "randm1.f", line 74: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 384.
+   jwd5001p-i  "randm1.f", line 78: DO loop with DO variable 'I' is parallelized.
+   jwd6001s-i  "randm1.f", line 78: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8204o-i  "randm1.f", line 78: This loop is software pipelined.
+   jwd8205o-i  "randm1.f", line 78: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 384.
+   jwd6001s-i  "randm1.f", line 89: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8204o-i  "randm1.f", line 89: This loop is software pipelined.
+   jwd8205o-i  "randm1.f", line 89: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 320.
+   jwd5208p-i  "randm1.f", line 90: DO loop is not parallelized: the assign-refer order of 'IARY' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6001s-i  "randm1.f", line 96: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8204o-i  "randm1.f", line 96: This loop is software pipelined.
+   jwd8205o-i  "randm1.f", line 96: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 320.
+   jwd5208p-i  "randm1.f", line 97: DO loop is not parallelized: the assign-refer order of 'FARY' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5001p-i  "randm1.f", line 106: DO loop with DO variable 'I' is parallelized.
+   jwd6001s-i  "randm1.f", line 106: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8204o-i  "randm1.f", line 106: This loop is software pipelined.
+   jwd8205o-i  "randm1.f", line 106: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 352.
+   jwd5001p-i  "randm1.f", line 112: DO loop with DO variable 'I' is parallelized.
+   jwd6001s-i  "randm1.f", line 112: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8204o-i  "randm1.f", line 112: This loop is software pipelined.
+   jwd8205o-i  "randm1.f", line 112: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 352.
+
+ Procedure information
+   Lines      : 121
+   Statements : 45
+   Stack(byte): 2160
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 121
+   Total statements : 45
+   Total stack(byte): 2160
+   Total prefetch num: 0
+

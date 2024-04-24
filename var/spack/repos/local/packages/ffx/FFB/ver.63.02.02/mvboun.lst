@@ -1,0 +1,306 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:53:12 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : mvboun.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "MVBOUN"
+  (line-no.)(nest)(optimize)
+          1                     C
+          2                     C
+          3                     C     <<<<< SUBROUTINE TO SET MOVING BOUNDARY NODE LIST FOR ALE >>>>>
+          4                     C
+          5                     C
+          6                           SUBROUTINE MVBOUN(MB,NP,
+          7                          *                 NPINLT,NPFREE,NPWALL,NPSYMT,NPCCL,NPBODY,
+          8                          *                 NPSETR,NPMVB,
+          9                          *                 LPINLT,LPFREE,LPWALL,LPSYMT,LPCCL1,LPCCL2,LPBODY,
+         10                          *                 LPSET1,LPMVB,
+         11                          *                 UMVB,VMVB,WMVB,LWRK01,IUT6,IUT0,IERR)
+         12                     C
+         13                           IMPLICIT NONE
+         14                     C[INPUT]
+         15                           INTEGER*4 MB,NP
+         16                           INTEGER*4 NPINLT,NPFREE,NPWALL,NPSYMT,NPCCL,NPBODY,NPSETR
+         17                           INTEGER*4 LPINLT(NPINLT),LPFREE(NPFREE),LPWALL(NPWALL),
+         18                          *          LPSYMT(NPSYMT),LPCCL1(NPCCL ),LPCCL2(NPCCL ),
+         19                          *          LPBODY(NPBODY),LPSET1(NPSETR)
+         20                           INTEGER*4 IUT6,IUT0
+         21                     C
+         22                     C[OUTPUT]
+         23                           INTEGER*4 NPMVB
+         24                           INTEGER*4 LPMVB(3,MB)
+         25                           REAL*4    UMVB(MB),VMVB(MB),WMVB(MB)
+         26                           INTEGER*4 IERR
+         27                     C
+         28                     C[INPUT(WORK)]
+         29                           INTEGER*4 LWRK01(NP)
+         30                     C
+         31                     C[LOCAL]
+         32                           INTEGER*4 IP,IBP
+         33                           CHARACTER*60 ERMSG1
+         34                          * / ' SUB. MVBOUN: NUM. OF MOV. B.C. NODES EXCEEDED LIMIT OF ' /
+         35                           CHARACTER*10 BLANK / ' ' /
+         36                     C
+         37                     C
+         38                     C
+         39                           WRITE(IUT6,*) BLANK
+         40                           WRITE(IUT6,*) ' ** SETTING MOVING BOUNDARY DATA FOR ALE **'
+         41                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LWRK01
+                              <<< Loop-information  End >>>
+         42     1  pp   4v            DO 1000 IP=1,NP
+         43     1   p   4v               LWRK01(IP)=0
+         44     1   p   4v       1000 CONTINUE
+         45                     C
+         46                           NPMVB=0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPBODY
+                              <<< Loop-information  End >>>
+         47     1                     DO 1100 IBP = 1 , NPBODY
+         48     1                        IF (LWRK01(LPBODY(IBP)).EQ.1) GOTO 1100
+         49     1                        LWRK01(LPBODY(IBP))=1
+         50     1                        NPMVB=NPMVB+1
+         51     1                        IF (NPMVB.GT.MB) GOTO 9999
+         52     1                        LPMVB(1,NPMVB) = LPBODY(IBP)
+         53     1                        LPMVB(2,NPMVB) = LPBODY(IBP)
+         54     1                        LPMVB(3,NPMVB) = LPBODY(IBP)
+         55     1                        UMVB(NPMVB) = 0.E0
+         56     1                        VMVB(NPMVB) = 0.E0
+         57     1                        WMVB(NPMVB) = 0.E0
+         58     1                1100 CONTINUE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPINLT
+                              <<< Loop-information  End >>>
+         59     1                     DO 1200 IBP = 1 , NPINLT
+         60     1                        IF (LWRK01(LPINLT(IBP)).EQ.1) GOTO 1200
+         61     1                        LWRK01(LPINLT(IBP))=1
+         62     1                        NPMVB=NPMVB+1
+         63     1                        IF (NPMVB.GT.MB) GOTO 9999
+         64     1                        LPMVB(1,NPMVB) = LPINLT(IBP)
+         65     1                        LPMVB(2,NPMVB) = LPINLT(IBP)
+         66     1                        LPMVB(3,NPMVB) = LPINLT(IBP)
+         67     1                        UMVB(NPMVB) = 0.E0
+         68     1                        VMVB(NPMVB) = 0.E0
+         69     1                        WMVB(NPMVB) = 0.E0
+         70     1                1200 CONTINUE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPFREE
+                              <<< Loop-information  End >>>
+         71     1                     DO 1300 IBP = 1 , NPFREE
+         72     1                        IF (LWRK01(LPFREE(IBP)).EQ.1) GOTO 1300
+         73     1                        LWRK01(LPFREE(IBP))=1
+         74     1                        NPMVB=NPMVB+1
+         75     1                        IF (NPMVB.GT.MB) GOTO 9999
+         76     1                        LPMVB(1,NPMVB) = LPFREE(IBP)
+         77     1                        LPMVB(2,NPMVB) = LPFREE(IBP)
+         78     1                        LPMVB(3,NPMVB) = LPFREE(IBP)
+         79     1                        UMVB(NPMVB) = 0.E0
+         80     1                        VMVB(NPMVB) = 0.E0
+         81     1                        WMVB(NPMVB) = 0.E0
+         82     1                1300 CONTINUE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPWALL
+                              <<< Loop-information  End >>>
+         83     1                     DO 1400 IBP = 1 , NPWALL
+         84     1                        IF (LWRK01(LPWALL(IBP)).EQ.1) GOTO 1400
+         85     1                        LWRK01(LPWALL(IBP))=1
+         86     1                        NPMVB=NPMVB+1
+         87     1                        IF (NPMVB.GT.MB) GOTO 9999
+         88     1                        LPMVB(1,NPMVB) = LPWALL(IBP)
+         89     1                        LPMVB(2,NPMVB) = LPWALL(IBP)
+         90     1                        LPMVB(3,NPMVB) = LPWALL(IBP)
+         91     1                        UMVB(NPMVB) = 0.E0
+         92     1                        VMVB(NPMVB) = 0.E0
+         93     1                        WMVB(NPMVB) = 0.E0
+         94     1                1400 CONTINUE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPSYMT
+                              <<< Loop-information  End >>>
+         95     1                     DO 1500 IBP = 1 , NPSYMT
+         96     1                        IF (LWRK01(LPSYMT(IBP)).EQ.1) GOTO 1500
+         97     1                        LWRK01(LPSYMT(IBP))=1
+         98     1                        NPMVB=NPMVB+1
+         99     1                        IF (NPMVB.GT.MB) GOTO 9999
+        100     1                        LPMVB(1,NPMVB) = LPSYMT(IBP)
+        101     1                        LPMVB(2,NPMVB) = LPSYMT(IBP)
+        102     1                        LPMVB(3,NPMVB) = LPSYMT(IBP)
+        103     1                        UMVB(NPMVB) = 0.E0
+        104     1                        VMVB(NPMVB) = 0.E0
+        105     1                        WMVB(NPMVB) = 0.E0
+        106     1                1500 CONTINUE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPCCL1
+                              <<< Loop-information  End >>>
+        107     1                     DO 1600 IBP = 1 , NPCCL
+        108     1                        IF (LWRK01(LPCCL1(IBP)).EQ.1) GOTO 1600
+        109     1                        LWRK01(LPCCL1(IBP))=1
+        110     1                        NPMVB=NPMVB+1
+        111     1                        IF (NPMVB.GT.MB) GOTO 9999
+        112     1                        LPMVB(1,NPMVB) = LPCCL1(IBP)
+        113     1                        LPMVB(2,NPMVB) = LPCCL1(IBP)
+        114     1                        LPMVB(3,NPMVB) = LPCCL1(IBP)
+        115     1                        UMVB(NPMVB) = 0.E0
+        116     1                        VMVB(NPMVB) = 0.E0
+        117     1                        WMVB(NPMVB) = 0.E0
+        118     1                1600 CONTINUE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPCCL2
+                              <<< Loop-information  End >>>
+        119     1                     DO 1700 IBP = 1 , NPCCL
+        120     1                        IF (LWRK01(LPCCL2(IBP)).EQ.1) GOTO 1700
+        121     1                        LWRK01(LPCCL2(IBP))=1
+        122     1                        NPMVB=NPMVB+1
+        123     1                        IF (NPMVB.GT.MB) GOTO 9999
+        124     1                        LPMVB(1,NPMVB) = LPCCL2(IBP)
+        125     1                        LPMVB(2,NPMVB) = LPCCL2(IBP)
+        126     1                        LPMVB(3,NPMVB) = LPCCL2(IBP)
+        127     1                        UMVB(NPMVB) = 0.E0
+        128     1                        VMVB(NPMVB) = 0.E0
+        129     1                        WMVB(NPMVB) = 0.E0
+        130     1                1700 CONTINUE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPSET1
+                              <<< Loop-information  End >>>
+        131     1                     DO 1800 IBP = 1 , NPSETR
+        132     1                        IF (LWRK01(LPSET1(IBP)).EQ.1) GOTO 1800
+        133     1                        LWRK01(LPSET1(IBP))=1
+        134     1                        NPMVB=NPMVB+1
+        135     1                        IF (NPMVB.GT.MB) GOTO 9999
+        136     1                        LPMVB(1,NPMVB) = LPSET1(IBP)
+        137     1                        LPMVB(2,NPMVB) = LPSET1(IBP)
+        138     1                        LPMVB(3,NPMVB) = LPSET1(IBP)
+        139     1                        UMVB(NPMVB) = 0.E0
+        140     1                        VMVB(NPMVB) = 0.E0
+        141     1                        WMVB(NPMVB) = 0.E0
+        142     1                1800 CONTINUE
+        143                     C
+        144                           WRITE(IUT6,*) ' DONE!'
+        145                           RETURN
+        146                     C
+        147                      9999 CONTINUE
+        148                           WRITE(IUT0,*) BLANK
+        149                           WRITE(IUT0,*) ERMSG1,MB
+        150                           IERR=1
+        151                     C
+        152                           RETURN
+        153                           END
+
+ Diagnostic messages: program name(MVBOUN)
+   jwd5001p-i  "mvboun.f", line 42: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "mvboun.f", line 42: このDOループをSIMD化しました。(名前:IP)
+   jwd8663o-i  "mvboun.f", line 42: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "mvboun.f", line 42: ループを展開数4回でアンローリングしました。
+   jwd5131p-i  "mvboun.f", line 47: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd6131s-i  "mvboun.f", line 47: ループ出口が2つ以上あるため、このDOループはSIMD化できません。
+   jwd8671o-i  "mvboun.f", line 47: ループの形状が最適化の対象外であるため、ソフトウェアパイプライニングを適用できません。
+   jwd5131p-i  "mvboun.f", line 59: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd6131s-i  "mvboun.f", line 59: ループ出口が2つ以上あるため、このDOループはSIMD化できません。
+   jwd8671o-i  "mvboun.f", line 59: ループの形状が最適化の対象外であるため、ソフトウェアパイプライニングを適用できません。
+   jwd5131p-i  "mvboun.f", line 71: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd6131s-i  "mvboun.f", line 71: ループ出口が2つ以上あるため、このDOループはSIMD化できません。
+   jwd8671o-i  "mvboun.f", line 71: ループの形状が最適化の対象外であるため、ソフトウェアパイプライニングを適用できません。
+   jwd5131p-i  "mvboun.f", line 83: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd6131s-i  "mvboun.f", line 83: ループ出口が2つ以上あるため、このDOループはSIMD化できません。
+   jwd8671o-i  "mvboun.f", line 83: ループの形状が最適化の対象外であるため、ソフトウェアパイプライニングを適用できません。
+   jwd5131p-i  "mvboun.f", line 95: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd6131s-i  "mvboun.f", line 95: ループ出口が2つ以上あるため、このDOループはSIMD化できません。
+   jwd8671o-i  "mvboun.f", line 95: ループの形状が最適化の対象外であるため、ソフトウェアパイプライニングを適用できません。
+   jwd5131p-i  "mvboun.f", line 107: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd6131s-i  "mvboun.f", line 107: ループ出口が2つ以上あるため、このDOループはSIMD化できません。
+   jwd8671o-i  "mvboun.f", line 107: ループの形状が最適化の対象外であるため、ソフトウェアパイプライニングを適用できません。
+   jwd5131p-i  "mvboun.f", line 119: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd6131s-i  "mvboun.f", line 119: ループ出口が2つ以上あるため、このDOループはSIMD化できません。
+   jwd8671o-i  "mvboun.f", line 119: ループの形状が最適化の対象外であるため、ソフトウェアパイプライニングを適用できません。
+   jwd5131p-i  "mvboun.f", line 131: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd6131s-i  "mvboun.f", line 131: ループ出口が2つ以上あるため、このDOループはSIMD化できません。
+   jwd8671o-i  "mvboun.f", line 131: ループの形状が最適化の対象外であるため、ソフトウェアパイプライニングを適用できません。
+
+ Procedure information
+   Lines      : 153
+   Statements : 124
+   Stack(byte): 1376
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 153
+   Total statements : 124
+   Total stack(byte): 1376
+   Total prefetch num: 0
+

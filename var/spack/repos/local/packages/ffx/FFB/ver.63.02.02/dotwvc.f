@@ -1,0 +1,30 @@
+      SUBROUTINE DOTWVC(NP,X,Y,WEIGHT,XTY)
+C
+      IMPLICIT NONE
+C
+C   INPUTS
+      INTEGER*4 NP
+      REAL*4 X(NP),Y(NP),WEIGHT(NP)
+C
+C   OUTPUTS
+      REAL*4 XTY,XTYR
+C
+C   WORKS
+      INTEGER*4 IP
+C
+C
+C
+      XTY = 0.0E0
+C
+      DO 1000 IP=1, NP
+         XTY = XTY + WEIGHT(IP)*X(IP)*Y(IP)
+ 1000 CONTINUE
+C
+      CALL DDCOM2(XTY,XTYR)
+      XTY=XTYR
+C
+      RETURN
+      END
+C
+
+      

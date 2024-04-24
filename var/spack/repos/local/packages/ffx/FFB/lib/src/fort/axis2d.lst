@@ -1,0 +1,672 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:53:45 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : axis2d.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "AXIS2D"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    AXIS2D                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE AXIS2D(JPSOUT,IUTPS,IAXIS,SMINX,SMAXX,SMINY,SMAXY,
+         14                          *                  GDELX,GDELY,TITLEX,TITLEY,NTITLE,
+         15                          *                  ORGX,ORGY,RNGX,RNGY,ICLAXS,SCLX,SCLY,IUT0,IWRN)
+         16                           IMPLICIT REAL*4(A-H,O-Z)
+         17                           CHARACTER*10 TITLEX,TITLEY
+         18                     C
+         19                           CHARACTER*80 BUF
+         20                           DIMENSION XBUF2(2),YBUF2(2)
+         21                     C
+         22                     #ifdef VOS
+         23                           INCLUDE (GN)
+         24                     #else
+         25                           INCLUDE 'gn.h'
+         26                     #endif
+         27                     C
+         28                           CHARACTER*72 WRMSG1
+         29                          & /' *** SUBROUTINE AXIS2D ISSUES A WARNING                ***   '/
+         30                           CHARACTER*72 WREXP1
+         31                          & /' LOGARITHMIC SCALING IS IMPOSSIBLE DUE TO THE NEGATIVE VALUES'/
+         32                     C
+         33                           BASE  = 10.E0
+         34                           IBASE = 10
+         35                           UNIT  =  1.E0
+         36                           ZERO  =  0.E0
+         37                           EPS   =  1.E-1
+         38                     C
+         39                           CSZAXS = RNGX/40
+         40                           CSZSUF = 0.6*CSZAXS
+         41                           D      = RNGX/100
+         42                     C
+         43                           DSCLXX = 2*CSZAXS
+         44                           DSCLXY = 2*CSZAXS
+         45                           DSCLYX = 6*CSZAXS+D
+         46                           DSCLYY = 0.5*CSZAXS
+         47                     C
+         48                           DTTLXX = (NTITLE+7)*CSZAXS
+         49                           DTTLXY =   4*CSZAXS
+         50                           DTTLYX = ZERO
+         51                           DTTLYY = D
+         52                     C
+         53                     C
+         54                     C      WRITE X-Y AXES
+         55                     C         ( 2-D GRAPHICS )
+         56                     C
+         57                     C
+         58                     C     NOTE 1 ; CALLING GENERIC GRAPHIC AND POSTSCRIPT INTERFACES.
+         59                     C     NOTE 2 ; IF AN IMPROPER SCALING RANGE SPECIFIED FOR THE LOGARITH-
+         60                     C             MIC SCALING, THIS SUBROUTINE WILL IMMEDEATELY CLOSE THE
+         61                     C             GRAPHIC SYSTEM AND RETURN THE SEQUENCE AFTER REPORTING
+         62                     C             A WARNING MESSAGE WRITTEN IN FORTRAN WRITE.
+         63                     C     NOTE 3 ; WHILE THE SCALING FACTORS WILL ALWAYS BE CALCULATED
+         64                     C             BY USING THE MINIMUM SCALE, MAXIMUM SCALE, AND GRAPHIC
+         65                     C             RANGE SPECIFIED, THE GRIDDING WILL BE DONE ACCORDING
+         66                     C             EITHER TO THE MINIMUM SCALE AND GRIDDING INTERVAL
+         67                     C             SPECIFIED OR TO THE MININUM 10TH INCLUDED BETWEEN THE
+         68                     C             MINIMUM AND MAXIMUM SCALES AND A CONSTANT INRERVAL OF 10,
+         69                     C             FOR LINEAR SCALE AND LOGARITHMIC SCALE, RESPECTIVELY,
+         70                     C     NOTE 4 ; THE SIZE AND LOCATIONS OF THE INDICES AND THE TITLES
+         71                     C             WILL BE AUTOMATICALLY ADJUSTTED, ACCORDING TO THE GRAPHIC
+         72                     C             RANGE SPECIFIED.
+         73                     C
+         74                     C
+         75                     C
+         76                     C     ARGUMENT LISTINGS
+         77                     C       (1) INPUT
+         78                     C          JPSOUT      ; POSTSCRIPT FILE WILL BE OUTPUT IF SET TO 1 OR 2
+         79                     C          IUTPS       ; FILE NUMBER TO ACCESS POSTSCRIPT FILE
+         80                     C          IAXIS       ; SPECIFIES THE AXIS AS FOLLOWS
+         81                     C                   1 ---     X -    Y
+         82                     C                   2 --- LOG(X)-    Y
+         83                     C                   3 ---     X -LOG(Y)
+         84                     C                   4 --- LOG(X)-LOG(Y)
+         85                     C          SMINX       ; X-DIR. MIN. SCALE
+         86                     C          SMAXX       ; X-DIR. MAX. SCALE
+         87                     C          SMINY       ; Y-DIR. MIN. SCALE
+         88                     C          SMAXY       ; Y-DIR. MAX. SCALE
+         89                     C          GDELX       ; X-DIR. GRIDDING INTERVAL(IGNORED FOR LOG SCALE)
+         90                     C          GDELY       ; Y-DIR. GRIDDING INTERVAL(IGNORED FOR LOG SCALE)
+         91                     C
+         92                     C          TITLEX      ; THE TITLE FOR THE X-AXIS
+         93                     C          TITLEY      ; THE TITLE FOR THE Y-AXIS
+         94                     C          NTITLE      ; THE LENGTH OF TITLE CHARACTERS
+         95                     C
+         96                     C          ORGX        ; X-DIR. GRAPHIC ORIGIN
+         97                     C          ORGY        ; Y-DIR. GRAPHIC ORIGIN
+         98                     C          RNGX        ; X-DIR. GRAPHIC RANGE
+         99                     C          RNGY        ; Y-DIR. GRAPHIC RANGE
+        100                     C          ICLAXS      ; COLOR INDEX    FOR WRITING THE AXES
+        101                     C
+        102                     C          IUT0       ; DEVICE NUMBER TO ISSUE A WARNING
+        103                     C
+        104                     C       (2) OUTPUT
+        105                     C          SCLX        ; X-DIR. SCALING FACTOR
+        106                     C          SCLY        ; Y-DIR. SCALING FACTOR
+        107                     C          IWRN        ; RETURN CODE TO REPORT A WARNING
+        108                     C                   0 --- NORMAL TERMINATION
+        109                     C                   1 --- A WARNING ISSUED
+        110                     C
+        111                     C
+        112                           CALL GNCSET(ICLAXS)
+        113                           IF(JPSOUT.EQ.1) CALL PSGRAY(IUTPS,ICLAXS)
+        114                           IF(JPSOUT.EQ.2) CALL PSCSET(IUTPS,ICLAXS)
+        115                     C
+        116                           LNTYPE = GLSOLD
+        117                           PLTYPE = GLSOLD
+        118                     C
+        119                           LNWDTH = GLNORM
+        120                           PLWDTH = GLNORM
+        121                     C
+        122                     C
+        123                     C      (1) CHECK THE GIVEN PARAMETERS
+        124                     C
+        125                     C
+        126                           IWRN = 0
+        127                     C
+        128                     C  X-DIR. SCALING
+        129                     C
+        130     1                     IF((IAXIS.EQ.2    .OR. IAXIS.EQ.4   )  .AND.
+        131     1                    &   (SMINX.LE.ZERO .OR. SMAXX.LE.ZERO)) THEN
+        132     1                         CALL GNENDG
+        133     1                         IF(JPSOUT.GE.1) CALL PSENDG(IUTPS)
+        134     1                         WRITE(IUT0,*) WRMSG1
+        135     1                         WRITE(IUT0,*) WREXP1
+        136     1                         IWRN = 1
+        137     1                         RETURN
+        138     1                     ENDIF
+        139                     C
+        140                     C  Y-DIR. SCALING
+        141                     C
+        142     1                     IF((IAXIS.EQ.3    .OR. IAXIS.EQ.4   )  .AND.
+        143     1                    &   (SMINY.LE.ZERO .OR. SMAXY.LE.ZERO)) THEN
+        144     1                         CALL GNENDG
+        145     1                         IF(JPSOUT.GE.1) CALL PSENDG(IUTPS)
+        146     1                         WRITE(IUT0,*) WRMSG1
+        147     1                         WRITE(IUT0,*) WREXP1
+        148     1                         IWRN = 1
+        149     1                         RETURN
+        150     1                     ENDIF
+        151                     C
+        152                     C
+        153                     C      (2) CALCULATE THE SCALING FACTORS
+        154                     C
+        155                     C
+        156                     C  X-DIR. SCALE
+        157                     C
+        158     1                     IF(IAXIS.EQ.1 .OR. IAXIS.EQ.3) THEN
+        159     1                         SCLX = RNGX/(       SMAXX -       SMINX )
+        160     1                     ELSE
+        161     1                         SCLX = RNGX/(ALOG10(SMAXX)-ALOG10(SMINX))
+        162     1                     ENDIF
+        163                     C
+        164                     C  Y-DIR. SCALE
+        165                     C
+        166     1                     IF(IAXIS.EQ.1 .OR. IAXIS.EQ.2) THEN
+        167     1                         SCLY = RNGY/(       SMAXY -       SMINY)
+        168     1                     ELSE
+        169     1                         SCLY = RNGY/(ALOG10(SMAXY)-ALOG10(SMINY))
+        170     1                     ENDIF
+        171                     C
+        172                     C
+        173                     C      (3) DECIDE THE GRIDDING RANGES
+        174                     C
+        175                     C
+        176                     C  VERTICAL GRIDS
+        177                     C
+        178     1                     IF(IAXIS.EQ.1 .OR. IAXIS.EQ.3) THEN
+        179     1                         NGRIDX = (SMAXX-SMINX)/GDELX+EPS
+        180     1                         GMINX  = SMINX
+        181     1                         GMAXX  = SMINX+FLOAT(NGRIDX)*GDELX
+        182     1                     ELSE
+        183     1                         FMIN   = UNIT
+        184     1                         IF(SMINX.LT.UNIT) FMIN = -UNIT
+        185     1                         FMAX   = UNIT
+        186     1                         IF(SMAXX.LT.UNIT) FMAX = -UNIT
+        187     1                         LMINX  = ALOG10(SMINX)+FMIN*EPS
+        188     1                         LMAXX  = ALOG10(SMAXX)+FMAX*EPS
+        189     1                         GMINX  = BASE**LMINX
+        190     1                         GMAXX  = BASE**LMAXX
+        191     1                         NGRIDX = LMAXX-LMINX
+        192     1                     ENDIF
+        193                     C
+        194                     C  HORIZONTAL GRIDS
+        195                     C
+        196     1                     IF(IAXIS.EQ.1 .OR. IAXIS.EQ.2) THEN
+        197     1                         NGRIDY = (SMAXY-SMINY)/GDELY+EPS
+        198     1                         GMINY  = SMINY
+        199     1                         GMAXY  = SMINY+FLOAT(NGRIDY)*GDELY
+        200     1                     ELSE
+        201     1                         FMIN   = UNIT
+        202     1                         IF(SMINY.LT.UNIT) FMIN = -UNIT
+        203     1                         FMAX   = UNIT
+        204     1                         IF(SMAXY.LT.UNIT) FMAX = -UNIT
+        205     1                         LMINY  = ALOG10(SMINY)+FMIN*EPS
+        206     1                         LMAXY  = ALOG10(SMAXY)+FMAX*EPS
+        207     1                         GMINY  = BASE**LMINY
+        208     1                         GMAXY  = BASE**LMAXY
+        209     1                         NGRIDY = LMAXY-LMINY
+        210     1                     ENDIF
+        211                     C
+        212                     C
+        213                     C      (4) DRAW THE GRID LINES
+        214                     C
+        215                     C
+        216                     C  VERTICAL GRID LINES
+        217                     C
+        218     1                     IF(IAXIS.EQ.1 .OR. IAXIS.EQ.2) THEN
+        219     1                         GRFY1 = ORGY+SCLY*(GMINY-SMINY)
+        220     1                         GRFY2 = ORGY+SCLY*(GMAXY-SMINY)
+        221     1                     ELSE
+        222     1                         GRFY1 = ORGY+SCLY*(ALOG10(GMINY)-ALOG10(SMINY))
+        223     1                         GRFY2 = ORGY+SCLY*(ALOG10(GMAXY)-ALOG10(SMINY))
+        224     1                     ENDIF
+        225                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    UNSWITCHING
+                              <<< Loop-information  End >>>
+        226     1                     DO 20 IGRID = 0 , NGRIDX
+        227     2                         IF(IAXIS.EQ.1 .OR. IAXIS.EQ.3) THEN
+        228     2                             GRFX = ORGX+SCLX*FLOAT(IGRID)*GDELX
+        229     2                             XBUF2(1) = GRFX
+        230     2                             YBUF2(1) = GRFY1
+        231     2                             XBUF2(2) = GRFX
+        232     2                             YBUF2(2) = GRFY2
+        233     2                             CALL GNLINE(XBUF2,YBUF2,2)
+        234     2                             IF(JPSOUT.GE.1) CALL PSLINE(IUTPS,XBUF2,YBUF2,2)
+        235     2                         ELSE
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 43
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    UNSWITCHING
+                              <<<    FULL UNROLLING
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 0
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 1
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        236     3   s   fm                    DO 10 IFACT = 1 , 9
+        237     3   p   fv                        IF(IGRID.EQ.NGRIDX .AND. IFACT.GE.2) GO TO 10
+        238     3   p   fm                        VALUE = FLOAT(IFACT)*BASE**(IGRID+LMINX)
+        239     3   p   fm                        GRFX  = ORGX+SCLX*(ALOG10(VALUE)-ALOG10(SMINX))
+        240     3   s   fs                        XBUF2(1) = GRFX
+        241     3   s   fs                        YBUF2(1) = GRFY1
+        242     3   s   fs                        XBUF2(2) = GRFX
+        243     3   s   fs                        YBUF2(2) = GRFY2
+        244     3   s   fm                        CALL GNLINE(XBUF2,YBUF2,2)
+        245     3   s   fm                        IF(JPSOUT.GE.1) CALL PSLINE(IUTPS,XBUF2,YBUF2,2)
+        246     3   p   fv         10         CONTINUE
+        247     2                         ENDIF
+        248     1                  20 CONTINUE
+        249                     C
+        250                     C  HORIZONTAL GRID LINES
+        251                     C
+        252     1                     IF(IAXIS.EQ.1 .OR. IAXIS.EQ.3) THEN
+        253     1                         GRFX1 = ORGX+SCLX*(GMINX-SMINX)
+        254     1                         GRFX2 = ORGX+SCLX*(GMAXX-SMINX)
+        255     1                     ELSE
+        256     1                         GRFX1 = ORGX+SCLX*(ALOG10(GMINX)-ALOG10(SMINX))
+        257     1                         GRFX2 = ORGX+SCLX*(ALOG10(GMAXX)-ALOG10(SMINX))
+        258     1                     ENDIF
+        259                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    UNSWITCHING
+                              <<< Loop-information  End >>>
+        260     1                     DO 40 IGRID = 0 , NGRIDY
+        261     2                         IF(IAXIS.EQ.1 .OR. IAXIS.EQ.2) THEN
+        262     2                             GRFY = ORGY+SCLY*FLOAT(IGRID)*GDELY
+        263     2                             XBUF2(1) = GRFX1
+        264     2                             YBUF2(1) = GRFY
+        265     2                             XBUF2(2) = GRFX2
+        266     2                             YBUF2(2) = GRFY
+        267     2                             CALL GNLINE(XBUF2,YBUF2,2)
+        268     2                             IF(JPSOUT.GE.1) CALL PSLINE(IUTPS,XBUF2,YBUF2,2)
+        269     2                         ELSE
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 43
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    UNSWITCHING
+                              <<<    FULL UNROLLING
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 1  FILL 1
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 1
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        270     3   s   fm                    DO 30 IFACT = 1 , 9
+        271     3   p   fv                        IF(IGRID.EQ.NGRIDY .AND. IFACT.GE.2) GO TO 30
+        272     3   p   fm                        VALUE = FLOAT(IFACT)*BASE**(IGRID+LMINY)
+        273     3   p   fm                        GRFY  = ORGY+SCLY*(ALOG10(VALUE)-ALOG10(SMINY))
+        274     3   s   fs                        XBUF2(1) = GRFX1
+        275     3   s   fs                        YBUF2(1) = GRFY
+        276     3   s   fs                        XBUF2(2) = GRFX2
+        277     3   s   fs                        YBUF2(2) = GRFY
+        278     3   s   fm                        CALL GNLINE(XBUF2,YBUF2,2)
+        279     3   s   fm                        IF(JPSOUT.GE.1) CALL PSLINE(IUTPS,XBUF2,YBUF2,2)
+        280     3   p   fv         30         CONTINUE
+        281     2                         ENDIF
+        282     1                  40 CONTINUE
+        283                     C
+        284                     C
+        285                     C      (5) WRITE INDICES ON THE AXES
+        286                     C
+        287                     C
+        288                     C  X-DIR. AXIS
+        289                     C
+        290     1                     IF(IAXIS.EQ.1 .OR. IAXIS.EQ.2) THEN
+        291     1                         GRFY = ORGY+SCLY*(       GMINY -       SMINY )-DSCLXY
+        292     1                     ELSE
+        293     1                         GRFY = ORGY+SCLY*(ALOG10(GMINY)-ALOG10(SMINY))-DSCLXY
+        294     1                     ENDIF
+        295                           GRFYS = GRFY+CSZAXS
+        296                           IORDX = 0
+        297                     C
+        298     1                     IF(IAXIS.EQ.1 .OR. IAXIS.EQ.3) THEN
+        299     1                         ORDER  = AMAX1(ABS(SMINX),ABS(SMAXX))
+        300     1                         IORDX  = ALOG10(ORDER)
+        301     1                         IF(ORDER.LT.UNIT) IORDX = IORDX-1
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 5
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        302     2                         DO 50 IGRID = 0 , NGRIDX
+        303     2                             VALUE = SMINX+FLOAT(IGRID)*GDELX
+        304     2                             SCAL  = VALUE*BASE**(-IORDX)
+        305     2                             GRFX  = ORGX+SCLX*(VALUE-SMINX)-DSCLXX
+        306     2                             WRITE(BUF,'(F6.3)') SCAL
+        307     2                             TXSIZE = CSZAXS
+        308     2                             PTSIZE = CSZAXS
+        309     2                             CALL GNTEXT(GRFX,GRFY,BUF,6)
+        310     2                             IF(JPSOUT.GE.1) CALL PSTEXT(IUTPS,GRFX,GRFY,BUF,6)
+        311     2                  50     CONTINUE
+        312     1                     ELSE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 1  FILL 3
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 1
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        313     2                         DO 60 IGRID = 0 , NGRIDX
+        314     2                             SCAL  = FLOAT(IGRID+LMINX)
+        315     2                             VALUE = BASE**SCAL
+        316     2                             GRFX  = ORGX+SCLX*(ALOG10(VALUE)-ALOG10(SMINX))-DSCLXX
+        317     2                             GRFXS = GRFX+2*CSZAXS
+        318     2                             WRITE(BUF,'(I2)') IBASE
+        319     2                             TXSIZE = CSZAXS
+        320     2                             PTSIZE = CSZAXS
+        321     2                             CALL GNTEXT(GRFX,GRFY,BUF,5)
+        322     2                             IF(JPSOUT.GE.1) CALL PSTEXT(IUTPS,GRFX,GRFY,BUF,5)
+        323     2               C
+        324     2                             WRITE(BUF,'(I2)') IGRID+LMINX
+        325     2                             TXSIZE = CSZSUF
+        326     2                             PTSIZE = CSZSUF
+        327     2                             CALL GNTEXT(GRFXS,GRFYS,BUF,5)
+        328     2                             IF(JPSOUT.GE.1) CALL PSTEXT(IUTPS,GRFXS,GRFYS,BUF,5)
+        329     2                  60     CONTINUE
+        330     1                     ENDIF
+        331                     C
+        332                     C  Y-DIR. AXIS
+        333                     C
+        334     1                     IF(IAXIS.EQ.1 .OR. IAXIS.EQ.3) THEN
+        335     1                         GRFX = ORGX+SCLX*(       GMINX -       SMINX )-DSCLYX
+        336     1                     ELSE
+        337     1                         GRFX = ORGX+SCLX*(ALOG10(GMINX)-ALOG10(SMINX))-DSCLYX
+        338     1                     ENDIF
+        339                           GRFXS = GRFX+2*CSZAXS
+        340                           IORDY = 0
+        341                     C
+        342     1                     IF(IAXIS.EQ.1 .OR. IAXIS.EQ.2) THEN
+        343     1                         ORDER  = AMAX1(ABS(SMINY),ABS(SMAXY))
+        344     1                         IORDY  = ALOG10(ORDER)
+        345     1                         IF(ORDER.LT.UNIT) IORDY = IORDY-1
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 5
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        346     2                         DO 70 IGRID = 0 , NGRIDY
+        347     2                             VALUE = SMINY+FLOAT(IGRID)*GDELY
+        348     2                             SCAL  = VALUE*BASE**(-IORDY)
+        349     2                             GRFY  = ORGY+SCLY*(VALUE-SMINY)-DSCLYY
+        350     2                             WRITE(BUF,'(F6.3)') SCAL
+        351     2                             TXSIZE = CSZAXS
+        352     2                             PTSIZE = CSZAXS
+        353     2                             CALL GNTEXT(GRFX,GRFY,BUF,6)
+        354     2                             IF(JPSOUT.GE.1) CALL PSTEXT(IUTPS,GRFX,GRFY,BUF,6)
+        355     2                  70     CONTINUE
+        356     1                     ELSE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 1  FILL 6
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 1
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        357     2                         DO 80 IGRID = 0 , NGRIDY
+        358     2                             SCAL  = FLOAT(IGRID+LMINY)
+        359     2                             VALUE = BASE**SCAL
+        360     2                             GRFY  = ORGY+SCLY*(ALOG10(VALUE)-ALOG10(SMINY))-DSCLYY
+        361     2                             GRFYS = GRFY+CSZAXS
+        362     2                             WRITE(BUF,'(I2)') IBASE
+        363     2                             TXSIZE = CSZAXS
+        364     2                             PTSIZE = CSZAXS
+        365     2                             CALL GNTEXT(GRFX,GRFY,BUF,5)
+        366     2                             IF(JPSOUT.GE.1) CALL PSTEXT(IUTPS,GRFX,GRFY,BUF,5)
+        367     2               C
+        368     2                             WRITE(BUF,'(I2)') IGRID+LMINY
+        369     2                             TXSIZE = CSZSUF
+        370     2                             PTSIZE = CSZSUF
+        371     2                             CALL GNTEXT(GRFXS,GRFYS,BUF,5)
+        372     2                             IF(JPSOUT.GE.1) CALL PSTEXT(IUTPS,GRFXS,GRFYS,BUF,5)
+        373     2                  80     CONTINUE
+        374     1                     ENDIF
+        375                     C
+        376                     C
+        377                     C      (6) WRITE TITLES  ON THE AXES
+        378                     C
+        379                     C
+        380                     C  X-DIR. AXIS
+        381                     C
+        382     1                     IF(IAXIS.EQ.1 .OR. IAXIS.EQ.2) THEN
+        383     1                         GRFY = ORGY+SCLY*(       GMINY -       SMINY )-DTTLXY
+        384     1                     ELSE
+        385     1                         GRFY = ORGY+SCLY*(ALOG10(GMINY)-ALOG10(SMINY))-DTTLXY
+        386     1                     ENDIF
+        387                     C
+        388     1                     IF(IAXIS.EQ.1 .OR. IAXIS.EQ.3) THEN
+        389     1                         GRFX = ORGX+SCLX*(GMAXX-SMINX)-DTTLXX
+        390     1                     ELSE
+        391     1                         GRFX = ORGX+SCLX*(ALOG10(GMAXX)-ALOG10(SMINX))-DTTLXX
+        392     1                     ENDIF
+        393                     C
+        394                           WRITE(BUF,'(A10)') TITLEX
+        395                           TXSIZE = CSZAXS
+        396                           PTSIZE = CSZAXS
+        397                           CALL GNTEXT(GRFX,GRFY,BUF,NTITLE)
+        398                           IF(JPSOUT.GE.1) CALL PSTEXT(IUTPS,GRFX,GRFY,BUF,NTITLE)
+        399                     C
+        400     1                     IF(IORDX.NE.0) THEN
+        401     1                         GRFX = GRFX+CSZAXS*NTITLE
+        402     1               C
+        403     1                         WRITE(BUF,'(7H(*10  ))')
+        404     1                         TXSIZE = CSZAXS
+        405     1                         PTSIZE = CSZAXS
+        406     1                         CALL GNTEXT(GRFX,GRFY,BUF,7)
+        407     1                         IF(JPSOUT.GE.1) CALL PSTEXT(IUTPS,GRFX,GRFY,BUF,7)
+        408     1               C
+        409     1                         GRFX = GRFX+CSZAXS*4
+        410     1                         GRFY = GRFY+CSZAXS
+        411     1               C
+        412     1                         WRITE(BUF,'(I2)') IORDX
+        413     1                         TXSIZE = CSZSUF
+        414     1                         PTSIZE = CSZSUF
+        415     1                         CALL GNTEXT(GRFX,GRFY,BUF,2)
+        416     1                         IF(JPSOUT.GE.1) CALL PSTEXT(IUTPS,GRFX,GRFY,BUF,2)
+        417     1                     ENDIF
+        418                     C
+        419                     C  Y-DIR. AXIS
+        420                     C
+        421     1                     IF(IAXIS.EQ.1 .OR. IAXIS.EQ.3) THEN
+        422     1                         GRFX = ORGX+SCLX*(       GMINX -       SMINX )-DTTLYX
+        423     1                     ELSE
+        424     1                         GRFX = ORGX+SCLX*(ALOG10(GMINX)-ALOG10(SMINX))-DTTLYX
+        425     1                     ENDIF
+        426                     C
+        427     1                     IF(IAXIS.EQ.1 .OR. IAXIS.EQ.2) THEN
+        428     1                         GRFY = ORGY+SCLY*(GMAXY-SMINY)+DTTLYY
+        429     1                     ELSE
+        430     1                         GRFY = ORGY+SCLY*(ALOG10(GMAXY)-ALOG10(SMINY))+DTTLYY
+        431     1                     ENDIF
+        432                     C
+        433                           WRITE(BUF,'(A10)') TITLEY
+        434                           TXSIZE = CSZAXS
+        435                           PTSIZE = CSZAXS
+        436                           CALL GNTEXT(GRFX,GRFY,BUF,NTITLE)
+        437                           IF(JPSOUT.GE.1) CALL PSTEXT(IUTPS,GRFX,GRFY,BUF,NTITLE)
+        438                     C
+        439     1                     IF(IORDY.NE.0) THEN
+        440     1                         GRFX = GRFX+CSZAXS*NTITLE
+        441     1               C
+        442     1                         WRITE(BUF,'(7H(*10  ))')
+        443     1                         TXSIZE = CSZAXS
+        444     1                         PTSIZE = CSZAXS
+        445     1                         CALL GNTEXT(GRFX,GRFY,BUF,7)
+        446     1                         IF(JPSOUT.GE.1) CALL PSTEXT(IUTPS,GRFX,GRFY,BUF,7)
+        447     1                         GRFX = GRFX+CSZAXS*4
+        448     1                         GRFY = GRFY+CSZAXS
+        449     1               C
+        450     1                         WRITE(BUF,'(I2)') IORDY
+        451     1                         TXSIZE = CSZSUF
+        452     1                         PTSIZE = CSZSUF
+        453     1                         CALL GNTEXT(GRFX,GRFY,BUF,2)
+        454     1                         IF(JPSOUT.GE.1) CALL PSTEXT(IUTPS,GRFX,GRFY,BUF,2)
+        455     1                     ENDIF
+        456                     C
+        457                     C
+        458                           RETURN
+        459                           END
+
+ Diagnostic messages: program name(AXIS2D)
+   jwd8220o-i  "axis2d.f", line 13: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd8206o-i  "axis2d.f", line 39: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "axis2d.f", line 41: Division is changed to multiplication by reciprocal.
+   jwd8321o-i  "axis2d.f", line 226: Loop unswitched.
+   jwd5122p-i  "axis2d.f", line 226: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd8209o-i  "axis2d.f", line 228: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8321o-i  "axis2d.f", line 236: Loop unswitched.
+   jwd5143p-i  "axis2d.f", line 236: DO loop is not parallelized: the value of its iteration count is insufficient to make parallelization worthwhile.
+   jwd6229s-i  "axis2d.f", line 236: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8664o-i  "axis2d.f", line 236: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd8203o-i  "axis2d.f", line 236: Loop unrolled fully.
+   jwd5208p-i  "axis2d.f", line 240: DO loop is not parallelized: the assign-refer order of 'XBUF2' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "axis2d.f", line 240: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'XBUF2' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "axis2d.f", line 241: DO loop is not parallelized: the assign-refer order of 'YBUF2' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "axis2d.f", line 241: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'YBUF2' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "axis2d.f", line 242: DO loop is not parallelized: the assign-refer order of 'XBUF2' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "axis2d.f", line 243: DO loop is not parallelized: the assign-refer order of 'YBUF2' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "axis2d.f", line 244: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6122s-i  "axis2d.f", line 244: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "axis2d.f", line 245: DO loop is not parallelized: the assign-refer order of 'IUTPS' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "axis2d.f", line 245: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "axis2d.f", line 245: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'IUTPS' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "axis2d.f", line 245: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd8321o-i  "axis2d.f", line 260: Loop unswitched.
+   jwd5122p-i  "axis2d.f", line 260: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd8209o-i  "axis2d.f", line 262: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8321o-i  "axis2d.f", line 270: Loop unswitched.
+   jwd5143p-i  "axis2d.f", line 270: DO loop is not parallelized: the value of its iteration count is insufficient to make parallelization worthwhile.
+   jwd6229s-i  "axis2d.f", line 270: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8664o-i  "axis2d.f", line 270: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd8203o-i  "axis2d.f", line 270: Loop unrolled fully.
+   jwd5208p-i  "axis2d.f", line 274: DO loop is not parallelized: the assign-refer order of 'XBUF2' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "axis2d.f", line 274: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'XBUF2' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "axis2d.f", line 275: DO loop is not parallelized: the assign-refer order of 'YBUF2' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "axis2d.f", line 275: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'YBUF2' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "axis2d.f", line 276: DO loop is not parallelized: the assign-refer order of 'XBUF2' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "axis2d.f", line 277: DO loop is not parallelized: the assign-refer order of 'YBUF2' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "axis2d.f", line 278: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6122s-i  "axis2d.f", line 278: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "axis2d.f", line 279: DO loop is not parallelized: the assign-refer order of 'IUTPS' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "axis2d.f", line 279: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "axis2d.f", line 279: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'IUTPS' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "axis2d.f", line 279: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd8209o-i  "axis2d.f", line 291: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "axis2d.f", line 293: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5123p-i  "axis2d.f", line 302: DO loop is not parallelized: a character or structure type data was found in the loop.
+   jwd6165s-i  "axis2d.f", line 302: SIMD conversion cannot be applied to DO loop: one or more data with character type or derived type were found in the DO loop.
+   jwd8664o-i  "axis2d.f", line 302: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd8209o-i  "axis2d.f", line 305: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5123p-i  "axis2d.f", line 313: DO loop is not parallelized: a character or structure type data was found in the loop.
+   jwd6165s-i  "axis2d.f", line 313: SIMD conversion cannot be applied to DO loop: one or more data with character type or derived type were found in the DO loop.
+   jwd8664o-i  "axis2d.f", line 313: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd8209o-i  "axis2d.f", line 316: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "axis2d.f", line 335: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "axis2d.f", line 337: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5123p-i  "axis2d.f", line 346: DO loop is not parallelized: a character or structure type data was found in the loop.
+   jwd6165s-i  "axis2d.f", line 346: SIMD conversion cannot be applied to DO loop: one or more data with character type or derived type were found in the DO loop.
+   jwd8664o-i  "axis2d.f", line 346: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd8209o-i  "axis2d.f", line 349: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5123p-i  "axis2d.f", line 357: DO loop is not parallelized: a character or structure type data was found in the loop.
+   jwd6165s-i  "axis2d.f", line 357: SIMD conversion cannot be applied to DO loop: one or more data with character type or derived type were found in the DO loop.
+   jwd8664o-i  "axis2d.f", line 357: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd8209o-i  "axis2d.f", line 360: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "axis2d.f", line 383: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "axis2d.f", line 385: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "axis2d.f", line 389: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "axis2d.f", line 391: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "axis2d.f", line 428: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "axis2d.f", line 430: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+
+ Procedure information
+   Lines      : 647
+   Statements : 357
+   Stack(byte): 2928
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 647
+   Total statements : 357
+   Total stack(byte): 2928
+   Total prefetch num: 0
+

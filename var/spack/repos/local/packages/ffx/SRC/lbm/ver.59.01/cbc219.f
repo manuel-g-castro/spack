@@ -1,0 +1,13 @@
+      SUBROUTINE CBC219(NG,NP,BUFSND,FBC3)
+      IMPLICIT NONE
+      INTEGER*4 NG,NP
+      REAL*8    FBC3(NP)
+      REAL*8    BUFSND(*)
+      INTEGER*4 IP
+C
+      DO 1000 IP=1,NP
+          BUFSND(IP)=FBC3(IP)
+ 1000 CONTINUE
+C
+      RETURN
+      END

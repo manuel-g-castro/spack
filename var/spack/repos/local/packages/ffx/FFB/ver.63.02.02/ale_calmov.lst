@@ -1,0 +1,1020 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:53:37 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : ale_calmov.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "ALE_CALMOV"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE ALE_CALMOV
+          2                          *                 (MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+          3                          *                  NEX,EPS,EPSRE,NMAX,X,Y,Z,
+          4                          *                  MELM,EXX,EYY,EZZ,EXY,EXZ,EYZ,
+          5                          *                  NODE,ME,NE,NP,EJ,DT,
+          6                          *                  NCRS,N1,N2,LTAB,NPP,IPCRS,AP,
+          7                          *                  NPMVB,LPMVB,UMVB,VMVB,WMVB,
+          8                          *                  UMESH,VMESH,WMESH,
+          9                          *                  UMESH_P,VMESH_P,WMESH_P,ITIME,ISTART,
+         10                          *                  IPART,LDOM,NBPDOM,NDOM,
+         11                          *                  IPSLF,IPSND,MBPDOM,NUMIP,
+         12                          *                  NITR,RES,RX,RY,WRK01,AWRK01,AWRK02,
+         13                          *                  AWRK03,AWRK04,AWRK05,AWRK06,RHSF,
+         14                          *                  DISP,AR,AWRK07,LFIXX,LFIXY,LFIXZ,
+         15                          *                  MRSALE,IALEDB,IUTAL,IUT0,IUT6,IERR)
+         16                     C
+         17                           IMPLICIT NONE
+         18                     C
+         19                     C     INPUT
+         20                           INTEGER*4 MCOLOR,MCPART
+         21                           INTEGER*4 NCOLOR(4),NCPART(MCOLOR,4),LLOOP(MCPART,MCOLOR,4)
+         22                     C
+         23                           INTEGER*4 MELM,NEX,
+         24                          *          NMAX,NODE,ME,NE,NP,NPMVB,LPMVB,
+         25                          *          NCRS,N1,N2,LTAB,NPP,IPCRS,ITIME,ISTART,
+         26                          *          IPART,LDOM,NBPDOM,NDOM,
+         27                          *          IPSLF,IPSND,MBPDOM,NUMIP,NITR,
+         28                          *          LFIXX,LFIXY,LFIXZ,
+         29                          *          IUT0,IUT6,IERR
+         30                           REAL*4    EPS,EPSRE,X,Y,Z,EJ,EXX,EYY,EZZ,EXY,EXZ,EYZ,
+         31                          *          DT,UMVB,VMVB,WMVB,UMESH,VMESH,WMESH,
+         32                          *          UMESH_P,VMESH_P,WMESH_P,RES,RX,RY,WRK01,
+         33                          *          AWRK01,AWRK02,AWRK03,AWRK04,AWRK05,AWRK06,AWRK07
+         34                     
+         35                           DIMENSION LTAB(N1,N2,NE),NEX(12),
+         36                          *          NPP(NP),IPCRS(NCRS)
+         37                           DIMENSION X(NP),Y(NP),Z(NP), NODE(N2,NE),EJ(NE),
+         38                          *          EXX(MELM),EYY(MELM),EZZ(MELM),
+         39                          *          EXY(MELM),EXZ(MELM),EYZ(MELM)
+         40                           DIMENSION LPMVB(3,NPMVB),
+         41                          *          UMVB(NPMVB),VMVB(NPMVB),WMVB(NPMVB)
+         42                           DIMENSION UMESH(NP),VMESH(NP),WMESH(NP)
+         43                           DIMENSION UMESH_P(NP),VMESH_P(NP),WMESH_P(NP)
+         44                     
+         45                           DIMENSION LDOM(NDOM), NBPDOM(NDOM),
+         46                          *          IPSLF(MBPDOM,NDOM), IPSND(MBPDOM,NDOM),
+         47                          *          NUMIP(NP)
+         48                           DIMENSION RX(0:N2,ME),RY(0:N2,ME)
+         49                           DIMENSION LFIXX(NP),LFIXY(NP),LFIXZ(NP),WRK01(NP)
+         50                           DIMENSION AWRK01(NP*3),AWRK02(NP*3),AWRK03(NP*3),
+         51                          *          AWRK04(NP*3),AWRK05(NP*3),AWRK06(NP*3),AWRK07(NP*3)
+         52                     C
+         53                     C     WORK
+         54                           REAL*4    AP(NCRS*9)
+         55                           REAL*4    AR(NP*3),DISP(NP*3),RHSF(NP*3)
+         56                           INTEGER*4 ICOLOR,ICPART
+         57                     CCHY_TMP
+         58                           INTEGER*4 MRSALE,IALEDB,IUTAL
+         59                     CCHY_TMP
+         60                     C
+         61                     C     ----STRESS-STRAIN INTERACTION----
+         62                           REAL*4    YM,PR,D1,D2,G
+         63                           PARAMETER (YM = 1.0E0, PR = 0.3E0)
+         64                           PARAMETER (D1 = YM*(1.E0-PR)/(1.E0+PR)/(1.E0-2.E0*PR))
+         65                           PARAMETER (D2 = YM*PR       /(1.E0+PR)/(1.E0-2.E0*PR))
+         66                           PARAMETER (G  = YM/2.E0/(1.E0+PR))
+         67                     C
+         68                           INTEGER*4 IDOM,MAXBUF,NSIZEBUF,IE,I,J,IP,IBP,IDIM,
+         69                          *          NTET,NPRD,NWED,NHEX,IES,IEE,
+         70                          *          IELM0,I1,I2,I3,J1,J2,J3,IELMA,IELMB,
+         71                          *          NSKIP1,NSKIP2,NSKIP3,NSKIP4,ICRS,
+         72                          *          ICRS11,ICRS12,ICRS13,
+         73                          *          ICRS21,ICRS22,ICRS23,
+         74                          *          ICRS31,ICRS32,ICRS33
+         75                           REAL*4    K11,K12,K13,K21,K22,K23,K31,K32,K33
+         76                          *
+         77                     C
+         78                           CHARACTER*60 ERMSGC /' ## SUBROUTINE ALE_CALMOV: FATAL
+         79                          *      ERROR REPORT   ; RETURNED' /
+         80                     C
+         81                     C     ARGUMENT LISTINGS
+         82                     C       (1) INPUT
+         83                     C          NEX(I)      ; INCLUDES NUMBER OF ELEMENTS AND NUMBER OF LOCAL NODES
+         84                     C                        AS FOLOOWS
+         85                     C          NEX(1)      ; NUMBER OF TET.    ELEMENTS
+         86                     C          NEX(2)      ; NUMBER OF PYRAMID ELEMENTS
+         87                     C          NEX(3)      ; NUMBER OF WEGDE   ELEMENTS
+         88                     C          NEX(4)      ; NUMBER OF HEX.    ELEMENTS
+         89                     C          NEX(5)      ; NUMBER OF LOCAL NODES IN A TET.    ELEMENT (=4)
+         90                     C          NEX(6)      ; NUMBER OF LOCAL NODES IN A PYRAMID ELEMENT (=5)
+         91                     C          NEX(7)      ; NUMBER OF LOCAL NODES IN A WEGDE   ELEMENT (=6)
+         92                     C          NEX(8)      ; NUMBER OF LOCAL NODES IN A HEX.    ELEMENT (=8)
+         93                     C
+         94                     C          EPS       ; MAXIMUM ALLOWABLE ERROR
+         95                     C          EPSRE     ; MAXIMUM RERATIVE ALLOWABLE ERROR
+         96                     C          NMAX      ; MAX. NUMBER OF MATRIX SOLVER ITERATIONS
+         97                     C          X(IP)     ; X COORDINATE OF NODE
+         98                     C          Y(IP)     ; Y COORDINATE OF NODE
+         99                     C          Z(IP)     ; Z COORDINATE OF NODE
+        100                     C          NELM      ;
+        101                     C
+        102                     C          EXX (I,J,IE); INTEGRATED ELEMENT MATRIX OF NX*NXT
+        103                     C          EYY (I,J,IE); INTEGRATED ELEMENT MATRIX OF NY*NYT
+        104                     C          EZZ (I,J,IE); INTEGRATED ELEMENT MATRIX OF NZ*NZT
+        105                     C          EXY (I,J,IE); INTEGRATED ELEMENT MATRIX OF NX*NYT
+        106                     C          EXZ (I,J,IE); INTEGRATED ELEMENT MATRIX OF NX*NZT
+        107                     C          EYZ (I,J,IE); INTEGRATED ELEMENT MATRIX OF NY*NZT
+        108                     C
+        109                     C          NODE(I,IE); NODE NO. TABLE BASED ON ELEMENT
+        110                     C          ME        ; MAX. NUMBER OF TOTAL ELEMENTS
+        111                     C          NE        ; NUMBER OF TOTAL ELEMENTS
+        112                     C          NP        ; NUMBER OF TOTAL NODES
+        113                     C          N         ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT
+        114                     C          EJ(IE)    ; YOUNG'S MODULUS OF EACH ELEMENT FOR JACOBIAN STIFFENING
+        115                     C          DT        ; TIME INCREMENT
+        116                     C          NCRS      ; NUMBER OF NONZERO ELEMENTS IN MATRIX OF CRS FORMAT
+        117                     C          N1        ;
+        118                     C          N2        ;
+        119                     C          LTAB(J1,J2,IE); CRS INDEX TABLE FOR NODE-BASE MATRIX
+        120                     C                          COEFFICIENT
+        121                     C          NPP      (IP); NUMBER OF ADJACENT NODES    TO NODE    IP
+        122                     C          IPCRS  (ICRS); NODE NO. TABLE BASED ON CRS FORMAT
+        123                     C          UMESH(IP) ; X-DIR MESH VELOCITY OF NODE
+        124                     C          VMESH(IP) ; Y-DIR MESH VELOCITY OF NODE
+        125                     C          WMESH(IP) ; Z-DIR MESH VELOCITY OF NODE
+        126                     C          UMESH_P(IP) ; OLD X-DIR MESH VELOCITY OF NODE
+        127                     C          VMESH_P(IP) ; OLD Y-DIR MESH VELOCITY OF NODE
+        128                     C          WMESH_P(IP) ; OLD Z-DIR MESH VELOCITY OF NODE
+        129                     C
+        130                     C        A.  FIXED BOUNDARY
+        131                     C          NPMVB     ; NUMBER OF MOVING BOUNDARY NODES
+        132                     C          LPMVB(3,IB) ; MOVING BOUNDARY NODE
+        133                     C          UMVB(IB)  ; X-DIR VELOCITY OF MOVING BOUNDARY
+        134                     C          VMVB(IB)  ; Y-DIR VELOCITY OF MOVING BOUNDARY
+        135                     C          WMVB(IB)  ; Z-DIR VELOCITY OF MOVING BOUNDARY
+        136                     C
+        137                     C        B. INTER-CONNECT BOUNDARY
+        138                     C          IPART     ; SUB-DOMAIN NUMBER THAT THIS TASK SHOULD TAKE/IS
+        139                     C                      TAKING CARE OF. IPART BEING SET ZERO MEANS THAT
+        140                     C                      THE PROGRAM SHOULD RUN/IS RUNNING IN SERIAL
+        141                     C                      MODE.
+        142                     C
+        143                     C          LDOM  (IDOM); NEIBERING SUB-DOMAIN NUMBER
+        144                     C          NBPDOM(IDOM); NUMBER OF INTER-CONNECT BOUNDARY NODES
+        145                     C                        SHARING WITH THE IDOM'TH NEIBERING SUB-DOMAIN,
+        146                     C                        LDOM(IDOM)
+        147                     C          NDOM        ; NUMBER OF THE NERIBERING SUB-DOMAINS
+        148                     C          IPSLF(IBP,IDOM); INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+        149                     C                           CALLING TASK'S SUB-DOMAIN, FOR THE IDOM'TH
+        150                     C                           NEIBERING SUB-DOMAIN, LDOM(IDOM)
+        151                     C          IPSND(IBP,IDOM); INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+        152                     C                           SUB-DOMAIN THAT IS RECEIVING THE CALLING
+        153                     C                           TASK'S RESIDUALS.
+        154                     C          MBPDOM      ; THE MAXIMUM NUMBER OF THE INTER-CONNECT
+        155                     C                        BOUNDARY NODES FOR ONE NEIBERING SUB-DOMAIN
+        156                     C          NUMIP(IP)   ; NUMBER OF NEIGHBORING DOMAINS THAT NODE
+        157                     C                        'IP' BELONG TO
+        158                     C
+        159                     C          NITR      ; NUMBER OF MATRIX SOLVER ITERATIONS
+        160                     C          RES       ; RESIDUAL OF U-EQUATION
+        161                     C          RX        ;
+        162                     C          RY        ;
+        163                     C          IUT0      ; FILE NUMBER TO WRITE ERROR MESSAGE
+        164                     C          IUT6      ; FILE NUMBER TO WRITE CALCULATION SEQUENCE
+        165                     C          IERR      ; RETURN CODE TO REPORT ERROR OCCURENCE
+        166                     C                      0 --- NORMAL TERMINATION
+        167                     C                      1 --- A FATAL ERROR HAS OCCURED
+        168                     C
+        169                     C       (2) OUTPUT
+        170                     C          UMESH(IP) ; X-DIR MESH VELOCITY OF NODE
+        171                     C          VMESH(IP) ; Y-DIR MESH VELOCITY OF NODE
+        172                     C          WMESH(IP) ; Z-DIR MESH VELOCITY OF NODE
+        173                     C          X(IP)     ; X COORDINATE OF NODE
+        174                     C          Y(IP)     ; Y COORDINATE OF NODE
+        175                     C          Z(IP)     ; Z COORDINATE OF NODE
+        176                     C
+        177                     C       (3) WORK
+        178                     C          AP  (ICRS); NODE-BASE MATRIX COEFFICIENT WHICH INCLUDES
+        179                     C                  ALL THE ERMS AND WILL BE PASSED TO THE MATRIX SOLVER
+        180                     C          AR(IP*3)      ; DIAGONAL TERM
+        181                     C          RHSF(IP*3)    ; WORK REGION FOR RHS IN
+        182                     C          DISP(IP*3)    ; MESH DISPLACEMENT OF NODE
+        183                     C          LFIXX         ;
+        184                     C          LFIXY         ;
+        185                     C          LFIXZ         ;
+        186                     C
+        187                     C        STRESS-STRAIN INTERACTION
+        188                     C          YM            ; YOUNG'S MODULUS (E)
+        189                     C          PR            ; POISSON'S RATIO (NU)
+        190                     C          D1            ;
+        191                     C          D2            ;
+        192                     C          G             ;
+        193                     C
+        194                           MAXBUF = (N2+1)*NE
+        195                           NSIZEBUF = 0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1600
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        196     1  pp    v            DO 100 IDOM=1,NDOM
+        197     1   p    v               NSIZEBUF = NSIZEBUF + NBPDOM(IDOM)*4
+        198     1   p    v       100  CONTINUE
+        199     1                     IF(MAXBUF .LT. NSIZEBUF) THEN
+        200     1                        WRITE(IUT0,*) ""
+        201     1                        WRITE(IUT0,*) "MORE BUFFER IS NECESSARY FOR MESH_CONTROL"
+        202     1                        STOP
+        203     1                     ENDIF
+        204                     
+        205                     C     INITIALIZE
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      AP
+                              <<< Loop-information  End >>>
+        206     1  pp   4v            DO 200 ICRS=1,NCRS*9
+        207     1   p   4v               AP(ICRS)=0.0E0
+        208     1   p   4v        200 CONTINUE
+        209                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1455
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      RHSF, AR
+                              <<< Loop-information  End >>>
+        210     1  pp   2v            DO 300 IP=1,NP*3
+        211     1   p   2v               AR(IP) = 0.E0
+        212     1   p   2v               RHSF(IP) = 0.E0
+        213     1   p   2v       300  CONTINUE
+        214                     C
+        215                     C     MAKE FIX BOUNDARY NODES LIST
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1143
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LFIXZ, LFIXY, LFIXX
+                              <<< Loop-information  End >>>
+        216     1  pp   2v            DO 400 IP=1,NP
+        217     1   p   2v               LFIXX(IP)=0
+        218     1   p   2v               LFIXY(IP)=0
+        219     1   p   2v               LFIXZ(IP)=0
+        220     1   p   2v       400  CONTINUE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.77, ITR: 128, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPMVB
+                              <<< Loop-information  End >>>
+        221     1   s   2v            DO 410 IBP=1,NPMVB
+        222     1   p   2v               IF ( LPMVB(1,IBP).GT.0 ) LFIXX(LPMVB(1,IBP))=1
+        223     1   p   2v               IF ( LPMVB(2,IBP).GT.0 ) LFIXY(LPMVB(2,IBP))=1
+        224     1   p   2v               IF ( LPMVB(3,IBP).GT.0 ) LFIXZ(LPMVB(3,IBP))=1
+        225     1   p   2v       410  CONTINUE
+        226                     C
+        227                           NTET=NEX(5)
+        228                           NPRD=NEX(6)
+        229                           NWED=NEX(7)
+        230                           NHEX=NEX(8)
+        231                           NSKIP1=NEX( 9)
+        232                           NSKIP2=NEX(10)
+        233                           NSKIP3=NEX(11)
+        234                           NSKIP4=NEX(12)
+        235                     C
+        236                     C     == TET. ==
+        237                           IELM0=1
+        238     1                     DO 1000 ICOLOR=1,NCOLOR(1)
+        239     1               !ocl norecurrence(AP,AR)
+        240     2                     DO 1010 ICPART=1,NCPART(ICOLOR,1)
+        241     2                        IES=LLOOP(ICPART  ,ICOLOR,1)
+        242     2                        IEE=LLOOP(ICPART+1,ICOLOR,1)-1
+        243     2               !ocl nosimd
+        244     2               !ocl noswp
+        245     3                        DO 1020 IE=IES,IEE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 5)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LTAB, EYY, EXX, EZZ, EXY, EXZ, EYZ
+                              <<< Loop-information  End >>>
+        246     4   p                       DO 1030 I=1,NTET
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 4)
+                              <<< Loop-information  End >>>
+        247     5  pp                          DO 1040 J=1,NTET
+        248     5   p                             I1=I+NTET*0
+        249     5   p                             I2=I+NTET*1
+        250     5   p                             I3=I+NTET*2
+        251     5   p                             J1=J+NTET*0
+        252     5   p                             J2=J+NTET*1
+        253     5   p                             J3=J+NTET*2
+        254     5               C
+        255     5   p                             IELMA=IELM0+(I-1)+NTET*(J-1)
+        256     5   p                             IELMB=IELM0+(J-1)+NTET*(I-1)
+        257     5               C
+        258     5   p                             K11 = D1*EXX(IELMA) + G *EYY(IELMA) + G *EZZ(IELMA)
+        259     5   p                             K12 = D2*EXY(IELMA) + G *EXY(IELMB)
+        260     5   p                             K13 = D2*EXZ(IELMA) + G *EXZ(IELMB)
+        261     5   p                             K21 = D2*EXY(IELMB) + G *EXY(IELMA)
+        262     5   p                             K22 =  G*EXX(IELMA) + D1*EYY(IELMA) + G *EZZ(IELMA)
+        263     5   p                             K23 = D2*EYZ(IELMA) + G *EYZ(IELMB)
+        264     5   p                             K31 = D2*EXZ(IELMB) + G *EXZ(IELMA)
+        265     5   p                             K32 = D2*EYZ(IELMB) + G *EYZ(IELMA)
+        266     5   p                             K33 = G *EXX(IELMA) + G *EYY(IELMA) + D1*EZZ(IELMA)
+        267     5   p                             K11 = K11*EJ(IE)
+        268     5   p                             K12 = K12*EJ(IE)
+        269     5   p                             K13 = K13*EJ(IE)
+        270     5   p                             K21 = K21*EJ(IE)
+        271     5   p                             K22 = K22*EJ(IE)
+        272     5   p                             K23 = K23*EJ(IE)
+        273     5   p                             K31 = K31*EJ(IE)
+        274     5   p                             K32 = K32*EJ(IE)
+        275     5   p                             K33 = K33*EJ(IE)
+        276     5               C
+        277     5   p                             ICRS  =9*(LTAB(I,J,IE)-1)
+        278     5   p                             ICRS11=ICRS+1
+        279     5   p                             ICRS12=ICRS+2
+        280     5   p                             ICRS13=ICRS+3
+        281     5   p                             ICRS21=ICRS+4
+        282     5   p                             ICRS22=ICRS+5
+        283     5   p                             ICRS23=ICRS+6
+        284     5   p                             ICRS31=ICRS+7
+        285     5   p                             ICRS32=ICRS+8
+        286     5   p                             ICRS33=ICRS+9
+        287     5               C
+        288     5   p                             AP(ICRS11)=AP(ICRS11)+K11
+        289     5   p                             AP(ICRS12)=AP(ICRS12)+K12
+        290     5   p                             AP(ICRS13)=AP(ICRS13)+K13
+        291     5   p                             AP(ICRS21)=AP(ICRS21)+K21
+        292     5   p                             AP(ICRS22)=AP(ICRS22)+K22
+        293     5   p                             AP(ICRS23)=AP(ICRS23)+K23
+        294     5   p                             AP(ICRS31)=AP(ICRS31)+K31
+        295     5   p                             AP(ICRS32)=AP(ICRS32)+K32
+        296     5   p                             AP(ICRS33)=AP(ICRS33)+K33
+        297     5               C
+        298     6   p                             IF (I.EQ.J ) THEN
+        299     6   p                                IP=NODE(I,IE)
+        300     6   p                                AR(IP+NP*0)=AR(IP+NP*0)+K11
+        301     6   p                                AR(IP+NP*1)=AR(IP+NP*1)+K22
+        302     6   p                                AR(IP+NP*2)=AR(IP+NP*2)+K33
+        303     6   p                             ENDIF
+        304     5   p            1040          CONTINUE
+        305     4   p            1030       CONTINUE
+        306     3                           IELM0=IELM0+NSKIP1
+        307     3                1020    CONTINUE
+        308     2                1010 CONTINUE
+        309     1                1000 CONTINUE
+        310                     
+        311                     C     == PYRAMID. ==
+        312     1                     DO 1100 ICOLOR=1,NCOLOR(2)
+        313     1               !ocl norecurrence(AP,AR)
+        314     2                     DO 1110 ICPART=1,NCPART(ICOLOR,2)
+        315     2                        IES=LLOOP(ICPART  ,ICOLOR,2)
+        316     2                        IEE=LLOOP(ICPART+1,ICOLOR,2)-1
+        317     2               !ocl nosimd
+        318     2               !ocl noswp
+        319     3                        DO 1120 IE=IES,IEE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 5)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LTAB, EYY, EXX, EZZ, EXY, EXZ, EYZ
+                              <<< Loop-information  End >>>
+        320     4   p                       DO 1130 I=1,NPRD
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 4)
+                              <<< Loop-information  End >>>
+        321     5  pp                          DO 1140 J=1,NPRD
+        322     5   p                             I1=I+NPRD*0
+        323     5   p                             I2=I+NPRD*1
+        324     5   p                             I3=I+NPRD*2
+        325     5   p                             J1=J+NPRD*0
+        326     5   p                             J2=J+NPRD*1
+        327     5   p                             J3=J+NPRD*2
+        328     5               C
+        329     5   p                             IELMA=IELM0+(I-1)+NPRD*(J-1)
+        330     5   p                             IELMB=IELM0+(J-1)+NPRD*(I-1)
+        331     5               C
+        332     5   p                             K11 = D1*EXX(IELMA) + G *EYY(IELMA) + G *EZZ(IELMA)
+        333     5   p                             K12 = D2*EXY(IELMA) + G *EXY(IELMB)
+        334     5   p                             K13 = D2*EXZ(IELMA) + G *EXZ(IELMB)
+        335     5   p                             K21 = D2*EXY(IELMB) + G *EXY(IELMA)
+        336     5   p                             K22 =  G*EXX(IELMA) + D1*EYY(IELMA) + G *EZZ(IELMA)
+        337     5   p                             K23 = D2*EYZ(IELMA) + G *EYZ(IELMB)
+        338     5   p                             K31 = D2*EXZ(IELMB) + G *EXZ(IELMA)
+        339     5   p                             K32 = D2*EYZ(IELMB) + G *EYZ(IELMA)
+        340     5   p                             K33 = G *EXX(IELMA) + G *EYY(IELMA) + D1*EZZ(IELMA)
+        341     5   p                             K11 = K11*EJ(IE)
+        342     5   p                             K12 = K12*EJ(IE)
+        343     5   p                             K13 = K13*EJ(IE)
+        344     5   p                             K21 = K21*EJ(IE)
+        345     5   p                             K22 = K22*EJ(IE)
+        346     5   p                             K23 = K23*EJ(IE)
+        347     5   p                             K31 = K31*EJ(IE)
+        348     5   p                             K32 = K32*EJ(IE)
+        349     5   p                             K33 = K33*EJ(IE)
+        350     5               C
+        351     5   p                             ICRS  =9*(LTAB(I,J,IE)-1)
+        352     5   p                             ICRS11=ICRS+1
+        353     5   p                             ICRS12=ICRS+2
+        354     5   p                             ICRS13=ICRS+3
+        355     5   p                             ICRS21=ICRS+4
+        356     5   p                             ICRS22=ICRS+5
+        357     5   p                             ICRS23=ICRS+6
+        358     5   p                             ICRS31=ICRS+7
+        359     5   p                             ICRS32=ICRS+8
+        360     5   p                             ICRS33=ICRS+9
+        361     5               C
+        362     5   p                             AP(ICRS11)=AP(ICRS11)+K11
+        363     5   p                             AP(ICRS12)=AP(ICRS12)+K12
+        364     5   p                             AP(ICRS13)=AP(ICRS13)+K13
+        365     5   p                             AP(ICRS21)=AP(ICRS21)+K21
+        366     5   p                             AP(ICRS22)=AP(ICRS22)+K22
+        367     5   p                             AP(ICRS23)=AP(ICRS23)+K23
+        368     5   p                             AP(ICRS31)=AP(ICRS31)+K31
+        369     5   p                             AP(ICRS32)=AP(ICRS32)+K32
+        370     5   p                             AP(ICRS33)=AP(ICRS33)+K33
+        371     5               C
+        372     6   p                             IF (I.EQ.J ) THEN
+        373     6   p                                IP=NODE(I,IE)
+        374     6   p                                AR(IP+NP*0)=AR(IP+NP*0)+K11
+        375     6   p                                AR(IP+NP*1)=AR(IP+NP*1)+K22
+        376     6   p                                AR(IP+NP*2)=AR(IP+NP*2)+K33
+        377     6   p                             ENDIF
+        378     5   p            1140          CONTINUE
+        379     4   p            1130       CONTINUE
+        380     3                           IELM0=IELM0+NSKIP2
+        381     3                1120    CONTINUE
+        382     2                1110 CONTINUE
+        383     1                1100 CONTINUE
+        384                     C
+        385                     C     == WEDGE. ==
+        386     1                     DO 1200 ICOLOR=1,NCOLOR(3)
+        387     1               !ocl norecurrence(AP,AR)
+        388     2                     DO 1210 ICPART=1,NCPART(ICOLOR,3)
+        389     2                        IES=LLOOP(ICPART  ,ICOLOR,3)
+        390     2                        IEE=LLOOP(ICPART+1,ICOLOR,3)-1
+        391     2               !ocl nosimd
+        392     2               !ocl noswp
+        393     3                        DO 1220 IE=IES,IEE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 5)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LTAB, EYY, EXX, EZZ, EXY, EXZ, EYZ
+                              <<< Loop-information  End >>>
+        394     4   p                       DO 1230 I=1,NWED
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 4)
+                              <<< Loop-information  End >>>
+        395     5  pp                          DO 1240 J=1,NWED
+        396     5   p                             I1=I+NWED*0
+        397     5   p                             I2=I+NWED*1
+        398     5   p                             I3=I+NWED*2
+        399     5   p                             J1=J+NWED*0
+        400     5   p                             J2=J+NWED*1
+        401     5   p                             J3=J+NWED*2
+        402     5               C
+        403     5   p                             IELMA=IELM0+(I-1)+NWED*(J-1)
+        404     5   p                             IELMB=IELM0+(J-1)+NWED*(I-1)
+        405     5               C
+        406     5   p                             K11 = D1*EXX(IELMA) + G *EYY(IELMA) + G *EZZ(IELMA)
+        407     5   p                             K12 = D2*EXY(IELMA) + G *EXY(IELMB)
+        408     5   p                             K13 = D2*EXZ(IELMA) + G *EXZ(IELMB)
+        409     5   p                             K21 = D2*EXY(IELMB) + G *EXY(IELMA)
+        410     5   p                             K22 =  G*EXX(IELMA) + D1*EYY(IELMA) + G *EZZ(IELMA)
+        411     5   p                             K23 = D2*EYZ(IELMA) + G *EYZ(IELMB)
+        412     5   p                             K31 = D2*EXZ(IELMB) + G *EXZ(IELMA)
+        413     5   p                             K32 = D2*EYZ(IELMB) + G *EYZ(IELMA)
+        414     5   p                             K33 = G *EXX(IELMA) + G *EYY(IELMA) + D1*EZZ(IELMA)
+        415     5   p                             K11 = K11*EJ(IE)
+        416     5   p                             K12 = K12*EJ(IE)
+        417     5   p                             K13 = K13*EJ(IE)
+        418     5   p                             K21 = K21*EJ(IE)
+        419     5   p                             K22 = K22*EJ(IE)
+        420     5   p                             K23 = K23*EJ(IE)
+        421     5   p                             K31 = K31*EJ(IE)
+        422     5   p                             K32 = K32*EJ(IE)
+        423     5   p                             K33 = K33*EJ(IE)
+        424     5               C
+        425     5   p                             ICRS  =9*(LTAB(I,J,IE)-1)
+        426     5   p                             ICRS11=ICRS+1
+        427     5   p                             ICRS12=ICRS+2
+        428     5   p                             ICRS13=ICRS+3
+        429     5   p                             ICRS21=ICRS+4
+        430     5   p                             ICRS22=ICRS+5
+        431     5   p                             ICRS23=ICRS+6
+        432     5   p                             ICRS31=ICRS+7
+        433     5   p                             ICRS32=ICRS+8
+        434     5   p                             ICRS33=ICRS+9
+        435     5               C
+        436     5   p                             AP(ICRS11)=AP(ICRS11)+K11
+        437     5   p                             AP(ICRS12)=AP(ICRS12)+K12
+        438     5   p                             AP(ICRS13)=AP(ICRS13)+K13
+        439     5   p                             AP(ICRS21)=AP(ICRS21)+K21
+        440     5   p                             AP(ICRS22)=AP(ICRS22)+K22
+        441     5   p                             AP(ICRS23)=AP(ICRS23)+K23
+        442     5   p                             AP(ICRS31)=AP(ICRS31)+K31
+        443     5   p                             AP(ICRS32)=AP(ICRS32)+K32
+        444     5   p                             AP(ICRS33)=AP(ICRS33)+K33
+        445     5               C
+        446     6   p                             IF (I.EQ.J ) THEN
+        447     6   p                                IP=NODE(I,IE)
+        448     6   p                                AR(IP+NP*0)=AR(IP+NP*0)+K11
+        449     6   p                                AR(IP+NP*1)=AR(IP+NP*1)+K22
+        450     6   p                                AR(IP+NP*2)=AR(IP+NP*2)+K33
+        451     6   p                             ENDIF
+        452     5   p            1240          CONTINUE
+        453     4   p            1230       CONTINUE
+        454     3                           IELM0=IELM0+NSKIP3
+        455     3                1220    CONTINUE
+        456     2                1210 CONTINUE
+        457     1                1200 CONTINUE
+        458                     C
+        459                     C     == HEX. ==
+        460     1                     DO 1300 ICOLOR=1,NCOLOR(4)
+        461     1               !ocl norecurrence(AP,AR)
+        462     2                     DO 1310 ICPART=1,NCPART(ICOLOR,4)
+        463     2                        IES=LLOOP(ICPART  ,ICOLOR,4)
+        464     2                        IEE=LLOOP(ICPART+1,ICOLOR,4)-1
+        465     2               !ocl nosimd
+        466     2               !ocl noswp
+        467     3                        DO 1320 IE=IES,IEE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 5)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LTAB, EYY, EXX, EZZ, EXY, EXZ, EYZ
+                              <<< Loop-information  End >>>
+        468     4   p                       DO 1330 I=1,NHEX
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 4)
+                              <<< Loop-information  End >>>
+        469     5  pp                          DO 1340 J=1,NHEX
+        470     5   p                             I1=I+NHEX*0
+        471     5   p                             I2=I+NHEX*1
+        472     5   p                             I3=I+NHEX*2
+        473     5   p                             J1=J+NHEX*0
+        474     5   p                             J2=J+NHEX*1
+        475     5   p                             J3=J+NHEX*2
+        476     5               C
+        477     5   p                             IELMA=IELM0+(I-1)+NHEX*(J-1)
+        478     5   p                             IELMB=IELM0+(J-1)+NHEX*(I-1)
+        479     5               C
+        480     5   p                             K11 = D1*EXX(IELMA) + G *EYY(IELMA) + G *EZZ(IELMA)
+        481     5   p                             K12 = D2*EXY(IELMA) + G *EXY(IELMB)
+        482     5   p                             K13 = D2*EXZ(IELMA) + G *EXZ(IELMB)
+        483     5   p                             K21 = D2*EXY(IELMB) + G *EXY(IELMA)
+        484     5   p                             K22 =  G*EXX(IELMA) + D1*EYY(IELMA) + G *EZZ(IELMA)
+        485     5   p                             K23 = D2*EYZ(IELMA) + G *EYZ(IELMB)
+        486     5   p                             K31 = D2*EXZ(IELMB) + G *EXZ(IELMA)
+        487     5   p                             K32 = D2*EYZ(IELMB) + G *EYZ(IELMA)
+        488     5   p                             K33 = G *EXX(IELMA) + G *EYY(IELMA) + D1*EZZ(IELMA)
+        489     5   p                             K11 = K11*EJ(IE)
+        490     5   p                             K12 = K12*EJ(IE)
+        491     5   p                             K13 = K13*EJ(IE)
+        492     5   p                             K21 = K21*EJ(IE)
+        493     5   p                             K22 = K22*EJ(IE)
+        494     5   p                             K23 = K23*EJ(IE)
+        495     5   p                             K31 = K31*EJ(IE)
+        496     5   p                             K32 = K32*EJ(IE)
+        497     5   p                             K33 = K33*EJ(IE)
+        498     5               C
+        499     5   p                             ICRS  =9*(LTAB(I,J,IE)-1)
+        500     5   p                             ICRS11=ICRS+1
+        501     5   p                             ICRS12=ICRS+2
+        502     5   p                             ICRS13=ICRS+3
+        503     5   p                             ICRS21=ICRS+4
+        504     5   p                             ICRS22=ICRS+5
+        505     5   p                             ICRS23=ICRS+6
+        506     5   p                             ICRS31=ICRS+7
+        507     5   p                             ICRS32=ICRS+8
+        508     5   p                             ICRS33=ICRS+9
+        509     5               C
+        510     5   p                             AP(ICRS11)=AP(ICRS11)+K11
+        511     5   p                             AP(ICRS12)=AP(ICRS12)+K12
+        512     5   p                             AP(ICRS13)=AP(ICRS13)+K13
+        513     5   p                             AP(ICRS21)=AP(ICRS21)+K21
+        514     5   p                             AP(ICRS22)=AP(ICRS22)+K22
+        515     5   p                             AP(ICRS23)=AP(ICRS23)+K23
+        516     5   p                             AP(ICRS31)=AP(ICRS31)+K31
+        517     5   p                             AP(ICRS32)=AP(ICRS32)+K32
+        518     5   p                             AP(ICRS33)=AP(ICRS33)+K33
+        519     5               C
+        520     6   p                             IF (I.EQ.J ) THEN
+        521     6   p                                IP=NODE(I,IE)
+        522     6   p                                AR(IP+NP*0)=AR(IP+NP*0)+K11
+        523     6   p                                AR(IP+NP*1)=AR(IP+NP*1)+K22
+        524     6   p                                AR(IP+NP*2)=AR(IP+NP*2)+K33
+        525     6   p                             ENDIF
+        526     5   p            1340          CONTINUE
+        527     4   p            1330       CONTINUE
+        528     3                           IELM0=IELM0+NSKIP4
+        529     3                1320    CONTINUE
+        530     2                1310 CONTINUE
+        531     1                1300 CONTINUE
+        532                     C
+        533                           IDIM = 3
+        534                           CALL DDCOMX(IPART,IDIM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        535                          *     AR  ,AR  (NP+1),AR  (NP*2+1),NP,IUT0,IERR,RX,RY,MAXBUF)
+        536     1                     IF(IERR.EQ.1) THEN
+        537     1                        WRITE(IUT0,*)'ERROR CODE REPORTED FROM DDCOMX'
+        538     1                        WRITE(IUT0,*) ERMSGC
+        539     1                        RETURN
+        540     1                     ENDIF
+        541                     C
+        542                     C     DIAGONAL SCALING OF CRS MATRIX AND RHS
+        543                           ICRS=0
+        544     1                     DO 1400 IP=1,NP
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 208
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      AP
+                              <<<    PREFETCH(SOFT) : 6
+                              <<<     SEQUENTIAL : 6
+                              <<<      AP: 6
+                              <<< Loop-information  End >>>
+        545     2  pp    v               DO 1410 I=1,NPP(IP)
+        546     2   p    v                  ICRS=ICRS+1
+        547     2   p    v                  ICRS11=(ICRS-1)*9+1
+        548     2   p    v                  ICRS12=(ICRS-1)*9+2
+        549     2   p    v                  ICRS13=(ICRS-1)*9+3
+        550     2   p    v                  ICRS21=(ICRS-1)*9+4
+        551     2   p    v                  ICRS22=(ICRS-1)*9+5
+        552     2   p    v                  ICRS23=(ICRS-1)*9+6
+        553     2   p    v                  ICRS31=(ICRS-1)*9+7
+        554     2   p    v                  ICRS32=(ICRS-1)*9+8
+        555     2   p    v                  ICRS33=(ICRS-1)*9+9
+        556     2   p    v                  AP(ICRS11)=AP(ICRS11)/AR(IP+NP*0)
+        557     2   p    v                  AP(ICRS12)=AP(ICRS12)/AR(IP+NP*0)
+        558     2   p    v                  AP(ICRS13)=AP(ICRS13)/AR(IP+NP*0)
+        559     2   p    v                  AP(ICRS21)=AP(ICRS21)/AR(IP+NP*1)
+        560     2   p    v                  AP(ICRS22)=AP(ICRS22)/AR(IP+NP*1)
+        561     2   p    v                  AP(ICRS23)=AP(ICRS23)/AR(IP+NP*1)
+        562     2   p    v                  AP(ICRS31)=AP(ICRS31)/AR(IP+NP*2)
+        563     2   p    v                  AP(ICRS32)=AP(ICRS32)/AR(IP+NP*2)
+        564     2   p    v                  AP(ICRS33)=AP(ICRS33)/AR(IP+NP*2)
+        565     2   p    v       1410    CONTINUE
+        566     1                1400 CONTINUE
+        567                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 254
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      AR, RHSF
+                              <<< Loop-information  End >>>
+        568     1  pp    v            DO 1500 IP=1,NP
+        569     1   p    v               RHSF(IP+NP*0)=RHSF(IP+NP*0)/AR(IP+NP*0)
+        570     1   p    v               RHSF(IP+NP*1)=RHSF(IP+NP*1)/AR(IP+NP*1)
+        571     1   p    v               RHSF(IP+NP*2)=RHSF(IP+NP*2)/AR(IP+NP*2)
+        572     1   p    v       1500 CONTINUE
+        573                     C
+        574                           IDIM = 3
+        575                           CALL DDCOMX(IPART,IDIM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        576                          *     RHSF,RHSF(NP+1),RHSF(NP*2+1),NP,IUT0,IERR,RX,RY,MAXBUF)
+        577     1                     IF(IERR.EQ.1) THEN
+        578     1                        WRITE(IUT0,*)'ERROR CODE REPORTED FROM DDCOMX'
+        579     1                        WRITE(IUT0,*) ERMSGC
+        580     1                        RETURN
+        581     1                     ENDIF
+        582                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPMVB
+                              <<< Loop-information  End >>>
+        583     1   s    s            DO 1600 IBP=1,NPMVB
+        584     2   p    v               IF ( LPMVB(1,IBP).GT.0 ) THEN
+        585     2   p    v                  IP=LPMVB(1,IBP)
+        586     2   m    m                  RHSF(IP+NP*0) = UMVB(IBP)*DT
+        587     2   p    v               ENDIF
+        588     2   p    v               IF ( LPMVB(2,IBP).GT.0 ) THEN
+        589     2   p    v                  IP=LPMVB(2,IBP)
+        590     2   m    m                  RHSF(IP+NP*1) = VMVB(IBP)*DT
+        591     2   p    v               ENDIF
+        592     2   p    v               IF ( LPMVB(3,IBP).GT.0 ) THEN
+        593     2   p    v                  IP=LPMVB(3,IBP)
+        594     2   m    m                  RHSF(IP+NP*2) = WMVB(IBP)*DT
+        595     2   p    v               ENDIF
+        596     1   p    v       1600 CONTINUE
+        597                     C
+        598                     C     CLEAR CRS MATRIX FOR DIRICHLET B.C.
+        599                           CALL ALE_CLRCRS(AP,NP,NCRS,IPCRS,NPP,
+        600                          *                LFIXX,LFIXY,LFIXZ,NUMIP,WRK01)
+        601                     C
+        602                     C     SET INITIIAL VECTOR TO SOLVE
+        603     1                     IF (ITIME.EQ.1.AND.ISTART.EQ.0) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.00, ITR: 112, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      UMVB, LPMVB, WMVB, VMVB
+                              <<< Loop-information  End >>>
+        604     2   s    v               DO 1700 IBP=1,NPMVB
+        605     3   p    v                  IF ( LPMVB(1,IBP).GT.0 ) THEN
+        606     3   p    v                     IP=LPMVB(1,IBP)
+        607     3   m    v                     UMESH  (IP) = UMVB(IBP)
+        608     3   s    v                     UMESH_P(IP) = UMVB(IBP)
+        609     3   p    v                  ENDIF
+        610     3   p    v                  IF ( LPMVB(2,IBP).GT.0 ) THEN
+        611     3   p    v                     IP=LPMVB(2,IBP)
+        612     3   m    v                     VMESH  (IP) = VMVB(IBP)
+        613     3   s    v                     VMESH_P(IP) = VMVB(IBP)
+        614     3   p    v                  ENDIF
+        615     3   p    v                  IF ( LPMVB(3,IBP).GT.0 ) THEN
+        616     3   p    v                     IP=LPMVB(3,IBP)
+        617     3   m    v                     WMESH  (IP) = WMVB(IBP)
+        618     3   s    v                     WMESH_P(IP) = WMVB(IBP)
+        619     3   p    v                  ENDIF
+        620     2   p    v       1700     CONTINUE
+        621     1                     ENDIF
+        622                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 281
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.81, ITR: 112, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WMESH, VMESH_P, VMESH, UMESH_P, WMESH_P
+                              <<<      UMESH, DISP
+                              <<< Loop-information  End >>>
+        623     1  pp    v            DO 1800 IP=1,NP
+        624     1   p    v               DISP(IP+NP*0) = ( 1.5E0*UMESH(IP) - 0.5E0*UMESH_P(IP) ) * DT
+        625     1   p    v               DISP(IP+NP*1) = ( 1.5E0*VMESH(IP) - 0.5E0*VMESH_P(IP) ) * DT
+        626     1   p    v               DISP(IP+NP*2) = ( 1.5E0*WMESH(IP) - 0.5E0*WMESH_P(IP) ) * DT
+        627     1               C
+        628     1   p    v               UMESH_P(IP) = UMESH(IP)
+        629     1   p    v               VMESH_P(IP) = VMESH(IP)
+        630     1   p    v               WMESH_P(IP) = WMESH(IP)
+        631     1   p    v       1800  CONTINUE
+        632                     CC
+        633                     CCC   SOLVER
+        634                     C
+        635                     C     CALL MATRIX SOLVER
+        636                           CALL ALE_BCGSTX(NPP,NCRS,IPCRS,AP,RHSF,DISP,EPS,EPSRE,
+        637                          *                NMAX,RES,NITR,NODE,NE,NEX,NP,ME,N2,
+        638                          *                IPART,LDOM,NBPDOM,NDOM,
+        639                          *                IPSLF,IPSND,MBPDOM,NUMIP,
+        640                          *                RX,RY,WRK01,AWRK01,AWRK02,
+        641                          *                AWRK03,AWRK04,AWRK05,AWRK06,AWRK07,
+        642                          *                MRSALE,IALEDB,IUTAL,IUT0,IERR)
+        643     1                     IF (IERR.NE.0) THEN
+        644     1                        WRITE(IUT0,*)'ERROR CODE REPORTED FROM BCGSTX'
+        645     1                        WRITE(IUT0,*) ERMSGC
+        646     1                        RETURN
+        647     1                     ENDIF
+        648                     C
+        649                     C     UPDATE MESH
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 534
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.20, ITR: 128, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      DISP, VMESH, UMESH, WMESH
+                              <<< Loop-information  End >>>
+        650     1  pp    v            DO 2000 IP=1,NP
+        651     1   p    v               UMESH(IP) = DISP(IP+NP*0) / DT
+        652     1   p    v               VMESH(IP) = DISP(IP+NP*1) / DT
+        653     1   p    v               WMESH(IP) = DISP(IP+NP*2) / DT
+        654     1   p    v       2000 CONTINUE
+        655                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPMVB
+                              <<< Loop-information  End >>>
+        656     1   s    s            DO 2100 IBP=1,NPMVB
+        657     2   p    v               IF ( LPMVB(1,IBP).GT.0 ) THEN
+        658     2   p    v                  IP=LPMVB(1,IBP)
+        659     2   m    v                  UMESH(IP) = UMVB(IBP)
+        660     2   m    m                  DISP(IP+NP*0) = UMVB(IBP)*DT
+        661     2   p    v               ENDIF
+        662     2   p    v               IF ( LPMVB(2,IBP).GT.0 ) THEN
+        663     2   p    v                  IP=LPMVB(2,IBP)
+        664     2   m    v                  VMESH(IP) = VMVB(IBP)
+        665     2   m    m                  DISP(IP+NP*1) = VMVB(IBP)*DT
+        666     2   p    v               ENDIF
+        667     2   p    v               IF ( LPMVB(3,IBP).GT.0 ) THEN
+        668     2   p    v                  IP=LPMVB(3,IBP)
+        669     2   m    v                  WMESH(IP) = WMVB(IBP)
+        670     2   m    m                  DISP(IP+NP*2) = WMVB(IBP)*DT
+        671     2   p    v               ENDIF
+        672     1   p    v       2100 CONTINUE
+        673                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 411
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.16, ITR: 144, MVE: 5)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      Z, DISP, X, Y
+                              <<< Loop-information  End >>>
+        674     1  pp    v            DO 2200 IP=1,NP
+        675     1   p    v               X(IP) = X(IP) + DISP(IP+NP*0)
+        676     1   p    v               Y(IP) = Y(IP) + DISP(IP+NP*1)
+        677     1   p    v               Z(IP) = Z(IP) + DISP(IP+NP*2)
+        678     1   p    v       2200 CONTINUE
+        679                     C
+        680                           RETURN
+        681                           END
+
+ Diagnostic messages: program name(ALE_CALMOV)
+   jwd2008i-i  "ale_calmov.f", line 1: この仮引数'IUT6'は、副プログラム中で使用されていません。
+   jwd8220o-i  "ale_calmov.f", line 1: 副作用の可能性のある最適化を行いました。
+   jwd5004p-i  "ale_calmov.f", line 196: リダクション演算を含むDOループを並列化しました。(名前:IDOM)
+   jwd6004s-i  "ale_calmov.f", line 196: リダクション演算を含むDOループをSIMD化しました。(名前:IDOM)
+   jwd5001p-i  "ale_calmov.f", line 206: このDOループを並列化しました。(名前:ICRS)
+   jwd6001s-i  "ale_calmov.f", line 206: このDOループをSIMD化しました。(名前:ICRS)
+   jwd8663o-i  "ale_calmov.f", line 206: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "ale_calmov.f", line 206: ループを展開数4回でアンローリングしました。
+   jwd5001p-i  "ale_calmov.f", line 210: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "ale_calmov.f", line 210: このDOループをSIMD化しました。(名前:IP)
+   jwd8663o-i  "ale_calmov.f", line 210: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "ale_calmov.f", line 210: ループを展開数2回でアンローリングしました。
+   jwd5001p-i  "ale_calmov.f", line 216: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "ale_calmov.f", line 216: このDOループをSIMD化しました。(名前:IP)
+   jwd8663o-i  "ale_calmov.f", line 216: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "ale_calmov.f", line 216: ループを展開数2回でアンローリングしました。
+   jwd6001s-i  "ale_calmov.f", line 221: このDOループをSIMD化しました。(名前:IBP)
+   jwd8204o-i  "ale_calmov.f", line 221: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "ale_calmov.f", line 221: ループの繰返し数が128回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5228p-i  "ale_calmov.f", line 222: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd5202p-i  "ale_calmov.f", line 238: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:IELM0)
+   jwd5208p-i  "ale_calmov.f", line 238: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:AR)
+   jwd5208p-i  "ale_calmov.f", line 238: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:AP)
+   jwd5202p-i  "ale_calmov.f", line 240: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:IELM0)
+   jwd5202p-i  "ale_calmov.f", line 245: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:IELM0)
+   jwd8211o-i  "ale_calmov.f", line 246: ループを入れ換えました。(行:247)
+   jwd6156s-i  "ale_calmov.f", line 246: 最適化指示子NOSIMDを指定しているため、このDOループはSIMD化できません。
+   jwd8211o-i  "ale_calmov.f", line 247: ループを入れ換えました。(行:246)
+   jwd5001p-i  "ale_calmov.f", line 247: このDOループを並列化しました。(名前:J)
+   jwd8209o-i  "ale_calmov.f", line 266: 多項式の演算順序を変更しました。
+   jwd8209o-i  "ale_calmov.f", line 277: 多項式の演算順序を変更しました。
+   jwd5202p-i  "ale_calmov.f", line 312: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:IELM0)
+   jwd5208p-i  "ale_calmov.f", line 312: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:AR)
+   jwd5208p-i  "ale_calmov.f", line 312: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:AP)
+   jwd5202p-i  "ale_calmov.f", line 314: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:IELM0)
+   jwd5202p-i  "ale_calmov.f", line 319: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:IELM0)
+   jwd8211o-i  "ale_calmov.f", line 320: ループを入れ換えました。(行:321)
+   jwd6156s-i  "ale_calmov.f", line 320: 最適化指示子NOSIMDを指定しているため、このDOループはSIMD化できません。
+   jwd8211o-i  "ale_calmov.f", line 321: ループを入れ換えました。(行:320)
+   jwd5001p-i  "ale_calmov.f", line 321: このDOループを並列化しました。(名前:J)
+   jwd8209o-i  "ale_calmov.f", line 340: 多項式の演算順序を変更しました。
+   jwd8209o-i  "ale_calmov.f", line 351: 多項式の演算順序を変更しました。
+   jwd5202p-i  "ale_calmov.f", line 386: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:IELM0)
+   jwd5208p-i  "ale_calmov.f", line 386: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:AR)
+   jwd5208p-i  "ale_calmov.f", line 386: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:AP)
+   jwd5202p-i  "ale_calmov.f", line 388: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:IELM0)
+   jwd5202p-i  "ale_calmov.f", line 393: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:IELM0)
+   jwd8211o-i  "ale_calmov.f", line 394: ループを入れ換えました。(行:395)
+   jwd6156s-i  "ale_calmov.f", line 394: 最適化指示子NOSIMDを指定しているため、このDOループはSIMD化できません。
+   jwd8211o-i  "ale_calmov.f", line 395: ループを入れ換えました。(行:394)
+   jwd5001p-i  "ale_calmov.f", line 395: このDOループを並列化しました。(名前:J)
+   jwd8209o-i  "ale_calmov.f", line 414: 多項式の演算順序を変更しました。
+   jwd8209o-i  "ale_calmov.f", line 425: 多項式の演算順序を変更しました。
+   jwd5202p-i  "ale_calmov.f", line 460: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:IELM0)
+   jwd5208p-i  "ale_calmov.f", line 460: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:AR)
+   jwd5208p-i  "ale_calmov.f", line 460: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:AP)
+   jwd5202p-i  "ale_calmov.f", line 462: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:IELM0)
+   jwd5202p-i  "ale_calmov.f", line 467: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:IELM0)
+   jwd8211o-i  "ale_calmov.f", line 468: ループを入れ換えました。(行:469)
+   jwd6156s-i  "ale_calmov.f", line 468: 最適化指示子NOSIMDを指定しているため、このDOループはSIMD化できません。
+   jwd8211o-i  "ale_calmov.f", line 469: ループを入れ換えました。(行:468)
+   jwd5001p-i  "ale_calmov.f", line 469: このDOループを並列化しました。(名前:J)
+   jwd8209o-i  "ale_calmov.f", line 488: 多項式の演算順序を変更しました。
+   jwd8209o-i  "ale_calmov.f", line 499: 多項式の演算順序を変更しました。
+   jwd5202p-i  "ale_calmov.f", line 544: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:ICRS)
+   jwd5208p-i  "ale_calmov.f", line 544: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:AP)
+   jwd5001p-i  "ale_calmov.f", line 545: このDOループを並列化しました。(名前:I)
+   jwd6001s-i  "ale_calmov.f", line 545: このDOループをSIMD化しました。(名前:I)
+   jwd8222o-i  "ale_calmov.f", line 545: このループで必要なプリフェッチの数が、ハードウェアプリフェッチの許容数を超えたため、prefetch命令を出力しました。
+   jwd8662o-i  "ale_calmov.f", line 545: スケジューリング結果を得られなかったため、ソフトウェアパイプライニングを抑止しました。
+   jwd8206o-i  "ale_calmov.f", line 556: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "ale_calmov.f", line 557: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "ale_calmov.f", line 558: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "ale_calmov.f", line 559: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "ale_calmov.f", line 560: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "ale_calmov.f", line 561: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "ale_calmov.f", line 562: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "ale_calmov.f", line 563: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "ale_calmov.f", line 564: 除算を逆数の乗算に変更しました。
+   jwd5001p-i  "ale_calmov.f", line 568: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "ale_calmov.f", line 568: このDOループをSIMD化しました。(名前:IP)
+   jwd8662o-i  "ale_calmov.f", line 568: スケジューリング結果を得られなかったため、ソフトウェアパイプライニングを抑止しました。
+   jwd6229s-i  "ale_calmov.f", line 583: IF文が存在するため、このDOループのSIMD化を抑止しました。
+   jwd8670o-i  "ale_calmov.f", line 583: ループ内に分岐命令があるため、ソフトウェアパイプライニングを適用できません。
+   jwd5228p-i  "ale_calmov.f", line 586: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd6228s-i  "ale_calmov.f", line 586: データの定義引用の順序が逐次実行と異なる可能性があるため、このDOループはSIMD化できません。
+   jwd6001s-i  "ale_calmov.f", line 604: このDOループをSIMD化しました。(名前:IBP)
+   jwd8204o-i  "ale_calmov.f", line 604: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "ale_calmov.f", line 604: ループの繰返し数が112回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5228p-i  "ale_calmov.f", line 607: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd5228p-i  "ale_calmov.f", line 612: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd5228p-i  "ale_calmov.f", line 617: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd5001p-i  "ale_calmov.f", line 623: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "ale_calmov.f", line 623: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "ale_calmov.f", line 623: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "ale_calmov.f", line 623: ループの繰返し数が112回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "ale_calmov.f", line 650: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "ale_calmov.f", line 650: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "ale_calmov.f", line 650: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "ale_calmov.f", line 650: ループの繰返し数が128回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8206o-i  "ale_calmov.f", line 651: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "ale_calmov.f", line 652: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "ale_calmov.f", line 653: 除算を逆数の乗算に変更しました。
+   jwd6229s-i  "ale_calmov.f", line 656: IF文が存在するため、このDOループのSIMD化を抑止しました。
+   jwd8670o-i  "ale_calmov.f", line 656: ループ内に分岐命令があるため、ソフトウェアパイプライニングを適用できません。
+   jwd5228p-i  "ale_calmov.f", line 659: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd6228s-i  "ale_calmov.f", line 660: データの定義引用の順序が逐次実行と異なる可能性があるため、このDOループはSIMD化できません。
+   jwd5228p-i  "ale_calmov.f", line 664: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd5228p-i  "ale_calmov.f", line 669: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd5001p-i  "ale_calmov.f", line 674: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "ale_calmov.f", line 674: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "ale_calmov.f", line 674: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "ale_calmov.f", line 674: ループの繰返し数が144回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+
+ Procedure information
+   Lines      : 681
+   Statements : 439
+   Stack(byte): 20032
+   Prefetch num: 6
+
+ Total information
+   Procedures       : 1
+   Total lines      : 681
+   Total statements : 439
+   Total stack(byte): 20032
+   Total prefetch num: 6
+

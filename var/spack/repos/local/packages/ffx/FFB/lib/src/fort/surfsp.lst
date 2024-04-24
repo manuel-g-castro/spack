@@ -1,0 +1,261 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:54:33 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : surfsp.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "SURFSP"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    SURFSP                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE SURFSP(LPNT,NPNT,NODE,NE,NP,N,LOCAL,NSP,NS,IUT0,IERR,
+         14                          *                  LESURF,NESURF,MESURF,MLST,IPFLAG)
+         15                           IMPLICIT REAL*4(A-H,O-Z)
+         16                           DIMENSION LPNT(NPNT),NODE(N,NE),LOCAL(NSP,NS),
+         17                          1          LESURF(MLST,MESURF),IPFLAG(NP)
+         18                     C
+         19                           CHARACTER*60 ERMSGB
+         20                          & /' ## SUBROUTINE SURFSP: FATAL      ERROR OCCURENCE; RETURNED '/
+         21                           CHARACTER*60 EREXP1
+         22                          & /' THE FIRST DIMENSION OF OUTPUT LIST PASSED IS NOT SUFFICIENT'/
+         23                           CHARACTER*60 EREXP2
+         24                          & /' THE PASSED NODAL POINT LIST CONTAINS ILLEGAL NODE NUMBER   '/
+         25                           CHARACTER*60 EREXP3
+         26                          & /' NUMBER OF EXTRACTED SURFACES EXCEEDED LIMIT OF             '/
+         27                     C
+         28                     C
+         29                     C      EXTRACT ALL SURFACES COMPOSED OF A GIVEN GROUP OF NODAL POINTS
+         30                     C
+         31                     C
+         32                     C     ARGUMENT LISTINGS
+         33                     C       (1) INPUT
+         34                     C          LPNT  (IPNT); SURFACE EXTRACTING NODE NUMBERS
+         35                     C          NPNT        ; NUMBER OF SURFACE EXTRACTING NODES
+         36                     C
+         37                     C          NODE  (I,IE); NODE NUMBER TABLE BASED ON ELEMENT
+         38                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+         39                     C          NP          ; NUMBER OF TOTAL    NODES
+         40                     C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT
+         41                     C
+         42                     C          LOCAL (I,IS); NODE NUMBER TABLE  DEFINING ELEMENT'S SURFACES
+         43                     C          NSP         ; NUMBER OF NODES    DEFINING A  SURFACE
+         44                     C          NS          ; NUMBER OF SURFACES DEFINING AN ELEMENT
+         45                     C
+         46                     C          MESURF      ; MAXIMUM NUMBER OF SURFACES TO BE EXTRACTED
+         47                     C          MLST        ; FIRST DIMENSION OF ARRAY LESURF (2 OR GREATER)
+         48                     C          IUT0        ; FILE NUMBER TO WRITE  ERROR MESSAGE
+         49                     C
+         50                     C       (2) OUTPUT
+         51                     C          LESURF(1,IESURF); EXTRACTED SURFACES REPRESENTED BY ELEMENT
+         52                     C                       NUMBER FACING ON THE SURFACE, CONTAINED IN
+         53                     C                       ARGUMENT LESURF(1,IESURF), AND THE LOCAL
+         54                     C                       SURFACE NUMBER IN THE ELEMENT, CONTAINED IN
+         55                     C                       ARGUMENT LESURF(2,IESURF). THE LOCAL SURFACE
+         56                     C                       NUMBER IS THE SAME AS THE PASSED LOCAL SURFACE
+         57                     C                       NODE LIST ARGUMENT 'LOCAL'.
+         58                     C
+         59                     C          NESURF      ; NUMBER OF SURFACE ELEMENTS EXTRACTED
+         60                     C
+         61                     C          IERR        ; RETURN CODE WHOSE VALUE WILL BE EITHER
+         62                     C                   0 --- INDICATING SUCCESSFUL TERMINATION
+         63                     C                OR 1 --- INDICATING OCCURENCE OF SOME ERROR CONDITIONS
+         64                     C
+         65                     C       (4) WORK
+         66                     C          IPFLAG  (IP); NEEDED FOR ALL NODES
+         67                     C
+         68                     C
+         69                           IERR   = 0
+         70                           NESURF = 0
+         71                     C
+         72                     C
+         73                     C CHECK PASSED PARAMETERS
+         74                     C
+         75                     C
+         76     1                     IF(MLST.LT.2) THEN
+         77     1                         WRITE(IUT0,*) ERMSGB
+         78     1                         WRITE(IUT0,*) EREXP1
+         79     1                         IERR = 1
+         80     1                         RETURN
+         81     1                     ENDIF
+         82                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPNT
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 4  FILL 14
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+         83     1   s    s            DO 10 IPNT = 1 , NPNT
+         84     2   p    m                IF(LPNT(IPNT).LT.1 .OR. LPNT(IPNT).GT.NP) THEN
+         85     2   m    s                    WRITE(IUT0,*) ERMSGB
+         86     2   m    s                    WRITE(IUT0,*) EREXP2
+         87     2   m    s                    WRITE(IUT0,*)
+         88     2                    &        ' *** POINT NO. = ',IPNT,' *** NODE NO. = ',LPNT(IPNT)
+         89     2   p    s                    IERR = 1
+         90     2   p    v                ENDIF
+         91     1   p    v         10 CONTINUE
+         92                           IF(IERR.EQ.1) RETURN
+         93                     C
+         94                     C
+         95                     C
+         96                     C EXTRACT ALL THE SURFACES COMPOSED OF GIVEN SET OF NODES
+         97                     C
+         98                     C
+         99                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IPFLAG
+                              <<< Loop-information  End >>>
+        100     1  pp   4v            DO 20 IP = 1 , NP
+        101     1   p   4v                IPFLAG(IP) = 0
+        102     1   p   4v         20 CONTINUE
+        103                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.83, ITR: 320, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPNT
+                              <<< Loop-information  End >>>
+        104     1   s   4v            DO 30 IPNT = 1 , NPNT
+        105     1   p   4v                IP         = LPNT(IPNT)
+        106     1   m   4v                IPFLAG(IP) = 1
+        107     1   p   4v         30 CONTINUE
+        108                     C
+        109     1                     DO 60 IE = 1 , NE
+        110     2                         DO 50 IS = 1 , NS
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LOCAL
+                              <<< Loop-information  End >>>
+        111     3                             DO 40 I = 1 , NSP
+        112     3                                 IP = NODE(LOCAL(I,IS),IE)
+        113     3                                 IF(IPFLAG(IP).EQ.0) GO TO 50
+        114     3                  40         CONTINUE
+        115     2               C
+        116     2                             NESURF = NESURF+1
+        117     2               C
+        118     3                             IF(NESURF.GT.MESURF) THEN
+        119     3                                 WRITE(IUT0,*) ERMSGB
+        120     3                                 WRITE(IUT0,*) EREXP3, MESURF
+        121     3                                 IERR   = 1
+        122     3                                 RETURN
+        123     3                             ENDIF
+        124     2               C
+        125     2                             LESURF(1,NESURF) = IE
+        126     2                             LESURF(2,NESURF) = IS
+        127     2                  50     CONTINUE
+        128     1                  60 CONTINUE
+        129                     C
+        130                     C
+        131                           RETURN
+        132                           END
+
+ Diagnostic messages: program name(SURFSP)
+   jwd6229s-i  "surfsp.f", line 83: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8664o-i  "surfsp.f", line 83: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5121p-i  "surfsp.f", line 85: DO loop is not parallelized: an input/output statement was found in the loop.
+   jwd6121s-i  "surfsp.f", line 85: SIMD conversion cannot be applied to DO loop: an input/output statement was found in the loop.
+   jwd5121p-i  "surfsp.f", line 86: DO loop is not parallelized: an input/output statement was found in the loop.
+   jwd6121s-i  "surfsp.f", line 86: SIMD conversion cannot be applied to DO loop: an input/output statement was found in the loop.
+   jwd5121p-i  "surfsp.f", line 87: DO loop is not parallelized: an input/output statement was found in the loop.
+   jwd6121s-i  "surfsp.f", line 87: SIMD conversion cannot be applied to DO loop: an input/output statement was found in the loop.
+   jwd5001p-i  "surfsp.f", line 100: DO loop with DO variable 'IP' is parallelized.
+   jwd6001s-i  "surfsp.f", line 100: SIMD conversion is applied to DO loop with DO variable 'IP'.
+   jwd8663o-i  "surfsp.f", line 100: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "surfsp.f", line 100: Loop unrolled 4 times.
+   jwd6001s-i  "surfsp.f", line 104: SIMD conversion is applied to DO loop with DO variable 'IPNT'.
+   jwd8204o-i  "surfsp.f", line 104: This loop is software pipelined.
+   jwd8205o-i  "surfsp.f", line 104: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 320.
+   jwd5209p-i  "surfsp.f", line 106: DO loop is not parallelized: the variable 'IP' referenced in the subscript expression of array 'IPFLAG' is assigned to in DO loop.
+   jwd5131p-i  "surfsp.f", line 109: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "surfsp.f", line 110: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "surfsp.f", line 111: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "surfsp.f", line 111: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "surfsp.f", line 111: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+
+ Procedure information
+   Lines      : 132
+   Statements : 50
+   Stack(byte): 1680
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 132
+   Total statements : 50
+   Total stack(byte): 1680
+   Total prefetch num: 0
+

@@ -1,0 +1,19 @@
+      SUBROUTINE CBC201(NG,NP,BUFSND,FBC1)
+      IMPLICIT NONE
+      INTEGER*4 NG,NP
+      REAL*8    FBC1(NP,NG+1,NG+1)
+      REAL*8    BUFSND(*)
+      INTEGER*4 I,J,IP,II
+C
+      II=0
+      DO 1000 J =1,NG+1
+      DO 1100 I =1,NG+1
+      DO 1200 IP=1,NP
+          II=II+1
+          BUFSND(II)=FBC1(IP,I,J)
+ 1200 CONTINUE
+ 1100 CONTINUE
+ 1000 CONTINUE
+C
+      RETURN
+      END

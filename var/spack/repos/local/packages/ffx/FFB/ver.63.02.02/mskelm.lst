@@ -1,0 +1,538 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:53:35 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : mskelm.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "MSKELM"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.8.1                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE : MSKELM                                                C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY H.YOSHIMURA         C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C CONTACT ADDRESS : IIS, THE UNIVERSITY OF TOKYO, CISS                 C
+         11                     C                                                                      C
+         12                     C THERMO-FLUID ANALYSIS SOLVERS FOR LARGE-SCALE-ASSEMBLY               C
+         13                     C                                                                      C
+         14                     C======================================================================C
+         15                           SUBROUTINE MSKELM(ITIME,NE,NP,N2,NEX,MELM,NODE,MEP,MP,NEP,IENP,
+         16                          *                  FE,DELTA,NPWALL,NPINLT,LPWALL,LPINLT,
+         17                          *                  IPART,NDOM,MBPDOM,LDOM,NBPDOM,
+         18                          *                  IPSLF,IPSND,RX,RY,
+         19                          *                  CM,U,V,W,NEFLD2,NPFLD2,LEFLD2,LPFLD2,
+         20                          *                  MWRK,LEFIX,LPACT1,LPACT2,LWRK01,EAP1,
+         21                          *                  WRK01,WRK02,WRK03,WRK04,WRK05,WRK06,WRK07,
+         22                          *                  IUT0,IERR)
+         23                     C
+         24                           IMPLICIT NONE
+         25                     C
+         26                     C     [INPUT]
+         27                           INTEGER*4 ITIME,NE,NP,N2,NEX(12),MELM,MP,
+         28                          *          NODE(N2,NE),MEP,IENP(MEP,NP),NEP(MP)
+         29                           REAL*4    FE(NE),DELTA(NE),EAP1(N2,MEP,NP)
+         30                           INTEGER*4 NPWALL,NPINLT,LPWALL(NPWALL),LPINLT(NPINLT)
+         31                           INTEGER*4 IPART,NDOM,MBPDOM
+         32                           INTEGER*4 LDOM(NDOM),NBPDOM(NDOM),
+         33                          *          IPSLF(MBPDOM,NDOM),IPSND(MBPDOM,NDOM),
+         34                          *          RX(NP*3),RY(NP*3)
+         35                     C
+         36                     C     [IN-OUTPUT]
+         37                           REAL*4    CM(NP),U(NP),V(NP),W(NP)
+         38                           INTEGER*4 NEFLD2,NPFLD2,LEFLD2(NE),LPFLD2(NP)
+         39                           INTEGER*4 IUT0,IERR
+         40                     C
+         41                     C     [WORK]
+         42                           INTEGER*4 MWRK,LEFIX(NE),LPACT1(NP),LPACT2(NP),LWRK01(NP)
+         43                           REAL*4    WRK01(MWRK),WRK02(MWRK),WRK03(MWRK),WRK04(MWRK),
+         44                          *          WRK05(MWRK),WRK06(MWRK),WRK07(MWRK)
+         45                     C
+         46                     C     [LOCAL]
+         47                           INTEGER*4 IE,IP,IBP,ND,I,IDUM,MAXBUF
+         48                           CHARACTER*60 ERMSGC
+         49                          * /' ## SUBROUTINE MSKELM: ERROR OCCURED             ; RETURNED' /
+         50                     C
+         51                           MAXBUF=3*NP
+         52                     C
+         53                           IF (ITIME.EQ.0) GOTO 1400
+         54                     C
+         55                     CC
+         56                     CCHY  [1] INSERT OLD ACTIVE NODE TO LPACT1
+         57                     CC
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPACT1
+                              <<< Loop-information  End >>>
+         58     1  pp   4v            DO 1000 IP=1,NP
+         59     1   p   4v               LPACT1(IP)=1
+         60     1   p   4v       1000 CONTINUE
+         61                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.83, ITR: 320, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPFLD2
+                              <<< Loop-information  End >>>
+         62     1   s   4v            DO 1100 IBP=1,NPFLD2
+         63     1   m   4v               LPACT1(LPFLD2(IBP))=0
+         64     1   p   4v       1100 CONTINUE
+         65                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.83, ITR: 320, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPWALL
+                              <<< Loop-information  End >>>
+         66     1   s   4v            DO 1200 IBP=1,NPWALL
+         67     1   m   4v               LPACT1(LPWALL(IBP))=1
+         68     1   p   4v       1200 CONTINUE
+         69                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.83, ITR: 320, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPINLT
+                              <<< Loop-information  End >>>
+         70     1   s   4v            DO 1300 IBP=1,NPINLT
+         71     1   m   4v               LPACT1(LPINLT(IBP))=1
+         72     1   p   4v       1300 CONTINUE
+         73                     C
+         74                      1400 CONTINUE
+         75                     C
+         76                     CC
+         77                     CCHY  [2] MASK NON-ACTIVE(F<0.5) ELEMENT AND NODE AT NEW TIME STEP
+         78                     CC
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LWRK01
+                              <<< Loop-information  End >>>
+         79     1  pp   4v            DO 2000 IP=1,NP
+         80     1   p   4v               LWRK01(IP)=0
+         81     1   p   4v       2000 CONTINUE
+         82                     C
+         83                           NEFLD2=0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FE
+                              <<< Loop-information  End >>>
+         84     1                     DO 2100 IE=1,NE
+         85     2                        IF (FE(IE).LT.0.5) THEN
+         86     2                           NEFLD2=NEFLD2+1
+         87     2                           LEFLD2(NEFLD2)=IE
+         88     2                        ELSE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<< Loop-information  End >>>
+         89     3   s    v                  DO 2200 I=1,8
+         90     3   p    v                     IP=NODE(I,IE)
+         91     3   p    v                     IF (IP.EQ.0) GOTO 2200
+         92     3   m    v                     LWRK01(IP)=1
+         93     3   p    v       2200       CONTINUE
+         94     2                        ENDIF
+         95     1                2100 CONTINUE
+         96                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 843
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.33, ITR: 384, MVE: 5)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LWRK01, WRK01
+                              <<< Loop-information  End >>>
+         97     1  pp   2v            DO 2300 IP=1,NP
+         98     1   p   2v               WRK01(IP)=FLOAT(LWRK01(IP))
+         99     1   p   2v       2300 CONTINUE
+        100                     C
+        101                           IDUM=1
+        102                           CALL DDCOMX(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        103                          *            WRK01,WRK01,WRK01,NP,IUT0,IERR,RX,RY,MAXBUF)
+        104                           IF(IERR.NE.0) GOTO 9999
+        105                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 942
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.00, ITR: 160, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WRK01, LWRK01
+                              <<< Loop-information  End >>>
+        106     1  pp   2v            DO 2400 IP=1,NP
+        107     2   p   2v               IF (WRK01(IP).GT.0.0) THEN
+        108     2   p   2v                  LWRK01(IP)=1
+        109     2   p   2v               ELSE
+        110     2   p   2v                  LWRK01(IP)=0
+        111     2   p   2v               ENDIF
+        112     1   p   2v       2400 CONTINUE
+        113                     C
+        114                           NPFLD2=0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LWRK01
+                              <<< Loop-information  End >>>
+        115     1   s   2s            DO 2500 IP=1,NP
+        116     2   p   2v               IF (LWRK01(IP).EQ.0) THEN
+        117     2   s   2s                  NPFLD2=NPFLD2+1
+        118     2   m   2v                  LPFLD2(NPFLD2)=IP
+        119     2   p   2v               ENDIF
+        120     1   p   2v       2500 CONTINUE
+        121                     C
+        122                     CC
+        123                     CCHY  [3] LUMP MAXX MATRIX
+        124                     CC
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LEFIX
+                              <<< Loop-information  End >>>
+        125     1  pp   4v            DO 3000 IE=1,NE
+        126     1   p   4v               LEFIX(IE)=0
+        127     1   p   4v       3000 CONTINUE
+        128                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.83, ITR: 320, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LEFLD2
+                              <<< Loop-information  End >>>
+        129     1   s   4v            DO 3100 IBP=1,NEFLD2
+        130     1   m   4v               LEFIX(LEFLD2(IBP))=1
+        131     1   p   4v       3100 CONTINUE
+        132                     C
+        133                           CALL LMPEX2(N2,NE,NP,NEX,NODE,MELM,EAP1,IENP,NEP,MEP,MP,CM,LEFIX)
+        134                     C
+        135                           IDUM=1
+        136                           CALL DDCOMX(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        137                          *            CM,CM,CM,NP,IUT0,IERR,RX,RY,MAXBUF)
+        138                           IF(IERR.NE.0) GOTO 9999
+        139                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 572
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.00, ITR: 736, MVE: 12)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      CM
+                              <<< Loop-information  End >>>
+        140     1  pp   2v            DO 3200 IP=1,NP
+        141     1   p   2v               IF (CM(IP).EQ.0.0E0) CM(IP)=1.0E0
+        142     1   p   2v               CM(IP)=1.0E0/CM(IP)
+        143     1   p   2v       3200 CONTINUE
+        144                     C
+        145                           IF (ITIME.EQ.0) RETURN
+        146                     C
+        147                     CC
+        148                     CCHY  [4] INSERT NEW ACTIVE NODE TO LPACT2
+        149                     CC
+        150                     
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPACT2
+                              <<< Loop-information  End >>>
+        151     1  pp   4v            DO 4000 IP=1,NP
+        152     1   p   4v               LPACT2(IP)=1
+        153     1   p   4v       4000 CONTINUE
+        154                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.83, ITR: 320, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPFLD2
+                              <<< Loop-information  End >>>
+        155     1   s   4v            DO 4100 IBP=1,NPFLD2
+        156     1   m   4v               LPACT2(LPFLD2(IBP))=0
+        157     1   p   4v       4100 CONTINUE
+        158                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.83, ITR: 320, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPWALL
+                              <<< Loop-information  End >>>
+        159     1   s   4v            DO 4200 IBP=1,NPWALL
+        160     1   m   4v               LPACT2(LPWALL(IBP))=1
+        161     1   p   4v       4200 CONTINUE
+        162                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.83, ITR: 320, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPINLT
+                              <<< Loop-information  End >>>
+        163     1   s   4v            DO 4300 IBP=1,NPINLT
+        164     1   m   4v               LPACT2(LPINLT(IBP))=1
+        165     1   p   4v       4300 CONTINUE
+        166                     C
+        167                     CC
+        168                     CCHY  [5] CALC VELOCITY AT NEW ACTIVE NODE
+        169                     CC
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 30
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WRK01, WRK02, WRK03, LEFIX
+                              <<< Loop-information  End >>>
+        170     1  pp                 DO 5100 IE=1,NE
+        171     1   p                    WRK01(IE)=0.0E0
+        172     1   p                    WRK02(IE)=0.0E0
+        173     1   p                    WRK03(IE)=0.0E0
+        174     1   p                    IF (LEFIX(IE).EQ.1) GOTO 5100
+        175     1               C
+        176     1   p                    ND=0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FULL UNROLLING
+                              <<< Loop-information  End >>>
+        177     2   p   fs               DO 5200 I=1,8
+        178     2   p   fv                  IP=NODE(I,IE)
+        179     2   p   fs                  IF (IP.EQ.0) GOTO 5200
+        180     2   p   fs                  IF (LPACT1(IP).EQ.0) GOTO 5200
+        181     2   p   fs                  ND=ND+1
+        182     2   p   fs                  WRK01(IE)=WRK01(IE)+U(IP)
+        183     2   p   fs                  WRK02(IE)=WRK02(IE)+V(IP)
+        184     2   p   fs                  WRK03(IE)=WRK03(IE)+W(IP)
+        185     2   p   fv       5200    CONTINUE
+        186     1   p                    WRK01(IE)=WRK01(IE)/FLOAT(ND)
+        187     1   p                    WRK02(IE)=WRK02(IE)/FLOAT(ND)
+        188     1   p                    WRK03(IE)=WRK03(IE)/FLOAT(ND)
+        189     1   p            5100 CONTINUE
+        190                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<< Loop-information  End >>>
+        191     1  pp                 DO 5300 IP=1,NP
+        192     1   p                    WRK04(IP)=0.0E0
+        193     1   p                    WRK05(IP)=0.0E0
+        194     1   p                    WRK06(IP)=0.0E0
+        195     1   p                    WRK07(IP)=0.0E0
+        196     2   p                    IF (LPACT1(IP).EQ.0.AND.LPACT2(IP).EQ.1) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IENP
+                              <<< Loop-information  End >>>
+        197     3   p    s                  DO 5400 I=1,NEP(IP)
+        198     3   p    v                     IE=IENP(I,IP)
+        199     3   p    m                     IF (LEFIX(IE).EQ.1) GOTO 5400
+        200     3   p    s                     WRK04(IP)=WRK04(IP)+WRK01(IE)*DELTA(IE)
+        201     3   p    s                     WRK05(IP)=WRK05(IP)+WRK02(IE)*DELTA(IE)
+        202     3   p    s                     WRK06(IP)=WRK06(IP)+WRK03(IE)*DELTA(IE)
+        203     3   p    s                     WRK07(IP)=WRK07(IP)+DELTA(IE)
+        204     3   p    v       5400       CONTINUE
+        205     2   p                    ENDIF
+        206     1   p            5300 CONTINUE
+        207                     C
+        208                           IDUM=3
+        209                           CALL DDCOMX(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        210                          *            WRK04,WRK05,WRK06,NP,IUT0,IERR,RX,RY,MAXBUF)
+        211                           IDUM=1
+        212                           CALL DDCOMX(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        213                          *            WRK07,WRK07,WRK07,NP,IUT0,IERR,RX,RY,MAXBUF)
+        214                           IF(IERR.NE.0) GOTO 9999
+        215                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPACT1
+                              <<< Loop-information  End >>>
+        216     1                     DO 5500 IP=1,NP
+        217     2                        IF (LPACT1(IP).EQ.0.AND.LPACT2(IP).EQ.1) THEN
+        218     3                           IF (WRK07(IP).EQ.0.0E0) THEN
+        219     3                              WRITE(IUT0,*)
+        220     3                    *'THERE ARE NODE HAVING NO ACTIVE NEIGHBOUR ELEMENT'
+        221     3                              GOTO 9999
+        222     3                           ENDIF
+        223     2                           U(IP)=WRK04(IP)/WRK07(IP)
+        224     2                           V(IP)=WRK05(IP)/WRK07(IP)
+        225     2                           W(IP)=WRK06(IP)/WRK07(IP)
+        226     2                        ENDIF
+        227     1                5500 CONTINUE
+        228                     C
+        229                           RETURN
+        230                     C
+        231                      9999 CONTINUE
+        232                           WRITE(IUT0,*) ERMSGC
+        233                           IERR=1
+        234                           RETURN
+        235                     C
+        236                           END
+
+ Diagnostic messages: program name(MSKELM)
+   jwd5001p-i  "mskelm.f", line 58: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "mskelm.f", line 58: このDOループをSIMD化しました。(名前:IP)
+   jwd8663o-i  "mskelm.f", line 58: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "mskelm.f", line 58: ループを展開数4回でアンローリングしました。
+   jwd6001s-i  "mskelm.f", line 62: このDOループをSIMD化しました。(名前:IBP)
+   jwd8204o-i  "mskelm.f", line 62: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "mskelm.f", line 62: ループの繰返し数が320回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5228p-i  "mskelm.f", line 63: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd6001s-i  "mskelm.f", line 66: このDOループをSIMD化しました。(名前:IBP)
+   jwd8204o-i  "mskelm.f", line 66: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "mskelm.f", line 66: ループの繰返し数が320回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5228p-i  "mskelm.f", line 67: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd6001s-i  "mskelm.f", line 70: このDOループをSIMD化しました。(名前:IBP)
+   jwd8204o-i  "mskelm.f", line 70: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "mskelm.f", line 70: ループの繰返し数が320回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5228p-i  "mskelm.f", line 71: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd5001p-i  "mskelm.f", line 79: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "mskelm.f", line 79: このDOループをSIMD化しました。(名前:IP)
+   jwd8663o-i  "mskelm.f", line 79: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "mskelm.f", line 79: ループを展開数4回でアンローリングしました。
+   jwd5202p-i  "mskelm.f", line 84: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:NEFLD2)
+   jwd5208p-i  "mskelm.f", line 84: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:LEFLD2)
+   jwd5208p-i  "mskelm.f", line 84: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:LWRK01)
+   jwd8670o-i  "mskelm.f", line 84: ループ内に分岐命令があるため、ソフトウェアパイプライニングを適用できません。
+   jwd6001s-i  "mskelm.f", line 89: このDOループをSIMD化しました。(名前:I)
+   jwd5209p-i  "mskelm.f", line 92: 配列'LWRK01'の添字式中の変数'IP'をループ中で定義しているため、このDOループは並列化できません。
+   jwd5001p-i  "mskelm.f", line 97: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "mskelm.f", line 97: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "mskelm.f", line 97: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "mskelm.f", line 97: ループの繰返し数が384回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "mskelm.f", line 106: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "mskelm.f", line 106: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "mskelm.f", line 106: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "mskelm.f", line 106: ループの繰返し数が160回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd6229s-i  "mskelm.f", line 115: IF文が存在するため、このDOループのSIMD化を抑止しました。
+   jwd8670o-i  "mskelm.f", line 115: ループ内に分岐命令があるため、ソフトウェアパイプライニングを適用できません。
+   jwd8202o-i  "mskelm.f", line 115: ループを展開数2回でアンローリングしました。
+   jwd5202p-i  "mskelm.f", line 117: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:NPFLD2)
+   jwd6202s-i  "mskelm.f", line 117: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:NPFLD2)
+   jwd5209p-i  "mskelm.f", line 118: 配列'LPFLD2'の添字式中の変数'NPFLD2'をループ中で定義しているため、このDOループは並列化できません。
+   jwd5001p-i  "mskelm.f", line 125: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "mskelm.f", line 125: このDOループをSIMD化しました。(名前:IE)
+   jwd8663o-i  "mskelm.f", line 125: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "mskelm.f", line 125: ループを展開数4回でアンローリングしました。
+   jwd6001s-i  "mskelm.f", line 129: このDOループをSIMD化しました。(名前:IBP)
+   jwd8204o-i  "mskelm.f", line 129: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "mskelm.f", line 129: ループの繰返し数が320回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5228p-i  "mskelm.f", line 130: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd5001p-i  "mskelm.f", line 140: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "mskelm.f", line 140: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "mskelm.f", line 140: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "mskelm.f", line 140: ループの繰返し数が736回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "mskelm.f", line 151: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "mskelm.f", line 151: このDOループをSIMD化しました。(名前:IP)
+   jwd8663o-i  "mskelm.f", line 151: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "mskelm.f", line 151: ループを展開数4回でアンローリングしました。
+   jwd6001s-i  "mskelm.f", line 155: このDOループをSIMD化しました。(名前:IBP)
+   jwd8204o-i  "mskelm.f", line 155: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "mskelm.f", line 155: ループの繰返し数が320回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5228p-i  "mskelm.f", line 156: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd6001s-i  "mskelm.f", line 159: このDOループをSIMD化しました。(名前:IBP)
+   jwd8204o-i  "mskelm.f", line 159: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "mskelm.f", line 159: ループの繰返し数が320回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5228p-i  "mskelm.f", line 160: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd6001s-i  "mskelm.f", line 163: このDOループをSIMD化しました。(名前:IBP)
+   jwd8204o-i  "mskelm.f", line 163: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "mskelm.f", line 163: ループの繰返し数が320回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5228p-i  "mskelm.f", line 164: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd5001p-i  "mskelm.f", line 170: このDOループを並列化しました。(名前:IE)
+   jwd8670o-i  "mskelm.f", line 170: ループ内に分岐命令があるため、ソフトウェアパイプライニングを適用できません。
+   jwd6229s-i  "mskelm.f", line 177: IF文が存在するため、このDOループのSIMD化を抑止しました。
+   jwd8203o-i  "mskelm.f", line 177: ループをフルアンローリングしました。
+   jwd5001p-i  "mskelm.f", line 191: このDOループを並列化しました。(名前:IP)
+   jwd6229s-i  "mskelm.f", line 197: IF文が存在するため、このDOループのSIMD化を抑止しました。
+   jwd8670o-i  "mskelm.f", line 197: ループ内に分岐命令があるため、ソフトウェアパイプライニングを適用できません。
+   jwd5131p-i  "mskelm.f", line 216: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd6131s-i  "mskelm.f", line 216: ループ出口が2つ以上あるため、このDOループはSIMD化できません。
+   jwd8671o-i  "mskelm.f", line 216: ループの形状が最適化の対象外であるため、ソフトウェアパイプライニングを適用できません。
+
+ Procedure information
+   Lines      : 236
+   Statements : 149
+   Stack(byte): 3840
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 236
+   Total statements : 149
+   Total stack(byte): 3840
+   Total prefetch num: 0
+

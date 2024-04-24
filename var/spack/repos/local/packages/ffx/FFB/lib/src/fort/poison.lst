@@ -1,0 +1,358 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:54:16 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : poison.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "POISON"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    POISON                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE POISON(IDIM,NMAX,NMIN,EPS,ALF,
+         14                          *                  AP,IPNP,NPP,MAXP,MAXPP,NP,F,S,
+         15                          *                  DF,IRN,NRN,ERR,IUT0,IERR)
+         16                           IMPLICIT REAL*8(A-H,O-Z)
+         17                           REAL*4   AP
+         18                           DIMENSION AP(MAXPP,NP),IPNP(MAXPP,NP),NPP(NP),F(NP),S(NP),DF(NP)
+         19                     C
+         20                           CHARACTER*72 ERMSG
+         21                          & /' *** SUBROUTINE POISON REPORTS A FATAL ERROR OCCURENCE ***' /
+         22                           CHARACTER*72 EREXP1
+         23                          & /' NO ROOM LEFT IN S(MAXP) FOR CONDUCTING POISON OPERATIONS' /
+         24                           CHARACTER*72 EREXP2
+         25                          & /' MAXPP IS TOO SMALL TO CONDUCT POISON OPERATIONS' /
+         26                     C
+         27                     C
+         28                     C      SOLVE POISSON EQUATION BY THE JACOBI ITERATION ALGORITHM
+         29                     C         ( 2-D , 3-D CALCULATION )
+         30                     C
+         31                     C
+         32                     C     NOTE ; INTRINSIC INITIAL CONDITION IS GIVEN FOR THE ITERATION
+         33                     C
+         34                     C     ARGUMENT LISTINGS
+         35                     C       (1) INPUT
+         36                     C          IDIM        ; SPECIFIES THE SPACE DIMENSION AS FOLLOWS
+         37                     C                   2 --- TWO   DIMENSIONAL PROBLEM
+         38                     C                   3 --- THREE DIMENSIONAL PROBLEM
+         39                     C          NMAX        ; MAX. ITERATION NO. FOR JACOBI ITERATION
+         40                     C          NMIN        ; MIN. ITERATION NO. FOR JACOBI ITERATION
+         41                     C          EPS         ; ALLOWABLE MAXIMUM RESIDUAL ERROR
+         42                     C          ALF         ; RELAXATION COEFFICIENT
+         43                     C          AP  (IPP,IP); CONDENSED DIFFUSION MATRIX
+         44                     C          IPNP(IPP,IP); ADJACENT NODE NUMBER TO NODE IP
+         45                     C                      ( IF NPP(IP).LT.MINPP , THEN IPNP(NPP(IP)+1,IP),
+         46                     C                       IPNP(MINPP,IP) MUST BE SET TO AN IMAGINARY
+         47                     C                       NODE NO. BETWEEN NP+1,MAXP.)
+         48                     C          NPP     (IP); NUMBER OF ADJACENT NODES TO NODE IP
+         49                     C          MAXP        ; THE       DIMENSION OF ARRAY S
+         50                     C          MAXPP       ; THE FIRST DIMENSION OF ARRAY IPNP
+         51                     C          NP          ; NUMBER OF TOTAL NODES
+         52                     C          F       (IP); GLOBAL SOURCE VECTOR
+         53                     C          IUT0        ; DEVICE NO. TO REPORT ERROR OCCURENCE
+         54                     C
+         55                     C       (2) OUTPUT
+         56                     C          S       (IP); SOLUTION VECTOR
+         57                     C          IRN         ; RETURN CODE TO REPORT THE CONVERGENCE
+         58                     C                   0 --- NOT CONVERGED
+         59                     C                   1 ---     CONVERGED
+         60                     C          NRN         ; CALCULATION ITERATED NUMBER
+         61                     C          ERR         ; RESIDUAL ERROR
+         62                     C          IERR        ; RETURN CODE TO REPORT ERROR OCCURENCE
+         63                     C                   0 --- NORMAL TERMINATION
+         64                     C                   1 --- A FATAL ERROR HAS OCCURED
+         65                     C
+         66                     C       (4) WORK
+         67                     C          DF      (IP); USED FOR RESIDUAL FORCE VECTOR
+         68                     C
+         69                     C
+         70                     C
+         71                     C           ( ALL TO BE ZERO )
+         72                     C
+         73                     C
+         74     1                     IF(IDIM.EQ.2) THEN
+         75     1                         MINPP = 9
+         76     1                     ELSE
+         77     1                         MINPP = 27
+         78     1                     ENDIF
+         79                     C
+         80                           IERR = 0
+         81                     C
+         82     1                     IF(MAXP.LE.NP) THEN
+         83     1                         WRITE(IUT0,6300) ERMSG
+         84     1                         WRITE(IUT0,6300) EREXP1
+         85     1                         IERR = 1
+         86     1                         RETURN
+         87     1                     ENDIF
+         88                     C
+         89     1                     IF(MAXPP.LT.MINPP) THEN
+         90     1                         WRITE(IUT0,6300) ERMSG
+         91     1                         WRITE(IUT0,6300) EREXP2
+         92     1                         IERR = 1
+         93     1                         RETURN
+         94     1                     ENDIF
+         95                     C
+         96                     C      CLEAR THE ARRAY S(IP) FOR POISON OPERATIONS
+         97                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      S
+                              <<< Loop-information  End >>>
+         98     1  pp   4v            DO 100 IP = NP+1 , MAXP
+         99     1   p   4v                S(IP) = 0.D0
+        100     1   p   4v        100 CONTINUE
+        101                     C
+        102                     C      SET INITIAL VALUES
+        103                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      S
+                              <<< Loop-information  End >>>
+        104     1  pp   4v            DO 200 IP = 1 , NP
+        105     1   p   4v                S(IP) = 0.D0
+        106     1   p   4v        200 CONTINUE
+        107                     C
+        108                     C      JACOBI ITERATION LOOP START
+        109                     C
+        110                           IRN = 0
+        111                           NRN = NMAX
+        112                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      DF
+                              <<< Loop-information  End >>>
+        113     1                     DO 2000 ITER = 1 , NMAX
+        114     1               C
+        115     1               C      CALCULATION OF RESIDUAL FORCE VECTOR
+        116     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 112
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED(lines: 117,121)
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.18, ITR: 64, MVE: 4, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      DF
+                              <<< Loop-information  End >>>
+        117     2  pp    v                DO 400 IP = 1 , NP
+        118     2   p    v                    DF(IP) = AP(2,IP)*S(IPNP(2,IP))+AP(3,IP)*S(IPNP(3,IP))
+        119     2                    &                +AP(4,IP)*S(IPNP(4,IP))+AP(5,IP)*S(IPNP(5,IP))
+        120     2   p    v        400     CONTINUE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED
+                              <<< Loop-information  End >>>
+        121     2                         DO 500 IP = 1 , NP
+        122     2                             DF(IP) = DF(IP)
+        123     2                    &                +AP(6,IP)*S(IPNP(6,IP))+AP(7,IP)*S(IPNP(7,IP))
+        124     2                    &                +AP(8,IP)*S(IPNP(8,IP))+AP(9,IP)*S(IPNP(9,IP))
+        125     2                 500     CONTINUE
+        126     1               C
+        127     2                         IF(IDIM.EQ.3) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 51
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED(lines: 128,134,140)
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.88, ITR: 48, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      DF
+                              <<< Loop-information  End >>>
+        128     3  pp    v                DO 600 IP = 1 , NP
+        129     3   p    v                    DF(IP) = DF(IP)
+        130     3                    &                +AP(10,IP)*S(IPNP(10,IP))+AP(11,IP)*S(IPNP(11,IP))
+        131     3                    &                +AP(12,IP)*S(IPNP(12,IP))+AP(13,IP)*S(IPNP(13,IP))
+        132     3                    &                +AP(14,IP)*S(IPNP(14,IP))+AP(15,IP)*S(IPNP(15,IP))
+        133     3   p    v        600     CONTINUE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED
+                              <<< Loop-information  End >>>
+        134     3                         DO 700 IP = 1 , NP
+        135     3                             DF(IP) = DF(IP)
+        136     3                    &                +AP(16,IP)*S(IPNP(16,IP))+AP(17,IP)*S(IPNP(17,IP))
+        137     3                    &                +AP(18,IP)*S(IPNP(18,IP))+AP(19,IP)*S(IPNP(19,IP))
+        138     3                    &                +AP(20,IP)*S(IPNP(20,IP))+AP(21,IP)*S(IPNP(21,IP))
+        139     3                 700     CONTINUE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED
+                              <<< Loop-information  End >>>
+        140     3                         DO 800 IP = 1 , NP
+        141     3                             DF(IP) = DF(IP)
+        142     3                    &                +AP(22,IP)*S(IPNP(22,IP))+AP(23,IP)*S(IPNP(23,IP))
+        143     3                    &                +AP(24,IP)*S(IPNP(24,IP))+AP(25,IP)*S(IPNP(25,IP))
+        144     3                    &                +AP(26,IP)*S(IPNP(26,IP))+AP(27,IP)*S(IPNP(27,IP))
+        145     3                 800     CONTINUE
+        146     2                         ENDIF
+        147     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 3)
+                              <<< Loop-information  End >>>
+        148     2   p   2s                DO 910 IPP = MINPP+1 , MAXPP
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<< Loop-information  End >>>
+        149     3  pp   2                     DO 900 IP = 1 , NP
+        150     4   p   2m                        IF(NPP(IP).GE.IPP) THEN
+        151     4   p   2s                            DF(IP) = DF(IP)
+        152     4                    &                        +AP(IPP,IP)*S(IPNP(IPP,IP))
+        153     4   p   2v                        ENDIF
+        154     3   p   2         900         CONTINUE
+        155     2   p   2         910     CONTINUE
+        156     1               C
+        157     1               C      CALCULATE NEW VALUE WHILE CALCULATING RESIDUAL ERROR
+        158     1               C
+        159     1                         ERR = 0.D0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 334
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<< Loop-information  End >>>
+        160     2  pp    v                DO 1000 IP = 1 , NP
+        161     2   p    v                    SNEW  = (F(IP)-DF(IP))/AP(1,IP)
+        162     2   p    v                    ERR   = ERR+DABS(SNEW-S(IP))
+        163     2   p    v                    S(IP) = ALF*SNEW+(1.D0-ALF)*S(IP)
+        164     2   p    v       1000     CONTINUE
+        165     1               C
+        166     1               C      RETURN IF CONVERGED
+        167     1               C
+        168     1                         ERR = ERR/NP
+        169     1                         IF(ITER.LT.NMIN) GO TO 2000
+        170     2                         IF(ERR .LE.EPS ) THEN
+        171     2                             IRN = 1
+        172     2                             NRN = ITER
+        173     2                             RETURN
+        174     2                          ENDIF
+        175     1               C
+        176     1               C      JACOBI ITERATION LOOP END
+        177     1               C
+        178     1                2000 CONTINUE
+        179                     C
+        180                     C
+        181                           RETURN
+        182                      6300 FORMAT(A72)
+        183                           END
+
+ Diagnostic messages: program name(POISON)
+   jwd5001p-i  "poison.f", line 98: DO loop with DO variable 'IP' is parallelized.
+   jwd6001s-i  "poison.f", line 98: SIMD conversion is applied to DO loop with DO variable 'IP'.
+   jwd8663o-i  "poison.f", line 98: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "poison.f", line 98: Loop unrolled 4 times.
+   jwd5001p-i  "poison.f", line 104: DO loop with DO variable 'IP' is parallelized.
+   jwd6001s-i  "poison.f", line 104: SIMD conversion is applied to DO loop with DO variable 'IP'.
+   jwd8663o-i  "poison.f", line 104: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "poison.f", line 104: Loop unrolled 4 times.
+   jwd5131p-i  "poison.f", line 113: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd8210o-i  "poison.f", line 117: Loops fused at line 121.
+   jwd5001p-i  "poison.f", line 117: DO loop with DO variable 'IP' is parallelized.
+   jwd6001s-i  "poison.f", line 117: SIMD conversion is applied to DO loop with DO variable 'IP'.
+   jwd8204o-i  "poison.f", line 117: This loop is software pipelined.
+   jwd8205o-i  "poison.f", line 117: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 64.
+   jwd8210o-i  "poison.f", line 128: Loops fused at line 134.
+   jwd8210o-i  "poison.f", line 128: Loops fused at line 140.
+   jwd5001p-i  "poison.f", line 128: DO loop with DO variable 'IP' is parallelized.
+   jwd6001s-i  "poison.f", line 128: SIMD conversion is applied to DO loop with DO variable 'IP'.
+   jwd8204o-i  "poison.f", line 128: This loop is software pipelined.
+   jwd8205o-i  "poison.f", line 128: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 48.
+   jwd8211o-i  "poison.f", line 148: Loops interchanged at line 149.
+   jwd6229s-i  "poison.f", line 148: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8670o-i  "poison.f", line 148: This loop cannot be software pipelined because the loop contains a branch instruction.
+   jwd8202o-i  "poison.f", line 148: Loop unrolled 2 times.
+   jwd8211o-i  "poison.f", line 149: Loops interchanged at line 148.
+   jwd5001p-i  "poison.f", line 149: DO loop with DO variable 'IP' is parallelized.
+   jwd5004p-i  "poison.f", line 160: DO loop with DO variable 'IP' is parallelized. The DO loop contains the reduction operation.
+   jwd6004s-i  "poison.f", line 160: SIMD conversion is applied to DO loop with DO variable 'IP'. The DO loop contains a reduction operation.
+
+ Procedure information
+   Lines      : 183
+   Statements : 75
+   Stack(byte): 16080
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 183
+   Total statements : 75
+   Total stack(byte): 16080
+   Total prefetch num: 0
+

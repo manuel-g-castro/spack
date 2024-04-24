@@ -1,0 +1,423 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:53:54 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : elem3d.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "ELEM3D"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    ELEM3D                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE ELEM3D(IGAUSS,X,Y,Z,NODE,ME,NE,NP,N,
+         14                          *                  SNI ,DNXI,DNYI,DNZI,
+         15                          *                  SN  ,DNX ,DNY ,DNZ ,
+         16                          *                  E   ,EX  ,EY  ,EZ  ,
+         17                          *                  EXX ,EYY ,EZZ ,
+         18                          *                  EXY ,EXZ ,EYZ ,DELTA,
+         19                          *                  DET,DXG,DYG,DZG,
+         20                          *                      DXE,DYE,DZE,
+         21                          *                      DXT,DYT,DZT,DGET,
+         22                          *                  IUT0,IERR)
+         23                           IMPLICIT REAL*4(A-H,O-Z)
+         24                           DIMENSION NODE(N,NE),X(NP),Y(NP),Z(NP),
+         25                          1          SNI  (N,NE),DNXI (N,NE),DNYI (N,NE),DNZI  (N,NE),
+         26                          2          SN   (N,NE),DNX  (N,NE),DNY  (N,NE),DNZ   (N,NE),
+         27                          3          E  (ME,N,N),EX (ME,N,N),EY (ME,N,N),EZ (ME,N,N),
+         28                          4          EXX(ME,N,N),EYY(ME,N,N),EZZ(ME,N,N),
+         29                          5          EXY(ME,N,N),EXZ(ME,N,N),EYZ(ME,N,N),DELTA(NE),
+         30                          6          DET(NE),DXG(NE),DYG(NE),DZG(NE),DXE(NE),DYE(NE),DZE(NE),
+         31                          7                  DXT(NE),DYT(NE),DZT(NE),DGET(N,NE)
+         32                     C
+         33                           PARAMETER ( MPOINT = 4*4*4 )
+         34                           DIMENSION GP(MPOINT),EP(MPOINT),TP(MPOINT),WP(MPOINT)
+         35                     C
+         36                           CHARACTER*60 ERMSGB
+         37                          & /' ## SUBROUTINE ELEM3D: FATAL      ERROR OCCURENCE; RETURNED' /
+         38                     C
+         39                     C
+         40                     C      CALCULATE ELEMENT CHARACTERISTIC DIMENSION AND
+         41                     C     INTEGRAL ELEMENT VECTOR AND MATRICES AND CALCULATE ELEMENT CENTER
+         42                     C     X,Y,Z DERIVERTIVES OF SHAPE FUNCTION
+         43                     C         ( 3-D CALCULATION : SINGLE WORD & SAME ELEMENT VERSION )
+         44                     C
+         45                     C
+         46                     C     ARGUMENT LISTINGS
+         47                     C       (1) INPUT
+         48                     C          IGAUSS      ; SPECIFIES NUMBER OF GAUSS POINTS IN ONE DIR.
+         49                     C          X     (IP)  ; X-DIR. COORDINATE         OF NODE
+         50                     C          Y     (IP)  ; Y-DIR. COORDINATE         OF NODE
+         51                     C          Z     (IP)  ; Y-DIR. COORDINATE         OF NODE
+         52                     C          NODE(I,IE)  ; NODE TABLE
+         53                     C          ME          ; MAX. NUMBER OF TOTAL ELEMENTS
+         54                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+         55                     C          NP          ; NUMBER OF TOTAL    NODES
+         56                     C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT
+         57                     C          IUT0        ; FILE NUMBER TO REPORT ERROR OCCURENCE
+         58                     C
+         59                     C       (2) OUTPUT
+         60                     C           NOTES ; IN THE FOLLOWING EXPRESSIONS, 'N' DENOTES THE
+         61                     C          SHAPE FUNCTION AND 'NX', 'NY', AND, 'NZ', RESPECTIVELY DENOTE
+         62                     C          X, Y, AND, Z DERIVERTIVES OF THE SHAPE FUNCTION. THE SURFIX
+         63                     C          'T' DENOTES THE TRANSVERS OF THE MATRICES OR VECTORS.
+         64                     C          SNI  (I,IE) ; ELEMENT CENTER VALUE OF N
+         65                     C          DNXI (I,IE) ; ELEMENT CENTER VALUE OF NX
+         66                     C          DNYI (I,IE) ; ELEMENT CENTER VALUE OF NY
+         67                     C          DNZI (I,IE) ; ELEMENT CENTER VALUE OF NZ
+         68                     C          SN   (I,IE) ; ELEMENT INTEGRATED VECTOR OF N
+         69                     C          DNX  (I,IE) ; ELEMENT INTEGRATED VECTOR OF NX
+         70                     C          DNY  (I,IE) ; ELEMENT INTEGRATED VECTOR OF NY
+         71                     C          DNZ  (I,IE) ; ELEMENT INTEGRATED VECTOR OF NZ
+         72                     C
+         73                     C          E   (I,IE,J); INTEGRATED ELEMENT MATRIX OF N*NT
+         74                     C          EX  (I,IE,J); INTEGRATED ELEMENT MATRIX OF N*NXT
+         75                     C          EY  (I,IE,J); INTEGRATED ELEMENT MATRIX OF N*NYT
+         76                     C          EZ  (I,IE,J); INTEGRATED ELEMENT MATRIX OF N*NZT
+         77                     C          EXX (I,IE,J); INTEGRATED ELEMENT MATRIX OF NX*NXT
+         78                     C          EYY (I,IE,J); INTEGRATED ELEMENT MATRIX OF NY*NYT
+         79                     C          EZZ (I,IE,J); INTEGRATED ELEMENT MATRIX OF NZ*NZT
+         80                     C          EXY (I,IE,J); INTEGRATED ELEMENT MATRIX OF NX*NYT
+         81                     C          EXZ (I,IE,J); INTEGRATED ELEMENT MATRIX OF NX*NZT
+         82                     C          EYZ (I,IE,J); INTEGRATED ELEMENT MATRIX OF NY*NZT
+         83                     C
+         84                     C          DELTA  (IE) ; ELEMENT CHARACTERISTIC DIMENSION
+         85                     C          IERR        ; RETURN CODE TO REPORT ERROR OCCURENCE
+         86                     C                   0 --- NORMAL TERMINATION
+         87                     C                   1 --- A FATAL ERROR HAS OCCURED
+         88                     C
+         89                     C       (3) WORK
+         90                     C           NOTES ; PREPARE THE FOLLOWING ARRAYS FOR MAX(IE) = NE,
+         91                     C                  ANE MAX(K) = 3.
+         92                     C          DET    (IE) ; DETERMINANT OF JACOBIAN MATRIX
+         93                     C          DXG    (IE) ; G-DIR. DERIVERTIVE OF X
+         94                     C          DYG    (IE) ; G-DIR. DERIVERTIVE OF Y
+         95                     C          DZG    (IE) ; G-DIR. DERIVERTIVE OF Z
+         96                     C          DXE    (IE) ; E-DIR. DERIVERTIVE OF X
+         97                     C          DYE    (IE) ; E-DIR. DERIVERTIVE OF Y
+         98                     C          DZE    (IE) ; E-DIR. DERIVERTIVE OF Z
+         99                     C          DXT    (IE) ; T-DIR. DERIVERTIVE OF X
+        100                     C          DYT    (IE) ; T-DIR. DERIVERTIVE OF Y
+        101                     C          DZT    (IE) ; T-DIR. DERIVERTIVE OF Z
+        102                     C          DGET (K,IE) ; D(G,E,T)/D(X,Y,Z) OF ELEMENT
+        103                     C
+        104                     C
+        105                     C      (1) GAUSS POINTS SETTING
+        106                     C
+        107                           CALL GAUS3D(IGAUSS,MPOINT,GP,EP,TP,WP,NPOINT,IUT0,IERR)
+        108                     C
+        109     1                     IF(IERR.EQ.1) THEN
+        110     1                         WRITE(IUT0,*) ERMSGB
+        111     1                         RETURN
+        112     1                     ENDIF
+        113                     C
+        114                     C      (2) ARRAYS CLEARING
+        115                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED(lines: 116,121)
+                              <<< Loop-information  End >>>
+        116     1                     DO 100 IE = 1 , NE
+        117     1                          DELTA(IE) = 0.E0
+        118     1                 100 CONTINUE
+        119                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED
+                              <<<    COLLAPSED
+                              <<< Loop-information  End >>>
+        120     1   p                 DO 210 I = 1 , N
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 800
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<<    FUSED
+                              <<<    COLLAPSED
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      DELTA, DNZ, DNY, DNX, SN
+                              <<< Loop-information  End >>>
+        121     2  pp   2v                DO 200 IE = 1 , NE
+        122     2   p   2v                     SN (I,IE) = 0.E0
+        123     2   p   2v                     DNX(I,IE) = 0.E0
+        124     2   p   2v                     DNY(I,IE) = 0.E0
+        125     2   p   2v                     DNZ(I,IE) = 0.E0
+        126     2   p   2v        200     CONTINUE
+        127     1       2v        210 CONTINUE
+        128                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<< Loop-information  End >>>
+        129     1  pp                 DO 320 J = 1 , N
+        130     2   p                     DO 310 I = 1 , N
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      EYZ, EXZ, EXY, EZZ, EYY, EXX, EZ, EY, EX
+                              <<<      E
+                              <<< Loop-information  End >>>
+        131     3   p    v                    DO 300 IE = 1 , NE
+        132     3   p    v                        E  (IE,I,J) = 0.E0
+        133     3   p    v                        EX (IE,I,J) = 0.E0
+        134     3   p    v                        EY (IE,I,J) = 0.E0
+        135     3   p    v                        EZ (IE,I,J) = 0.E0
+        136     3   p    v                        EXX(IE,I,J) = 0.E0
+        137     3   p    v                        EYY(IE,I,J) = 0.E0
+        138     3   p    v                        EZZ(IE,I,J) = 0.E0
+        139     3   p    v                        EXY(IE,I,J) = 0.E0
+        140     3   p    v                        EXZ(IE,I,J) = 0.E0
+        141     3   p    v                        EYZ(IE,I,J) = 0.E0
+        142     3   p    v        300         CONTINUE
+        143     2   p             310     CONTINUE
+        144     1   p             320 CONTINUE
+        145                     C
+        146                     C      (3) GAUSS INTEGRATION
+        147                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      GP, WP, EP, TP
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 9
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        148     1                     DO 630 IPOINT = 1 , NPOINT
+        149     1                         GG = GP(IPOINT)
+        150     1                         EG = EP(IPOINT)
+        151     1                         TG = TP(IPOINT)
+        152     1                         W  = WP(IPOINT)
+        153     1               C
+        154     1                         CALL DERIV3(GG,EG,TG,X,Y,Z,NODE,NE,NP,N,
+        155     1                    *                SNI,DNXI,DNYI,DNZI,DET,
+        156     1                    *                DXG,DYG,DZG,DXE,DYE,DZE,DXT,DYT,DZT,DGET)
+        157     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED(lines: 158,163)
+                              <<< Loop-information  End >>>
+        158     2                         DO 400 IE = 1 , NE
+        159     2   p                         DELTA(IE) = DELTA(IE)+W*DET(IE)
+        160     2                 400     CONTINUE
+        161     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 3)
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.12, ITR: 96, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      DNZ, DNYI, DNY, DNXI, DNX, SNI, SN, DNZI
+                              <<< Loop-information  End >>>
+        162     2   p    v                DO 510 I = 1 , N
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    FUSED
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      DNZI, DNZ, DNYI, DNY, DNXI, DNX, SNI, SN
+                              <<< Loop-information  End >>>
+        163     3  pp                         DO 500 IE = 1 , NE
+        164     3   p    v                        SN (I,IE) = SN (I,IE)+W*DET(IE)* SNI(I,IE)
+        165     3   p    v                        DNX(I,IE) = DNX(I,IE)+W*DET(IE)*DNXI(I,IE)
+        166     3   p    v                        DNY(I,IE) = DNY(I,IE)+W*DET(IE)*DNYI(I,IE)
+        167     3   p    v                        DNZ(I,IE) = DNZ(I,IE)+W*DET(IE)*DNZI(I,IE)
+        168     3   p             500         CONTINUE
+        169     2   p             510     CONTINUE
+        170     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 3)
+                              <<< Loop-information  End >>>
+        171     2   p                     DO 620 I = 1 , N
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<< Loop-information  End >>>
+        172     3  pp                        DO 610 J = 1 , N
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      DET, E, EX, EY, EZ, EXX, EYY, EZZ, EXY
+                              <<<      EXZ, EYZ
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 1
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        173     4   p                         DO 600 IE = 1 , NE
+        174     4   p                          E  (IE,I,J) = E  (IE,I,J)+W*DET(IE)*SNI (I,IE)*SNI (J,IE)
+        175     4   p                          EX (IE,I,J) = EX (IE,I,J)+W*DET(IE)*SNI (I,IE)*DNXI(J,IE)
+        176     4   p                          EY (IE,I,J) = EY (IE,I,J)+W*DET(IE)*SNI (I,IE)*DNYI(J,IE)
+        177     4   p                          EZ (IE,I,J) = EZ (IE,I,J)+W*DET(IE)*SNI (I,IE)*DNZI(J,IE)
+        178     4   p                          EXX(IE,I,J) = EXX(IE,I,J)+W*DET(IE)*DNXI(I,IE)*DNXI(J,IE)
+        179     4   p                          EYY(IE,I,J) = EYY(IE,I,J)+W*DET(IE)*DNYI(I,IE)*DNYI(J,IE)
+        180     4   p                          EZZ(IE,I,J) = EZZ(IE,I,J)+W*DET(IE)*DNZI(I,IE)*DNZI(J,IE)
+        181     4   p                          EXY(IE,I,J) = EXY(IE,I,J)+W*DET(IE)*DNXI(I,IE)*DNYI(J,IE)
+        182     4   p                          EXZ(IE,I,J) = EXZ(IE,I,J)+W*DET(IE)*DNXI(I,IE)*DNZI(J,IE)
+        183     4   p                          EYZ(IE,I,J) = EYZ(IE,I,J)+W*DET(IE)*DNYI(I,IE)*DNZI(J,IE)
+        184     4   p             600         CONTINUE
+        185     3   p             610        CONTINUE
+        186     2   p             620     CONTINUE
+        187     1                 630 CONTINUE
+        188                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 45
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.22, ITR: 128, MVE: 4, POL: L)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      DELTA
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 0
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 28
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        189     1  pp    v            DO 700 IE = 1 , NE
+        190     1   p    v                DELTA(IE) = DELTA(IE)**0.333E0
+        191     1   p    v        700 CONTINUE
+        192                     C
+        193                     C      (4) ELEMENT CENTER X,Y DERIVERTIVES OF SHAPE FUNCTION
+        194                     C
+        195                           GG = 0.E0
+        196                           EG = 0.E0
+        197                           TG = 0.E0
+        198                     C
+        199                           CALL DERIV3(GG,EG,TG,X,Y,Z,NODE,NE,NP,N,
+        200                          *            SNI,DNXI,DNYI,DNZI,DET,
+        201                          *            DXG,DYG,DZG,DXE,DYE,DZE,DXT,DYT,DZT,DGET)
+        202                     C
+        203                           RETURN
+        204                           END
+
+ Diagnostic messages: program name(ELEM3D)
+   jwd8220o-i  "elem3d.f", line 13: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd8210o-i  "elem3d.f", line 116: Loops fused at line 121.
+   jwd5002p-i  "elem3d.f", line 120: DO loop is parallelized.
+   jwd5001p-i  "elem3d.f", line 121: DO loop with DO variable 'IE' is parallelized.
+   jwd8215o-i  "elem3d.f", line 121: Imperfectly nested loop is fissioned into perfectly nested loops.
+   jwd6002s-i  "elem3d.f", line 121: SIMD conversion is applied to DO loop.
+   jwd6001s-i  "elem3d.f", line 121: SIMD conversion is applied to DO loop with DO variable 'IE'.
+   jwd8663o-i  "elem3d.f", line 121: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "elem3d.f", line 121: Loop unrolled 2 times.
+   jwd8330o-i  "elem3d.f", line 122: Nested DO loops were coalesced into a single loop by DO variables IE,...,I.
+   jwd5001p-i  "elem3d.f", line 129: DO loop with DO variable 'J' is parallelized.
+   jwd8211o-i  "elem3d.f", line 130: Loops interchanged at line 121.
+   jwd6001s-i  "elem3d.f", line 131: SIMD conversion is applied to DO loop with DO variable 'IE'.
+   jwd8663o-i  "elem3d.f", line 131: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd5122p-i  "elem3d.f", line 148: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd8664o-i  "elem3d.f", line 148: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd8210o-i  "elem3d.f", line 158: Loops fused at line 163.
+   jwd8211o-i  "elem3d.f", line 162: Loops interchanged at line 163.
+   jwd6001s-i  "elem3d.f", line 162: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8204o-i  "elem3d.f", line 162: This loop is software pipelined.
+   jwd8205o-i  "elem3d.f", line 162: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 96.
+   jwd8211o-i  "elem3d.f", line 163: Loops interchanged at line 162.
+   jwd5001p-i  "elem3d.f", line 163: DO loop with DO variable 'IE' is parallelized.
+   jwd8211o-i  "elem3d.f", line 171: Loops interchanged at line 172.
+   jwd8320o-i  "elem3d.f", line 171: Loop blocking is performed with size 32.
+   jwd8211o-i  "elem3d.f", line 172: Loops interchanged at line 171.
+   jwd5001p-i  "elem3d.f", line 172: DO loop with DO variable 'J' is parallelized.
+   jwd8320o-i  "elem3d.f", line 173: Loop blocking is performed with size 32.
+   jwd6133s-i  "elem3d.f", line 173: SIMD conversion cannot be applied to DO loop: its structure is too complicated.
+   jwd8665o-i  "elem3d.f", line 173: This loop cannot be software pipelined because of shortage of integer registers.
+   jwd8209o-i  "elem3d.f", line 174: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "elem3d.f", line 175: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "elem3d.f", line 176: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "elem3d.f", line 177: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "elem3d.f", line 178: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "elem3d.f", line 179: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "elem3d.f", line 180: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "elem3d.f", line 181: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "elem3d.f", line 182: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "elem3d.f", line 183: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5001p-i  "elem3d.f", line 189: DO loop with DO variable 'IE' is parallelized.
+   jwd6001s-i  "elem3d.f", line 189: SIMD conversion is applied to DO loop with DO variable 'IE'.
+   jwd8204o-i  "elem3d.f", line 189: This loop is software pipelined.
+   jwd8205o-i  "elem3d.f", line 189: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 128.
+
+ Procedure information
+   Lines      : 204
+   Statements : 81
+   Stack(byte): 3184
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 204
+   Total statements : 81
+   Total stack(byte): 3184
+   Total prefetch num: 0
+

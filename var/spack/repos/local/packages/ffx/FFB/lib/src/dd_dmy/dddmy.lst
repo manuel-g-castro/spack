@@ -1,0 +1,1234 @@
+
+ Fujitsu Fortran Version 4.7.0  Mon Jan 31 20:16:12 2022
+
+ Compilation information
+   Current directory : /vol0005/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/dd_dmy
+   Source file       : dddmy.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0005/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -Nlst=t -Cpp -Cfpp -c -I/opt/FJSVxtclanga/.common/MELI026/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI026/lib64 -Knointentopt
+   Cpp options          : -I/vol0005/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -I/opt/FJSVxtclanga/.common/MELI026/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI026/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=7 -D__FRT_patchlevel__=0 -D__FRT_version__="4.7.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Knoarray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nlibomp -Nline -Nlst -Nlst=p -Nlst=t
+                          -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "DDINIT"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.5.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    DDDMY                                                C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                     C
+         14                     C      DUMMY FORTRAN INTERFACE FOR DOMAIN-DECOMPOSITION PROGRAMMING
+         15                     C     MODEL PREPARED TO ENABLE FULL-LINKING FOR SYSTEMS WHERE PARALLEL
+         16                     C     ENVIRONMENT IS NOT SUPPORTED
+         17                     C
+         18                     C                        AUTHOR: C. KATO, MERL, HITACHI, LTD.
+         19                     C                        DATE WRITTEN : MARCH    2ND, 1996
+         20                     C                        DATE MODIFIED: JANUARY 12TH, 1998
+         21                     C                             (ENTRY 'DDEXIT' ADDED)
+         22                     C                        DATE MODIFIED: MARCH    7TH, 2003
+         23                     C                             (ENTRIES 'DDCOM1' AND 'DDCOM2' ADDED)
+         24                     C
+         25                     C
+         26                           SUBROUTINE DDINIT(NPART,IPART)
+         27                           IMPLICIT REAL*4(A-H,O-Z)
+         28                     C
+         29                           NPART = 0
+         30                           IPART = 0
+         31                     C
+         32                           RETURN
+         33                           END
+
+ Procedure information
+   Lines      : 33
+   Statements : 6
+   Stack(byte): 352
+   Prefetch num: 0
+
+ External subroutine subprogram "DDEXIT"
+  (line-no.)(nest)(optimize)
+         34                     C
+         35                     C
+         36                           SUBROUTINE DDEXIT
+         37                     C
+         38                           RETURN
+         39                           END
+
+ Procedure information
+   Lines      : 6
+   Statements : 3
+   Stack(byte): 352
+   Prefetch num: 0
+
+ External subroutine subprogram "DDSYNC"
+  (line-no.)(nest)(optimize)
+         40                     C
+         41                     C
+         42                           SUBROUTINE DDSYNC
+         43                     C
+         44                           RETURN
+         45                           END
+
+ Procedure information
+   Lines      : 6
+   Statements : 3
+   Stack(byte): 352
+   Prefetch num: 0
+
+ External subroutine subprogram "DDSTOP"
+  (line-no.)(nest)(optimize)
+         46                     C
+         47                     C
+         48                           SUBROUTINE DDSTOP(IPART,IUT0)
+         49                           IMPLICIT REAL*4(A-H,O-Z)
+         50                     C
+         51                           IPART = IPART
+         52                           IUT0  = IUT0
+         53                     C
+         54                           RETURN
+         55                           END
+
+ Procedure information
+   Lines      : 10
+   Statements : 6
+   Stack(byte): 352
+   Prefetch num: 0
+
+ External subroutine subprogram "DDCOM0"
+  (line-no.)(nest)(optimize)
+         56                     C
+         57                     C
+         58                           SUBROUTINE DDCOM0(LPINT1,LPINT2,LPINT3,NPINT,MDOM,MBPDOM,
+         59                          *                  LDOM,NBPDOM,NDOM,IPSLF,IPSND,IUT0,IERR)
+         60                           IMPLICIT REAL*4(A-H,O-Z)
+         61                           DIMENSION LPINT1(NPINT),LPINT2(NPINT),LPINT3(NPINT),
+         62                          1          LDOM(MDOM),NBPDOM(MDOM),
+         63                          2          IPSLF(MBPDOM,MDOM),IPSND(MBPDOM,MDOM)
+         64                     C
+         65                     C
+         66                           CHARACTER*60 ERMSGB
+         67                          & / ' ## SUBROUTINE DDCOM0: FATAL      ERROR OCCURENCE; RETURNED' /
+         68                           CHARACTER*60 EREXP1
+         69                          & / ' DIMENSION SIZE OF PASSED LIST ARRAYS IS NOT SUFFICIENT    ' /
+         70                     C
+         71                     C
+         72                     C      SET UP NEIBERING DOMAIN LISTS FOR DOMAIN-DECOMPOSITION
+         73                     C     PROGRAMMING MODEL
+         74                     C
+         75                     C
+         76                     C     ARGUMENT LISTINGS
+         77                     C       (1) INPUT
+         78                     C INT *4   LPINT1 (IBP)     ; INTER-CONNECT BOUNDARY NODES
+         79                     C INT *4   LPINT2 (IBP)     ; NEIBERING SUB-DOMAIN NUMBERS
+         80                     C INT *4   LPINT3 (IBP)     ; NODE NUMBER IN THE NEIBERING SUB-DOMAINS
+         81                     C INT *4   NPINT            ; NUMBER OF INTER-CONNECT BOUNDARY NODES
+         82                     C
+         83                     C INT *4   MDOM             ; MAX. NUMBER OF THE NEIBERING SUB-DOMAINS
+         84                     C INT *4   MBPDOM           ; THE DIMENSION SIZE OF THE FIRST ELEMENTS
+         85                     C                            OF THE PASSED ARRAYS 'IPSLF' AND 'IPSND'
+         86                     C                            (I.E. THE MAXIMUM NUMBER OF THE
+         87                     C                             INTER-CONNECT BOUNDARY NODES FOR A
+         88                     C                             NEIBERING SUB-DOMAIN)
+         89                     C INT *4   IUT0             ; FILE NUMBER TO WRITE ERROR MESSAGE
+         90                     C
+         91                     C       (2) OUTPUT
+         92                     C INT *4   LDOM      (IDOM) ; NEIBERING SUB-DOMAIN NUMBER
+         93                     C INT *4   NBPDOM    (IDOM) ; NUMBER OF INTER-CONNECT BOUNDARY NODES
+         94                     C                            SHARING WITH THE IDOM'TH NEIBERING
+         95                     C                            SUB-DOMAIN, LDOM(IDOM)
+         96                     C INT *4   NDOM             ; NUMBER OF THE NERIBERING SUB-DOMAINS
+         97                     C INT *4   IPSLF (IBP,IDOM) ; INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+         98                     C                            CALLING TASK'S SUB-DOMAIN, FOR THE IDOM'TH
+         99                     C                            NEIBERING SUB-DOMAIN, LDOM(IDOM)
+        100                     C INT *4   IPSND (IBP,IDOM) ; INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+        101                     C                            SUB-DOMAIN THAT IS RECEIVING THE CALLING
+        102                     C                            TASK'S RESIDUALS.
+        103                     C INT *4   IERR             ; RETURN CODE WHOSE VALUE WILL BE EITHER
+        104                     C                   0 --- INDICATING SUCCESSFUL TERMINATION
+        105                     C                OR 1 --- INDICATING OCCURENCE OF SOME ERROR CONDITIONS
+        106                     C
+        107                     C
+        108                           IERR = 0
+        109                     C
+        110                     C
+        111                     C
+        112                     C SET INITIAL VALUES
+        113                     C
+        114                     C
+        115                     C
+        116                           NDOM = 0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NBPDOM
+                              <<< Loop-information  End >>>
+        117     1  pp   4v            DO 100 IDOM = 1 , MDOM
+        118     1   p   4v                NBPDOM(IDOM) = 0
+        119     1   p   4v        100 CONTINUE
+        120                     C
+        121                     C
+        122                     C
+        123                     C SET NEIBERING DOMAIN LISTS
+        124                     C
+        125                     C
+        126                     C
+        127     1                     DO 230 IPINT = 1 , NPINT
+        128     1                         IFNEW = LPINT2(IPINT)
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LDOM
+                              <<< Loop-information  End >>>
+        129     2                         DO 210 ICHK = 1 , NDOM
+        130     3                             IF(LDOM(ICHK).EQ.IFNEW) THEN
+        131     3                                 IDOM = ICHK
+        132     3                                 GO TO 220
+        133     3                             ENDIF
+        134     2                 210     CONTINUE
+        135     1                         NDOM = NDOM+1
+        136     1                         IDOM = NDOM
+        137     1               C
+        138     2                         IF(NDOM.GT.MDOM) THEN
+        139     2                             WRITE(IUT0,*) ERMSGB
+        140     2                             WRITE(IUT0,*) EREXP1
+        141     2                             IERR = 1
+        142     2                             RETURN
+        143     2                         ENDIF
+        144     1               C
+        145     1                         LDOM(NDOM) = IFNEW
+        146     1               C
+        147     1                 220     CONTINUE
+        148     1                         NBPDOM(IDOM) = NBPDOM(IDOM)+1
+        149     1               C
+        150     2                         IF(NBPDOM(IDOM).GT.MBPDOM) THEN
+        151     2                             WRITE(IUT0,*) ERMSGB
+        152     2                             WRITE(IUT0,*) EREXP1
+        153     2                             IERR = 1
+        154     2                             RETURN
+        155     2                         ENDIF
+        156     1               C
+        157     1                         IPSLF(NBPDOM(IDOM),IDOM) = LPINT1(IPINT)
+        158     1                         IPSND(NBPDOM(IDOM),IDOM) = LPINT3(IPINT)
+        159     1                 230 CONTINUE
+        160                     C
+        161                     C
+        162                           RETURN
+        163                           END
+
+ Diagnostic messages: program name(DDCOM0)
+   jwd5001p-i  "dddmy.f", line 117: DO loop with DO variable 'IDOM' is parallelized.
+   jwd6001s-i  "dddmy.f", line 117: SIMD conversion is applied to DO loop with DO variable 'IDOM'.
+   jwd8663o-i  "dddmy.f", line 117: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "dddmy.f", line 117: Loop unrolled 4 times.
+   jwd5131p-i  "dddmy.f", line 127: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "dddmy.f", line 129: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "dddmy.f", line 129: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "dddmy.f", line 129: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+
+ Procedure information
+   Lines      : 108
+   Statements : 40
+   Stack(byte): 1152
+   Prefetch num: 0
+
+ External subroutine subprogram "DDCOM1"
+  (line-no.)(nest)(optimize)
+        164                     C
+        165                     C
+        166                           SUBROUTINE DDCOM1(LPINT1,NPINT,NUMIP,NP,IUT0,IERR)
+        167                           IMPLICIT REAL*4(A-H,O-Z)
+        168                           DIMENSION LPINT1(NPINT),NUMIP(NP)
+        169                     C
+        170                           NPINT     = NPINT
+        171                           NP        = NP
+        172                           IUT0      = IUT0
+        173                           IERR      = IERR
+        174                     CC    LPINT1(1) = LPINT1(1)
+        175                     CC    NUMIP (1) = NUMIP (1)
+        176                     C
+        177                           RETURN
+        178                           END
+
+ Diagnostic messages: program name(DDCOM1)
+   jwd2008i-i  "dddmy.f", line 168: Dummy argument 'NUMIP' not used in this subprogram.
+   jwd2008i-i  "dddmy.f", line 168: Dummy argument 'LPINT1' not used in this subprogram.
+
+ Procedure information
+   Lines      : 15
+   Statements : 9
+   Stack(byte): 368
+   Prefetch num: 0
+
+ External subroutine subprogram "DDCOM2"
+  (line-no.)(nest)(optimize)
+        179                     C
+        180                     C
+        181                           SUBROUTINE DDCOM2(SEND,RECV)
+        182                           IMPLICIT REAL*4(A-H,O-Z)
+        183                     C
+        184                           SEND = SEND
+        185                           RECV = RECV
+        186                           RECV = SEND
+        187                     C
+        188                           RETURN
+        189                           END
+
+ Procedure information
+   Lines      : 11
+   Statements : 7
+   Stack(byte): 352
+   Prefetch num: 0
+
+ External subroutine subprogram "DDALLD"
+  (line-no.)(nest)(optimize)
+        190                     C
+        191                     C
+        192                           SUBROUTINE DDALLD(SEND,RECV,IFLAG,IUT0,IERR)
+        193                           IMPLICIT REAL*4(A-H,O-Z)
+        194                     C
+        195                           CHARACTER*60 ERMSGB
+        196                          & / ' ## SUBROUTINE DDALLD: FATAL   ERROR OCCURENCE; RETURNED ' /
+        197                           CHARACTER*60 ERMSG1
+        198                          & / ' ILLIGAL OPERATION NUMBER IS GIVEN ' /
+        199                     C
+        200     1                     IF(IFLAG.EQ.1.OR.IFLAG.EQ.2.OR.IFLAG.EQ.3) THEN
+        201     1               C
+        202     1                         SEND = SEND
+        203     1                         RECV = RECV
+        204     1                     ELSE
+        205     1                         WRITE(IUT0,*) ERMSGB
+        206     1                         WRITE(IUT0,*) ERMSG1
+        207     1                         IERR=1
+        208     1                         RETURN
+        209     1                     ENDIF
+        210                     C
+        211                           RETURN
+        212                           END
+
+ Procedure information
+   Lines      : 23
+   Statements : 15
+   Stack(byte): 544
+   Prefetch num: 0
+
+ External subroutine subprogram "DDCOM3"
+  (line-no.)(nest)(optimize)
+        213                     C
+        214                     C
+        215                           SUBROUTINE DDCOM3(IPART,IDIM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        216                          *                  FX,FY,FZ,NP,IUT0,IERR,BUFSND,BUFRCV,MAXBUF)
+        217                           IMPLICIT REAL*4(A-H,O-Z)
+        218                           DIMENSION LDOM(NDOM),NBPDOM(NDOM),IPSLF(MBPDOM,NDOM),
+        219                          1          IPSND(MBPDOM,NDOM), FX(NP),FY(NP),FZ(NP),
+        220                          2          BUFSND(MAXBUF),BUFRCV(MAXBUF)
+        221                     C
+        222                     C
+        223                     C
+        224                           CHARACTER*60 ERMSGB
+        225                          & / ' ## SUBROUTINE DDCOM3: FATAL     ERROR OCCURRENCE; RETURNED' /
+        226                           CHARACTER*60 EREXP1
+        227                          & / ' INVALID VALUE FOT NDOM                                    ' /
+        228                           CHARACTER*60 EREXP2
+        229                          & / ' DIMENSION SIZE OF PASSED BUFFER ARRAYS IS NOT SUFFICIENT  ' /
+        230                           CHARACTER*60 EREXP3
+        231                          & / ' RECEIVED NODE NUMBER IS OUT OF THE GLOBAL NODE NUMBER     ' /
+        232                     C
+        233                     C NOTE THAT;
+        234                     C THIS PROGRAM IS MODIFIED IN ORDER TO DEAL WITH CYCLIC BOUNDARY
+        235                     C CONDITION AS IN SERIAL COMPUTATIONS (2007.04.25 Y. YAMADE)
+        236                     C
+        237                     C
+        238                     C
+        239                     C     ARGUMENT LISTINGS
+        240                     C       (1) INPUT
+        241                     C INT *4   IPART       ; SUB-DOMAIN NUMBER THAT THE CALLING TASK IS
+        242                     C                       TAKING CARE OF
+        243                     C           NOTES ; ARGUMENT 'IPART' IS NOT CURRENTLY USED. IT IS
+        244                     C                  RETAINED FOR A POSSIBLE FUTURE USE.
+        245                     C INT *4   IDIM             ; SPACE DIMENSION ( 1, 2, OR 3 )
+        246                     C INT *4   LDOM      (IDOM) ; NEIGHBORING SUB-DOMAIN NUMBER
+        247                     C INT *4   NBPDOM    (IDOM) ; NUMBER OF INTER-CONNECT BOUNDARY NODES
+        248                     C                            SHARING WITH THE IDOM'TH NEIGHBORING
+        249                     C                            SUB-DOMAIN, LDOM(IDOM)
+        250                     C INT *4   NDOM             ; NUMBER OF THE NEIGHBORING SUB-DOMAINS
+        251                     C INT *4   IPSLF (IBP,IDOM) ; INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+        252                     C                            CALLING TASK'S SUB-DOMAIN, FOR THE IDOM'TH
+        253                     C                            NEIGHBORING SUB-DOMAIN, LDOM(IDOM)
+        254                     C INT *4   IPSND (IBP,IDOM) ; INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+        255                     C                            SUB-DOMAIN THAT IS RECEIVING THE CALLING
+        256                     C                            TASK'S RESIDUALS.
+        257                     C INT *4   MBPDOM           ; THE DIMENSION SIZE OF THE FIRST ELEMENTS
+        258                     C                            OF THE PASSED ARRAYS 'IPSLF' AND 'IPSND'
+        259                     C                            (I.E. THE MAXIMUM NUMBER OF THE
+        260                     C                             INTER-CONNECT BOUNDARY NODES FOR A
+        261                     C                             NEIGHBORING SUB-DOMAIN)
+        262                     C INT *4   NP               ; NUMBER OF THE TOTAL NODES IN THE CALLING
+        263                     C                            TASK'S SUB-DOMAIN
+        264                     C INT *4   IUT0             ; FILE NUMBER TO WRITE ERROR MESSAGE
+        265                     C INT *4   MAXBUF           ; LENGTH OF THE PASSED COMMUNICATION BUFFERS
+        266                     C                            'BUFSND' AND 'BUFRCV' IN WORDS. 'MAXBUF'
+        267                     C                             MUST BE NO SMALLER THAN 4 TIMES THE TOTAL
+        268                     C                             NUMBER OF INTER-CONNECT BOUNDARY NODES IN
+        269                     C                             THE CALLING TASK
+        270                     C
+        271                     C       (2) OUTPUT
+        272                     C INT *4   IERR             ; RETURN CODE WHOSE VALUE WILL BE EITHER
+        273                     C                   0 --- INDICATING SUCCESSFUL TERMINATION
+        274                     C                OR 1 --- INDICATING OCCURRENCE OF SOME ERROR CONDITIONS
+        275                     C
+        276                     C       (3) INPUT-OUTPUT
+        277                     C REAL*4   FX(IP)           ; X-DIRECTION RESIDUAL VECTOR
+        278                     C REAL*4   FY(IP)           ; Y-DIRECTION RESIDUAL VECTOR
+        279                     C REAL*4   FZ(IP)           ; Z-DIRECTION RESIDUAL VECTOR
+        280                     C
+        281                     C       (4) WORK
+        282                     C REAL*4   BUFSND(IBUF)     ; HOLDS THE VALUES OF THE INTER-CONNECT
+        283                     C                            BOUNDARY NODE NUMBER IN THE NEIGHBORING
+        284                     C                            SUB-DOMAINS AND THE RESIDUALS OF THE
+        285                     C                            CALLING TASK'S SUB-DOMAIN WHEN SENDING
+        286                     C                            THE RESIDUALS
+        287                     C
+        288                     C REAL*4   BUFRCV(IBUF)     ; HOLDS THE VALUES OF THE INTER-CONNECT
+        289                     C                            BOUNDARY NODE NUMBER IN THE CALLING TASK'S
+        290                     C                            SUB-DOMAIN AND THE RESIDUALS OF THE
+        291                     C                            NEIGHBORING SUB-DOMAINS AT THE RECEIPT OF
+        292                     C                            THE RESIDUALS FROM THE NEIGHBORING
+        293                     C                            SUB-DOMAINS
+        294                     C
+        295                           IERR=0
+        296                     C
+        297                     C
+        298                     C
+        299                     C
+        300                     C CHECK THE NUMBER OF NEIBERING DOMAINS
+        301                     C
+        302                     C
+        303                     C
+        304                           IF(NDOM.EQ.0) RETURN
+        305                     C
+        306     1                     IF(NDOM.NE.1) THEN
+        307     1                         IERR=1
+        308     1                         WRITE(IUT0,*) ERMSGB
+        309     1                         WRITE(IUT0,*) EREXP1
+        310     1                         RETURN
+        311     1                     ENDIF
+        312                     C
+        313                     C
+        314                     C
+        315                     C
+        316                     C SET UP THE SEND BUFFER
+        317                     C
+        318                     C
+        319                     C
+        320                           IDOM   = 1
+        321                           NSTART = 0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 341
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.00, ITR: 192, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IPSLF, IPSND, BUFSND
+                              <<< Loop-information  End >>>
+        322     1  pp   2v            DO 100 IBP = 1 , NBPDOM(IDOM)
+        323     1   p   2v                IP  = IPSLF(IBP,IDOM)
+        324     1   p   2v                IPS = IPSND(IBP,IDOM)
+        325     1   p   2v                BUFSND(NSTART+1) = IPS
+        326     1   p   2v                BUFSND(NSTART+2) = FX(IP)
+        327     1   p   2v                BUFSND(NSTART+3) = FY(IP)
+        328     1   p   2v                BUFSND(NSTART+4) = FZ(IP)
+        329     1   p   2v                NSTART = NSTART+4
+        330     1   p   2v        100 CONTINUE
+        331                     C
+        332                     C
+        333                     C
+        334                     C POST ALL THE EXPECTED RECEIVES
+        335                     C
+        336                     C
+        337                     C
+        338                           IDOM   = 1
+        339                           NSTART = 0
+        340     1                     DO 200 IBP = 1 , NBPDOM(IDOM)
+        341     1               C
+        342     2                         IF(NSTART+3.GT.MAXBUF) THEN
+        343     2                             WRITE(IUT0,*) ERMSGB
+        344     2                             WRITE(IUT0,*) EREXP2
+        345     2                             IERR = 1
+        346     2                             RETURN
+        347     2                         ENDIF
+        348     1               C
+        349     1                         BUFRCV(NSTART+1)=BUFSND(NSTART+1)
+        350     1                         BUFRCV(NSTART+2)=BUFSND(NSTART+2)
+        351     1                         BUFRCV(NSTART+3)=BUFSND(NSTART+3)
+        352     1                         BUFRCV(NSTART+4)=BUFSND(NSTART+4)
+        353     1               C
+        354     1                         NSTART = NSTART+4
+        355     1                 200 CONTINUE
+        356                     C
+        357                     C
+        358                     C
+        359                     C SUPERIMPOSE THE RECEIVED RESIDUALS
+        360                     C
+        361                     C
+        362                     C
+        363                           IDOM   = 1
+        364                           NSTART = 0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      BUFRCV
+                              <<< Loop-information  End >>>
+        365     1                     DO 300 IBP = 1 , NBPDOM(IDOM)
+        366     1                         IP = BUFRCV(NSTART+1)+0.1
+        367     1               C
+        368     2                         IF(IP.LT.1 .OR. IP.GT.NP) THEN
+        369     2                             WRITE(IUT0,*) ERMSGB
+        370     2                             WRITE(IUT0,*) EREXP3
+        371     2                             IERR = 1
+        372     2                             RETURN
+        373     2                         ENDIF
+        374     1               C
+        375     1                                       FX(IP) = FX(IP)+BUFRCV(NSTART+2)
+        376     1                         IF(IDIM.GE.2) FY(IP) = FY(IP)+BUFRCV(NSTART+3)
+        377     1                         IF(IDIM.GE.3) FZ(IP) = FZ(IP)+BUFRCV(NSTART+4)
+        378     1                         NSTART = NSTART+4
+        379     1                 300 CONTINUE
+        380                     C
+        381                           RETURN
+        382                           END
+
+ Diagnostic messages: program name(DDCOM3)
+   jwd2008i-i  "dddmy.f", line 215: Dummy argument 'IPART' not used in this subprogram.
+   jwd2008i-i  "dddmy.f", line 218: Dummy argument 'LDOM' not used in this subprogram.
+   jwd5001p-i  "dddmy.f", line 322: DO loop with DO variable 'IBP' is parallelized.
+   jwd6001s-i  "dddmy.f", line 322: SIMD conversion is applied to DO loop with DO variable 'IBP'.
+   jwd8204o-i  "dddmy.f", line 322: This loop is software pipelined.
+   jwd8205o-i  "dddmy.f", line 322: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 192.
+   jwd5131p-i  "dddmy.f", line 340: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "dddmy.f", line 340: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "dddmy.f", line 340: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+   jwd5131p-i  "dddmy.f", line 365: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "dddmy.f", line 365: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "dddmy.f", line 365: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+
+ Procedure information
+   Lines      : 170
+   Statements : 58
+   Stack(byte): 1392
+   Prefetch num: 0
+
+ External subroutine subprogram "DDCOMX"
+  (line-no.)(nest)(optimize)
+        383                           SUBROUTINE DDCOMX(IPART,IDIM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        384                          *                  FX,FY,FZ,NP,IUT0,IERR,BUFSND,BUFRCV,MAXBUF)
+        385                           IMPLICIT REAL*4(A-H,O-Z)
+        386                           DIMENSION LDOM(NDOM),NBPDOM(NDOM),IPSLF(MBPDOM,NDOM),
+        387                          1          IPSND(MBPDOM,NDOM), FX(NP),FY(NP),FZ(NP),
+        388                          2          BUFSND(MAXBUF),BUFRCV(MAXBUF)
+        389                     C
+        390                     C
+        391                     C
+        392                           CHARACTER*60 ERMSGB
+        393                          & / ' ## SUBROUTINE DDCOMX: FATAL     ERROR OCCURRENCE; RETURNED' /
+        394                           CHARACTER*60 EREXP1
+        395                          & / ' INVALID VALUE FOT NDOM                                    ' /
+        396                           CHARACTER*60 EREXP2
+        397                          & / ' DIMENSION SIZE OF PASSED BUFFER ARRAYS IS NOT SUFFICIENT  ' /
+        398                           CHARACTER*60 EREXP3
+        399                          & / ' RECEIVED NODE NUMBER IS OUT OF THE GLOBAL NODE NUMBER     ' /
+        400                     C
+        401                     C NOTE THAT;
+        402                     C THIS PROGRAM IS MODIFIED IN ORDER TO DEAL WITH CYCLIC BOUNDARY
+        403                     C CONDITION AS IN SERIAL COMPUTATIONS (2007.04.25 Y. YAMADE)
+        404                     C
+        405                     C
+        406                     C
+        407                     C     ARGUMENT LISTINGS
+        408                     C       (1) INPUT
+        409                     C INT *4   IPART       ; SUB-DOMAIN NUMBER THAT THE CALLING TASK IS
+        410                     C                       TAKING CARE OF
+        411                     C           NOTES ; ARGUMENT 'IPART' IS NOT CURRENTLY USED. IT IS
+        412                     C                  RETAINED FOR A POSSIBLE FUTURE USE.
+        413                     C INT *4   IDIM             ; SPACE DIMENSION ( 1, 2, OR 3 )
+        414                     C INT *4   LDOM      (IDOM) ; NEIGHBORING SUB-DOMAIN NUMBER
+        415                     C INT *4   NBPDOM    (IDOM) ; NUMBER OF INTER-CONNECT BOUNDARY NODES
+        416                     C                            SHARING WITH THE IDOM'TH NEIGHBORING
+        417                     C                            SUB-DOMAIN, LDOM(IDOM)
+        418                     C INT *4   NDOM             ; NUMBER OF THE NEIGHBORING SUB-DOMAINS
+        419                     C INT *4   IPSLF (IBP,IDOM) ; INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+        420                     C                            CALLING TASK'S SUB-DOMAIN, FOR THE IDOM'TH
+        421                     C                            NEIGHBORING SUB-DOMAIN, LDOM(IDOM)
+        422                     C INT *4   IPSND (IBP,IDOM) ; INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+        423                     C                            SUB-DOMAIN THAT IS RECEIVING THE CALLING
+        424                     C                            TASK'S RESIDUALS.
+        425                     C INT *4   MBPDOM           ; THE DIMENSION SIZE OF THE FIRST ELEMENTS
+        426                     C                            OF THE PASSED ARRAYS 'IPSLF' AND 'IPSND'
+        427                     C                            (I.E. THE MAXIMUM NUMBER OF THE
+        428                     C                             INTER-CONNECT BOUNDARY NODES FOR A
+        429                     C                             NEIGHBORING SUB-DOMAIN)
+        430                     C INT *4   NP               ; NUMBER OF THE TOTAL NODES IN THE CALLING
+        431                     C                            TASK'S SUB-DOMAIN
+        432                     C INT *4   IUT0             ; FILE NUMBER TO WRITE ERROR MESSAGE
+        433                     C INT *4   MAXBUF           ; LENGTH OF THE PASSED COMMUNICATION BUFFERS
+        434                     C                            'BUFSND' AND 'BUFRCV' IN WORDS. 'MAXBUF'
+        435                     C                             MUST BE NO SMALLER THAN 4 TIMES THE TOTAL
+        436                     C                             NUMBER OF INTER-CONNECT BOUNDARY NODES IN
+        437                     C                             THE CALLING TASK
+        438                     C
+        439                     C       (2) OUTPUT
+        440                     C INT *4   IERR             ; RETURN CODE WHOSE VALUE WILL BE EITHER
+        441                     C                   0 --- INDICATING SUCCESSFUL TERMINATION
+        442                     C                OR 1 --- INDICATING OCCURRENCE OF SOME ERROR CONDITIONS
+        443                     C
+        444                     C       (3) INPUT-OUTPUT
+        445                     C REAL*4   FX(IP)           ; X-DIRECTION RESIDUAL VECTOR
+        446                     C REAL*4   FY(IP)           ; Y-DIRECTION RESIDUAL VECTOR
+        447                     C REAL*4   FZ(IP)           ; Z-DIRECTION RESIDUAL VECTOR
+        448                     C
+        449                     C       (4) WORK
+        450                     C REAL*4   BUFSND(IBUF)     ; HOLDS THE VALUES OF THE INTER-CONNECT
+        451                     C                            BOUNDARY NODE NUMBER IN THE NEIGHBORING
+        452                     C                            SUB-DOMAINS AND THE RESIDUALS OF THE
+        453                     C                            CALLING TASK'S SUB-DOMAIN WHEN SENDING
+        454                     C                            THE RESIDUALS
+        455                     C
+        456                     C REAL*4   BUFRCV(IBUF)     ; HOLDS THE VALUES OF THE INTER-CONNECT
+        457                     C                            BOUNDARY NODE NUMBER IN THE CALLING TASK'S
+        458                     C                            SUB-DOMAIN AND THE RESIDUALS OF THE
+        459                     C                            NEIGHBORING SUB-DOMAINS AT THE RECEIPT OF
+        460                     C                            THE RESIDUALS FROM THE NEIGHBORING
+        461                     C                            SUB-DOMAINS
+        462                     C
+        463                           IERR=0
+        464                     C
+        465                     C
+        466                     C
+        467                     C
+        468                     C CHECK THE NUMBER OF NEIBERING DOMAINS
+        469                     C
+        470                     C
+        471                     C
+        472                           IF(NDOM.EQ.0) RETURN
+        473                     C
+        474     1                     IF(NDOM.NE.1) THEN
+        475     1                         IERR=1
+        476     1                         WRITE(IUT0,*) ERMSGB
+        477     1                         WRITE(IUT0,*) EREXP1
+        478     1                         RETURN
+        479     1                     ENDIF
+        480                     C
+        481                     C
+        482                     C
+        483                     C
+        484                     C SET UP THE SEND BUFFER
+        485                     C
+        486                     C
+        487                     C
+        488                           IDOM   = 1
+        489                           NSTART = 0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 341
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.00, ITR: 192, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IPSLF, IPSND, BUFSND
+                              <<< Loop-information  End >>>
+        490     1  pp   2v            DO 100 IBP = 1 , NBPDOM(IDOM)
+        491     1   p   2v                IP  = IPSLF(IBP,IDOM)
+        492     1   p   2v                IPS = IPSND(IBP,IDOM)
+        493     1   p   2v                BUFSND(NSTART+1) = IPS
+        494     1   p   2v                BUFSND(NSTART+2) = FX(IP)
+        495     1   p   2v                BUFSND(NSTART+3) = FY(IP)
+        496     1   p   2v                BUFSND(NSTART+4) = FZ(IP)
+        497     1   p   2v                NSTART = NSTART+4
+        498     1   p   2v        100 CONTINUE
+        499                     C
+        500                     C
+        501                     C
+        502                     C POST ALL THE EXPECTED RECEIVES
+        503                     C
+        504                     C
+        505                     C
+        506                           IDOM   = 1
+        507                           NSTART = 0
+        508     1                     DO 200 IBP = 1 , NBPDOM(IDOM)
+        509     1               C
+        510     2                         IF(NSTART+3.GT.MAXBUF) THEN
+        511     2                             WRITE(IUT0,*) ERMSGB
+        512     2                             WRITE(IUT0,*) EREXP2
+        513     2                             IERR = 1
+        514     2                             RETURN
+        515     2                         ENDIF
+        516     1               C
+        517     1                         BUFRCV(NSTART+1)=BUFSND(NSTART+1)
+        518     1                         BUFRCV(NSTART+2)=BUFSND(NSTART+2)
+        519     1                         BUFRCV(NSTART+3)=BUFSND(NSTART+3)
+        520     1                         BUFRCV(NSTART+4)=BUFSND(NSTART+4)
+        521     1               C
+        522     1                         NSTART = NSTART+4
+        523     1                 200 CONTINUE
+        524                     C
+        525                     C
+        526                     C
+        527                     C SUPERIMPOSE THE RECEIVED RESIDUALS
+        528                     C
+        529                     C
+        530                     C
+        531                           IDOM   = 1
+        532                           NSTART = 0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      BUFRCV
+                              <<< Loop-information  End >>>
+        533     1                     DO 300 IBP = 1 , NBPDOM(IDOM)
+        534     1                         IP = BUFRCV(NSTART+1)+0.1
+        535     1               C
+        536     2                         IF(IP.LT.1 .OR. IP.GT.NP) THEN
+        537     2                             WRITE(IUT0,*) ERMSGB
+        538     2                             WRITE(IUT0,*) EREXP3
+        539     2                             IERR = 1
+        540     2                             RETURN
+        541     2                         ENDIF
+        542     1               C
+        543     1                                       FX(IP) = FX(IP)+BUFRCV(NSTART+2)
+        544     1                         IF(IDIM.GE.2) FY(IP) = FY(IP)+BUFRCV(NSTART+3)
+        545     1                         IF(IDIM.GE.3) FZ(IP) = FZ(IP)+BUFRCV(NSTART+4)
+        546     1                         NSTART = NSTART+4
+        547     1                 300 CONTINUE
+        548                     C
+        549                           RETURN
+        550                           END
+
+ Diagnostic messages: program name(DDCOMX)
+   jwd2008i-i  "dddmy.f", line 383: Dummy argument 'IPART' not used in this subprogram.
+   jwd2008i-i  "dddmy.f", line 386: Dummy argument 'LDOM' not used in this subprogram.
+   jwd5001p-i  "dddmy.f", line 490: DO loop with DO variable 'IBP' is parallelized.
+   jwd6001s-i  "dddmy.f", line 490: SIMD conversion is applied to DO loop with DO variable 'IBP'.
+   jwd8204o-i  "dddmy.f", line 490: This loop is software pipelined.
+   jwd8205o-i  "dddmy.f", line 490: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 192.
+   jwd5131p-i  "dddmy.f", line 508: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "dddmy.f", line 508: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "dddmy.f", line 508: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+   jwd5131p-i  "dddmy.f", line 533: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "dddmy.f", line 533: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "dddmy.f", line 533: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+
+ Procedure information
+   Lines      : 168
+   Statements : 58
+   Stack(byte): 1392
+   Prefetch num: 0
+
+ External subroutine subprogram "DDCMAX"
+  (line-no.)(nest)(optimize)
+        551                     C
+        552                     C
+        553                           SUBROUTINE DDCMAX(IPART,IDIM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        554                          *                  FX,FY,FZ,NP,IUT0,IERR,BUFSND,BUFRCV,MAXBUF)
+        555                           IMPLICIT REAL*4(A-H,O-Z)
+        556                           DIMENSION LDOM(NDOM),NBPDOM(NDOM),IPSLF(MBPDOM,NDOM),
+        557                          1          IPSND(MBPDOM,NDOM), FX(NP),FY(NP),FZ(NP),
+        558                          2          BUFSND(MAXBUF),BUFRCV(MAXBUF)
+        559                     C
+        560                     C
+        561                     C
+        562                           CHARACTER*60 ERMSGB
+        563                          & / ' ## SUBROUTINE DDCOMX: FATAL     ERROR OCCURRENCE; RETURNED' /
+        564                           CHARACTER*60 EREXP1
+        565                          & / ' INVALID VALUE FOT NDOM                                    ' /
+        566                           CHARACTER*60 EREXP2
+        567                          & / ' DIMENSION SIZE OF PASSED BUFFER ARRAYS IS NOT SUFFICIENT  ' /
+        568                           CHARACTER*60 EREXP3
+        569                          & / ' RECEIVED NODE NUMBER IS OUT OF THE GLOBAL NODE NUMBER     ' /
+        570                     C
+        571                     C NOTE THAT;
+        572                     C THIS PROGRAM IS MODIFIED IN ORDER TO DEAL WITH CYCLIC BOUNDARY
+        573                     C CONDITION AS IN SERIAL COMPUTATIONS (2007.04.25 Y. YAMADE)
+        574                     C
+        575                     C
+        576                     C
+        577                     C     ARGUMENT LISTINGS
+        578                     C       (1) INPUT
+        579                     C INT *4   IPART       ; SUB-DOMAIN NUMBER THAT THE CALLING TASK IS
+        580                     C                       TAKING CARE OF
+        581                     C           NOTES ; ARGUMENT 'IPART' IS NOT CURRENTLY USED. IT IS
+        582                     C                  RETAINED FOR A POSSIBLE FUTURE USE.
+        583                     C INT *4   IDIM             ; SPACE DIMENSION ( 1, 2, OR 3 )
+        584                     C INT *4   LDOM      (IDOM) ; NEIGHBORING SUB-DOMAIN NUMBER
+        585                     C INT *4   NBPDOM    (IDOM) ; NUMBER OF INTER-CONNECT BOUNDARY NODES
+        586                     C                            SHARING WITH THE IDOM'TH NEIGHBORING
+        587                     C                            SUB-DOMAIN, LDOM(IDOM)
+        588                     C INT *4   NDOM             ; NUMBER OF THE NEIGHBORING SUB-DOMAINS
+        589                     C INT *4   IPSLF (IBP,IDOM) ; INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+        590                     C                            CALLING TASK'S SUB-DOMAIN, FOR THE IDOM'TH
+        591                     C                            NEIGHBORING SUB-DOMAIN, LDOM(IDOM)
+        592                     C INT *4   IPSND (IBP,IDOM) ; INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+        593                     C                            SUB-DOMAIN THAT IS RECEIVING THE CALLING
+        594                     C                            TASK'S RESIDUALS.
+        595                     C INT *4   MBPDOM           ; THE DIMENSION SIZE OF THE FIRST ELEMENTS
+        596                     C                            OF THE PASSED ARRAYS 'IPSLF' AND 'IPSND'
+        597                     C                            (I.E. THE MAXIMUM NUMBER OF THE
+        598                     C                             INTER-CONNECT BOUNDARY NODES FOR A
+        599                     C                             NEIGHBORING SUB-DOMAIN)
+        600                     C INT *4   NP               ; NUMBER OF THE TOTAL NODES IN THE CALLING
+        601                     C                            TASK'S SUB-DOMAIN
+        602                     C INT *4   IUT0             ; FILE NUMBER TO WRITE ERROR MESSAGE
+        603                     C INT *4   MAXBUF           ; LENGTH OF THE PASSED COMMUNICATION BUFFERS
+        604                     C                            'BUFSND' AND 'BUFRCV' IN WORDS. 'MAXBUF'
+        605                     C                             MUST BE NO SMALLER THAN 4 TIMES THE TOTAL
+        606                     C                             NUMBER OF INTER-CONNECT BOUNDARY NODES IN
+        607                     C                             THE CALLING TASK
+        608                     C
+        609                     C       (2) OUTPUT
+        610                     C INT *4   IERR             ; RETURN CODE WHOSE VALUE WILL BE EITHER
+        611                     C                   0 --- INDICATING SUCCESSFUL TERMINATION
+        612                     C                OR 1 --- INDICATING OCCURRENCE OF SOME ERROR CONDITIONS
+        613                     C
+        614                     C       (3) INPUT-OUTPUT
+        615                     C REAL*4   FX(IP)           ; X-DIRECTION RESIDUAL VECTOR
+        616                     C REAL*4   FY(IP)           ; Y-DIRECTION RESIDUAL VECTOR
+        617                     C REAL*4   FZ(IP)           ; Z-DIRECTION RESIDUAL VECTOR
+        618                     C
+        619                     C       (4) WORK
+        620                     C REAL*4   BUFSND(IBUF)     ; HOLDS THE VALUES OF THE INTER-CONNECT
+        621                     C                            BOUNDARY NODE NUMBER IN THE NEIGHBORING
+        622                     C                            SUB-DOMAINS AND THE RESIDUALS OF THE
+        623                     C                            CALLING TASK'S SUB-DOMAIN WHEN SENDING
+        624                     C                            THE RESIDUALS
+        625                     C
+        626                     C REAL*4   BUFRCV(IBUF)     ; HOLDS THE VALUES OF THE INTER-CONNECT
+        627                     C                            BOUNDARY NODE NUMBER IN THE CALLING TASK'S
+        628                     C                            SUB-DOMAIN AND THE RESIDUALS OF THE
+        629                     C                            NEIGHBORING SUB-DOMAINS AT THE RECEIPT OF
+        630                     C                            THE RESIDUALS FROM THE NEIGHBORING
+        631                     C                            SUB-DOMAINS
+        632                     C
+        633                           IERR=0
+        634                     C
+        635                     C
+        636                     C
+        637                     C
+        638                     C CHECK THE NUMBER OF NEIBERING DOMAINS
+        639                     C
+        640                     C
+        641                     C
+        642                           IF(NDOM.EQ.0) RETURN
+        643                     C
+        644     1                     IF(NDOM.NE.1) THEN
+        645     1                         IERR=1
+        646     1                         WRITE(IUT0,*) ERMSGB
+        647     1                         WRITE(IUT0,*) EREXP1
+        648     1                         RETURN
+        649     1                     ENDIF
+        650                     C
+        651                     C
+        652                     C
+        653                     C
+        654                     C SET UP THE SEND BUFFER
+        655                     C
+        656                     C
+        657                     C
+        658                           IDOM   = 1
+        659                           NSTART = 0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 341
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.00, ITR: 192, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IPSLF, IPSND, BUFSND
+                              <<< Loop-information  End >>>
+        660     1  pp   2v            DO 100 IBP = 1 , NBPDOM(IDOM)
+        661     1   p   2v                IP  = IPSLF(IBP,IDOM)
+        662     1   p   2v                IPS = IPSND(IBP,IDOM)
+        663     1   p   2v                BUFSND(NSTART+1) = IPS
+        664     1   p   2v                BUFSND(NSTART+2) = FX(IP)
+        665     1   p   2v                BUFSND(NSTART+3) = FY(IP)
+        666     1   p   2v                BUFSND(NSTART+4) = FZ(IP)
+        667     1   p   2v                NSTART = NSTART+4
+        668     1   p   2v        100 CONTINUE
+        669                     C
+        670                     C
+        671                     C
+        672                     C POST ALL THE EXPECTED RECEIVES
+        673                     C
+        674                     C
+        675                     C
+        676                           IDOM   = 1
+        677                           NSTART = 0
+        678     1                     DO 200 IBP = 1 , NBPDOM(IDOM)
+        679     1               C
+        680     2                         IF(NSTART+3.GT.MAXBUF) THEN
+        681     2                             WRITE(IUT0,*) ERMSGB
+        682     2                             WRITE(IUT0,*) EREXP2
+        683     2                             IERR = 1
+        684     2                             RETURN
+        685     2                         ENDIF
+        686     1               C
+        687     1                         BUFRCV(NSTART+1)=BUFSND(NSTART+1)
+        688     1                         BUFRCV(NSTART+2)=BUFSND(NSTART+2)
+        689     1                         BUFRCV(NSTART+3)=BUFSND(NSTART+3)
+        690     1                         BUFRCV(NSTART+4)=BUFSND(NSTART+4)
+        691     1               C
+        692     1                         NSTART = NSTART+4
+        693     1                 200 CONTINUE
+        694                     C
+        695                     C
+        696                     C
+        697                     C SUPERIMPOSE THE RECEIVED RESIDUALS
+        698                     C
+        699                     C
+        700                     C
+        701                           IDOM   = 1
+        702                           NSTART = 0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      BUFRCV
+                              <<< Loop-information  End >>>
+        703     1                     DO 300 IBP = 1 , NBPDOM(IDOM)
+        704     1                         IP = BUFRCV(NSTART+1)+0.1
+        705     1               C
+        706     2                         IF(IP.LT.1 .OR. IP.GT.NP) THEN
+        707     2                             WRITE(IUT0,*) ERMSGB
+        708     2                             WRITE(IUT0,*) EREXP3
+        709     2                             IERR = 1
+        710     2                             RETURN
+        711     2                         ENDIF
+        712     1               C
+        713     1                                       FX(IP) = MAX(FX(IP),BUFRCV(NSTART+2))
+        714     1                         IF(IDIM.GE.2) FY(IP) = MAX(FY(IP),BUFRCV(NSTART+3))
+        715     1                         IF(IDIM.GE.3) FZ(IP) = MAX(FZ(IP),BUFRCV(NSTART+4))
+        716     1                         NSTART = NSTART+4
+        717     1                 300 CONTINUE
+        718                     C
+        719                           RETURN
+        720                           END
+
+ Diagnostic messages: program name(DDCMAX)
+   jwd2008i-i  "dddmy.f", line 553: Dummy argument 'IPART' not used in this subprogram.
+   jwd2008i-i  "dddmy.f", line 556: Dummy argument 'LDOM' not used in this subprogram.
+   jwd5001p-i  "dddmy.f", line 660: DO loop with DO variable 'IBP' is parallelized.
+   jwd6001s-i  "dddmy.f", line 660: SIMD conversion is applied to DO loop with DO variable 'IBP'.
+   jwd8204o-i  "dddmy.f", line 660: This loop is software pipelined.
+   jwd8205o-i  "dddmy.f", line 660: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 192.
+   jwd5131p-i  "dddmy.f", line 678: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "dddmy.f", line 678: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "dddmy.f", line 678: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+   jwd5131p-i  "dddmy.f", line 703: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "dddmy.f", line 703: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "dddmy.f", line 703: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+
+ Procedure information
+   Lines      : 170
+   Statements : 58
+   Stack(byte): 1392
+   Prefetch num: 0
+
+ External subroutine subprogram "DDSET0"
+  (line-no.)(nest)(optimize)
+        721                     C
+        722                     C
+        723                           SUBROUTINE DDSET0(LPSET1,LPSET3,NPSET,MPT,MDOM,IUT0,
+        724                          *                  NSND,LSND,NPTSND,IPSET,IPSRC,
+        725                          *                  NRCV,LRCV,NPTRCV,IERR)
+        726                           IMPLICIT REAL*4(A-H,O-Z)
+        727                           DIMENSION LPSET1(NPSET),LPSET3(NPSET),
+        728                          1          LSND(MDOM),NPTSND(MDOM),IPSET(MPT,MDOM),IPSRC(MPT,MDOM),
+        729                          2          LRCV(MDOM),NPTRCV(MDOM)
+        730                     C
+        731                     C
+        732                           CHARACTER*60 ERMSGB
+        733                          & / ' ## SUBROUTINE DDSET0: FATAL      ERROR OCCURENCE; RETURNED' /
+        734                           CHARACTER*60 EREXP1
+        735                          & / ' DIMENSION SIZE OF PASSED LIST ARRAYS IS NOT SUFFICIENT    ' /
+        736                     C
+        737                     C
+        738                     C      SET UP OVERSET SUB-DOMAIN LISTS FOR DOMAIN-DECOMPOSITION
+        739                     C     PROGRAMMING MODEL
+        740                     C
+        741                     C
+        742                     C     ARGUMENT LISTINGS
+        743                     C       (1) INPUT
+        744                     C INT *4   LPSET1  (IB); OVERSET BOUNDARY NODES/ELEMENTS
+        745                     C INT *4   LPSET3  (IB); DOMAIN NUMBER TO SEND/RECEIVE OVERSET VALUES
+        746                     C                   0 --- CALCULATE AND SET OVERSET VALUE WITHIN THE
+        747                     C                         SELF-DOMAIN
+        748                     C          (POS. INT.)--- SEND    OVERSET VALUE TO   DOMAIN  LPSET3(IB)
+        749                     C                         AFTER CALCULATING IT WITHIN THE SELF-DOMAIN
+        750                     C          (NEG. INT.)--- RECEIVE OVERSET VALUE FROM DOMAIN -LPSET3(IB)
+        751                     C          NPSET       ; NUMBER OF OVERSET BOUNDARY NODES/ELEMENTS
+        752                     C
+        753                     C INT *4   MPT              ; THE DIMENSION SIZE OF THE FIRST ELEMENTS
+        754                     C                            OF THE PASSED ARRAYS 'IPSET'
+        755                     C                            (I.E. THE MAXIMUM NUMBER OF THE OVERSET
+        756                     C                             POINTS FOR A SINGLE SUB-DOMAIN)
+        757                     C INT *4   MDOM             ; MAX. NUMBER OF THE OVERSET SUB-DOMAINS
+        758                     C
+        759                     C INT *4   IUT0             ; FILE NUMBER TO WRITE ERROR MESSAGE
+        760                     C
+        761                     C       (2) OUTPUT
+        762                     C INT *4   NSND             ; NUMBER OF DOMAINS TO SEND OVERSET VALUE
+        763                     C INT *4   LSND      (IDOM) ; DOMAIN NUMBER     TO SEND OVERSET VALUE
+        764                     C INT *4   NPTSND    (IDOM) ; NUMBER OF OVERSET POINTS TO SEND TO
+        765                     C                            SUB-DOMAIN 'LSND(IDOM)'
+        766                     C INT *4   IPSET (IPT,IDOM) ; OVERSET NODE/ELEMENT NUMBER IN THE
+        767                     C                            SUB-DOMAIN RECEIVING THE OVERSET VALUES.
+        768                     C INT *4   IPSRC (IPT,IDOM) ; INDICATES POSITION IN THE OVERSET-VALUES
+        769                     C                            PASSING ARRAYS WHEN OVERSET CONDITIONS DATA
+        770                     C                            ARE COMPILED SEQUENTIALLY
+        771                     C
+        772                     C INT *4   NRCV             ; NUMBER OF DOMAINS TO RECEIVE OVERSET VALUE
+        773                     C INT *4   LRCV      (IDOM) ; DOMAIN NUMBER     TO RECEIVE OVERSET VALUE
+        774                     C INT *4   NPTRCV    (IDOM) ; NUMBER OF OVERSET POINTS TO RECEIVE FROM
+        775                     C                            SUB-DOMAIN 'LRCV(IDOM)'
+        776                     C
+        777                     C INT *4   IERR             ; RETURN CODE WHOSE VALUE WILL BE EITHER
+        778                     C                   0 --- INDICATING SUCCESSFUL TERMINATION
+        779                     C                OR 1 --- INDICATING OCCURENCE OF SOME ERROR CONDITIONS
+        780                     C
+        781                     C
+        782                           IERR = 0
+        783                     C
+        784                     C
+        785                     C
+        786                     C SET INITIAL VALUES
+        787                     C
+        788                     C
+        789                     C
+        790                           NSND = 0
+        791                           NRCV = 0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1455
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NPTRCV, NPTSND
+                              <<< Loop-information  End >>>
+        792     1  pp   2v            DO 100 IDOM = 1 , MDOM
+        793     1   p   2v                NPTSND(IDOM) = 0
+        794     1   p   2v                NPTRCV(IDOM) = 0
+        795     1   p   2v        100 CONTINUE
+        796                     C
+        797                     C
+        798                     C
+        799                     C SET DOMAIN LISTS FOR SEND
+        800                     C
+        801                     C
+        802                     C
+        803                           NDUM = 0
+        804     1                     DO 230 IBP = 1 , NPSET
+        805     1                         IF(LPSET3(IBP).LE.0) GO TO 230
+        806     1               C
+        807     1                         NDUM = NDUM+1
+        808     1               C
+        809     1                         IFNEW = LPSET3(IBP)
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LSND
+                              <<< Loop-information  End >>>
+        810     2                         DO 210 ICHK = 1 , NSND
+        811     3                             IF(LSND(ICHK).EQ.IFNEW) THEN
+        812     3                                 IDOM = ICHK
+        813     3                                 GO TO 220
+        814     3                             ENDIF
+        815     2                 210     CONTINUE
+        816     1                         NSND = NSND+1
+        817     1                         IDOM = NSND
+        818     1               C
+        819     2                         IF(NSND.GT.MDOM) THEN
+        820     2                             WRITE(IUT0,*) ERMSGB
+        821     2                             WRITE(IUT0,*) EREXP1
+        822     2                             IERR = 1
+        823     2                             RETURN
+        824     2                         ENDIF
+        825     1               C
+        826     1                         LSND(NSND) = IFNEW
+        827     1               C
+        828     1                 220     CONTINUE
+        829     1                         NPTSND(IDOM) = NPTSND(IDOM)+1
+        830     1               C
+        831     2                         IF(NPTSND(IDOM).GT.MPT) THEN
+        832     2                             WRITE(IUT0,*) ERMSGB
+        833     2                             WRITE(IUT0,*) EREXP1
+        834     2                             IERR = 1
+        835     2                             RETURN
+        836     2                         ENDIF
+        837     1               C
+        838     1                         IPSET(NPTSND(IDOM),IDOM) = LPSET1(IBP)
+        839     1                         IPSRC(NPTSND(IDOM),IDOM) = NDUM
+        840     1                 230 CONTINUE
+        841                     C
+        842                     C
+        843                     C
+        844                     C SET DOMAIN LISTS FOR RECEIVE
+        845                     C
+        846                     C
+        847                     C
+        848     1                     DO 330 IBP = 1 , NPSET
+        849     1                         IF(LPSET3(IBP).GE.0) GO TO 330
+        850     1                         IFNEW = -LPSET3(IBP)
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LRCV
+                              <<< Loop-information  End >>>
+        851     2                         DO 310 ICHK = 1 , NRCV
+        852     3                             IF(LRCV(ICHK).EQ.IFNEW) THEN
+        853     3                                 IDOM = ICHK
+        854     3                                 GO TO 320
+        855     3                             ENDIF
+        856     2                 310     CONTINUE
+        857     1                         NRCV = NRCV+1
+        858     1                         IDOM = NRCV
+        859     1               C
+        860     2                         IF(NRCV.GT.MDOM) THEN
+        861     2                             WRITE(IUT0,*) ERMSGB
+        862     2                             WRITE(IUT0,*) EREXP1
+        863     2                             IERR = 1
+        864     2                             RETURN
+        865     2                         ENDIF
+        866     1               C
+        867     1                         LRCV(NRCV) = IFNEW
+        868     1               C
+        869     1                 320     CONTINUE
+        870     1                         NPTRCV(IDOM) = NPTRCV(IDOM)+1
+        871     1                 330 CONTINUE
+        872                     C
+        873                     C
+        874                           RETURN
+        875                           END
+
+ Diagnostic messages: program name(DDSET0)
+   jwd5001p-i  "dddmy.f", line 792: DO loop with DO variable 'IDOM' is parallelized.
+   jwd6001s-i  "dddmy.f", line 792: SIMD conversion is applied to DO loop with DO variable 'IDOM'.
+   jwd8663o-i  "dddmy.f", line 792: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "dddmy.f", line 792: Loop unrolled 2 times.
+   jwd5131p-i  "dddmy.f", line 804: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "dddmy.f", line 810: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "dddmy.f", line 810: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "dddmy.f", line 810: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+   jwd5131p-i  "dddmy.f", line 848: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "dddmy.f", line 851: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "dddmy.f", line 851: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "dddmy.f", line 851: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+
+ Procedure information
+   Lines      : 155
+   Statements : 66
+   Stack(byte): 1360
+   Prefetch num: 0
+
+ External subroutine subprogram "DDSET3"
+  (line-no.)(nest)(optimize)
+        876                     C
+        877                     C
+        878                           SUBROUTINE DDSET3(NSND,LSND,NPTSND,IPSET,IPSRC,VALX,VALY,VALZ,NB,
+        879                          *                  NRCV,LRCV,NPTRCV,FX,FY,FZ,NP,
+        880                          *                  IDIM,MPT,IUT0,IERR,BUFSND,BUFRCV,MAXBUF)
+        881                           IMPLICIT REAL*4(A-H,O-Z)
+        882                           DIMENSION LSND(NSND),NPTSND(NSND),IPSET(MPT,NSND),IPSRC(MPT,NSND),
+        883                          1          LRCV(NRCV),NPTRCV(NRCV),
+        884                          2          VALX(NB),VALY(NB),VALZ(NB),FX(NP),FY(NP),FZ(NP),
+        885                          3          BUFSND(MAXBUF),BUFRCV(MAXBUF)
+        886                     C
+        887                           LSND   (1) = LSND   (1)
+        888                           LRCV   (1) = LRCV   (1)
+        889                           NPTSND (1) = NPTSND (1)
+        890                           NPTRCV (1) = NPTRCV (1)
+        891                           IPSET(1,1) = IPSET(1,1)
+        892                           IPSRC(1,1) = IPSRC(1,1)
+        893                           VALX   (1) = VALX   (1)
+        894                           VALY   (1) = VALY   (1)
+        895                           VALZ   (1) = VALZ   (1)
+        896                           FX     (1) = FX     (1)
+        897                           FY     (1) = FY     (1)
+        898                           FZ     (1) = FZ     (1)
+        899                           IDIM       = IDIM
+        900                           IUT0       = IUT0
+        901                           IERR       = IERR
+        902                           BUFSND(1)  = BUFSND (1)
+        903                           BUFRCV(1)  = BUFRCV (1)
+        904                     C
+        905                     C
+        906                           RETURN
+        907                           END
+
+ Procedure information
+   Lines      : 32
+   Statements : 22
+   Stack(byte): 352
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 13
+   Total lines      : 907
+   Total statements : 351
+   Total stack(byte): 9712
+   Total prefetch num: 0
+

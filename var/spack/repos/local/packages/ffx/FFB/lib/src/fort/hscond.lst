@@ -1,0 +1,179 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:54:05 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : hscond.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "HSCOND"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    HSCOND                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE HSCOND(IESMPL,LSMPL,XSMPL,YSMPL,ZSMPL,
+         14                          *                  GSMPL,ESMPL,TSMPL,NSMPL,COMHST,NHST,MRESV,IUTW)
+         15                           IMPLICIT REAL*4(A-H,O-Z)
+         16                           DIMENSION IESMPL(NSMPL),LSMPL(NSMPL),
+         17                          1           XSMPL(NSMPL),YSMPL(NSMPL),ZSMPL(NSMPL),
+         18                          2           GSMPL(NSMPL),ESMPL(NSMPL),TSMPL(NSMPL)
+         19                           CHARACTER*60 COMHST(NHST)
+         20                     C
+         21                           CHARACTER*60 WRMSGA
+         22                          & /' ## SUBROUTINE HSCOND: WARNING          ISSUING  ; CONTINUE' /
+         23                           CHARACTER*60 WREXP1
+         24                          & /' SPECIFIED POINT IS OUT OF THE COMPUTAION DOMAIN           ' /
+         25                     C
+         26                     C
+         27                     C
+         28                     C      CONDENSE HISTORY SAVING ARRAYS FOR SAMPLING POINTS OUT OF THE
+         29                     C     COMPUTAIONAL DOMAIN
+         30                     C                        ( 3-D CALCULATION )
+         31                     C
+         32                     C
+         33                     C     ARGUMENT LISTINGS
+         34                     C       (1) INPUT
+         35                     C          MRESV       ; DEFAULT NUMBER OF HISTORY SAVING    DATA
+         36                     C          IUTW        ; DEVICE NUMBER TO ISSUE A WARNING
+         37                     C           NOTES; SET 'IUTW' NEGATIVE TO DISABLE WARNING MESSAGES
+         38                     C
+         39                     C       (3) INPUT-OUTPUT
+         40                     C          IESMPL(ISMPL); ELEMENT NUMBER  OF  SAMPLING POINT
+         41                     C          LSMPL (ISMPL); TYPE OF DATA TO BE SAMPLED
+         42                     C          XSMPL(ISMPL); X     COORDINATE OF  SAMPLING POINT
+         43                     C          YSMPL(ISMPL); Y     COORDINATE OF  SAMPLING POINT
+         44                     C          ZSMPL(ISMPL); Z     COORDINATE OF  SAMPLING POINT
+         45                     C          GSMPL(ISMPL); GZAI  COORDINATE OF  SAMPLING POINT
+         46                     C          ESMPL(ISMPL); EATA  COORDINATE OF  SAMPLING POINT
+         47                     C          TSMPL(ISMPL); THETA COORDINATE OF  SAMPLING POINT
+         48                     C          NSMPL       ; NUMBER OF DATA SAMPLING POINTS
+         49                     C          COMHST(IHST); SPECIFIC SET COMMENT STRINGS TO BE WRITTEN
+         50                     C                        TO HISTORY FILE, WHICH IDENTIFIES EACH HISTORY
+         51                     C                        DATA
+         52                     C          NHST        ; TOTAL NUMBER OF TIME HISTORY DATA TO BE SAVED
+         53                     C           NOTES; SAMPLING FOR THOSE POINTS OUT OF THE COMPUTATIONAL
+         54                     C                 DOMAIN (IE. POINTS WITH IESMPL SET TO ZERO) WILL BE
+         55                     C                 DISABLED AND THE SAMPLING NUMBER WILL BE CONDENSED.
+         56                     C
+         57                     C
+         58                     
+         59                           IF(NSMPL.LE.0) RETURN
+         60                     C
+         61                           IFRONT = 1
+         62                        10 CONTINUE
+         63     1                         IF(IESMPL(IFRONT).EQ.0) THEN
+         64     2                             IF(IUTW.GE.0) THEN
+         65     2                                 WRITE(IUTW,*) WRMSGA
+         66     2                                 WRITE(IUTW,*) WREXP1
+         67     2                                 WRITE(IUTW,*)
+         68     2                    &        '    (X,Y,Z)=',XSMPL(IFRONT),YSMPL(IFRONT),ZSMPL(IFRONT)
+         69     2                             ENDIF
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IESMPL, XSMPL, GSMPL, ESMPL, TSMPL
+                              <<<      LSMPL, YSMPL, ZSMPL
+                              <<< Loop-information  End >>>
+         70     2       2                     DO 20 I = IFRONT , NSMPL-1
+         71     2       2                         IESMPL (I)       = IESMPL (I+1)
+         72     2       2                          LSMPL (I)       =  LSMPL (I+1)
+         73     2       2                          XSMPL (I)       =  XSMPL (I+1)
+         74     2       2                          YSMPL (I)       =  YSMPL (I+1)
+         75     2       2                          ZSMPL (I)       =  ZSMPL (I+1)
+         76     2       2                          GSMPL (I)       =  GSMPL (I+1)
+         77     2       2                          ESMPL (I)       =  ESMPL (I+1)
+         78     2       2                          TSMPL (I)       =  TSMPL (I+1)
+         79     2       2                          COMHST(I+MRESV) =  COMHST(I+1+MRESV)
+         80     2       2          20         CONTINUE
+         81     1                             NSMPL = NSMPL-1
+         82     1                             NHST  = NHST -1
+         83     1                         ELSE
+         84     1                             IFRONT = IFRONT+1
+         85     1                         ENDIF
+         86                           IF(IFRONT.LE.NSMPL) GO TO 10
+         87                     C
+         88                     C
+         89                           RETURN
+         90                           END
+
+ Diagnostic messages: program name(HSCOND)
+   jwd5132p-i  "hscond.f", line 62: Loop is not parallelized: cannot parallelize DO WHILE constructs, DO UNTIL constructs, or loops by IF/GO TO statements.
+   jwd5123p-i  "hscond.f", line 70: DO loop is not parallelized: a character or structure type data was found in the loop.
+   jwd6165s-i  "hscond.f", line 70: SIMD conversion cannot be applied to DO loop: one or more data with character type or derived type were found in the DO loop.
+   jwd8663o-i  "hscond.f", line 70: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "hscond.f", line 70: Loop unrolled 2 times.
+
+ Procedure information
+   Lines      : 90
+   Statements : 34
+   Stack(byte): 864
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 90
+   Total statements : 34
+   Total stack(byte): 864
+   Total prefetch num: 0
+

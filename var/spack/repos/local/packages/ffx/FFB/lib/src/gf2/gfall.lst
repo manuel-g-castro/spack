@@ -1,0 +1,1138 @@
+Fujitsu C/C++ Version 4.4.0a   Thu Feb 18 12:40:03 2021
+Compilation information
+  Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/gf2
+  Source file       : gfall.c
+(line-no.)(optimize)
+        1             /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+        2             /*   GENERAL FILE UTILITY FOR ACCESSING ANY TYPE OF DATA FILE               */
+        3             /*                                                                          */
+        4             /*      Written by  Y. Yamade                                               */
+        5             /*      Since       9 Oct. 2002                                             */
+        6             /*      Reference   gfmesh.f gfflow.f gfbou2.f gfbou3.f gfattr.f            */
+        7             /*                  gfover.f gfover.f gfsurf.f gfhist.f gfturb.f of LES3D   */
+        8             /*                                                                          */
+        9             /* ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ */
+       10             /*                                                                          */
+       11             /*    ARGUMENT LISTINGS                                                     */
+       12             /*      (1) INPUT                                                           */
+       13             /*         IUT0        ; FILE NUMBER TO WRITE ERROR MESSAGE                 */
+       14             /*         IUT6        ; FILE NUMBER TO WRITE CALCULATION SEQUENCE          */
+       15             /*         IUNIT       ; FILE NUMBER TO ACCESS THE SPECIFIED FILE           */
+       16             /*         FILE        ; FILE NAME   TO BE OPENED                           */
+       17             /*         MCOMFL      ; MAX. NUMBER OF FILE COMMENT STRINGS                */
+       18             /*         MCOMST      ; MAX. NUMBER OF SET  COMMENT STRINGS                */
+       19             /*         IACT        ; SPECIFIES TYPE OF ACTION TO BE TAKEN               */
+       20             /*          (READ)  1 --- OPEN THE SPECIFIED FILE, READ FILE COMMENT        */
+       21             /*                       STRINGS, SEARCH AND READ A FLOW DATA SET, AND      */
+       22             /*                       CLOSE THE FILE                                     */
+       23             /*          (WRITE) 2 --- OPEN THE SPECIFIED FILE IN THE SPECIFIED MODE,    */
+       24             /*                       WRITE FILE COMMENT STRINGS, WRITE A FLOW DATA      */
+       25             /*                       SET, AND CLOSE THE FILE                            */
+       26             /*          (READ)  3 --- OPEN THE SPECIFIED FILE AND READ FILE COMMENT     */
+       27             /*                       STRINGS                                            */
+       28             /*          (WRITE) 4 --- OPEN THE SPECIFIED FILE IN THE SPECIFIED MODE,    */
+       29             /*                       AND WRITE FILE COMMENT STRINGS                     */
+       30             /*          (READ)  5 --- SEARCH AND READ THE NEXT FLOW DATA SET            */
+       31             /*          (WRITE) 6 --- APPEND-WRITE A FLOW DATA SET                      */
+       32             /*          (READ)  7 --- CLOSE THE FILE                                    */
+       33             /*          (WRITE) 8 --- CLOSE THE FILE                                    */
+       34             /*          NOTES ; GFALL  IS A SUBROUTINE WHICH READS OR WRITES A FLOW     */
+       35             /*                 DATA SET BY SEQUENTIALLY ACCESSING A SPECIFIED           */
+       36             /*                 GENERAL FILE. A FLOW DATA SET IS A SET OF DATA THAT      */
+       37             /*                 GFALL  DEFINES INTERNALLY.                               */
+       38             /*                  FOR IACT=1 AND 5, GFALL  WILL SEARCH AND READ A FLOW    */
+       39             /*                 DATA SET AND RETURN THE SEQUENCE TO THE CALLING          */
+       40             /*                 PROGRAM UNIT AS SOON AS ALL THE FLOW DATA HAVE BEEN      */
+       41             /*                 READ-IN ( AND THE FILE HAS BEEN CLOSED FOR IACT=1 ).     */
+       42             /*                                                                          */
+       43             /*                  A SET OF FLOW DATA MUST BE FOUND WITHIN A SINGLE        */
+       44             /*                 SET OF A GENERAL FILE. WHEN GFALL  ENCOUNTERS A          */
+       45             /*                 DEFINITION OF A NEW SET, IT WILL DISCARD ALL THE DATA    */
+       46             /*                 READ-IN SO FAR AND WILL RESUME THE SEARCH FROM THAT      */
+       47             /*                 POINT.                                                   */
+       48             /*                  WHEN GFALL  ENCOUNTERS A DATA THAT HAS ALREADY BEEN     */
+       49             /*                 READ-IN ( MULTIPLE DEFINITION ), IT WILL DISCARD THE     */
+       50             /*                 OLD DATA AND READ-IN THE NEWLY ENCOUNTERED DATA.         */
+       51             /*                  FOR ACTION TYPE READ, GFALL  INTERNALLY KEEPS TWO       */
+       52             /*                 VARIABLES ( 'IFPOS' AND 'IMODE' ) WHICH INDICATE THE     */
+       53             /*                 CURRENT FILE POSITION AND THE READING MODE. THUS,        */
+       54             /*                 NO MORE THAT ONE FILE CAN BE ACCESSED CONCURRENTLY       */
+       55             /*                 BY GFALL .                                               */
+       56             /*         IWRITE      ; SPECIFIES, FOR ACTION TYPE WRITE, WRITING MODE     */
+       57             /*                  1 --- ASCII                                             */
+       58             /*                  2 --- UNFORMAT                                          */
+       59             /*          NOTES ; FOR ACTION TYPE READ, ARGUMENT 'IWRITE' DOES NOT        */
+       60             /*                 HAVE TO BE SPECIFIED.                                    */
+       61             /*         INAME       ; SPECIFIES, FOR ACTION TYPE WRITE, WHETHER TO       */
+       62             /*                      USE THE INTERNALLY DEFINED DEFAULT NAMES OR         */
+       63             /*                      THE PASSED NAMES.                                   */
+       64             /*                  1 --- USE DEFAULT NAMES                                 */
+       65             /*                  2 --- USE PASSED  NAMES                                 */
+       66             /*          NOTES ; FOR ACTION TYPE READ, ARGUMENT 'INAME'  DOES NOT        */
+       67             /*                 HAVE TO BE SPECIFIED.                                    */
+       68             /*         ICAST   : SPECIFY THE ACTION WHEN THE DATA TYPE IS DIFFERENT     */
+       69             /*                   BETWEEN FILE-DATA AND ARGUMENT                         */
+       70             /*                  0 --- SET THE ERROR FLAG 'IERR'                         */
+       71             /*                  1 --- TEH READ-IN DATA WILL BE CASTED TO THE TYPE OF    */
+       72             /*                        THE ARGUMENT                                      */
+       73             /*         IDATA0  : SPECIFY THE ACTION WHEN THE DATA SIZE IS ZERO          */
+       74             /*                  0 --- NOT OUTPUT THE DATA WHOSE SIZE IS ZERO            */
+       75             /*                  1 ---     OUTPUT THE DATA WHOSE SIZE IS ZERO            */
+       76             /*          NOTES ; FOR ACTION TYPE READ, ARGUMENT 'IDATA0' DOES NOT        */
+       77             /*                 HAVE TO BE SPECIFIED.                                    */
+       78             /*         IALL    : SPECIFY THE ACTION WHEN ALL THE DATA CANNOT BE FOUND   */
+       79             /*                  0 --- SET IACT=7 AND RETURN                             */
+       80             /*                  1 --- SET THE ERROR FLAG 'IERR'                         */
+       81             /*          NOTES ; IF IALL IS NOT SET TO 1 ,GFALL  WILL NOT SET THE ERROR  */
+       82             /*                 FLAG 'IERR' EVEN IF IT COULD NOT READ ALL THE DATA       */
+       83             /*                 TO THE END OF THE FILE ( INCOMPLETE READ ), BECAUSE      */
+       84             /*                 THE CALLING PROGRAM UNIT IS NOT ALWAYS SURE THAT THERE   */
+       85             /*                 IS A COMPLETE SET OF DATA TO THE END OF THE FILE.        */
+       86             /*                 IN SUCH A CASE, GFALL  WILL SET THE VALUE OF 'IACT'      */
+       87             /*                 ARGUMENT TO 7 IN ORDER TO INFORM THE CALLING PROGRAM     */
+       88             /*                 UNIT OF THE INCOMPLETE READ. THE CALLING PROGRAM UNIT    */
+       89             /*                 CAN IDENTIFY THOSE DATA NOT READ-IN BY CHECKING 'NAME'   */
+       90             /*                 ARGUMENTS RETURNED UNSET.                                */
+       91             /*                 BUT THERE IS THE CASE THAT ALL THE DATA SHOULD BE READ   */  
+       92             /*                 , FOR EXAMPLE IT IS IMPOSSIBLE TO CONTINUE THE RUN       */
+       93             /*                 WITHOUT MESH DATA. WHEN READING SUCH CERTAINLY  NEEDED   */
+       94             /*                 DATA, IACT SHOULE BE SET TO 1                            */     
+       95             /*          NOTES ; FOR ACTION TYPE WRITE, ARGUMENT 'IALL' DOES NOT         */
+       96             /*                 HAVE TO BE SPECIFIED.                                    */
+       97             /*         ISKIP   : DATA WILL NOT BE READ IF ISKIP IS SET TO 1. THIS       */
+       98             /*                   FUNCTION IS USED TO GET ONLY NUMBER OF DATA            */
+       99             /*         ICHECK ; THIS ARGUMENT MUST BE SET AT THE END OF GFALL ARGUMENT  */
+      100             /*                 LIST , AND HAVE THE VALUE '999999'. IT IS THE FLAG FOR   */
+      101             /*                 CHECKING THAT NON-NAMED ARGUMENT LIST IS CORRELCTLLY     */
+      102             /*                 SET.                                                     */
+      103             /*         fmt     ; DATA KEYWORDS LIST.                                    */
+      104             /*                  NOTES ;                                                 */
+      105             /*                    KEWWOR IS DEFINED EXTERNALLY IN in gfc.h. IF          */
+      106             /*                   UNDEFINED KEYWORD IS SET TO fmt, THE EXCUTION WILL     */
+      107             /*                   OUTPUT ERROR MESSAGE AND TERMINATE. NUMBER OF          */
+      108             /*                   KEYWORDS MUET BE LESS THAN 100. THIS LIMITATION IS     */
+      109             /*                   DEFINED AS 'NDATA' IN THIS FILE.                       */  
+      110             /*                                                                          */
+      111             /*      (2) OUTPUT                                                          */
+      112             /*         IERR        ; RETURN CODE WHOSE VALUE WILL BE EITHER             */
+      113             /*                  0 --- INDICATING SUCCESSFUL TERMINATION                 */
+      114             /*               OR 1 --- INDICATING OCCURENCE OF SOME ERROR CONDITIONS     */
+      115             /*                                                                          */
+      116             /*      (3) INPUT-OUTPUT                                                    */
+      117             /*          NCOMFL      ; NUMBER OF FILE COMMENT STRINGS                    */
+      118             /*          COMFLE(ICOM); FILE COMMENT STRINGS                              */ 
+      119             /*          NCOMST      ; NUMBER OF SET  COMMENT STRINGS                    */
+      120             /*          COMSET(ICOM); SET  COMMENT STRINGS                              */
+      121             /*                                                                          */ 
+      122             /*         ...         ; NON-NAMED ARGUMENT LIST.                           */
+      123             /*                  NOTES ;                                                 */
+      124             /*                      THIS ARGUMEN HAVE TO BE SET DEPENDING ON THE DATA   */ 
+      125             /*                      KEYWORDS LIST (fmt). KEYWORDS IS CLASSIFIED INTO    */
+      126             /*                      FOLLOWING DATA TYPES:                               */
+      127             /*              TYPEI0: INTEGER  0-D VARIABLE  :IVAR(   1,  1)              */
+      128             /*              TYPEI1: INTEGER  1-D VARIABLE  :IVAR(   1,NUM)              */
+      129             /*              TYPEI2: INTEGER  1-D VARIABLE  :IVAR(   2,NUM)              */
+      130             /*              TYPEI3: INTEGER  1-D VARIABLE  :IVAR(   3,NUM)              */
+      131             /*              TYPEIN: INTEGER  2-D VARIABLE  :IVAR(NUM2,NUM)              */
+      132             /*              TYPEF0: FLOATING 0-D VARIABLE  :FVAR(   1,  1)              */
+      133             /*              TYPEF1: FLOATING 1-D VARIABLE  :FVAR(   1,NUM)              */
+      134             /*              TYPEF2: FLOATING 1-D VARIABLE  :FVAR(   2,NUM)              */
+      135             /*              TYPEF3: FLOATING 1-D VARIABLE  :FVAR(   3,NUM)              */
+      136             /*              TYPEFN: FLOATING 2-D VARIABLE  :FVAR(NUM2,NUM)              */
+      137             /*                                                                          */
+      138             /*                      FOLLOWING ARGUMENT IS NEED FOR EACH DATA TYPE       */
+      139             /*              TYPEI0: NAME,                   IVAR-0D                     */
+      140             /*              TYPEI1: NAME,MAX,    ,NUM ,     IVAR-1D(1    )              */
+      141             /*              TYPEI2: NAME,MAX,    ,NUM ,     IVAR-1D(1,2  )              */
+      142             /*              TYPEI3: NAME,MAX,    ,NUM ,     IVAR-1D(1,2,3)              */
+      143             /*              TYPEIN: NAME,MAX,MAX2,NUM2,NUM2,IVAR-2D                     */
+      144             /*              TYPEF0: NAME,                   FVAR-0D                     */
+      145             /*              TYPEF1: NAME,MAX,    ,NUM ,     FVAR-1D(1    )              */
+      146             /*              TYPEF2: NAME,MAX,    ,NUM ,     FVAR-1D(1,2  )              */
+      147             /*              TYPEF3: NAME,MAX,    ,NUM ,     FVAR-1D(1,2,3)              */
+      148             /*              TYPEFN: NAME,MAX,MAX2,NUM2,NUM2,FVAR-2D                     */
+      149             /*                                                                          */
+      150             /*               WHERE;                                                     */
+      151             /*               NAME IS NMAE OF DATA (CHARACTER*8)                         */  
+      152             /*               MAX,MAX2 ARE ARRAY SIZES OF ARGUMENTS                      */
+      153             /*               NUM,NUM2 ARE DATA SIZES OF ARGUMENTS                       */
+      154             /*               IVAR-0D,1D,2D ARE INTEGER  DATA ARGUMEN                    */
+      155             /*               FVAR-0D,1D,2D ARE FLOATING DATA ARGUMEN                    */
+      156             /*                                                                          */
+      157             /*                DATA TYPE IS DEFINED EXTERNALLY IN in gfc.h.              */
+      158             /*               THESE IMFOMATION OF NON-NAMED ARGUMENTS LIST WILL BE       */
+      159             /*               SET TO THE DATA TABLE 'table[i]' , WHISH IS THE STRUCTURE  */
+      160             /*               ARGUMENT DEFINED INTERNALLY IN GFALL .                     */    
+      161             /****************************************************************************/
+      162             
+      163             #include <stdio.h>
+      164             #include <string.h>
+      165             #include <stdarg.h>
+      166             #include "gfc.h"
+      167             
+      168             #define NDATA  100
+      169             
+      170             /* #define DEBUG0 */
+      171             /* #define DEBUG1 */
+      172             /* #define DEBUG000  */
+      173             /* #define DEBUG001  */ 
+      174             
+      175             #if F2C001
+      176             void GFALL( 
+      177             #else
+      178             void gfall_( 
+      179             #endif
+      180                          int *, int *, int *, char *,
+      181                          int *, int *, char *,
+      182                          int *, int *, char *,
+      183                          int *, int *, int *, int *,int *, int *,int *,int *,int *,
+      184                          char *, ... );
+      185             
+      186             
+      187             #if F2C001
+      188             void GFALL( 
+      189             #else
+      190             void gfall_( 
+      191             #endif
+      192                          int *IUT0, int *IUT6, int *IUNIT, char *FILEd
+      193                         ,int *MCOMFL, int *NCOMFL, char *COMFLE 
+      194                         ,int *MCOMST, int *NCOMST, char *COMSET 
+      195                         ,int *IACT, int *IWRITE, int *INAME,int *IWREV
+      196                         ,int *ICAST,int *IDATA0, int *IALL ,int *ISKIP ,int *IERR
+      197                         ,char *fmt , ...)
+      198             {
+      199               va_list ap         ;       /* ARGUMENT LIST                                 */
+      200               TABLE table[NDATA] ;       /* DATE-TABLE                                    */
+      201               int   key_list_ptr[NDATA]; /*                                               */
+      202               int   *ICHECK      ;       /* (=999999) FLAG TO CHECK ARGUMENT SETTING      */
+      203             
+      204               char  cdefault=' ' ;       /* LOCAL CHAR  ARGUMENT TO INITIALIZE DATA-TABLE */  
+      205               int   idefault=1   ;       /* LOCAL INT   ARGUMENT TO INITIALIZE DATA-TABLE */   
+      206               int   idefault2=1  ;       /* LOCAL INT   ARGUMENT TO INITIALIZE DATA-TABLE */   
+      207               int   idefault3=1  ;       /* LOCAL INT   ARGUMENT TO INITIALIZE DATA-TABLE */   
+      208               float fdefault=0.0 ;       /* LOCAL FLOAT ARGUMENT TO INITIALIZE DATA-TABLE */  
+      209             
+      210             
+      211               const char *ERMSGA = " ## SUBROUTINE GFALL : RECOVERBLE ERROR OCCURENCE; CONTINUE   ";
+      212               const char *ERMSGB = " ## SUBROUTINE GFALL : FATAL      ERROR OCCURENCE; RETURNED   ";
+      213               const char *ERRCV1 = " ## THE PARAMETER 'INAME' WILL BE SET TO THE DEFAULT VALUE    ";
+      214               const char *EREXP1 = " ## KEYWORD IS NOT DEFINED IN gfc.h                           ";
+      215               const char *EREXP2 = " ## ERROR OCCUERED WHEN MAKING DATA TABLE                     ";
+      216               const char *EREXP3 = " ## AN ILLEGAL VALUE WAS SPECIFIED FOR A CONTROLLING PARAMETER";
+      217             
+      218               const char *WRMSG0 = " ## SUBROUTINE GFALL : WARNING                                ";
+      219               const char *WRMSG1 = " ## GFALL: WARNING INCOMPLETE SET, DISCARD DATA               ";
+      220               const char *WRMSG2 = " ## GFALL: NOTE! DATA WERE NOT READ BECAUSE ISKIP WAS SET TO 1";
+      221               const char *WRMSG3 = " ## GFALL: RETURNED SINCE IALL=-2 AND NEW_SET IS FOUND        ";
+      222               const char *WRMSG4 = " ## GFALL: RETURNED SINCE IALL=-1 AND THE 2ND NEW_SET FOUND   ";
+      223               const char *WRMSG5 = " ## GFALL: NOTE! -2 WILL BE SET TO THE IALL                   ";
+      224               const char *WRMSG6 = " ## GFALL: NOTE!  2 WILL BE SET TO THE ERROR CODE, IERR       ";
+      225             
+      226               const char *OPNMSG[8] = {  " GFALL: LOOKING FOR A DATA SET                           "
+      227                                         ," GFALL: WRITING     A DATA SET                           "        
+      228                                         ," GFALL: OPENING     A DATA FILE                          "       
+      229                                         ," GFALL: OPENING     A DATA FILE                          "       
+      230                                         ," GFALL: LOOKING FOR THE NEXT DATA SET                    " 
+      231                                         ," GFALL: APPEND-WRITING     A DATA SET                    " 
+      232                                         ," GFALL: CLOSING     THE DATA FILE                        "     
+      233                                         ," GFALL: CLOSING     THE DATA FILE                        "     
+      234                                      } ;
+      235             
+      236              const char *ENDMSG[2] = {  "GFALL: SUCCESSFULLY RETURNING                             "
+      237                                        ,"GFALL: INCOMPLETE READ (END OF FILE)                      " 
+      238                                     };
+      239             
+      240              const char *ACTION[3] = {  "** PERSING ***"
+      241                                        ,"** READING OK ***"
+      242                                        ,"** WRITING OK ***" };
+      243             
+      244              const char *TYPEARG[3] = {  "INTEGER"
+      245                                         ,"SINGLE "
+      246                                         ,"DOUBLE " };
+      247             
+      248               const int  INAMED = 1;
+      249             
+      250               /*LOCAL ENTRY FOR BUFFER */ 
+      251               char  *p                     ;
+      252               char  headx[9]= " "          ;
+      253               char  FILE[61]   = " "       ;
+      254               char  CDUMMY[61]             ;
+      255               char  NAMERD[31]             ;
+      256               char  KEYWRD[9]= " "         ; 
+      257               int   i,j,nbuf,idata         ;   
+      258               int   ndata=0                ;
+      259               int   keynum                 ; 
+      260               int   TYPE0                  ;
+      261               int   imatch=0               ;
+      262               int   *NUM,*NUM2,NUMd,NUM2d  ;
+      263               int   IERRDM                 ;
+      264               int   *IVAR,ibuf             ;  
+      265               float *FVAR,fbuf             ;
+      266             
+      267               /*LOCAL ENTRY FOR READ & WRITE MODE */ 
+      268               int        ITYPE[2] ;       /*SPECIFIES THE TYPE OF ACTION TO BE TAKEN         */
+      269               int        IDEST    ;       /*SPECIFIES DESTINATION VARIABLE/ARRAYS TO STORE   */
+      270               int        ISRCE    ;       /*SPECIFIES SOURCE VARIABLE/ARRAYS TO BE WRITTEN   */
+      271               static int IMODE[FILEMAX];  /*SPECIFIES THE TYPE OF INPUT  MODE                */
+      272               static int IFPOS[FILEMAX];  /*SPECIFIES CURRENT FILE POSITION                  */
+      273               int JGOT[NDATA],JSTART,JALL;/*LOCAL ENTRY FOR CHECKING READ-IN DATA            */
+      274             
+      275             /*********************************************************************************/
+      276             /* NOTE                                                                          */
+      277             /*  ITYPE[0] HAS A SAME SENSE AS ONE OF PREVIOUS VESION, AND ITYPE[1] IS NEEDED  */  
+      278             /* TO CHECK THE TYPE OF PASSED ARUGUMENT, WHICH IS INTEGER ,OR SINGLE FLOATING   */
+      279             /* POINT ,OR DOUBLE FLOATING POINT.                                              */
+      280             /*********************************************************************************/
+      281             
+      282               JSTART=0; 
+      283               JALL  =0; 
+                       <<< Loop-information Start >>>
+                       <<<  [PARALLELIZATION]
+                       <<<    Standard iteration count: 2000
+                       <<<  [OPTIMIZATION]
+                       <<<    SIMD(VL: 16)
+                       <<<    FULL UNROLLING
+                       <<< Loop-information  End >>>
+      284   s     fv    for(i=0;i<NDATA;i++) JGOT[i]=0;
+      285             
+      286             #ifdef DEBUG0
+      287             for(i=1;i<=MAXKEY;i++){
+      288             printf("%2d %s  ",i,KEYWD0[i]);
+      289             switch( TYPE[i]){
+      290             case  TYPEI0 : printf("TYPEI0"); break;
+      291             case  TYPEI1 : printf("TYPEI1"); break;
+      292             case  TYPEI2 : printf("TYPEI2"); break;
+      293             case  TYPEI3 : printf("TYPEI3"); break;
+      294             case  TYPEIN : printf("TYPEIN"); break;
+      295             case  TYPEF0 : printf("TYPEF0"); break;
+      296             case  TYPEF1 : printf("TYPEF1"); break;
+      297             case  TYPEF2 : printf("TYPEF2"); break;
+      298             case  TYPEF3 : printf("TYPEF3"); break;
+      299             case  TYPEFN : printf("TYPEFN"); break;
+      300             default      : printf("NOT MATCH"); break;
+      301             }
+      302             printf("\n");
+      303             }
+      304             #endif
+      305             
+      306               /*GFALL: **********************************************************************/
+      307               /*GFALL: [0    ] START OF EXCUTION OF GFALL */
+      308             
+      309               /*GFALL: **********************************************************************/
+      310               /*GFALL: [1    ] PERSE FORMAT SENTENCE AND MAKE DATA-TABLE*/
+      311               /*GFALL: [1-1  ] COUNT NUMBER OF KEYWORD */
+      312               p=fmt;
+      313               i=0;
+      314             
+                       <<< Loop-information Start >>>
+                       <<<  [OPTIMIZATION]
+                       <<<    PREFETCH(HARD) Expected by compiler :
+                       <<<      (unknown)
+                       <<<    SPILLS :
+                       <<<      GENERAL   : SPILL 1  FILL 3
+                       <<<      SIMD&FP   : SPILL 0  FILL 0
+                       <<<      SCALABLE  : SPILL 0  FILL 0
+                       <<<      PREDICATE : SPILL 0  FILL 0
+                       <<< Loop-information  End >>>
+      315          s    while(*p!='\0'&&*p!='!'){
+      316          s        if(*p == '*'){
+      317          s            key_list_ptr[ndata]=i;
+      318          s            ndata++;
+      319          s        } 
+      320          s        p++;
+      321          s        i++;
+      322          s    }/*while(*p) */
+      323               sprintf(MESSAGE,"** GFALL   *** :ndata :%d ",ndata); 
+      324               print_std(IUT6,MESSAGE);
+      325             
+      326               /*GFALL: [1-2  ] INITIALIZE TABLE */
+                       <<< Loop-information Start >>>
+                       <<<  [OPTIMIZATION]
+                       <<<    PREFETCH(HARD) Expected by compiler :
+                       <<<      (unknown)
+                       <<< Loop-information  End >>>
+      327               for(i=0;i<ndata;i++){ 
+      328                   table[i].name   = &cdefault;
+      329                   table[i].keynum =  idefault;
+      330                   table[i].max2   = &idefault;
+      331                   table[i].max    = &idefault;
+      332                   table[i].num2   = &idefault2;
+      333                   table[i].num    = &idefault3;
+      334                   table[i].i0     = &idefault;
+      335                   table[i].i1     = &idefault;
+      336                   table[i].i2     = &idefault;
+      337                   table[i].i3     = &idefault;
+      338                   table[i].in     = &idefault;
+      339                   table[i].f0     = &fdefault;
+      340                   table[i].f1     = &fdefault;
+      341                   table[i].f2     = &fdefault;
+      342                   table[i].f3     = &fdefault;
+      343                   table[i].fn     = &fdefault;
+      344               }/* for(i=0;i<ndata;i++)  */
+      345             
+      346               /*GFALL: [1-3  ] SEARCH KEYWORD AND CHECK KEYNUM */
+      347               for(nbuf=0;nbuf<ndata;nbuf++){
+      348                   p=fmt+key_list_ptr[nbuf];
+      349                   headx[0]=*p; 
+                       <<< Loop-information Start >>>
+                       <<<  [OPTIMIZATION]
+                       <<<    FULL UNROLLING
+                       <<< Loop-information  End >>>
+      350         f         for(i=0;i<7;i++){
+      351         f             p++;
+      352         f             headx[i+1]=*p;
+      353         f         }
+      354                   imatch=0; 
+                       <<< Loop-information Start >>>
+                       <<<  [OPTIMIZATION]
+                       <<<    PREFETCH(HARD) Expected by compiler :
+                       <<<      KEYWD0
+                       <<<    SPILLS :
+                       <<<      GENERAL   : SPILL 0  FILL 2
+                       <<<      SIMD&FP   : SPILL 0  FILL 0
+                       <<<      SCALABLE  : SPILL 0  FILL 0
+                       <<<      PREDICATE : SPILL 0  FILL 0
+                       <<< Loop-information  End >>>
+      355                   for(i=1;i<=MAXKEY;i++){
+      356                       if(strcmp(headx,KEYWD0[i])==0){
+      357                           table[nbuf].keynum=i;
+      358                           keynum=table[nbuf].keynum;  
+      359                           TYPE0=TYPE[keynum];
+      360                           if(   TYPE0==TYPEI0 || TYPE0==TYPEI1 || TYPE0==TYPEI2 
+      361                              || TYPE0==TYPEI3 || TYPE0==TYPEIN){
+      362                               table[nbuf].itype=INTARY;
+      363                           }
+      364                           else{
+      365             	          p++;CDUMMY[0]=*p;
+      366             	          p++;CDUMMY[1]=*p;
+      367                               if(CDUMMY[0]=='%' && CDUMMY[1]=='D') {table[nbuf].itype=DBLARY;}
+      368                               else                                 {table[nbuf].itype=FLTARY;}
+      369                           }
+      370                       imatch=1;
+      371                       }
+      372                   }
+      373                   if(imatch==0){
+      374                       sprintf(MESSAGE,ERMSGB);                        print_std(IUT0,MESSAGE);
+      375                       sprintf(MESSAGE," UNDEFINED KEYWORD :%s",headx);print_std(IUT0,MESSAGE);
+      376                       sprintf(MESSAGE,EREXP1);strcat(MESSAGE,headx);  print_std(IUT0,MESSAGE);
+      377                       *IERR=1; 
+      378                       return;
+      379                   }
+      380                   keynum=table[nbuf].keynum;
+      381             #ifdef DEBUG1
+      382             printf("%02d-th keynum=%2d:keyword=%8s:data-type=%s:default-name=%s \n"
+      383             ,nbuf,keynum,KEYWD0[keynum],CTYPE[TYPE[keynum]],NAME0[keynum]);
+      384             #endif
+      385               }
+      386             
+      387               /*GFALL: [1-4  ] MAKE DATA TABLE */
+      388               va_start(ap,fmt);
+                       <<< Loop-information Start >>>
+                       <<<  [OPTIMIZATION]
+                       <<<    PREFETCH(HARD) Expected by compiler :
+                       <<<      (unknown)
+                       <<<    SPILLS :
+                       <<<      GENERAL   : SPILL 1  FILL 1
+                       <<<      SIMD&FP   : SPILL 0  FILL 0
+                       <<<      SCALABLE  : SPILL 0  FILL 0
+                       <<<      PREDICATE : SPILL 0  FILL 0
+                       <<< Loop-information  End >>>
+      389               for(i=0;i<ndata;i++){
+      390                   keynum=table[i].keynum;  
+      391                   TYPE0 =table[i].itype-6;      
+      392              
+      393                   switch(TYPE[keynum]){
+      394                       case TYPEI0: 
+      395                           sprintf(MESSAGE,"%s  :%8s: POINTER OF TYPEI0 IS SET AS %8s"
+      396                                          ,ACTION[0],KEYWD0[keynum],TYPEARG[TYPE0]); 
+      397                           table[i].max2 = &ONE;
+      398                           table[i].max  = &ONE;
+      399                           table[i].name = va_arg(ap, char *);
+      400                           table[i].i0   = va_arg(ap, int  *);
+      401                           break;
+      402             
+      403                       case TYPEI1: 
+      404                           sprintf(MESSAGE,"%s  :%8s: POINTER OF TYPEI1 IS SET AS %8s"
+      405                                          ,ACTION[0],KEYWD0[keynum],TYPEARG[TYPE0]); 
+      406                           table[i].name = va_arg(ap, char *);
+      407                           table[i].max  = va_arg(ap, int  *);
+      408                           table[i].max2 = &ONE;
+      409                           table[i].num  = va_arg(ap, int  *);
+      410                           table[i].num2 = &ONE;
+      411                           table[i].i1   = va_arg(ap, int  *);
+      412                           break;
+      413             
+      414                       case TYPEI2: 
+      415                           sprintf(MESSAGE,"%s  :%8s: POINTER OF TYPEI2 IS SET AS %8s"
+      416                                          ,ACTION[0],KEYWD0[keynum],TYPEARG[TYPE0]); 
+      417                           table[i].name = va_arg(ap, char *);
+      418                           table[i].max  = va_arg(ap, int  *);
+      419                           table[i].max2 = &TWO;
+      420                           table[i].num  = va_arg(ap, int  *);
+      421                           table[i].num2 = &TWO;
+      422                           table[i].i1   = va_arg(ap, int  *);
+      423                           table[i].i2   = va_arg(ap, int  *);
+      424                           break;
+      425             
+      426                       case TYPEI3: 
+      427                           sprintf(MESSAGE,"%s  :%8s: POINTER OF TYPEI3 IS SET AS %8s"
+      428                                          ,ACTION[0],KEYWD0[keynum],TYPEARG[TYPE0]); 
+      429                           table[i].name = va_arg(ap, char *);
+      430                           table[i].max  = va_arg(ap, int  *);
+      431                           table[i].max2 = &THREE;
+      432                           table[i].num  = va_arg(ap, int  *);
+      433                           table[i].num2 = &THREE;
+      434                           table[i].i1   = va_arg(ap, int  *);
+      435                           table[i].i2   = va_arg(ap, int  *);
+      436                           table[i].i3   = va_arg(ap, int  *);
+      437                           break;
+      438             
+      439                       case TYPEIN: 
+      440                           sprintf(MESSAGE,"%s  :%8s: POINTER OF TYPEIN IS SET AS %8s"
+      441                                          ,ACTION[0],KEYWD0[keynum],TYPEARG[TYPE0]); 
+      442                           table[i].name = va_arg(ap, char *);
+      443                           table[i].max  = va_arg(ap, int  *);
+      444                           table[i].max2 = va_arg(ap, int  *);
+      445                           table[i].num  = va_arg(ap, int  *);
+      446                           table[i].num2 = va_arg(ap, int  *);
+      447                           table[i].in   = va_arg(ap, int  *);
+      448                           break;
+      449              
+      450                       case TYPEF0: 
+      451                           sprintf(MESSAGE,"%s  :%8s: POINTER OF TYPEF0 IS SET AS %8s"
+      452                                          ,ACTION[0],KEYWD0[keynum],TYPEARG[TYPE0]); 
+      453                           table[i].max2 = &ONE;
+      454                           table[i].max  = &ONE;
+      455                           table[i].name = va_arg(ap, char  *);
+      456                           table[i].f0   = va_arg(ap, float *);
+      457                           break;
+      458             
+      459                       case TYPEF1: 
+      460                           sprintf(MESSAGE,"%s  :%8s: POINTER OF TYPEF1 IS SET AS %8s"
+      461                                          ,ACTION[0],KEYWD0[keynum],TYPEARG[TYPE0]); 
+      462                           table[i].name = va_arg(ap, char  *);
+      463                           table[i].max  = va_arg(ap, int   *);
+      464                           table[i].max2 = &ONE;
+      465                           table[i].num  = va_arg(ap, int   *);
+      466                           table[i].num2 = &ONE;
+      467                           table[i].f1   = va_arg(ap, float *);
+      468                           break;
+      469             
+      470                       case TYPEF2: 
+      471                           sprintf(MESSAGE,"%s  :%8s: POINTER OF TYPEF2 IS SET AS %8s"
+      472                                          ,ACTION[0],KEYWD0[keynum],TYPEARG[TYPE0]); 
+      473                           table[i].name = va_arg(ap, char *);
+      474                           table[i].max  = va_arg(ap, int   *);
+      475                           table[i].max2 = &TWO;
+      476                           table[i].num  = va_arg(ap, int   *);
+      477                           table[i].num2 = &TWO;
+      478                           table[i].f1   = va_arg(ap, float *);
+      479                           table[i].f2   = va_arg(ap, float *);
+      480                           break;
+      481             
+      482                       case TYPEF3: 
+      483                           sprintf(MESSAGE,"%s  :%8s: POINTER OF TYPEF3 IS SET AS %8s"
+      484                                          ,ACTION[0],KEYWD0[keynum],TYPEARG[TYPE0]); 
+      485                           table[i].name = va_arg(ap, char *);
+      486                           table[i].max  = va_arg(ap, int   *);
+      487                           table[i].max2 = &THREE;
+      488                           table[i].num  = va_arg(ap, int   *);
+      489                           table[i].num2 = &THREE;
+      490                           table[i].f1   = va_arg(ap, float *);
+      491                           table[i].f2   = va_arg(ap, float *);
+      492                           table[i].f3   = va_arg(ap, float *);
+      493                           break;
+      494             
+      495                       case TYPEFN: 
+      496                           sprintf(MESSAGE,"%s  :%8s: POINTER OF TYPEFN IS SET AS %8s"
+      497                                          ,ACTION[0],KEYWD0[keynum],TYPEARG[TYPE0]); 
+      498                           table[i].name = va_arg(ap, char  *);
+      499                           table[i].max  = va_arg(ap, int   *);
+      500                           table[i].max2 = va_arg(ap, int   *);
+      501                           table[i].num  = va_arg(ap, int   *);
+      502                           table[i].num2 = va_arg(ap, int   *);
+      503                           table[i].fn   = va_arg(ap, float *);
+      504                           break;
+      505              
+      506                   }/* switch(TYPEkeynum]) */
+      507             
+      508                   print_std(IUT6,MESSAGE);
+      509             
+      510               }/* for(i=0;i<ndata;i++) */
+      511             
+      512               /*GFALL: [1-5  ] CHECK :ARGUMENT IS CORRECTLY SET ? */
+      513               ICHECK = va_arg(ap, int   *);
+      514               if(*ICHECK != 999999){
+      515                   sprintf(MESSAGE,ERMSGB);print_std(IUT0,MESSAGE);
+      516                   sprintf(MESSAGE,EREXP2);print_std(IUT0,MESSAGE);
+      517                   *IERR=1;
+      518                   return;
+      519               }
+      520               va_end(ap);
+      521             
+      522             
+      523                /*GFALL: **********************************************************************/
+      524               /*GFALL: [2    ] PREPARE FOR READ AND WRITE MODE */
+      525               /*GFALL: [2-1  ] DUMMY SUBSTITUTION TO AVOID WARNING OF COMPILER */
+      526               ibuf=0 ; IVAR=&ibuf;
+      527               fbuf=0 ; FVAR=&fbuf;
+      528               NUMd=0 ; NUM =&NUMd ; 
+      529               NUM2d=0; NUM2=&NUM2d; 
+      530             
+      531               /*GFALL: [2-2  ] SET FILE NAME AS C CHARACTER CODE FORMAT */
+                       <<< Loop-information Start >>>
+                       <<<  [OPTIMIZATION]
+                       <<<    PREFETCH(HARD) Expected by compiler :
+                       <<<      FILE, (unknown)
+                       <<<    SPILLS :
+                       <<<      GENERAL   : SPILL 0  FILL 1
+                       <<<      SIMD&FP   : SPILL 0  FILL 0
+                       <<<      SCALABLE  : SPILL 0  FILL 0
+                       <<<      PREDICATE : SPILL 0  FILL 0
+                       <<< Loop-information  End >>>
+      532          s    i=0;while( *(FILEd+i) != ' ' && i<61){*(FILE+i)=*(FILEd+i);i++;}
+      533             
+      534               /*GFALL: [2-3  ] SET INITIAL VALUES */
+      535               *IERR = 0;
+      536               *IWREV = *IWREV;
+      537               JSTART=0;
+      538               if(*IACT!=1 && *IACT!=5) JALL=2;
+      539             
+      540               if(*IACT%2==1) {
+                       <<< Loop-information Start >>>
+                       <<<  [OPTIMIZATION]
+                       <<<    SOFTWARE PIPELINING(IPC: 2.00, ITR: 12, MVE: 2, POL: S)
+                       <<<    PREFETCH(HARD) Expected by compiler :
+                       <<<      (unknown)
+                       <<< Loop-information  End >>>
+      541         4         for(idata=0;idata<ndata;idata++){
+      542         4             *table[idata].num=0;
+      543         4         }
+      544               }
+      545             
+      546             
+      547               /*GFALL: [2-4  ] CHECK PASSED CONTROL PARAMETERS */
+      548               if(*IACT<1 || *IACT>8){
+      549                   sprintf(MESSAGE,ERMSGB);print_std(IUT0,MESSAGE);
+      550                   sprintf(MESSAGE,EREXP3);print_std(IUT0,MESSAGE);
+      551                   *IERR = 1;
+      552                   return;
+      553               }
+      554             
+      555               if(*IACT%2==0 && *IWRITE!=1&& *IWRITE!=2&& *IWRITE!=3){
+      556                   sprintf(MESSAGE,ERMSGB);print_std(IUT0,MESSAGE);
+      557                   sprintf(MESSAGE,EREXP3);print_std(IUT0,MESSAGE);
+      558                   *IERR = 1;
+      559                   return;
+      560               }
+      561             
+      562               if(*IALL!=-2 && *IALL!=-1 && *IALL!=0 && *IALL!=1 ){
+      563                   sprintf(MESSAGE,ERMSGB);print_std(IUT0,MESSAGE);
+      564                   sprintf(MESSAGE,EREXP3);print_std(IUT0,MESSAGE);
+      565                   *IERR = 1;
+      566                   return;
+      567               }
+      568             
+      569               if(*IACT%2==0 && *INAME!=1&& *INAME!=2){
+      570                   sprintf(MESSAGE,ERMSGA);print_std(IUT0,MESSAGE);
+      571                   sprintf(MESSAGE,EREXP3);print_std(IUT0,MESSAGE);
+      572                   sprintf(MESSAGE,ERRCV1);print_std(IUT0,MESSAGE);
+      573                   *INAME=INAMED;
+      574               }
+      575             
+      576               if(*ISKIP!=0 && *ISKIP!=1){
+      577                   *ISKIP=0;
+      578               }
+      579             
+      580               /*GFALL: **********************************************************************/
+      581               sprintf(MESSAGE,"%s",OPNMSG[*IACT-1]);          print_std(IUT6,MESSAGE);
+      582               sprintf(MESSAGE," FILENAME       =   %s",FILE); print_std(IUT6,MESSAGE);
+      583             
+      584               /*GFALL: [3    ] ACTION TYPE READ */
+      585               if(*IACT%2==1){
+      586                 
+      587               /*GFALL: [3-1  ] OPEN THE FILE */
+      588                   if(*IACT==1 || *IACT==3){
+      589                       ITYPE[0]=OPEN;
+      590                       gfrd_(ITYPE,&IDEST,&IMODE[*IUNIT],&IFPOS[*IUNIT],ICAST,
+      591                             IUNIT,FILE,KEYWRD,NAMERD,COMFLE,
+      592                             IVAR,IVAR,IVAR,IVAR,IVAR,
+      593                             FVAR,FVAR,FVAR,FVAR,FVAR,
+      594                             NUM,NCOMFL,&ONE,MCOMFL,IUT0,IERR);
+      595                       if(ONE!=1)*IERR=1;
+      596                       if(*IERR!=0)goto line999;
+      597             
+      598                       p=COMFLE;
+      599                       for(i=0;i<*NCOMFL;i++){
+                       <<< Loop-information Start >>>
+                       <<<  [OPTIMIZATION]
+                       <<<    PREFETCH(HARD) Expected by compiler :
+                       <<<      CDUMMY, (unknown)
+                       <<< Loop-information  End >>>
+      600   s     2s                for(j=0;j<59;j++)CDUMMY[j]=p[j];
+      601                           CDUMMY[59] = '\0';
+      602                           sprintf(MESSAGE,"FILE COMMENT %s ",CDUMMY);
+      603                           print_std(IUT6,MESSAGE); 
+      604                           p=p+60;
+      605                       }
+      606             
+      607                   }/* if(*IACT==1 || *IACT==3) */
+      608             
+      609               /*GFALL: [3-2  ] SEARCH AND READ THE NEXT FLOW DATA SET */
+      610                   if(*IACT==1 || *IACT==5){
+      611              
+      612                   line100: ;
+      613             
+      614               /*GFALL: [3-2-1] CHECK IF ALL DATA HAVE BEEN READ-IN */
+      615                   JALL=JSTART;
+                       <<< Loop-information Start >>>
+                       <<<  [PARALLELIZATION]
+                       <<<    Standard iteration count: 1778
+                       <<<  [OPTIMIZATION]
+                       <<<    SIMD(VL: 16)
+                       <<< Loop-information  End >>>
+      616  pp      v        for(i=0;i<ndata;i++){
+      617   p      v            JALL=JALL*JGOT[i];
+      618   p      v        }
+      619                   if(JALL==1) goto line200; 
+      620             
+      621               /*GFALL: [3-2-2] INQUIRE THE NEXT CONTENT IN THE FILE */ 
+      622                   ITYPE[0]=INQUIR;
+      623                   gfrd_(ITYPE,&IDEST,&IMODE[*IUNIT],&IFPOS[*IUNIT],ICAST,
+      624                         IUNIT,FILE,KEYWRD,NAMERD,COMSET,
+      625                         IVAR,IVAR,IVAR,IVAR,IVAR,
+      626                         FVAR,FVAR,FVAR,FVAR,FVAR,
+      627                         NUM,NCOMST,&ONE,MCOMST,IUT0,IERR);
+      628                   if(ONE!=1)*IERR=1;
+      629                   if(*IERR!=0)goto line999;
+      630             
+      631               /*GFALL: [3-2-3] END OF THE FILE */
+      632                   if(ITYPE[0]==CLOSE){
+      633                       *IACT=7;
+      634                       goto line200;    
+      635                   } 
+      636             
+      637               /*GFALL: [3-2-3] A NEW SET */
+      638                   if(ITYPE[0]==NEWSET){
+      639                       if(JSTART==1){
+      640                           sprintf(MESSAGE,WRMSG0);print_std(IUT6,MESSAGE);
+      641                           sprintf(MESSAGE,WRMSG1);print_std(IUT6,MESSAGE);
+      642                       } 
+      643             
+      644                       if(*IALL==-2){
+      645                           sprintf(MESSAGE,WRMSG0);print_std(IUT6,MESSAGE);
+      646                           sprintf(MESSAGE,WRMSG3);print_std(IUT6,MESSAGE);
+      647                           sprintf(MESSAGE,WRMSG6);print_std(IUT6,MESSAGE);
+      648             	      *IERR= 2;
+      649             	      return;
+      650             	  }
+      651             
+      652                       if(*IALL==-1&&JSTART==1){
+      653                           sprintf(MESSAGE,WRMSG0);print_std(IUT6,MESSAGE);
+      654                           sprintf(MESSAGE,WRMSG4);print_std(IUT6,MESSAGE);
+      655                           sprintf(MESSAGE,WRMSG5);print_std(IUT6,MESSAGE);
+      656                           sprintf(MESSAGE,WRMSG6);print_std(IUT6,MESSAGE);
+      657             	      *IERR= 2;
+      658             	      *IALL=-2;
+      659             	      return;
+      660             	  }
+      661             
+      662                       p=COMSET;
+      663                       for(i=0;i<*NCOMST;i++){
+                       <<< Loop-information Start >>>
+                       <<<  [OPTIMIZATION]
+                       <<<    PREFETCH(HARD) Expected by compiler :
+                       <<<      CDUMMY, (unknown)
+                       <<< Loop-information  End >>>
+      664   s     2s                for(j=0;j<59;j++)CDUMMY[j]=p[j];
+      665                           CDUMMY[59] = '\0';
+      666                           sprintf(MESSAGE,"SET  COMMENT %s ",CDUMMY);
+      667                           print_std(IUT6,MESSAGE); 
+      668                           p=p+60;
+      669                       }
+                       <<< Loop-information Start >>>
+                       <<<  [PARALLELIZATION]
+                       <<<    Standard iteration count: 2000
+                       <<<  [OPTIMIZATION]
+                       <<<    SIMD(VL: 16)
+                       <<<    PREFETCH(HARD) Expected by compiler :
+                       <<<      (unknown)
+                       <<< Loop-information  End >>>
+      670   s     4v            for(i=0;i<ndata;i++){
+      671   p     4v                JGOT[i]=0;
+      672   p     4v            }    
+      673                       JSTART=1;
+      674                       goto line100 ;
+      675                    }/* if(ITYPE[0]==NEWSET) */ 
+      676             
+      677               /*GFALL: [3-2-4] CHECK :KEYWORD IS MATCHED IN THE LIST OF gfc.h */
+      678                   imatch=0; 
+                       <<< Loop-information Start >>>
+                       <<<  [OPTIMIZATION]
+                       <<<    PREFETCH(HARD) Expected by compiler :
+                       <<<      KEYWD0
+                       <<< Loop-information  End >>>
+      679         2         for(i=1;i<=MAXKEY;i++){
+      680         2             if(strcmp(KEYWRD,KEYWD0[i])==0){
+      681         2                 imatch=1;
+      682         2                 keynum=i;
+      683         2             }
+      684         2         }
+      685                   if(imatch==0){
+      686                       sprintf(MESSAGE,ERMSGB);               print_std(IUT0,MESSAGE);
+      687                       sprintf(MESSAGE,"%s %s",EREXP1,KEYWRD);print_std(IUT0,MESSAGE);
+      688                       *IERR=1; 
+      689                       return;
+      690                   }
+      691             
+      692               /*GFALL: [3-2-5] CHECK :KEYWORD IS MATCHED IN THE LIST OF ARGUMENT */
+      693                   imatch=0; 
+                       <<< Loop-information Start >>>
+                       <<<  [PARALLELIZATION]
+                       <<<    Standard iteration count: 593
+                       <<<  [OPTIMIZATION]
+                       <<<    SIMD(VL: 16)
+                       <<< Loop-information  End >>>
+      694  pp      v        for(i=0;i<ndata;i++){
+      695   p      v            if(keynum==table[i].keynum&&JGOT[i]==0){
+      696   p      v                imatch=1; 
+      697   p      v                idata=i;
+      698   p      v            }  
+      699          v        }
+      700             
+      701               /*GFALL: [3-2-6] READ DATA */
+      702                   if(imatch==1){
+      703                       switch(TYPE[keynum]){
+      704                           case TYPEI0: IDEST= ARY0D;break;
+      705                           case TYPEI1: IDEST= ARY1D;break;
+      706                           case TYPEI2: IDEST= ARY1D;break;
+      707                           case TYPEI3: IDEST= ARY1D;break;
+      708                           case TYPEIN: IDEST= ARY2D;break;
+      709                           case TYPEF0: IDEST= ARY0D;break;
+      710                           case TYPEF1: IDEST= ARY1D;break;
+      711                           case TYPEF2: IDEST= ARY1D;break;
+      712                           case TYPEF3: IDEST= ARY1D;break;
+      713                           case TYPEFN: IDEST= ARY2D;break;
+      714                       }
+      715             
+      716                       ITYPE[1]=table[idata].itype;
+      717             	  
+      718             #ifdef DEBUG000
+      719             printf("PASS 000 \n");
+      720             printf("PASS 000 :ITYPE :%d\n",ITYPE[0] );
+      721             printf("PASS 000 :KEYWRD:%s\n",KEYWRD);
+      722             printf("PASS 000 :keynum:%d\n",keynum);
+      723             printf("PASS 000 :idata :%d\n",idata );
+      724             printf("PASS 000 :imatch:%d\n",imatch);
+      725             printf("PASS 000 :IDEST :%d\n",IDEST );
+      726             printf("PASS 000 :MAX2  :%d\n",*table[idata].max2  );
+      727             printf("PASS 000 :MAX   :%d\n",*table[idata].max   );
+      728             #endif
+      729             
+      730                       i=idata;
+      731                       if(*ISKIP==1) ITYPE[0]=-ITYPE[0];
+      732                       gfrd_(ITYPE,&IDEST,&IMODE[*IUNIT],&IFPOS[*IUNIT],ICAST,
+      733                             IUNIT,FILE,KEYWRD,NAMERD,COMSET,
+      734                             table[i].i0,table[i].i1,table[i].i2,table[i].i3,table[i].in,
+      735                             table[i].f0,table[i].f1,table[i].f2,table[i].f3,table[i].fn,
+      736                             table[i].num,table[i].num2,table[i].max,table[i].max2,IUT0,IERR);
+      737             
+      738                       if(*IERR!=0)goto line999;
+      739                       JGOT[idata]=1;
+      740             
+                       <<< Loop-information Start >>>
+                       <<<  [OPTIMIZATION]
+                       <<<    PREFETCH(HARD) Expected by compiler :
+                       <<<      NAMERD, (unknown)
+                       <<< Loop-information  End >>>
+      741   s     3s            for(j=0;j<30;j++) *(table[idata].name+j)=*(NAMERD+j);
+      742                       j=30;             *(NAMERD+j)='\0';
+      743             
+      744                       sprintf(MESSAGE,"%s  %s  (%8d,%8d)" 
+      745                              ,ACTION[1],NAMERD,*table[idata].num2,*table[idata].num);
+      746                       if(TYPE[keynum]==TYPEI0){
+      747                           sprintf(CDUMMY,"%8d"   ,*table[idata].i0);
+      748                           strcat(MESSAGE,CDUMMY) ;
+      749                       }  
+      750                       if(TYPE[keynum]==TYPEF0){
+      751                           if(table[idata].itype==FLTARY){
+      752                               sprintf(CDUMMY,"%14.6E",*table[idata].f0);
+      753                               strcat(MESSAGE,CDUMMY) ;
+      754                           }
+      755                           if(table[idata].itype==DBLARY){
+      756                               sprintf(CDUMMY,"%22.14E",*(double *)table[idata].f0);
+      757                               strcat(MESSAGE,CDUMMY) ;
+      758                           }
+      759                       }
+      760                       print_std(IUT6,MESSAGE);
+      761             
+      762                       goto line100;
+      763             
+      764                   }/* if(imatch==1) */
+      765             
+      766               /*GFALL: [3-2-7] SKIP TO THE NEXT DATA */
+      767                   if(imatch==0){
+      768                       ITYPE[0]=-ITYPE[0];
+      769                       gfrd_(ITYPE,&IDEST,&IMODE[*IUNIT],&IFPOS[*IUNIT],ICAST,
+      770                             IUNIT,FILE,KEYWRD,NAMERD,COMSET,
+      771                             IVAR,IVAR,IVAR,IVAR,IVAR,
+      772                             FVAR,FVAR,FVAR,FVAR,FVAR,
+      773                             NUM,NUM2,&ONE,&ONE,IUT0,IERR);
+      774                       if(ONE!=1)*IERR=1;
+      775                       if(*IERR!=0)goto line999;
+      776             
+      777                       sprintf(MESSAGE,"%s  SKIP TO THE NEXT DATA           (%8s)" ,ACTION[1],KEYWRD);
+      778                       print_std(IUT6,MESSAGE);
+      779             
+      780                       goto line100;
+      781                   }/* if(imatch==0) */
+      782                 
+      783                   line200: ;
+      784               }/* if(*IACT==1 || *IACT==5) */
+      785             
+      786               line999: ;
+      787             
+      788               /*GFALL: [3-3  ] CLOSE THE FILE */
+      789               if(*IACT==1 || *IACT==7 || *IERR!=0){
+      790             
+      791               ITYPE[0]=CLOSE;
+      792               gfrd_(ITYPE,&IDEST,&IMODE[*IUNIT],&IFPOS[*IUNIT],ICAST,
+      793                     IUNIT,FILE,KEYWRD,NAMERD,COMSET,
+      794                     IVAR,IVAR,IVAR,IVAR,IVAR,
+      795                     FVAR,FVAR,FVAR,FVAR,FVAR,
+      796                     NUM,NUM2,&ONE,&ONE,IUT0,&IERRDM);
+      797               if(ONE!=1)*IERR=1;
+      798               /* Note : IERRDM is used to avoid resetting IERR ARGUMENT */
+      799               }/* if(*IACT==1 || *IACT==7 || *IERR!=0) */
+      800             
+      801               if(JALL==0&&*IALL==1){
+      802                   sprintf(MESSAGE,ENDMSG[1]);print_std(IUT6,MESSAGE);
+      803                   sprintf(MESSAGE,ERMSGB);print_std(IUT0,MESSAGE);
+      804                   *IERR=1;
+      805                   return;
+      806               }
+      807             
+      808               if(*IERR==0){
+      809                   if(JALL==0){sprintf(MESSAGE,ENDMSG[1]);}
+      810                   else       {sprintf(MESSAGE,ENDMSG[0]);}
+      811                   print_std(IUT6,MESSAGE);
+      812                   if(*ISKIP==1){sprintf(MESSAGE,WRMSG2);print_std(IUT6,MESSAGE);}
+      813             
+      814               }
+      815               else{
+      816                   sprintf(MESSAGE,ERMSGB);
+      817                   print_std(IUT0,MESSAGE);
+      818                   
+      819               }
+      820             
+      821               return;
+      822               }/* if(*IACT%2==1) */
+      823             
+      824               /*GFALL: **********************************************************************/
+      825               /*GFALL: [4    ] ACTION TYPE WRITE */
+      826               if(*IACT%2==0){
+      827             
+      828               /*GFALL: [4-1  ] OPEN THE FILE IN THE SPECIFIED MODE */
+      829               if(*IACT==2 || *IACT==4 ){
+      830                   ITYPE[0] = OPEN;
+      831                   gfwrt_(ITYPE,&ISRCE,IWRITE,IWREV,
+      832                          IUNIT,FILE,KEYWRD,NAMERD,COMFLE,
+      833                          IVAR,IVAR,IVAR,IVAR,IVAR,
+      834                          FVAR,FVAR,FVAR,FVAR,FVAR,
+      835                          NUM,NCOMFL,&ONE,IUT0,IERR);
+      836                   if(ONE!=1)*IERR=1;
+      837                   if(*IERR!=0)goto line999;
+      838             
+      839                   p=COMFLE;
+      840                   for(i=0;i<*NCOMFL;i++){
+                       <<< Loop-information Start >>>
+                       <<<  [OPTIMIZATION]
+                       <<<    PREFETCH(HARD) Expected by compiler :
+                       <<<      CDUMMY, (unknown)
+                       <<< Loop-information  End >>>
+      841   s     2s            for(j=0;j<59;j++)CDUMMY[j]=p[j];
+      842                       CDUMMY[59] = '\0';
+      843                       sprintf(MESSAGE,"FILE COMMENT %s ",CDUMMY);
+      844                       print_std(IUT6,MESSAGE); 
+      845                       p=p+60;
+      846                   }
+      847             
+      848               }/* if(*IACT==2 || *IACT==4 ) */
+      849             
+      850               /*GFALL: [4-2  ] APPEND-WRITE A FLOW DATA SET */   
+      851               if(*IACT==2 || *IACT==6 ){
+      852             
+      853                   ITYPE[0]=NEWSET;
+      854                   gfwrt_(ITYPE,&ISRCE,IWRITE,IWREV,
+      855                          IUNIT,FILE,KEYWRD,NAMERD,COMSET,
+      856                          IVAR,IVAR,IVAR,IVAR,IVAR,
+      857                          FVAR,FVAR,FVAR,FVAR,FVAR,
+      858                          NUM,NCOMST,&ONE,IUT0,IERR);
+      859                   if(ONE!=1)*IERR=1;
+      860                   if(*IERR!=0)goto line1999;
+      861                  
+      862                   p=COMSET;
+      863                   for(i=0;i<*NCOMST;i++){
+                       <<< Loop-information Start >>>
+                       <<<  [OPTIMIZATION]
+                       <<<    PREFETCH(HARD) Expected by compiler :
+                       <<<      CDUMMY, (unknown)
+                       <<< Loop-information  End >>>
+      864   s     2s            for(j=0;j<59;j++)CDUMMY[j]=p[j];
+      865                       CDUMMY[59] = '\0';
+      866                       sprintf(MESSAGE,"SET  COMMENT %s ",CDUMMY);
+      867                       print_std(IUT6,MESSAGE); 
+      868                       p=p+60;
+      869                   }
+      870             
+      871               /*GFALL: [4-3  ] WRITE DATA */
+      872                   for(idata=0;idata<ndata;idata++){
+      873                
+      874                       if(*table[idata].num>0 || *IDATA0==1 ){
+      875             
+      876              	
+      877                           keynum=table[idata].keynum;
+      878                           strcpy(KEYWRD,KEYWD0[table[idata].keynum ]);
+      879                           if(*INAME==1){
+                       <<< Loop-information Start >>>
+                       <<<  [OPTIMIZATION]
+                       <<<    PREFETCH(HARD) Expected by compiler :
+                       <<<      (unknown)
+                       <<< Loop-information  End >>>
+      880   s     3s                    for(j=0;j<30;j++){
+      881   s     3s                       table[idata].name[j]=*(NAME0[keynum]+j);
+      882   s     3s                    }
+      883                           }
+      884             
+      885                           switch(TYPE[keynum]){
+      886                               case TYPEI0: ITYPE[0]=INTARY; ISRCE= ARY0D ; break;
+      887                               case TYPEI1: ITYPE[0]=INTARY; ISRCE= ARY1D ; break;
+      888                               case TYPEI2: ITYPE[0]=INTARY; ISRCE= ARY1D ; break;
+      889                               case TYPEI3: ITYPE[0]=INTARY; ISRCE= ARY1D ; break;
+      890                               case TYPEIN: ITYPE[0]=INTARY; ISRCE= ARY2D ; break;
+      891                               case TYPEF0: ITYPE[0]=FLTARY; ISRCE= ARY0D ; break;
+      892                               case TYPEF1: ITYPE[0]=FLTARY; ISRCE= ARY1D ; break;
+      893                               case TYPEF2: ITYPE[0]=FLTARY; ISRCE= ARY1D ; break;
+      894                               case TYPEF3: ITYPE[0]=FLTARY; ISRCE= ARY1D ; break;
+      895                               case TYPEFN: ITYPE[0]=FLTARY; ISRCE= ARY2D ; break;
+      896                           }
+      897                           ITYPE[0]=table[idata].itype;
+      898             
+      899             #ifdef DEBUG001          
+      900             printf("PASS 001 \n");
+      901             printf("PASS 001 :ITYPE :%d\n",ITYPE[0] );
+      902             printf("PASS 001 :KEYWRD:%s\n",KEYWRD);
+      903             printf("PASS 001 :keynum:%d\n",keynum);
+      904             printf("PASS 001 :idata :%d\n",idata );
+      905             printf("PASS 001 :imatch:%d\n",imatch);
+      906             printf("PASS 001 :ISRCE :%d\n",ISRCE );
+      907             printf("PASS 001 :MAX2  :%d\n",*table[idata].max2  );
+      908             printf("PASS 001 :MAX   :%d\n",*table[idata].max   );
+      909             printf("PASS 001 :IUT0  :%d\n",*IUT0);
+      910             #endif
+      911             
+      912                           i=idata;
+      913                           gfwrt_(ITYPE,&ISRCE,IWRITE,IWREV,
+      914                                  IUNIT,FILE,KEYWRD,table[idata].name,COMSET,
+      915                                  table[i].i0,table[i].i1,table[i].i2,table[i].i3,table[i].in,
+      916                                  table[i].f0,table[i].f1,table[i].f2,table[i].f3,table[i].fn,
+      917                                  table[i].num,table[i].num2,table[i].max2,IUT0,IERR);
+      918                           if(*IERR!=0)goto line1999;
+      919             
+                       <<< Loop-information Start >>>
+                       <<<  [OPTIMIZATION]
+                       <<<    PREFETCH(HARD) Expected by compiler :
+                       <<<      NAMERD, (unknown)
+                       <<< Loop-information  End >>>
+      920   s     3s                for(j=0;j<30;j++) *(NAMERD+j)=*(table[idata].name+j) ;
+      921                           j=30;             *(NAMERD+j)='\0';
+      922                          
+      923                           sprintf(MESSAGE,"%s  %s  (%8d,%8d)" 
+      924                                  ,ACTION[2],NAMERD,*table[idata].num2,*table[idata].num);
+      925                           if(TYPE[keynum]==TYPEI0){
+      926                               sprintf(CDUMMY,"%8d"   ,*table[idata].i0);
+      927                               strcat(MESSAGE,CDUMMY) ;
+      928                           }  
+      929                           if(TYPE[keynum]==TYPEF0){
+      930                               if(table[idata].itype==FLTARY){
+      931                                   sprintf(CDUMMY,"%14.6E",*table[idata].f0);
+      932                                   strcat(MESSAGE,CDUMMY) ;
+      933                               }
+      934                               if(table[idata].itype==DBLARY){
+      935                                   sprintf(CDUMMY,"%14.6E",*(double *)table[idata].f0);
+      936                                   strcat(MESSAGE,CDUMMY) ;
+      937                               }
+      938                           }
+      939                           print_std(IUT6,MESSAGE);
+      940             
+      941                       }/* if(*table[idata].num>0) */
+      942             
+      943                   }/* for(idata=0;idata<ndata;idata++) */
+      944             
+      945               }/* if(*IACT==2 || *IACT==6 ) */
+      946             
+      947               line1999: ;
+      948             
+      949               /*GFALL: [4-4  ] CLOSE THE FILE */
+      950               if(*IACT==2 || *IACT==8 ){
+      951                   ITYPE[0] = CLOSE;
+      952                   gfwrt_(ITYPE,&ISRCE,IWRITE,IWREV,
+      953                          IUNIT,FILE,KEYWRD,NAMERD,COMFLE,
+      954                          IVAR,IVAR,IVAR,IVAR,IVAR,
+      955                          FVAR,FVAR,FVAR,FVAR,FVAR,
+      956                          &ONE,&ONE,&ONE,IUT0,&IERRDM);
+      957                   if(ONE!=1)*IERR=1;
+      958                   /* Note : IERRDM is used to avoid resetting IERR ARGUMENT */
+      959               }
+      960             
+      961               if(*IERR==0){
+      962                   if(JALL==0){sprintf(MESSAGE,ENDMSG[1]);}
+      963                   else       {sprintf(MESSAGE,ENDMSG[0]);}
+      964                   print_std(IUT6,MESSAGE);
+      965               }
+      966               else{
+      967                   sprintf(MESSAGE,ERMSGB);
+      968                   print_std(IUT0,MESSAGE);
+      969               }/* if(*IERR==0) */
+      970             
+      971               return;
+      972             
+      973               }/* if(*IACT%2==0) */
+      974             
+      975             }
+Total prefetch num: 0
+Statistics information
+  Option information
+    Command line options : -Kident_mpi -Kvisimpact,ocl,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI023/include/mpi/fujitsu -pthread
+    Effective options    : -g0 -mt -Qy -std=gnu11 -x- -O3 -Knoalias_const -Kalign_loops
+                           -Karray_declaration_opt -Knoarray_private -Kassume=noshortloop
+                           -Kassume=nomemory_bandwidth -Kassume=notime_saving_compilation
+                           -Kcmodel=small -Kconst -Knodynamic_iteration -Keval
+                           -Keval_noconcurrent -Knoextract_stride_store -Kfast_matmul
+                           -Knofconst -Knofenv_access -Kfp_contract -Kfp_relaxed -Kfsimple
+                           -Kfz -Khpctag -Kilfunc=procedure -Klargepage -Klib
+                           -Kloop_blocking -Kloop_fission -Kloop_nofission_stripmining
+                           -Kloop_fission_threshold=50 -Kloop_fusion -Kloop_interchange
+                           -Kloop_part_parallel -Kloop_part_simd -Kloop_perfect_nest
+                           -Kloop_noversioning -Klooptype=f -Knomemalias -Kmfunc=1 -Kocl
+                           -Komitfp -Kopenmp -Kopenmp_noassume_norecurrence
+                           -Kopenmp_nocollapse_except_innermost -Kopenmp_noordered_reduction
+                           -Knoopenmp_simd -Knooptlib_string -Knooptmsg
+                           -Knopc_relative_literal_loads -Kparallel
+                           -Kparallel_nofp_precision -Knopreex -Kprefetch_cache_level=all
+                           -Kprefetch_noconditional -Kprefetch_noindirect -Kprefetch_noinfer
+                           -Kprefetch_sequential=auto -Kprefetch_nostride -Kprefetch_strong
+                           -Kprefetch_strong_L2 -Knopreload -Krdconv=1 -Kreduction
+                           -Kregion_extension -Krestp=restrict -Ksch_post_ra -Ksch_pre_ra
+                           -Ksibling_calls -Ksimd=auto -Ksimd_packed_promotion
+                           -Ksimd_reduction_product -Ksimd_reg_size=512
+                           -Ksimd_nouncounted_loop -Ksimd_use_multiple_structures
+                           -Knostrict_aliasing -Knostriping -KA64FX -KARMV8_3_A -KSVE -Kswp
+                           -Kswp_freg_rate=100 -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                           -Kswp_policy=auto -Kunroll -Knounroll_and_jam -Knozfill
+                           -Ncancel_overtime_compilation -Nnocoverage -Nnoexceptions
+                           -Nnofjcex -Nfjprof -Nnohook_func -Nnohook_time -Nfjomplib -Nline
+                           -Nlst=p -Nlst=t -Nquickdbg=noheapchk -Nquickdbg=nosubchk
+                           -NRnotrap -Nnoreordered_variable_stack -Nrt_notune
+                           -Nsetvalue=noheap -Nsetvalue=nostack -Nsetvalue=noscalar
+                           -Nsetvalue=noarray -Nsetvalue=nostruct -Nsrc -Nsta

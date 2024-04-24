@@ -1,0 +1,577 @@
+
+ Fujitsu Fortran Version 4.7.0  Tue Dec 21 10:39:32 2021
+
+ Compilation information
+   Current directory : /vol0005/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/dd_mpi
+   Source file       : ddmid3.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0005/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -Nlst=t -Cpp -Cfpp -c -I/opt/FJSVxtclanga/.common/MELI026/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI026/lib64 -Knointentopt
+   Cpp options          : -I/vol0005/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -I/opt/FJSVxtclanga/.common/MELI026/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI026/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=7 -D__FRT_patchlevel__=0 -D__FRT_version__="4.7.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Knoarray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nlibomp -Nline -Nlst -Nlst=p -Nlst=t
+                          -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "DDMID3"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE DDMID3(IMODE,MPT,MDOM,NPMID,MAXBUF,
+          2                          *                  NPGAT,LPGAT,VGAT1,VGAT2,VGAT3,
+          3                          *                  NPSCT,LESCT,CSCT,VSCT1,VSCT2,VSCT3,
+          4                          *                  NGAT,LGAT,NPTGAT,IPMID,IPGAT,
+          5                          *                  NSCT,LSCT,NPTSCT,IEMID,IPSCT,
+          6                          *                  BUFRCV,BUFSND,IUT0,IERR)
+          7                           IMPLICIT NONE
+          8                           INTEGER*4 IMODE,
+          9                          *          MPT,MDOM,NPMID,MAXBUF,NGAT,NSCT,NPGAT,NPSCT,IUT0,IERR
+         10                           INTEGER*4 LGAT(MDOM),NPTGAT(MDOM),IPMID(MPT,MDOM),IPGAT(MPT,MDOM),
+         11                          *          LSCT(MDOM),NPTSCT(MDOM),IEMID(MPT,MDOM),IPSCT(MPT,MDOM)
+         12                     C
+         13                           INTEGER*4 LPGAT(NPMID),LESCT(NPMID)
+         14                           REAL*4    VGAT1(NPMID),VGAT2(NPMID),VGAT3(NPMID),
+         15                          *          VSCT1(NPMID),VSCT2(NPMID),VSCT3(NPMID),CSCT(3,NPMID)
+         16                     C
+         17                           REAL*4    BUFRCV(MAXBUF),BUFSND(MAXBUF)
+         18                           INTEGER*4 NSTART,IDOM,IPT,IRECV,ISEND,MSGTYP,MSGLEN,IPT2,ISTART
+         19                     C
+         20                           INCLUDE 'mpif.h'
+         21                     C
+         22                           INTEGER*4 MAXDOM
+         23                           PARAMETER ( MAXDOM = 10000 )
+         24                           INTEGER*4 MSGIDS(MAXDOM),MSGSTS(MPI_STATUS_SIZE,MAXDOM)
+         25                     C
+         26                           INTEGER*4 NGATR,NGATS,NSCTR,NSCTS
+         27                     C
+         28                           CHARACTER*60 ERMSGB
+         29                          & / ' ## SUBROUTINE DDMID1: FATAL     ERROR OCCURRENCE; RETURNED' /
+         30                           CHARACTER*60 EREXP1
+         31                          & / ' DIMENSION SIZE OF INTERNAL      ARRAYS IS NOT SUFFICIENT  ' /
+         32                           CHARACTER*60 EREXP2
+         33                          & / ' DIMENSION SIZE OF PASSED BUFFER ARRAYS IS NOT SUFFICIENT  ' /
+         34                           CHARACTER*60 EREXP3
+         35                          & / ' RECEIVED NODE NUMBER IS OUT OF THE GLOBAL NODE NUMBER     ' /
+         36                     C
+         37                     C
+         38                     C     COMMUNICATE MID NODE DATA (MPI VERSION)
+         39                     C
+         40                     C     WRITTEN BY Y.YAMADE 2011.01.03
+         41                     C
+         42                     C
+         43                     C     ARGUMENT LISTINGS
+         44                     C (1) INPUT
+         45                     C INT *4   MPT         ; THE DIMENSION SIZE OF THE FIRST ELEMENTS OF THE
+         46                     C                        PASSED ARRAYS 'IPSET', 'IPGAT', 'IEMID', AND 'IPSCT'
+         47                     C                        (I.E. THE MAXIMUM NUMBER OF THE MID NODES FOR A
+         48                     C                         SINGLE SUB-DOMAIN)
+         49                     C INT *4   MDOM        ; MAX. NUMBER OF THE SUB-DOMAINS
+         50                     C INT *4   MB          ; MAX. NUMBER OF GATHER/SCATTER DATA TO BE RETURNED
+         51                     C INT *4   MAXBUF      ; LENGTH OF THE PASSED COMMUNICATION BUFFERS
+         52                     C                        'BUFSND' AND 'BUFRCV' IN WORDS.
+         53                     C INT *4   NGAT             ; NUMBER OF DOMAINS FOR GATHERING
+         54                     C INT *4   LGAT      (IDOM) ; DOMAIN NUMBER     FOR GATHERING
+         55                     C INT *4   NPTGAT    (IDOM) ; NUMBER OF GATHERED VALUES FOR THE
+         56                     C                             DOMAIN 'LGAT'
+         57                     C INT *4   IPMID (IPT,IDOM) ; MIN NODE NUMBER IN THE DOMAIN
+         58                     C                             WHICH WILL RECEIVE GATHERED VALUES
+         59                     C INT *4   IPGAT (IPT,IDOM) ; INDICATES POSITION OF GATHERED DATA
+         60                     C                             IN THE PASSING MID NODE ARRAYS
+         61                     C REAL*4   BUFGAT      (IB) ; GATHERD VALUE TO BE SENT
+         62                     C
+         63                     C INT *4   NSCT             ; NUMBER OF DOMAINS FOR SCATTERING
+         64                     C INT *4   LSCT      (IDOM) ; DOMAIN NUMBER     FOR SCATTERING
+         65                     C INT *4   NPTSCT    (IDOM) ; NUMBER OF VALUES TO BE SCATTERED
+         66                     C                             FOR THE DOMAIN 'LGAT'
+         67                     C INT *4   IEMID (IPT,IDOM) ; PARANT ELEMENT NUMBER IN THE DOMAIN
+         68                     C                             WHICH WILL RECEIVE VALUES AND SCATTER IT
+         69                     C INT *4   IPSCT (IPT,IDOM) ; INDICATES POSITION OF DATA TO BE SENT AND
+         70                     C                             SCATTERED IN THE PASSING MID NODE ARRAYS
+         71                     C REAL*4   BUFSCT      (IB) ; VALUE TO BE SENT AND SCATTERED
+         72                     C REAL*4   CBUFST    (I,IB) ; COEEFECIENTS FOR SCATTERING
+         73                     C
+         74                     C INT *4   IUT0        ; FILE NUMBER TO WRITE ERROR MESSAGE
+         75                     C
+         76                     C (2) INPUT-OUTPUT
+         77                     C INT *4   NPGAT       ; NUMBER OF GATHER GATA TO BE SENT AND RECIEVED
+         78                     C INT *4   LPGAT  (IB) ; MID NODE NUMBER
+         79                     C REAL*4   VGAT1  (IB) ; GATHERED VALUES AT MID NODES
+         80                     C REAL*4   VGAT2  (IB) ; GATHERED VALUES AT MID NODES
+         81                     C REAL*4   VGAT3  (IB) ; GATHERED VALUES AT MID NODES
+         82                     C INT *4   NPSCT       ; NUMBER OF SCATTER GATA TO BE SENT AND RECIEVED
+         83                     C INT *4   LESCT  (IB) ; PARENT ELEMENT NUMBER
+         84                     C REAL*4   CSCT (I,IB) ; COEEFECIENTS FOR SCATTERING
+         85                     C REAL*4   VSCT   (IB) ; VALUES TO BE SCATTERED
+         86                     C
+         87                     C (3) OUTPUT
+         88                     C INT *4   IERR             ; RETURN CODE WHOSE VALUE WILL BE EITHER
+         89                     C                   0 --- INDICATING SUCCESSFUL TERMINATION
+         90                     C                OR 1 --- INDICATING OCCURRENCE OF SOME ERROR CONDITIONS
+         91                     C
+         92                           IERR = 0
+         93                     C
+         94     1                     IF(IMODE.EQ.1) THEN
+         95     1                         NGATS=NGAT
+         96     1                         NGATR=NSCT
+         97     1                         NSCTS=0
+         98     1                         NSCTR=0
+         99     1                     ELSE IF(IMODE.EQ.2) THEN
+        100     1                         NGATS=0
+        101     1                         NGATR=0
+        102     1                         NSCTS=NSCT
+        103     1                         NSCTR=NGAT
+        104     1                     ELSE
+        105     1                         IERR=1
+        106     1                         RETURN
+        107     1                     ENDIF
+        108                     C
+        109                     C
+        110                     C
+        111                     C CHECK THE INTERNAL ARRAY SIZE
+        112                     C
+        113                     C
+        114                     C
+        115     1                     IF(NGATR+NGATS+NSCTR+NSCTS.GT.MAXDOM) THEN
+        116     1                         WRITE(IUT0,*) ERMSGB
+        117     1                         WRITE(IUT0,*) EREXP1
+        118     1                         IERR = 1
+        119     1                         RETURN
+        120     1                     ENDIF
+        121                     C
+        122                     C
+        123                     C
+        124                     C POST FOR SCATTER DATA
+        125                     C
+        126                     C
+        127                     C NOTE THAT FOLLOWING TWO VALUES ARE SAME
+        128                     C (1) NUM. OF GATHER  DATA TO BE SENT
+        129                     C (2) NUM. OF SCATTER DATA TO BE RECIEVED
+        130                     C
+        131                           NSTART = 1
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LGAT, NPTGAT
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 1  FILL 4
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        132     1                     DO 1000 IDOM = 1 , NSCTR
+        133     1                         MSGTYP = 2
+        134     1                         IRECV  = LGAT(IDOM)-1
+        135     1                         MSGLEN = 7*NPTGAT(IDOM)
+        136     1               C
+        137     2                         IF(NSTART+MSGLEN-1.GT.MAXBUF) THEN
+        138     2                             WRITE(IUT0,*) ERMSGB
+        139     2                             WRITE(IUT0,*) EREXP2
+        140     2                             IERR = 1
+        141     2                             RETURN
+        142     2                         ENDIF
+        143     1               C
+        144     1               #ifdef PRECEXP
+        145     1                         CALL MPI_IRECV(BUFRCV(NSTART),MSGLEN,MPI_REAL8,IRECV,MSGTYP,
+        146     1                    &                   MPI_COMM_WORLD,MSGIDS(IDOM),IERR)
+        147     1               #else
+        148     1                         CALL MPI_IRECV(BUFRCV(NSTART),MSGLEN,MPI_REAL ,IRECV,MSGTYP,
+        149     1                    &                   MPI_COMM_WORLD,MSGIDS(IDOM),IERR)
+        150     1               #endif
+        151     1               C
+        152     1                         NSTART = NSTART+MSGLEN
+        153     1                1000 CONTINUE
+        154                     C
+        155                     C
+        156                     C
+        157                     C POST FOR GATHER DATA
+        158                     C
+        159                     C
+        160                     C
+        161                     C
+        162                     C NOTE THAT FOLLOWING TWO VALUES ARE SAME
+        163                     C (1) NUM. OF SCATTER DATA TO BE SENT
+        164                     C (2) NUM. OF GATHER  DATA TO BE RECIEVED
+        165                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LSCT, NPTSCT
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 1  FILL 4
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        166     1                     DO 1100 IDOM = 1 , NGATR
+        167     1                         MSGTYP = 2
+        168     1                         IRECV  = LSCT(IDOM)-1
+        169     1                         MSGLEN = 4*NPTSCT(IDOM)
+        170     1               C
+        171     2                         IF(NSTART+MSGLEN-1.GT.MAXBUF) THEN
+        172     2                             WRITE(IUT0,*) ERMSGB
+        173     2                             WRITE(IUT0,*) EREXP2
+        174     2                             IERR = 1
+        175     2                             RETURN
+        176     2                         ENDIF
+        177     1               C
+        178     1               #ifdef PRECEXP
+        179     1                         CALL MPI_IRECV(BUFRCV(NSTART),MSGLEN,MPI_REAL8,IRECV,MSGTYP,
+        180     1                    &                   MPI_COMM_WORLD,MSGIDS(NSCTR+IDOM),IERR)
+        181     1               #else
+        182     1                         CALL MPI_IRECV(BUFRCV(NSTART),MSGLEN,MPI_REAL ,IRECV,MSGTYP,
+        183     1                    &                   MPI_COMM_WORLD,MSGIDS(NSCTR+IDOM),IERR)
+        184     1               #endif
+        185     1               C
+        186     1                         NSTART = NSTART+MSGLEN
+        187     1                1100 CONTINUE
+        188                     C
+        189                     C
+        190                     C
+        191                     C SET UP SEND BUFFER AND SEND GATHER DATA FOR EACH DOMAIN
+        192                     C
+        193                     C
+        194                     C
+        195                     C NOTE THAT FOLLOWING TWO VALUES ARE SAME
+        196                     C
+        197                           NSTART = 1
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IPGAT, IPMID, BUFSND
+                              <<< Loop-information  End >>>
+        198     1                     DO 2000 IDOM = 1 , NGATS
+        199     1                         MSGTYP = 2
+        200     1                         ISEND  = LGAT(IDOM)-1
+        201     1                         MSGLEN = 4*NPTGAT(IDOM)
+        202     1               C
+        203     2                         IF(NSTART+MSGLEN-1.GT.MAXBUF) THEN
+        204     2                             WRITE(IUT0,*) ERMSGB
+        205     2                             WRITE(IUT0,*) EREXP2
+        206     2                             IERR = 1
+        207     2                             RETURN
+        208     2                         ENDIF
+        209     1               !ocl norecurrence(BUFSND)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 327
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.09, ITR: 192, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IPGAT, IPMID, BUFSND
+                              <<< Loop-information  End >>>
+        210     2  pp   2v                DO 2100 IPT = 1 , NPTGAT(IDOM)
+        211     2   p   2v                    BUFSND(NSTART+4*(IPT-1)  ) = IPMID(IPT,IDOM)
+        212     2   p   2v                    BUFSND(NSTART+4*(IPT-1)+1) = VGAT1(IPGAT(IPT,IDOM))
+        213     2   p   2v                    BUFSND(NSTART+4*(IPT-1)+2) = VGAT2(IPGAT(IPT,IDOM))
+        214     2   p   2v                    BUFSND(NSTART+4*(IPT-1)+3) = VGAT3(IPGAT(IPT,IDOM))
+        215     2   p   2v       2100     CONTINUE
+        216     1               C
+        217     1               #ifdef PRECEXP
+        218     1                         CALL MPI_ISEND(BUFSND(NSTART),MSGLEN,MPI_REAL8,ISEND,MSGTYP,
+        219     1                    &                   MPI_COMM_WORLD,MSGIDS(NSCTR+NGATR+IDOM),IERR)
+        220     1               #else
+        221     1                         CALL MPI_ISEND(BUFSND(NSTART),MSGLEN,MPI_REAL ,ISEND,MSGTYP,
+        222     1                    &                   MPI_COMM_WORLD,MSGIDS(NSCTR+NGATR+IDOM),IERR)
+        223     1               #endif
+        224     1               C
+        225     1                         NSTART = NSTART+MSGLEN
+        226     1                2000 CONTINUE
+        227                     C
+        228                     C
+        229                     C
+        230                     C SET UP SEND BUFFER AND SEND SCATTER DATA FOR EACH DOMAIN
+        231                     C
+        232                     C
+        233                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IPSCT, IEMID, BUFSND
+                              <<< Loop-information  End >>>
+        234     1                     DO 2200 IDOM = 1 , NSCTS
+        235     1                         MSGTYP = 2
+        236     1                         ISEND  = LSCT(IDOM)-1
+        237     1                         MSGLEN = 7*NPTSCT(IDOM)
+        238     1               C
+        239     2                         IF(NSTART+MSGLEN-1.GT.MAXBUF) THEN
+        240     2                             WRITE(IUT0,*) ERMSGB
+        241     2                             WRITE(IUT0,*) EREXP2
+        242     2                             IERR = 1
+        243     2                             RETURN
+        244     2                         ENDIF
+        245     1               C
+        246     1               !ocl norecurrence(BUFSND)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 226
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.42, ITR: 128, MVE: 4, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      BUFSND, IPSCT, IEMID
+                              <<< Loop-information  End >>>
+        247     2  pp    v                DO 2300 IPT = 1 , NPTSCT(IDOM)
+        248     2   p    v                    BUFSND(NSTART+7*(IPT-1)  ) = IEMID(IPT,IDOM)
+        249     2   p    v                    BUFSND(NSTART+7*(IPT-1)+1) = CSCT(1,IPSCT(IPT,IDOM))
+        250     2   p    v                    BUFSND(NSTART+7*(IPT-1)+2) = CSCT(2,IPSCT(IPT,IDOM))
+        251     2   p    v                    BUFSND(NSTART+7*(IPT-1)+3) = CSCT(3,IPSCT(IPT,IDOM))
+        252     2   p    v                    BUFSND(NSTART+7*(IPT-1)+4) = VSCT1( IPSCT(IPT,IDOM))
+        253     2   p    v                    BUFSND(NSTART+7*(IPT-1)+5) = VSCT2( IPSCT(IPT,IDOM))
+        254     2   p    v                    BUFSND(NSTART+7*(IPT-1)+6) = VSCT3( IPSCT(IPT,IDOM))
+        255     2   p    v       2300     CONTINUE
+        256     1               C
+        257     1               #ifdef PRECEXP
+        258     1                         CALL MPI_ISEND(BUFSND(NSTART),MSGLEN,MPI_REAL8,ISEND,MSGTYP,
+        259     1                    &                   MPI_COMM_WORLD,MSGIDS(NGATR+NSCTR+NGATS+IDOM),
+        260     1                    &                   IERR)
+        261     1               #else
+        262     1                         CALL MPI_ISEND(BUFSND(NSTART),MSGLEN,MPI_REAL ,ISEND,MSGTYP,
+        263     1                    &                   MPI_COMM_WORLD,MSGIDS(NGATR+NSCTR+NGATS+IDOM),
+        264     1                    &                   IERR)
+        265     1               #endif
+        266     1               C
+        267     1                         NSTART = NSTART+MSGLEN
+        268     1                2200 CONTINUE
+        269                     C
+        270                     C
+        271                     C
+        272                     C WAIT FOR THE COMPLETION OF ALL THE REQUESTED COMMUNICATIONS
+        273                     C
+        274                     C
+        275                     C
+        276                           CALL MPI_WAITALL(NGATR+NSCTR+NGATS+NSCTS,MSGIDS,MSGSTS,IERR)
+        277                     C
+        278                     C
+        279                     C IMPORTANT NOTES!
+        280                     C        AFTER A NON-BLOCKING SEND/RECEIVE ROUTINE, SUCH AS 'MPI_ISEND'
+        281                     C    OR 'MPI_IRECV', IS CALLED, THE COMMUNICATION REQUEST CREATED BY
+        282                     C    THESE ROUTINES MUST BE FREED EITHER BY EXPLICITLY OR IMPLICITLY.
+        283                     C   'MPI_REQUEST_FREE' FREES SUCH REQUEST EXPLICITLY, WHILE A ROUTINE
+        284                     C    WHICH IDENTIFIES COMPLETION OF THE REQUEST, SUCH AS 'MPI_WAIT',
+        285                     C    'MPI_WAITANY', OR 'MPI_WAITALL' IMPLICITLY FREES THE REQUEST.
+        286                     C        THIS INTERFACE PROGRAM USES 'MPI_WAITALL' ROUTINES TO FREE SUCH
+        287                     C    REQUESTS. PAY PARTICULAR ATTENTION IF YOU WISH TO, INSTEAD, USE
+        288                     C   'MPI_REQUEST_FREE', BECAUSE 'MPI_REQUEST_FREE' FREES THE REQUESTS
+        289                     C    REGARDLESS OF THE STATE OF THE PREVIOUSLY CALLED COMMUNICATION
+        290                     C    ROUTINES, THUS SOMETIMES FREES REQUESTS WHICH HAVE NOT BEEN
+        291                     C    COMPLETED.
+        292                     C
+        293                     C
+        294                     C
+        295                     C    STORE SCATTER DATA FROM RECIEVE BUFFER
+        296                     C
+        297                     C
+        298                     C
+        299                     C
+        300                           NPSCT=0
+        301                           IF (NSCTR.EQ.0) GOTO 3300
+        302                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1067
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        303     1  pp    v            DO 3000 IDOM = 1, NSCTR
+        304     1   p    v               NPSCT=NPSCT+NPTGAT(IDOM)
+        305     1   p    v       3000 CONTINUE
+        306     1                     IF(NPSCT.GT.NPMID) THEN
+        307     1                        WRITE(IUT0,*) ERMSGB
+        308     1                        WRITE(IUT0,*) EREXP2
+        309     1                        IERR = 1
+        310     1                        RETURN
+        311     1                     ENDIF
+        312                     C
+        313                           NSTART=1
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      BUFRCV, LESCT, VSCT2, VSCT3, VSCT1, CSCT
+                              <<< Loop-information  End >>>
+        314     1                     DO 3100 IDOM = 1 , NSCTR
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 259
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.57, ITR: 96, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      BUFRCV, LESCT, VSCT3, VSCT2, VSCT1, CSCT
+                              <<< Loop-information  End >>>
+        315     2  pp    v               DO 3200 IPT = 1 , NPTGAT(IDOM)
+        316     2   p    v                  IPT2=NSTART+IPT-1
+        317     2   p    v                  ISTART=7*(NSTART+IPT-2)+1
+        318     2   p    v                  LESCT(  IPT2)=BUFRCV(ISTART  )+0.1
+        319     2   p    v                  CSCT (1,IPT2)=BUFRCV(ISTART+1)
+        320     2   p    v                  CSCT (2,IPT2)=BUFRCV(ISTART+2)
+        321     2   p    v                  CSCT (3,IPT2)=BUFRCV(ISTART+3)
+        322     2   p    v                  VSCT1(  IPT2)=BUFRCV(ISTART+4)
+        323     2   p    v                  VSCT2(  IPT2)=BUFRCV(ISTART+5)
+        324     2   p    v                  VSCT3(  IPT2)=BUFRCV(ISTART+6)
+        325     2   p    v       3200    CONTINUE
+        326     1                        NSTART=NSTART+NPTGAT(IDOM)
+        327     1                3100 CONTINUE
+        328                     C
+        329                      3300 CONTINUE
+        330                     C
+        331                     C
+        332                     C
+        333                     C    STORE SCATTER DATA FROM RECIEVE BUFFER
+        334                     C
+        335                     C
+        336                     C
+        337                     C
+        338                           NPGAT=0
+        339                           IF (NGATR.EQ.0) GOTO 4300
+        340                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1067
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        341     1  pp    v            DO 4000 IDOM = 1, NGATR
+        342     1   p    v               NPGAT=NPGAT+NPTSCT(IDOM)
+        343     1   p    v       4000 CONTINUE
+        344     1                     IF(NPGAT.GT.NPMID) THEN
+        345     1                        WRITE(IUT0,*) ERMSGB
+        346     1                        WRITE(IUT0,*) EREXP2
+        347     1                        IERR = 1
+        348     1                        RETURN
+        349     1                     ENDIF
+        350                     C
+        351                           NSTART=1
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      BUFRCV, VGAT3, VGAT1, VGAT2, LPGAT
+                              <<< Loop-information  End >>>
+        352     1                     DO 4100 IDOM = 1 , NGATR
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 373
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.14, ITR: 144, MVE: 4, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      BUFRCV, VGAT3, VGAT2, VGAT1, LPGAT
+                              <<< Loop-information  End >>>
+        353     2  pp    v               DO 4200 IPT = 1 , NPTSCT(IDOM)
+        354     2   p    v                  IPT2=NSTART+IPT-1
+        355     2   p    v                  ISTART=4*(NSTART+IPT-2)+1
+        356     2   p    v                  LPGAT(IPT2)=BUFRCV(ISTART  )+0.1
+        357     2   p    v                  VGAT1(IPT2)=BUFRCV(ISTART+1)
+        358     2   p    v                  VGAT2(IPT2)=BUFRCV(ISTART+2)
+        359     2   p    v                  VGAT3(IPT2)=BUFRCV(ISTART+3)
+        360     2   p    v       4200    CONTINUE
+        361     1                        NSTART=NSTART+NPTSCT(IDOM)
+        362     1                4100 CONTINUE
+        363                     C
+        364                      4300 CONTINUE
+        365                     C
+        366                           RETURN
+        367                           END
+
+ Diagnostic messages: program name(DDMID3)
+   jwd8220o-i  "ddmid3.f", line 1: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd5131p-i  "ddmid3.f", line 132: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "ddmid3.f", line 132: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8664o-i  "ddmid3.f", line 132: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5131p-i  "ddmid3.f", line 166: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "ddmid3.f", line 166: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8664o-i  "ddmid3.f", line 166: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5131p-i  "ddmid3.f", line 198: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5001p-i  "ddmid3.f", line 210: DO loop with DO variable 'IPT' is parallelized.
+   jwd6001s-i  "ddmid3.f", line 210: SIMD conversion is applied to DO loop with DO variable 'IPT'.
+   jwd8204o-i  "ddmid3.f", line 210: This loop is software pipelined.
+   jwd8205o-i  "ddmid3.f", line 210: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 192.
+   jwd5131p-i  "ddmid3.f", line 234: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5001p-i  "ddmid3.f", line 247: DO loop with DO variable 'IPT' is parallelized.
+   jwd6001s-i  "ddmid3.f", line 247: SIMD conversion is applied to DO loop with DO variable 'IPT'.
+   jwd8204o-i  "ddmid3.f", line 247: This loop is software pipelined.
+   jwd8205o-i  "ddmid3.f", line 247: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 128.
+   jwd5004p-i  "ddmid3.f", line 303: DO loop with DO variable 'IDOM' is parallelized. The DO loop contains the reduction operation.
+   jwd6004s-i  "ddmid3.f", line 303: SIMD conversion is applied to DO loop with DO variable 'IDOM'. The DO loop contains a reduction operation.
+   jwd5202p-i  "ddmid3.f", line 314: DO loop is not parallelized: data dependency of variable 'NSTART' may cause different results from serial execution for loop.
+   jwd5208p-i  "ddmid3.f", line 314: DO loop is not parallelized: the assign-refer order of 'LESCT' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "ddmid3.f", line 314: DO loop is not parallelized: the assign-refer order of 'VSCT3' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "ddmid3.f", line 314: DO loop is not parallelized: the assign-refer order of 'VSCT2' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "ddmid3.f", line 314: DO loop is not parallelized: the assign-refer order of 'VSCT1' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "ddmid3.f", line 314: DO loop is not parallelized: the assign-refer order of 'CSCT' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5001p-i  "ddmid3.f", line 315: DO loop with DO variable 'IPT' is parallelized.
+   jwd6001s-i  "ddmid3.f", line 315: SIMD conversion is applied to DO loop with DO variable 'IPT'.
+   jwd8204o-i  "ddmid3.f", line 315: This loop is software pipelined.
+   jwd8205o-i  "ddmid3.f", line 315: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 96.
+   jwd8209o-i  "ddmid3.f", line 316: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "ddmid3.f", line 317: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5004p-i  "ddmid3.f", line 341: DO loop with DO variable 'IDOM' is parallelized. The DO loop contains the reduction operation.
+   jwd6004s-i  "ddmid3.f", line 341: SIMD conversion is applied to DO loop with DO variable 'IDOM'. The DO loop contains a reduction operation.
+   jwd5202p-i  "ddmid3.f", line 352: DO loop is not parallelized: data dependency of variable 'NSTART' may cause different results from serial execution for loop.
+   jwd5208p-i  "ddmid3.f", line 352: DO loop is not parallelized: the assign-refer order of 'LPGAT' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "ddmid3.f", line 352: DO loop is not parallelized: the assign-refer order of 'VGAT3' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "ddmid3.f", line 352: DO loop is not parallelized: the assign-refer order of 'VGAT2' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "ddmid3.f", line 352: DO loop is not parallelized: the assign-refer order of 'VGAT1' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5001p-i  "ddmid3.f", line 353: DO loop with DO variable 'IPT' is parallelized.
+   jwd6001s-i  "ddmid3.f", line 353: SIMD conversion is applied to DO loop with DO variable 'IPT'.
+   jwd8204o-i  "ddmid3.f", line 353: This loop is software pipelined.
+   jwd8205o-i  "ddmid3.f", line 353: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 144.
+   jwd8209o-i  "ddmid3.f", line 354: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "ddmid3.f", line 355: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+
+ Procedure information
+   Lines      : 4396
+   Statements : 3417
+   Stack(byte): 310880
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 4396
+   Total statements : 3417
+   Total stack(byte): 310880
+   Total prefetch num: 0
+

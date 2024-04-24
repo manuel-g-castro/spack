@@ -1,0 +1,557 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:53:01 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : elm3bx.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "ELM3BX"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE ELM3BX(N1,N2,NP,X,Y,Z,NODE,NE,NEX,NSTET,NSPRD,NSWED,
+          2                          *                  NSHEX,LEB,NB,SNB,DNXB,DNYB,DNZB,IERR)
+          3                           IMPLICIT NONE
+          4                     C
+          5                     ***** DEFINE ARGUMENTS *****
+          6                           INTEGER N1,N2,NP
+          7                           REAL*8  X, Y, Z
+          8                           INTEGER NODE
+          9                           INTEGER NE,NEX(8)
+         10                           INTEGER LEB
+         11                           INTEGER NB,IERR
+         12                           REAL SNB, DNXB, DNYB, DNZB
+         13                           DIMENSION X(NP),Y(NP),Z(NP),NODE(N2,NE),
+         14                          *          LEB(2,NB),SNB(N1,NB),
+         15                          *          DNXB(N1,NB),DNYB(N1,NB),DNZB(N1,NB)
+         16                     C
+         17                     ***** OBJECTS *****
+         18                           INTEGER JHEX,JWED,JPYR,JTET
+         19                           INTEGER IB, IP, IS, EN
+         20                           INTEGER NETET,NEPRD,NEWED,NEHEX
+         21                           INTEGER  NTET, NPRD, NWED, NHEX
+         22                           INTEGER NSTET,NSPRD,NSWED,NSHEX
+         23                           REAL*8  XI1,XI2,XI3
+         24                     ***** *****
+         25                           REAL*8 R1D3, R2D3
+         26                           REAL*8 MR1D3, MR2D3
+         27                           REAL*8 SQRT2
+         28                           REAL*8 SQRT1D2, MSQRT1D2, SQRT1D3, MSQRT1D3
+         29                           REAL*8 SQRT3D2
+         30                           REAL*8 AW,BW
+         31                           PARAMETER (R1D3=1./3., R2D3=2./3.)           !1/3, 2/3
+         32                           PARAMETER (MR1D3=-1./3., MR2D3=-2./3.)       !1/3, 2/3
+         33                           PARAMETER (SQRT2  =1.41421356237309504880 )  !SQRT(2)
+         34                           PARAMETER (SQRT1D2=0.70710678118654752440)   !SQRT(1/2)
+         35                           PARAMETER (MSQRT1D2=-0.70710678118654752440) !SQRT(1/2)
+         36                           PARAMETER (SQRT1D3=0.57735026918962576450)   !SQRT(1/3)
+         37                           PARAMETER (MSQRT1D3=-0.57735026918962576450)
+         38                           PARAMETER (SQRT3D2=1.22474487139158904909)   !SQRT(3/2)
+         39                           PARAMETER (AW     =0.21132486540518711775)   !(-SQRT(1/3)+1)/2
+         40                           PARAMETER (BW     =0.78867513459481288225)   !(+SQRT(1/3)+1)/2
+         41                     C
+         42                     ***************
+         43                     ***** HEX *****
+         44                     ***************
+         45                           REAL*8 HEX_N(8,4,6)
+         46                           REAL*8 HEX_PSI(3,8,4,6)
+         47                           REAL*8 HEX_XI(3,4,6)
+         48                           REAL*8 HEX_NV(3,6)
+         49                           REAL*8 HEX_W(4,6)
+         50                           DATA HEX_XI /
+         51                          $     -1., SQRT1D3, SQRT1D3, -1., SQRT1D3,MSQRT1D3,
+         52                          $     -1.,MSQRT1D3, SQRT1D3, -1.,MSQRT1D3,MSQRT1D3, !IS=1
+         53                          $     +1., SQRT1D3, SQRT1D3, +1., SQRT1D3,MSQRT1D3,
+         54                          $     +1.,MSQRT1D3, SQRT1D3, +1.,MSQRT1D3,MSQRT1D3, !IS=2
+         55                          $      SQRT1D3,-1., SQRT1D3,  SQRT1D3,-1.,MSQRT1D3,
+         56                          $     MSQRT1D3,-1., SQRT1D3, MSQRT1D3,-1.,MSQRT1D3, !IS=3
+         57                          $      SQRT1D3,+1., SQRT1D3,  SQRT1D3,+1.,MSQRT1D3,
+         58                          $     MSQRT1D3,+1., SQRT1D3, MSQRT1D3,+1.,MSQRT1D3, !IS=4
+         59                          $      SQRT1D3, SQRT1D3,-1.,  SQRT1D3,MSQRT1D3,-1.,
+         60                          $     MSQRT1D3, SQRT1D3,-1., MSQRT1D3,MSQRT1D3,-1., !IS=5
+         61                          $      SQRT1D3, SQRT1D3,+1.,  SQRT1D3,MSQRT1D3,+1.,
+         62                          $     MSQRT1D3, SQRT1D3,+1., MSQRT1D3,MSQRT1D3,+1./ !IS=6
+         63                           DATA HEX_W /
+         64                          $     1., 1., 1., 1.,
+         65                          $     1., 1., 1., 1.,
+         66                          $     1., 1., 1., 1.,
+         67                          $     1., 1., 1., 1.,
+         68                          $     1., 1., 1., 1.,
+         69                          $     1., 1., 1., 1./
+         70                           DATA HEX_NV /
+         71                          $     -1., 0., 0.,
+         72                          $     +1., 0., 0.,
+         73                          $     0., -1., 0.,
+         74                          $     0., +1., 0.,
+         75                          $     0.,  0.,-1.,
+         76                          $     0.,  0.,+1./
+         77                     
+         78                     ***************
+         79                     ***** WED *****
+         80                     ***************
+         81                           REAL*8 WED_N(8,4,5)
+         82                           REAL*8 WED_PSI(3,8,4,5)
+         83                           REAL*8 WED_XI(3,4,5)
+         84                           REAL*8 WED_W(4,5)
+         85                           REAL*8 WED_NV(3,5)
+         86                           DATA WED_XI /
+         87                          $     R1D3,R1D3,-1., 0.,0.,0., 0.,0.,0., 0.,0.,0., !IS=1
+         88                          $     R1D3,R1D3,+1., 0.,0.,0., 0.,0.,0., 0.,0.,0., !IS=2
+         89                          $     AW,BW,SQRT1D3, AW,BW,MSQRT1D3,               !IS=3
+         90                          $     BW,AW,SQRT1D3, BW,AW,MSQRT1D3,               !IS=3
+         91                          $     0.,AW,SQRT1D3, 0.,AW,MSQRT1D3,               !IS=4
+         92                          $     0.,BW,SQRT1D3, 0.,BW,MSQRT1D3,               !IS=4
+         93                          $     AW,0.,SQRT1D3, AW,0.,MSQRT1D3,               !IS=5
+         94                          $     BW,0.,SQRT1D3, BW,0.,MSQRT1D3/               !IS=5
+         95                           DATA WED_W /
+         96                          $     0.5, 0.,0.,0.,
+         97                          $     0.5, 0.,0.,0.,
+         98                          $     SQRT1D2, SQRT1D2, SQRT1D2, SQRT1D2,
+         99                          $     0.5, 0.5, 0.5, 0.5,
+        100                          $     0.5, 0.5, 0.5, 0.5/
+        101                           DATA WED_NV /
+        102                          $     0.,  0.,-1.,
+        103                          $     0.,  0.,+1.,
+        104                          $     SQRT1D2, SQRT1D2, 0.,
+        105                          $     -1., 0., 0.,
+        106                          $     0., -1., 0./
+        107                     
+        108                     ***************
+        109                     ***** PYR *****
+        110                     ***************
+        111                           REAL*8 PYR_N(8,4,5)
+        112                           REAL*8 PYR_PSI(3,8,4,5)
+        113                           REAL*8 PYR_XI(3,4,5)
+        114                           REAL*8 PYR_W(4,5)
+        115                           REAL*8 PYR_NV(3,5)
+        116                           DATA PYR_XI /
+        117                          $     MR2D3,0.,R1D3, 0.,0.,0., 0.,0.,0., 0.,0.,0., !IS=1
+        118                          $      R2D3,0.,R1D3, 0.,0.,0., 0.,0.,0., 0.,0.,0., !IS=2
+        119                          $     0.,MR2D3,R1D3, 0.,0.,0., 0.,0.,0., 0.,0.,0., !IS=3
+        120                          $     0., R2D3,R1D3, 0.,0.,0., 0.,0.,0., 0.,0.,0., !IS=4
+        121                          $      SQRT1D3, SQRT1D3,0.,  SQRT1D3,MSQRT1D3,0.,
+        122                          $     MSQRT1D3, SQRT1D3,0., MSQRT1D3,MSQRT1D3,0./ !IS=5
+        123                           DATA PYR_W /
+        124                          $     SQRT2, 0.,0.,0.,
+        125                          $     SQRT2, 0.,0.,0.,
+        126                          $     SQRT2, 0.,0.,0.,
+        127                          $     SQRT2, 0.,0.,0.,
+        128                          $     1., 1., 1., 1./
+        129                           DATA PYR_NV /
+        130                          $     MSQRT1D2, 0.,  SQRT1D2,
+        131                          $      SQRT1D2, 0.,  SQRT1D2,
+        132                          $     0., MSQRT1D2,  SQRT1D2,
+        133                          $     0.,  SQRT1D2,  SQRT1D2,
+        134                          $     0., 0., -1./
+        135                     
+        136                     ***************
+        137                     ***** TET *****
+        138                     ***************
+        139                           REAL*8 TET_N(8,4,4)
+        140                           REAL*8 TET_PSI(3,8,4,4)
+        141                           REAL*8 TET_XI(3,4,4)
+        142                           REAL*8 TET_W(4,4)
+        143                           REAL*8 TET_NV(3,4)
+        144                           DATA TET_XI /
+        145                          $     R1D3,R1D3,R1D3, 0,0,0, 0,0,0, 0,0,0, !IS=1
+        146                          $     0.,  R1D3,R1D3, 0,0,0, 0,0,0, 0,0,0, !IS=2
+        147                          $     R1D3,  0.,R1D3, 0,0,0, 0,0,0, 0,0,0, !IS=3
+        148                          $     R1D3,R1D3,  0., 0,0,0, 0,0,0, 0,0,0/ !IS=4
+        149                           DATA TET_W /
+        150                          $     SQRT3D2,  0,0,0,
+        151                          $     0.5,      0,0,0,
+        152                          $     0.5,      0,0,0,
+        153                          $     0.5,      0,0,0/
+        154                           DATA TET_NV /
+        155                          $     SQRT1D3, SQRT1D3, SQRT1D3,
+        156                          $     -1., 0., 0.,
+        157                          $     0., -1., 0.,
+        158                          $     0.,  0.,-1./
+        159                     C
+        160                           NETET=NEX(1)
+        161                           NEPRD=NEX(2)
+        162                           NEWED=NEX(3)
+        163                           NEHEX=NEX(4)
+        164                            NTET=NEX(5)
+        165                            NPRD=NEX(6)
+        166                            NWED=NEX(7)
+        167                            NHEX=NEX(8)
+        168                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 26
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      HEX_XI, HEX_N
+                              <<<    PREFETCH(SOFT) : 48
+                              <<<     SEQUENTIAL : 48
+                              <<<      HEX_PSI: 48
+                              <<< Loop-information  End >>>
+        169     1   s    v            DO IS=1,NSHEX
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FULL UNROLLING
+                              <<< Loop-information  End >>>
+        170     2   p   fv                DO IP=1,4
+        171     2   p   fv                    XI1=HEX_XI(1,IP,IS)
+        172     2   p   fv                    XI2=HEX_XI(2,IP,IS)
+        173     2   p   fv                    XI3=HEX_XI(3,IP,IS)
+        174     2               C
+        175     2   p   fv                    HEX_N(1,IP,IS)=0.125*(1.-XI1)*(1.-XI2)*(1.-XI3)
+        176     2   p   fv                    HEX_N(2,IP,IS)=0.125*(1.+XI1)*(1.-XI2)*(1.-XI3)
+        177     2   p   fv                    HEX_N(3,IP,IS)=0.125*(1.+XI1)*(1.+XI2)*(1.-XI3)
+        178     2   p   fv                    HEX_N(4,IP,IS)=0.125*(1.-XI1)*(1.+XI2)*(1.-XI3)
+        179     2   p   fv                    HEX_N(5,IP,IS)=0.125*(1.-XI1)*(1.-XI2)*(1.+XI3)
+        180     2   p   fv                    HEX_N(6,IP,IS)=0.125*(1.+XI1)*(1.-XI2)*(1.+XI3)
+        181     2   p   fv                    HEX_N(7,IP,IS)=0.125*(1.+XI1)*(1.+XI2)*(1.+XI3)
+        182     2   p   fv                    HEX_N(8,IP,IS)=0.125*(1.-XI1)*(1.+XI2)*(1.+XI3)
+        183     2               C
+        184     2   p   fv                    HEX_PSI(1,1,IP,IS)=-0.125*(1.-XI2)*(1.-XI3)
+        185     2   p   fv                    HEX_PSI(1,2,IP,IS)=+0.125*(1.-XI2)*(1.-XI3)
+        186     2   p   fv                    HEX_PSI(1,3,IP,IS)=+0.125*(1.+XI2)*(1.-XI3)
+        187     2   p   fv                    HEX_PSI(1,4,IP,IS)=-0.125*(1.+XI2)*(1.-XI3)
+        188     2   p   fv                    HEX_PSI(1,5,IP,IS)=-0.125*(1.-XI2)*(1.+XI3)
+        189     2   p   fv                    HEX_PSI(1,6,IP,IS)=+0.125*(1.-XI2)*(1.+XI3)
+        190     2   p   fv                    HEX_PSI(1,7,IP,IS)=+0.125*(1.+XI2)*(1.+XI3)
+        191     2   p   fv                    HEX_PSI(1,8,IP,IS)=-0.125*(1.+XI2)*(1.+XI3)
+        192     2               C
+        193     2   p   fv                    HEX_PSI(2,1,IP,IS)=-0.125*(1.-XI3)*(1.-XI1)
+        194     2   p   fv                    HEX_PSI(2,2,IP,IS)=-0.125*(1.-XI3)*(1.+XI1)
+        195     2   p   fv                    HEX_PSI(2,3,IP,IS)=+0.125*(1.-XI3)*(1.+XI1)
+        196     2   p   fv                    HEX_PSI(2,4,IP,IS)=+0.125*(1.-XI3)*(1.-XI1)
+        197     2   p   fv                    HEX_PSI(2,5,IP,IS)=-0.125*(1.+XI3)*(1.-XI1)
+        198     2   p   fv                    HEX_PSI(2,6,IP,IS)=-0.125*(1.+XI3)*(1.+XI1)
+        199     2   p   fv                    HEX_PSI(2,7,IP,IS)=+0.125*(1.+XI3)*(1.+XI1)
+        200     2   p   fv                    HEX_PSI(2,8,IP,IS)=+0.125*(1.+XI3)*(1.-XI1)
+        201     2               C
+        202     2   p   fv                    HEX_PSI(3,1,IP,IS)=-0.125*(1.-XI1)*(1.-XI2)
+        203     2   p   fv                    HEX_PSI(3,2,IP,IS)=-0.125*(1.+XI1)*(1.-XI2)
+        204     2   p   fv                    HEX_PSI(3,3,IP,IS)=-0.125*(1.+XI1)*(1.+XI2)
+        205     2   p   fv                    HEX_PSI(3,4,IP,IS)=-0.125*(1.-XI1)*(1.+XI2)
+        206     2   p   fv                    HEX_PSI(3,5,IP,IS)=+0.125*(1.-XI1)*(1.-XI2)
+        207     2   p   fv                    HEX_PSI(3,6,IP,IS)=+0.125*(1.+XI1)*(1.-XI2)
+        208     2   p   fv                    HEX_PSI(3,7,IP,IS)=+0.125*(1.+XI1)*(1.+XI2)
+        209     2   p   fv                    HEX_PSI(3,8,IP,IS)=+0.125*(1.-XI1)*(1.+XI2)
+        210     2   p   fv               ENDDO
+        211     1   p    v            ENDDO
+        212                     
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 38
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WED_XI, WED_N
+                              <<<    PREFETCH(SOFT) : 48
+                              <<<     SEQUENTIAL : 48
+                              <<<      WED_PSI: 48
+                              <<< Loop-information  End >>>
+        213     1   s    v            DO IS=1,NSWED
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FULL UNROLLING
+                              <<< Loop-information  End >>>
+        214     2   p   fv               DO IP=1,4
+        215     2   p   fv                   XI1=WED_XI(1,IP,IS)
+        216     2   p   fv                   XI2=WED_XI(2,IP,IS)
+        217     2   p   fv                   XI3=WED_XI(3,IP,IS)
+        218     2   p   fv                   WED_N(1,IP,IS)=0.5*XI1         *(1.-XI3)
+        219     2   p   fv                   WED_N(2,IP,IS)=0.5*XI2         *(1.-XI3)
+        220     2   p   fv                   WED_N(3,IP,IS)=0.5*(1.-XI1-XI2)*(1.-XI3)
+        221     2   p   fv                   WED_N(4,IP,IS)=0.5*XI1         *(1.+XI3)
+        222     2   p   fv                   WED_N(5,IP,IS)=0.5*XI2         *(1.+XI3)
+        223     2   p   fv                   WED_N(6,IP,IS)=0.5*(1.-XI1-XI2)*(1.+XI3)
+        224     2               C
+        225     2   p   fv                   WED_PSI(1,1,IP,IS)=+0.5*(1.-XI3)
+        226     2   p   fv                   WED_PSI(1,2,IP,IS)=0.
+        227     2   p   fv                   WED_PSI(1,3,IP,IS)=-0.5*(1.-XI3)
+        228     2   p   fv                   WED_PSI(1,4,IP,IS)=+0.5*(1.+XI3)
+        229     2   p   fv                   WED_PSI(1,5,IP,IS)=0.
+        230     2   p   fv                   WED_PSI(1,6,IP,IS)=-0.5*(1.+XI3)
+        231     2               C
+        232     2   p   fv                   WED_PSI(2,1,IP,IS)=0.
+        233     2   p   fv                   WED_PSI(2,2,IP,IS)=+0.5*(1.-XI3)
+        234     2   p   fv                   WED_PSI(2,3,IP,IS)=-0.5*(1.-XI3)
+        235     2   p   fv                   WED_PSI(2,4,IP,IS)=0.
+        236     2   p   fv                   WED_PSI(2,5,IP,IS)=+0.5*(1.+XI3)
+        237     2   p   fv                   WED_PSI(2,6,IP,IS)=-0.5*(1.+XI3)
+        238     2               C
+        239     2   p   fv                   WED_PSI(3,1,IP,IS)=-0.5*XI1
+        240     2   p   fv                   WED_PSI(3,2,IP,IS)=-0.5*XI2
+        241     2   p   fv                   WED_PSI(3,3,IP,IS)=-0.5*(1.-XI1-XI2)
+        242     2   p   fv                   WED_PSI(3,4,IP,IS)=+0.5*XI1
+        243     2   p   fv                   WED_PSI(3,5,IP,IS)=+0.5*XI2
+        244     2   p   fv                   WED_PSI(3,6,IP,IS)=+0.5*(1.-XI1-XI2)
+        245     2   p   fv               ENDDO
+        246     1   p    v            ENDDO
+        247                     
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 25
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      PYR_XI, PYR_N
+                              <<<    PREFETCH(SOFT) : 48
+                              <<<     SEQUENTIAL : 48
+                              <<<      PYR_PSI: 48
+                              <<< Loop-information  End >>>
+        248     1   s    v            DO IS=1,NSPRD
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FULL UNROLLING
+                              <<< Loop-information  End >>>
+        249     2   p   fv                DO IP=1,4
+        250     2   p   fv                    XI1=PYR_XI(1,IP,IS)
+        251     2   p   fv                    XI2=PYR_XI(2,IP,IS)
+        252     2   p   fv                    XI3=PYR_XI(3,IP,IS)
+        253     2               C
+        254     2   p   fv                    PYR_N(1,IP,IS)=
+        255     2                    *        0.25*((1.-XI1)*(1.-XI2)-XI3+XI1*XI2*XI3/(1.-XI3))
+        256     2   p   fv                    PYR_N(2,IP,IS)=
+        257     2                    *        0.25*((1.+XI1)*(1.-XI2)-XI3-XI1*XI2*XI3/(1.-XI3))
+        258     2   p   fv                    PYR_N(3,IP,IS)=
+        259     2                    *        0.25*((1.+XI1)*(1.+XI2)-XI3+XI1*XI2*XI3/(1.-XI3))
+        260     2   p   fv                    PYR_N(4,IP,IS)=
+        261     2                    *        0.25*((1.-XI1)*(1.+XI2)-XI3-XI1*XI2*XI3/(1.-XI3))
+        262     2   p   fv                    PYR_N(5,IP,IS)=XI3
+        263     2               C
+        264     2   p   fv                    PYR_PSI(1,1,IP,IS)=0.25*( -1. +XI2/(1.-XI3) )
+        265     2   p   fv                    PYR_PSI(1,2,IP,IS)=0.25*( +1. -XI2/(1.-XI3) )
+        266     2   p   fv                    PYR_PSI(1,3,IP,IS)=0.25*( +1. +XI2/(1.-XI3) )
+        267     2   p   fv                    PYR_PSI(1,4,IP,IS)=0.25*( -1. -XI2/(1.-XI3) )
+        268     2   p   fv                    PYR_PSI(1,5,IP,IS)=0.
+        269     2               
+        270     2   p   fv                    PYR_PSI(2,1,IP,IS)=0.25*( -1. +XI1/(1.-XI3) )
+        271     2   p   fv                    PYR_PSI(2,2,IP,IS)=0.25*( -1. -XI1/(1.-XI3) )
+        272     2   p   fv                    PYR_PSI(2,3,IP,IS)=0.25*( +1. +XI1/(1.-XI3) )
+        273     2   p   fv                    PYR_PSI(2,4,IP,IS)=0.25*( +1. -XI1/(1.-XI3) )
+        274     2   p   fv                    PYR_PSI(2,5,IP,IS)=0.
+        275     2               
+        276     2   p   fv                    PYR_PSI(3,1,IP,IS)=0.25*( -1. +XI1*XI2/(1.-XI3)**2 )
+        277     2   p   fv                    PYR_PSI(3,2,IP,IS)=0.25*( -1. -XI1*XI2/(1.-XI3)**2 )
+        278     2   p   fv                    PYR_PSI(3,3,IP,IS)=0.25*( -1. +XI1*XI2/(1.-XI3)**2 )
+        279     2   p   fv                    PYR_PSI(3,4,IP,IS)=0.25*( -1. -XI1*XI2/(1.-XI3)**2 )
+        280     2   p   fv                    PYR_PSI(3,5,IP,IS)=1.
+        281     2   p   fv                ENDDO
+        282     1   p    v            ENDDO
+        283                     
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 62
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      TET_XI, TET_N
+                              <<<    PREFETCH(SOFT) : 48
+                              <<<     SEQUENTIAL : 48
+                              <<<      TET_PSI: 48
+                              <<< Loop-information  End >>>
+        284     1   s    v            DO IS=1,NSTET
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FULL UNROLLING
+                              <<< Loop-information  End >>>
+        285     2   p   fv                DO IP=1,4
+        286     2   p   fv                    XI1=TET_XI(1,IP,IS)
+        287     2   p   fv                    XI2=TET_XI(2,IP,IS)
+        288     2   p   fv                    XI3=TET_XI(3,IP,IS)
+        289     2   p   fv                    TET_N(1,IP,IS)=1.-XI1-XI2-XI3
+        290     2   p   fv                    TET_N(2,IP,IS)=XI1
+        291     2   p   fv                    TET_N(3,IP,IS)=XI2
+        292     2   p   fv                    TET_N(4,IP,IS)=XI3
+        293     2   p   fv                    TET_PSI(1,1,IP,IS)=-1.0E0
+        294     2   p   fv                    TET_PSI(1,2,IP,IS)= 1.0E0
+        295     2   p   fv                    TET_PSI(1,3,IP,IS)= 0.0E0
+        296     2   p   fv                    TET_PSI(1,4,IP,IS)= 0.0E0
+        297     2   p   fv                    TET_PSI(2,1,IP,IS)=-1.0E0
+        298     2   p   fv                    TET_PSI(2,2,IP,IS)= 0.0E0
+        299     2   p   fv                    TET_PSI(2,3,IP,IS)= 1.0E0
+        300     2   p   fv                    TET_PSI(2,4,IP,IS)= 0.0E0
+        301     2   p   fv                    TET_PSI(3,1,IP,IS)=-1.0E0
+        302     2   p   fv                    TET_PSI(3,2,IP,IS)= 0.0E0
+        303     2   p   fv                    TET_PSI(3,3,IP,IS)= 0.0E0
+        304     2   p   fv                    TET_PSI(3,4,IP,IS)= 1.0E0
+        305     2   p   fv                ENDDO
+        306     1   p    v            ENDDO
+        307                     
+        308                     *********************
+        309                     ***** FACE LOOP *****
+        310                     *********************
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LEB
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 2  FILL 20
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        311     1                     DO IB=1,NB
+        312     1               ***** ELEMENT NUMBER AND SURFACE NUMBER *****
+        313     1                        EN=LEB(1,IB)
+        314     1                        IS=LEB(2,IB)
+        315     1               
+        316     1               ***** DETERMIN ELEMENT TYPE *****
+        317     1                        JHEX=0
+        318     1                        JWED=0
+        319     1                        JPYR=0
+        320     1                        JTET=0
+        321     2                        IF( EN.LE.NETET ) THEN
+        322     2                           JTET=1
+        323     2                        ELSEIF( EN.LE.NETET+NEPRD) THEN
+        324     2                           JPYR=1
+        325     2                        ELSEIF( EN.LE.NETET+NEPRD+NEWED ) THEN
+        326     2                           JWED=1
+        327     2                        ELSEIF( EN.LE.NE ) THEN
+        328     2                           JHEX=1
+        329     2                        ELSE
+        330     2                           WRITE(*,*) "[ERROR]@ELM3BX: INVALID EN=", EN
+        331     2                           IERR=1
+        332     2                           RETURN
+        333     2                        ENDIF
+        334     1               CC
+        335     1               CC************HEX************
+        336     2                        IF( JHEX.EQ.1 ) THEN
+        337     2                           CALL INT3BX(N2,X,Y,Z,NODE,HEX_N(1,1,IS),HEX_PSI(1,1,1,IS),
+        338     2                    *           HEX_XI(1,1,IS),HEX_NV(1,IS),HEX_W(1,IS),NHEX,
+        339     2                    *           EN,SNB(1,IB),DNXB(1,IB),DNYB(1,IB),DNZB(1,IB),IERR)
+        340     2               CC
+        341     2               CC************WED************
+        342     2                        ELSEIF( JWED.EQ.1 ) THEN
+        343     2                           CALL INT3BX(N2,X,Y,Z,NODE,WED_N(1,1,IS),WED_PSI(1,1,1,IS),
+        344     2                    *           WED_XI(1,1,IS),WED_NV(1,IS),WED_W(1,IS),NWED,
+        345     2                    *           EN,SNB(1,IB),DNXB(1,IB),DNYB(1,IB),DNZB(1,IB),IERR)
+        346     2               CC
+        347     2               CC************PYR************
+        348     2                        ELSEIF( JPYR.EQ.1 ) THEN
+        349     2                           CALL INT3BX(N2,X,Y,Z,NODE,PYR_N(1,1,IS),PYR_PSI(1,1,1,IS),
+        350     2                    *           PYR_XI(1,1,IS),PYR_NV(1,IS),PYR_W(1,IS),NPRD,
+        351     2                    *           EN,SNB(1,IB),DNXB(1,IB),DNYB(1,IB),DNZB(1,IB),IERR)
+        352     2               CC
+        353     2               CC************TET************
+        354     2                        ELSE
+        355     2                           CALL INT3BX(N2,X,Y,Z,NODE,TET_N(1,1,IS),TET_PSI(1,1,1,IS),
+        356     2                    *           TET_XI(1,1,IS),TET_NV(1,IS),TET_W(1,IS),NTET,
+        357     2                    *           EN,SNB(1,IB),DNXB(1,IB),DNYB(1,IB),DNZB(1,IB),IERR)
+        358     2                        ENDIF
+        359     1                     ENDDO
+        360                     C
+        361                           RETURN
+        362                           END
+
+ Diagnostic messages: program name(ELM3BX)
+   jwd8220o-i  "elm3bx.f", line 1: 副作用の可能性のある最適化を行いました。
+   jwd5143p-i  "elm3bx.f", line 169: DOループの繰返し数が少ないため、このDOループは並列化できません。
+   jwd6001s-i  "elm3bx.f", line 169: このDOループをSIMD化しました。(名前:IS)
+   jwd8222o-i  "elm3bx.f", line 169: このループで必要なプリフェッチの数が、ハードウェアプリフェッチの許容数を超えたため、prefetch命令を出力しました。
+   jwd8674o-i  "elm3bx.f", line 169: ループの繰返し数が24回より小さく、最適化の効果を得られないため、ソフトウェアパイプライニングを抑止しました。
+   jwd8203o-i  "elm3bx.f", line 170: ループをフルアンローリングしました。
+   jwd8209o-i  "elm3bx.f", line 175: 多項式の演算順序を変更しました。
+   jwd8209o-i  "elm3bx.f", line 176: 多項式の演算順序を変更しました。
+   jwd8209o-i  "elm3bx.f", line 177: 多項式の演算順序を変更しました。
+   jwd8209o-i  "elm3bx.f", line 178: 多項式の演算順序を変更しました。
+   jwd8209o-i  "elm3bx.f", line 179: 多項式の演算順序を変更しました。
+   jwd8209o-i  "elm3bx.f", line 180: 多項式の演算順序を変更しました。
+   jwd8209o-i  "elm3bx.f", line 181: 多項式の演算順序を変更しました。
+   jwd8209o-i  "elm3bx.f", line 182: 多項式の演算順序を変更しました。
+   jwd5143p-i  "elm3bx.f", line 213: DOループの繰返し数が少ないため、このDOループは並列化できません。
+   jwd6001s-i  "elm3bx.f", line 213: このDOループをSIMD化しました。(名前:IS)
+   jwd8222o-i  "elm3bx.f", line 213: このループで必要なプリフェッチの数が、ハードウェアプリフェッチの許容数を超えたため、prefetch命令を出力しました。
+   jwd8674o-i  "elm3bx.f", line 213: ループの繰返し数が24回より小さく、最適化の効果を得られないため、ソフトウェアパイプライニングを抑止しました。
+   jwd8203o-i  "elm3bx.f", line 214: ループをフルアンローリングしました。
+   jwd8209o-i  "elm3bx.f", line 220: 多項式の演算順序を変更しました。
+   jwd8209o-i  "elm3bx.f", line 223: 多項式の演算順序を変更しました。
+   jwd8209o-i  "elm3bx.f", line 241: 多項式の演算順序を変更しました。
+   jwd5143p-i  "elm3bx.f", line 248: DOループの繰返し数が少ないため、このDOループは並列化できません。
+   jwd6001s-i  "elm3bx.f", line 248: このDOループをSIMD化しました。(名前:IS)
+   jwd8222o-i  "elm3bx.f", line 248: このループで必要なプリフェッチの数が、ハードウェアプリフェッチの許容数を超えたため、prefetch命令を出力しました。
+   jwd8674o-i  "elm3bx.f", line 248: ループの繰返し数が24回より小さく、最適化の効果を得られないため、ソフトウェアパイプライニングを抑止しました。
+   jwd8203o-i  "elm3bx.f", line 249: ループをフルアンローリングしました。
+   jwd8209o-i  "elm3bx.f", line 254: 多項式の演算順序を変更しました。
+   jwd8209o-i  "elm3bx.f", line 256: 多項式の演算順序を変更しました。
+   jwd8209o-i  "elm3bx.f", line 258: 多項式の演算順序を変更しました。
+   jwd8209o-i  "elm3bx.f", line 260: 多項式の演算順序を変更しました。
+   jwd8206o-i  "elm3bx.f", line 264: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "elm3bx.f", line 265: 多項式の演算順序を変更しました。
+   jwd8206o-i  "elm3bx.f", line 265: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "elm3bx.f", line 267: 多項式の演算順序を変更しました。
+   jwd8206o-i  "elm3bx.f", line 270: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "elm3bx.f", line 271: 多項式の演算順序を変更しました。
+   jwd8206o-i  "elm3bx.f", line 271: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "elm3bx.f", line 273: 多項式の演算順序を変更しました。
+   jwd5143p-i  "elm3bx.f", line 284: DOループの繰返し数が少ないため、このDOループは並列化できません。
+   jwd6001s-i  "elm3bx.f", line 284: このDOループをSIMD化しました。(名前:IS)
+   jwd8222o-i  "elm3bx.f", line 284: このループで必要なプリフェッチの数が、ハードウェアプリフェッチの許容数を超えたため、prefetch命令を出力しました。
+   jwd8674o-i  "elm3bx.f", line 284: ループの繰返し数が24回より小さく、最適化の効果を得られないため、ソフトウェアパイプライニングを抑止しました。
+   jwd8203o-i  "elm3bx.f", line 285: ループをフルアンローリングしました。
+   jwd8209o-i  "elm3bx.f", line 289: 多項式の演算順序を変更しました。
+   jwd5131p-i  "elm3bx.f", line 311: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd6131s-i  "elm3bx.f", line 311: ループ出口が2つ以上あるため、このDOループはSIMD化できません。
+   jwd8664o-i  "elm3bx.f", line 311: ループ内に関数呼出しなどの最適化対象外の命令があるため、ソフトウェアパイプライニングを適用できません。
+
+ Procedure information
+   Lines      : 362
+   Statements : 224
+   Stack(byte): 21408
+   Prefetch num: 192
+
+ Total information
+   Procedures       : 1
+   Total lines      : 362
+   Total statements : 224
+   Total stack(byte): 21408
+   Total prefetch num: 192
+

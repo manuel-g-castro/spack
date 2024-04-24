@@ -1,0 +1,392 @@
+
+ Fujitsu Fortran Version 4.8.1  Thu Nov 24 16:46:03 2022
+
+ Compilation information
+   Current directory : /vol0005/mdt2/home/u10588/SRC/lbm/ver.59.01
+   Source file       : setbc3.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -Nlst=t -Cpp -Cfpp -c -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Knointentopt
+   Cpp options          : -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Dcputime -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=8 -D__FRT_patchlevel__=1 -D__FRT_version__="4.8.1" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Knoarray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nlibomp -Nline -Nlst -Nlst=p -Nlst=t
+                          -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "SETBC3"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE SETBC3(NG,NP,NC,MPBDOM,F,BUFRCV,IUT6)
+          2                           IMPLICIT NONE
+          3                     C
+          4                           INTEGER*4 NG,NP,NC,MPBDOM,IUT6
+          5                           REAL*8    F(0:NG+2,0:NG+2,0:NG+2,NP,NC)
+          6                           REAL*8    BUFRCV(MPBDOM)
+          7                     C
+          8                           INTEGER*4 IB,NB,II,JC,ID,ILEVEL,IPOSI
+          9                     C
+         10                     C     ====FUNCTION====
+         11                     C     UNPACK DISTRIBUTION FUNCTION TO CUBE BOUNDARY, WHICH ARE RECIEVED
+         12                     C     FROM OTHE DOMAIN
+         13                     C
+         14                     C     ====VARIABLES LIST====
+         15                     C[IN]
+         16                     C     NG             :CUBE SIZE (=2^N)
+         17                     C     NC             :NUMBER OF CUBES IN SUB-DOMAIN
+         18                     C     NP             :NUMBER OF PARTICLES (=15)
+         19                     C     MPB             NUMBER OF DATA TO BE RECEIVED FROM THE NEIGHBORING
+         20                     C                     SUB-DOMAINS
+         21                     C    NDOM            :NUMBER OF THE NEIGHBORING SUB-DOMAINS
+         22                     C    LDOM(IDOM)      :NEIGHBORING SUB-DOMAIN NUMBER
+         23                     C    WRKSND(IPB,IDOM):WORK REGION FOR RECEIVING THE PARTICLE DISTRIBUTION FUNCTION
+         24                     C
+         25                     C[OUT]
+         26                     C     F(I,J,K,IP,IC) :PARTICLE DISTRIBUTION FUNCTION
+         27                     C
+         28                           NB=BUFRCV(1)
+         29                           II=1
+         30                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 1  FILL 2
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+         31     1   s    s            DO 1000 IB=1,NB
+         32     1   m    m                JC    =INT(BUFRCV(II+1))
+         33     1   s    s                ID    =INT(BUFRCV(II+2))
+         34     1   s    s                ILEVEL=INT(BUFRCV(II+3))
+         35     1   s    s                IPOSI =INT(BUFRCV(II+4))
+         36     1   s    s                II=II+4
+         37     1               C
+         38     1               C         FACE-CONNECTION
+         39     1   s    s                IF(ID .EQ.1)
+         40     1                    *    CALL CBC101(NG,NP,ILEVEL,IPOSI,
+         41     1                    *                F(0,0,0,1,JC),BUFRCV(II+1))
+         42     1   s    s                IF(ID.EQ. 2)
+         43     1                    *    CALL CBC102(NG,NP,ILEVEL,IPOSI,
+         44     1                    *                F(0,0,0,1,JC),BUFRCV(II+1))
+         45     1   s    s                IF(ID.EQ. 3)
+         46     1                    *    CALL CBC103(NG,NP,ILEVEL,IPOSI,
+         47     1                    *                F(0,0,0,1,JC),BUFRCV(II+1))
+         48     1   s    s                IF(ID.EQ. 4)
+         49     1                    *    CALL CBC104(NG,NP,ILEVEL,IPOSI,
+         50     1                    *                F(0,0,0,1,JC),BUFRCV(II+1))
+         51     1   s    s                IF(ID.EQ. 5)
+         52     1                    *    CALL CBC105(NG,NP,ILEVEL,IPOSI,
+         53     1                    *                F(0,0,0,1,JC),BUFRCV(II+1))
+         54     1   s    s                IF(ID.EQ. 6)
+         55     1                    *    CALL CBC106(NG,NP,ILEVEL,IPOSI,
+         56     1                    *                F(0,0,0,1,JC),BUFRCV(II+1))
+         57     1               C
+         58     1               C         EDGE-CONNECTION
+         59     1   s    s                IF(ID.EQ. 7)
+         60     1                    *    CALL CBC107(NG,NP,ILEVEL,IPOSI,
+         61     1                    *                F(0,0,0,1,JC),BUFRCV(II+1))
+         62     1   s    s                IF(ID.EQ. 8)
+         63     1                    *    CALL CBC108(NG,NP,ILEVEL,IPOSI,
+         64     1                    *                F(0,0,0,1,JC),BUFRCV(II+1))
+         65     1   s    s                IF(ID.EQ. 9)
+         66     1                    *    CALL CBC109(NG,NP,ILEVEL,IPOSI,
+         67     1                    *                F(0,0,0,1,JC),BUFRCV(II+1))
+         68     1   s    s                IF(ID.EQ.10)
+         69     1                    *    CALL CBC110(NG,NP,ILEVEL,IPOSI,
+         70     1                    *                F(0,0,0,1,JC),BUFRCV(II+1))
+         71     1   s    s                IF(ID.EQ.11)
+         72     1                    *    CALL CBC111(NG,NP,ILEVEL,IPOSI,
+         73     1                    *                F(0,0,0,1,JC),BUFRCV(II+1))
+         74     1   s    s                IF(ID.EQ.12)
+         75     1                    *    CALL CBC112(NG,NP,ILEVEL,IPOSI,
+         76     1                    *                F(0,0,0,1,JC),BUFRCV(II+1))
+         77     1   s    s                IF(ID.EQ.13)
+         78     1                    *    CALL CBC113(NG,NP,ILEVEL,IPOSI,
+         79     1                    *                F(0,0,0,1,JC),BUFRCV(II+1))
+         80     1   s    s                IF(ID.EQ.14)
+         81     1                    *    CALL CBC114(NG,NP,ILEVEL,IPOSI,
+         82     1                    *                F(0,0,0,1,JC),BUFRCV(II+1))
+         83     1   s    s                IF(ID.EQ.15)
+         84     1                    *    CALL CBC115(NG,NP,ILEVEL,IPOSI,
+         85     1                    *                F(0,0,0,1,JC),BUFRCV(II+1))
+         86     1   s    s                IF(ID.EQ.16)
+         87     1                    *    CALL CBC116(NG,NP,ILEVEL,IPOSI,
+         88     1                    *                F(0,0,0,1,JC),BUFRCV(II+1))
+         89     1   s    s                IF(ID.EQ.17)
+         90     1                    *    CALL CBC117(NG,NP,ILEVEL,IPOSI,
+         91     1                    *                F(0,0,0,1,JC),BUFRCV(II+1))
+         92     1   s    s                IF(ID.EQ.18)
+         93     1                    *    CALL CBC118(NG,NP,ILEVEL,IPOSI,
+         94     1                    *                F(0,0,0,1,JC),BUFRCV(II+1))
+         95     1               C
+         96     1               C         POINT-CONNECTION
+         97     1   s    s                IF(ID.EQ.19)
+         98     1                    *    CALL CBC119(NG,NP,ILEVEL,IPOSI,F(0,0,0,1,JC),BUFRCV(II+1))
+         99     1   s    s                IF(ID.EQ.20)
+        100     1                    *    CALL CBC120(NG,NP,ILEVEL,IPOSI,F(0,0,0,1,JC),BUFRCV(II+1))
+        101     1   s    s                IF(ID.EQ.21)
+        102     1                    *    CALL CBC121(NG,NP,ILEVEL,IPOSI,F(0,0,0,1,JC),BUFRCV(II+1))
+        103     1   s    s                IF(ID.EQ.22)
+        104     1                    *    CALL CBC122(NG,NP,ILEVEL,IPOSI,F(0,0,0,1,JC),BUFRCV(II+1))
+        105     1   s    s                IF(ID.EQ.23)
+        106     1                    *    CALL CBC123(NG,NP,ILEVEL,IPOSI,F(0,0,0,1,JC),BUFRCV(II+1))
+        107     1   s    s                IF(ID.EQ.24)
+        108     1                    *    CALL CBC124(NG,NP,ILEVEL,IPOSI,F(0,0,0,1,JC),BUFRCV(II+1))
+        109     1   s    s                IF(ID.EQ.25)
+        110     1                    *    CALL CBC125(NG,NP,ILEVEL,IPOSI,F(0,0,0,1,JC),BUFRCV(II+1))
+        111     1   s    s                IF(ID.EQ.26)
+        112     1                    *    CALL CBC126(NG,NP,ILEVEL,IPOSI,F(0,0,0,1,JC),BUFRCV(II+1))
+        113     1               C
+        114     1   p    v       1100 CONTINUE
+        115     1               C
+        116     2   s    s                IF(ID.LE.6) THEN
+        117     2   m    s                    II=II+NP*(NG+1)*(NG+1)
+        118     2   m    s                ELSE IF (ID.GE.7 .AND. ID.LE.18) THEN
+        119     2   m    m                    II=II+NP*(NG+1)
+        120     2   s    s                ELSE
+        121     2   m    s                    II=II+NP
+        122     2   p    v                ENDIF
+        123     1               C
+        124     1   p    v       1000 CONTINUE
+        125                     C
+        126                           RETURN
+        127                           END
+
+ Diagnostic messages: program name(SETBC3)
+   jwd2008i-i  "setbc3.f", line 1: Dummy argument 'IUT6' not used in this subprogram.
+   jwd6229s-i  "setbc3.f", line 31: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8664o-i  "setbc3.f", line 31: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5202p-i  "setbc3.f", line 32: DO loop is not parallelized: data dependency of variable 'II' may cause different results from serial execution for loop.
+   jwd5208p-i  "setbc3.f", line 32: DO loop is not parallelized: the assign-refer order of 'BUFRCV' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6202s-i  "setbc3.f", line 32: SIMD conversion cannot be applied to DO loop: data dependency of variable 'II' may cause different results from serial execution for loop.
+   jwd6208s-i  "setbc3.f", line 32: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'BUFRCV' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setbc3.f", line 34: DO loop is not parallelized: the assign-refer order of 'ILEVEL' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "setbc3.f", line 34: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'ILEVEL' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setbc3.f", line 35: DO loop is not parallelized: the assign-refer order of 'IPOSI' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "setbc3.f", line 35: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'IPOSI' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setbc3.f", line 39: DO loop is not parallelized: the assign-refer order of 'F' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setbc3.f", line 39: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setbc3.f", line 39: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "setbc3.f", line 39: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "setbc3.f", line 39: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'F' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "setbc3.f", line 39: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NG' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "setbc3.f", line 39: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "setbc3.f", line 39: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "setbc3.f", line 42: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setbc3.f", line 42: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "setbc3.f", line 42: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "setbc3.f", line 42: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NG' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "setbc3.f", line 42: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "setbc3.f", line 42: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "setbc3.f", line 45: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setbc3.f", line 45: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "setbc3.f", line 45: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "setbc3.f", line 45: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NG' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "setbc3.f", line 45: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "setbc3.f", line 45: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "setbc3.f", line 48: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setbc3.f", line 48: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "setbc3.f", line 48: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "setbc3.f", line 48: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NG' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "setbc3.f", line 48: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "setbc3.f", line 48: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "setbc3.f", line 51: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setbc3.f", line 51: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "setbc3.f", line 51: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "setbc3.f", line 51: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NG' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "setbc3.f", line 51: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "setbc3.f", line 51: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "setbc3.f", line 54: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setbc3.f", line 54: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "setbc3.f", line 54: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "setbc3.f", line 54: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NG' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "setbc3.f", line 54: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "setbc3.f", line 54: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "setbc3.f", line 59: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setbc3.f", line 59: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "setbc3.f", line 59: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "setbc3.f", line 59: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NG' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "setbc3.f", line 59: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "setbc3.f", line 59: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "setbc3.f", line 62: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setbc3.f", line 62: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "setbc3.f", line 62: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "setbc3.f", line 62: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NG' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "setbc3.f", line 62: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "setbc3.f", line 62: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "setbc3.f", line 65: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setbc3.f", line 65: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "setbc3.f", line 65: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "setbc3.f", line 65: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NG' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "setbc3.f", line 65: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "setbc3.f", line 65: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "setbc3.f", line 68: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setbc3.f", line 68: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "setbc3.f", line 68: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "setbc3.f", line 68: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NG' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "setbc3.f", line 68: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "setbc3.f", line 68: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "setbc3.f", line 71: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setbc3.f", line 71: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "setbc3.f", line 71: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "setbc3.f", line 71: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NG' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "setbc3.f", line 71: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "setbc3.f", line 71: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "setbc3.f", line 74: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setbc3.f", line 74: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "setbc3.f", line 74: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "setbc3.f", line 74: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NG' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "setbc3.f", line 74: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "setbc3.f", line 74: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "setbc3.f", line 77: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setbc3.f", line 77: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "setbc3.f", line 77: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "setbc3.f", line 77: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NG' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "setbc3.f", line 77: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "setbc3.f", line 77: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "setbc3.f", line 80: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setbc3.f", line 80: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "setbc3.f", line 80: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "setbc3.f", line 80: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NG' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "setbc3.f", line 80: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "setbc3.f", line 80: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "setbc3.f", line 83: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setbc3.f", line 83: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "setbc3.f", line 83: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "setbc3.f", line 83: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NG' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "setbc3.f", line 83: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "setbc3.f", line 83: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "setbc3.f", line 86: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setbc3.f", line 86: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "setbc3.f", line 86: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "setbc3.f", line 86: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NG' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "setbc3.f", line 86: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "setbc3.f", line 86: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "setbc3.f", line 89: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setbc3.f", line 89: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "setbc3.f", line 89: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "setbc3.f", line 89: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NG' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "setbc3.f", line 89: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "setbc3.f", line 89: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "setbc3.f", line 92: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setbc3.f", line 92: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "setbc3.f", line 92: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "setbc3.f", line 92: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NG' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "setbc3.f", line 92: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "setbc3.f", line 92: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "setbc3.f", line 97: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setbc3.f", line 97: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "setbc3.f", line 97: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "setbc3.f", line 97: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NG' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "setbc3.f", line 97: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "setbc3.f", line 97: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "setbc3.f", line 99: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setbc3.f", line 99: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "setbc3.f", line 99: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "setbc3.f", line 99: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NG' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "setbc3.f", line 99: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "setbc3.f", line 99: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "setbc3.f", line 101: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setbc3.f", line 101: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "setbc3.f", line 101: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "setbc3.f", line 101: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NG' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "setbc3.f", line 101: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "setbc3.f", line 101: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "setbc3.f", line 103: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setbc3.f", line 103: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "setbc3.f", line 103: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "setbc3.f", line 103: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NG' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "setbc3.f", line 103: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "setbc3.f", line 103: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "setbc3.f", line 105: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setbc3.f", line 105: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "setbc3.f", line 105: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "setbc3.f", line 105: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NG' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "setbc3.f", line 105: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "setbc3.f", line 105: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "setbc3.f", line 107: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setbc3.f", line 107: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "setbc3.f", line 107: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "setbc3.f", line 107: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NG' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "setbc3.f", line 107: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "setbc3.f", line 107: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "setbc3.f", line 109: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setbc3.f", line 109: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "setbc3.f", line 109: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "setbc3.f", line 109: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NG' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "setbc3.f", line 109: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "setbc3.f", line 109: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "setbc3.f", line 111: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setbc3.f", line 111: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "setbc3.f", line 111: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "setbc3.f", line 111: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NG' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "setbc3.f", line 111: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "setbc3.f", line 111: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "setbc3.f", line 117: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setbc3.f", line 117: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "setbc3.f", line 117: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NG' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "setbc3.f", line 117: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setbc3.f", line 119: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setbc3.f", line 119: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "setbc3.f", line 119: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NG' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "setbc3.f", line 119: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setbc3.f", line 121: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "setbc3.f", line 121: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+
+ Procedure information
+   Lines      : 127
+   Statements : 51
+   Stack(byte): 384
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 127
+   Total statements : 51
+   Total stack(byte): 384
+   Total prefetch num: 0
+

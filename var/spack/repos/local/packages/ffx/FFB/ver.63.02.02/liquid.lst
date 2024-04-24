@@ -1,0 +1,586 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:53:37 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : liquid.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "LIQUID"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE LIQUID(MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+          2                          *                  N1,N2,ME,MELM,NE,NP,MEP,NEX,NODE,NUMIP,
+          3                          *                  ICAVI,ISOLT,NS,NL,ITIME,JSET,NMAX,
+          4                          *                  NCRS,NCRS2,NPPMAX,ITPCRS,IUT6,IUT0,JUNROL,
+          5                          *                  NPP,IPCRS,LTAB,NITR,RES,
+          6                          *                  EPS,EPSRE,SIGMA,CGAS,CLQD,F0,
+          7                          *                  FLINLT,FLIMIT,FLMIN,
+          8                          *                  EAP1,EAP2,EAP3,EBP,AP,MP,IENP,NODP,NEP,
+          9                          *                  SN,DELTA,CM,
+         10                          *                  UG,VG,WG,P,DT,VISC,SCT,F,FESRC,FE,
+         11                          *                  NPINLT,LPINLT,
+         12                          *                  NPSET, LPSET1,LPSET2,LPSET3,
+         13                          *                  COVER1,COVER2,COVER3,
+         14                          *                  NPSND ,LPSND ,NPTSND,IPSET,IPSRC,
+         15                          *                  NPRCV ,LPRCV ,NPTRCV,
+         16                          *                  IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+         17                          *                  LFIX3D,LPFIX,RX,RY,ACRS,A,
+         18                          *                  WRK01,WRK02,WRK03,WRK04,WRK05,WRK06,WRK07,
+         19                          *                  RHS,A0,TS,TACRS,IERR,ICRS_T)
+         20                           IMPLICIT NONE
+         21                     C
+         22                     C[INPUT]
+         23                           INTEGER*4 MCOLOR,MCPART,
+         24                          *          NCOLOR(4),NCPART(MCOLOR,4),LLOOP(MCPART,MCOLOR,4),
+         25                          *          N1,N2,ME,MELM,NE,NP,MEP,NEX(12),NODE(N2,NE),NUMIP(NP),
+         26                          *          ICAVI,ISOLT,NS,NL,ITIME,JSET,NMAX,
+         27                          *          NCRS,NPP(NP),IPCRS(NCRS),LTAB(N1,N2,NE),
+         28                          *          NPPMAX,NCRS2,ITPCRS(NCRS2),IUT6,IUT0,JUNROL
+         29                           REAL*4    EPS,EPSRE,SIGMA,CGAS,CLQD,F0,FLINLT,FLIMIT,FLMIN
+         30                           REAL*4    UG(NE),VG(NE),WG(NE),P(NE),DT,VISC(NE),SCT
+         31                           REAL*4    SN(N1,NE),DELTA(NE),CM(NP)
+         32                           REAL*4    EAP1(N2,MEP,NP),EAP2(3,N2,MEP,NP),EAP3(6,N2,MEP,NP)
+         33                           REAL*4    EBP(3,N2,MEP,NP),AP(N2,MEP,NP)
+         34                           INTEGER*4 MP,IENP(MEP,MP),NODP(N2,MEP,NP),NEP(MP)
+         35                           INTEGER*4 NPINLT,LPINLT(NPINLT)
+         36                           INTEGER*4 IPART,NDOM,MBPDOM,
+         37                          *          LDOM(NDOM),NBPDOM(NDOM),
+         38                          *          IPSLF(MBPDOM,NDOM),IPSND(MBPDOM,NDOM)
+         39                           INTEGER*4 NPSND,NPRCV
+         40                           INTEGER*4 NPSET,LPSET1(NPSET),LPSET2(NPSET),LPSET3(NPSET),
+         41                          *          LPSND (NDOM),NPTSND(NDOM) ,LPRCV (NDOM) ,NPTRCV(NDOM),
+         42                          *          IPSET (MBPDOM,NDOM),IPSRC (MBPDOM,NDOM)
+         43                           REAL*4    COVER1(NPSET),COVER2(NPSET),COVER3(NPSET)
+         44                     C
+         45                     C[INPUT/OUTPUT]
+         46                           REAL*4    F(NP)
+         47                     C
+         48                     C[OUTPUT]
+         49                           INTEGER*4 IERR,NITR
+         50                           REAL*4    FESRC(NE),FE(NE)
+         51                           REAL*4    RES
+         52                     C
+         53                     C[WORK]
+         54                           INTEGER*4 LFIX3D(NP),LPFIX(NP)
+         55                           REAL*4    RX(0:N2,ME),RY(0:N2,ME),ACRS(NCRS),A(N1,N2,NE),
+         56                          *          WRK01(NP),WRK02(NP),WRK03(NP),WRK04(NP),
+         57                          *          WRK05(NP),WRK06(NP),WRK07(NP),
+         58                          *          RHS(NP),A0(NP),TS(0:NP),TACRS(NCRS2)
+         59                     C
+         60                     C[LOCAL]
+         61                           INTEGER*4 MAXBUF,IDUM,I,IE,IP,IB,ISEND,IDIM,NB,NPFIX
+         62                           INTEGER*4 IP1,IP2,IP3,IP4,IP5,IP6,IP7,IP8
+         63                           REAL*4    COEF,CEB,RESR,SOURCE,DELTAP
+         64                     C
+         65                           INTEGER*4 IBCGS
+         66                           DATA IBCGS  / 0 /
+         67                     C
+         68                           CHARACTER*60 ERMSGC
+         69                          & / ' ## SUBROUTINE LIQUID: FATAL      ERROR REPORT   ; RETURNED' /
+         70                     C
+         71                           INTEGER*4 ICRS,K
+         72                           INTEGER*4 ICRS_T(NP)
+         73                     C
+         74                           IERR=0
+         75                     C
+         76                           IF(ITIME.EQ.0) GOTO 4000
+         77                     C
+         78                     CCYY [1] PREPARE FIX B.C. LIST
+         79                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1455
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPFIX, LFIX3D
+                              <<< Loop-information  End >>>
+         80     1  pp   2v            DO 1100 IP = 1 , NP
+         81     1   p   2v                LFIX3D(IP) = 0
+         82     1   p   2v                LPFIX(IP) = 0
+         83     1   p   2v       1100 CONTINUE
+         84                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.83, ITR: 320, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPINLT
+                              <<< Loop-information  End >>>
+         85     1   s   4v            DO 1110 IB = 1 , NPINLT
+         86     1   m   4v                LFIX3D(LPINLT(IB))=1
+         87     1   p   4v       1110 CONTINUE
+         88                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.71, ITR: 224, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPSET1, LPSET3
+                              <<< Loop-information  End >>>
+         89     1   s   2v            DO 1120 IB = 1 , NPSET
+         90     1   p   2v                ISEND = LPSET3(IB)
+         91     1   p   2v                IF(ISEND.GT.0) GO TO 1120
+         92     1   m   2v                LFIX3D(LPSET1(IB))=1
+         93     1   p   2v       1120 CONTINUE
+         94                     C
+         95                           NPFIX=0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LFIX3D
+                              <<< Loop-information  End >>>
+         96     1       2s            DO 1200 IP = 1 , NP
+         97     1       2v                IF(LFIX3D(IP).EQ.0) GO TO 1200
+         98     1       2m                NPFIX=NPFIX+1
+         99     1       2s                LPFIX(NPFIX) = IP
+        100     1       2v       1200 CONTINUE
+        101                     C
+        102                           IERR=0
+        103                           MAXBUF = ME*N2
+        104                     C
+        105                     CCYY [2] CAL. TIME, ADV., AND DIFF. TERM
+        106                     C
+        107                           CALL ADVDFL(N1,N2,NE,NP,MEP,MELM,NEX,NODE,
+        108                          *            UG,VG,WG,DT,SCT,VISC,CEB,
+        109                          *            EAP1,EAP2,EAP3,EBP,IENP,NODP,NEP,MP,
+        110                          *            AP,A,F,RHS,A0,
+        111                          *            DELTA,IERR)
+        112                           IDUM = 2
+        113                           CALL DDCOMX(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        114                          *            RHS,A0,RHS,NP,IUT0,IERR,RX,RY,MAXBUF)
+        115     1                     IF(IERR.NE.0) THEN
+        116     1                         WRITE(IUT0,*)
+        117     1                         WRITE(IUT0,*) ERMSGC
+        118     1                         RETURN
+        119     1                     ENDIF
+        120                     C
+        121                     CCYY [3] ADD SOURCE TERM
+        122                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 54
+                              <<<  [OPTIMIZATION]
+                              <<<    UNSWITCHING
+                              <<< Loop-information  End >>>
+        123     1  pp    s            DO 2000 IE = 1 , NE
+        124     1   p    s                IP1=NODE(1,IE)
+        125     1   p    v                IP2=NODE(2,IE)
+        126     1   p    v                IP3=NODE(3,IE)
+        127     1   p    v                IP4=NODE(4,IE)
+        128     1   p    v                IP5=NODE(5,IE)
+        129     1   p    v                IP6=NODE(6,IE)
+        130     1   p    v                IP7=NODE(7,IE)
+        131     1   p    v                IP8=NODE(8,IE)
+        132     2   p    v                IF(IP8.NE.0) THEN
+        133     2   p    m                    FE(IE) = ( F(IP1)+F(IP2)+F(IP3)+F(IP4)
+        134     2                    *                  +F(IP5)+F(IP6)+F(IP7)+F(IP8))/8.0E0
+        135     2   p                     ELSE IF(IP6.NE.0) THEN
+        136     2   p    s                    FE(IE) = ( F(IP1)+F(IP2)+F(IP3)+F(IP4)
+        137     2                    *                  +F(IP5)+F(IP6)              )/6.0E0
+        138     2   p    m                ELSE IF(IP5.NE.0) THEN
+        139     2   p    m                    FE(IE) = ( F(IP1)+F(IP2)+F(IP3)+F(IP4)
+        140     2                    *                  +F(IP5)                     )/5.0E0
+        141     2   p    m                ELSE IF(IP4.NE.0) THEN
+        142     2   p    m                    FE(IE) = ( F(IP1)+F(IP2)+F(IP3)+F(IP4))/4.0E0
+        143     2   p    s                ENDIF
+        144     1               C
+        145     1   p    v                DELTAP=P(IE)+0.5E0*SIGMA
+        146     1               C
+        147     2   p    v                IF(ICAVI.EQ.1) THEN
+        148     3        v                    IF(DELTAP.LE.0) THEN
+        149     3        m                        SOURCE = (CGAS*(1.E0-FE(IE))+CLQD*FE(IE))*DELTAP
+        150     3                             ELSE
+        151     3        s                        SOURCE = (0.1E0*CGAS*(1.E0-FE(IE))+CLQD*FE(IE))*DELTAP
+        152     3        s                    ENDIF
+        153     2   p    v                ELSE IF(ICAVI.EQ.2) THEN
+        154     3   p    v                    IF(DELTAP.LE.0.0) THEN
+        155     3   p    s                        SOURCE = CLQD*FE(IE)*DELTAP
+        156     3   p                         ELSE
+        157     3   p    m                        SOURCE = CGAS*(1.E0-FE(IE))*DELTAP
+        158     3   p                         ENDIF
+        159     2                         ELSE IF(ICAVI.EQ.3) THEN
+        160     3                             IF(DELTAP.LE.0) THEN
+        161     3                                 SOURCE = CLQD*FE(IE)*DELTAP
+        162     3                             ELSE
+        163     3                                 SOURCE = CGAS*((FE(IE)-F0)**0.5)*(1.0E0-FE(IE)-F0)
+        164     3                             ENDIF
+        165     2   p    v                ENDIF
+        166     1               C
+        167     1   p    m              IF(DELTAP.GE.0.0E0 .AND. FE(IE).GE.FLIMIT) SOURCE=0.0E0
+        168     1               C
+        169     1   p    m              FESRC(IE) = SOURCE
+        170     1   p    v       2000 CONTINUE
+        171                     C
+        172                           CALL NODLEX(NODE,ME,NP,NE,NP,N1,N2,NEX,SN,
+        173                          *            IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        174                          *            FESRC,WRK01,CM,IUT0,IERR,RX,RY,MAXBUF)
+        175                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 696
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.50, ITR: 256, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      CM, WRK01, RHS
+                              <<< Loop-information  End >>>
+        176     1  pp   2v            DO 2100 IP = 1,NP
+        177     1   p   2v                RHS(IP)=RHS(IP) + DT*WRK01(IP)/CM(IP)
+        178     1   p   2v       2100 CONTINUE
+        179                     
+        180                     C
+        181                     CCYY [4] MATIRIX CONVET FROM ELEMENT-WIZE TO CRS
+        182                     C
+        183                           CALL E2PMAT(MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+        184                          *            N2,N1,NE,NEX,NCRS,A,ACRS,LTAB,IUT0,IERR)
+        185     1                     IF(IERR.NE.0) THEN
+        186     1                         WRITE(IUT0,*)'ERROR CODE REPORTED FROM E2PMAT'
+        187     1                         WRITE(IUT0,*)ERMSGC
+        188     1                         RETURN
+        189     1                     ENDIF
+        190                     C
+        191                     CCYY [5] DIAGONAL SCALING
+        192                     C
+        193                           CALL DGNSCL(ACRS,A0,NP,NE,NCRS,IPCRS,NPP,ME)
+        194                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 696
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.85, ITR: 416, MVE: 6)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      RHS, A0
+                              <<< Loop-information  End >>>
+        195     1  pp   2v            DO 1300 IP=1, NP
+        196     1   p   2v                RHS(IP) = RHS(IP)/A0(IP)
+        197     1   p   2v       1300 CONTINUE
+        198                     C
+        199                     CCYY [6] CLEAR CRS MATRIX FOR DIRICHLET B.C.
+        200                     C
+        201                           CALL CLRCRS(IPART,ACRS,NP,NCRS,IPCRS,NPP,
+        202                          *            A0,LFIX3D,NUMIP,WRK01)
+        203                     C
+        204                     CCYY [7] SET B.C. (1)INLET, (2)OVERSET
+        205                     C
+        206     1                     IF (JSET.GE.1) THEN
+        207     1                         CALL OVRST1(IPART,NPSET,N1,N2,ME,NE,NP,NEX,NODE,F,
+        208     1                    *                LPSET1,LPSET2,LPSET3,COVER1,COVER2,COVER3,
+        209     1                    *                NDOM,MBPDOM,NPSND,NPRCV,
+        210     1                    *                LPSND,NPTSND,LPRCV,NPTRCV,IPSET,IPSRC,
+        211     1                    *                WRK01,WRK02,RX,RY,IUT0,IERR)
+        212     2                         IF(IERR.NE.0) THEN
+        213     2                             WRITE(IUT0,*)'ERROR CODE REPORTED FROM OVRST1'
+        214     2                             WRITE(IUT0,*)ERMSGC
+        215     2                             RETURN
+        216     2                         ENDIF
+        217     1                     ENDIF
+        218                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.83, ITR: 320, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPINLT
+                              <<< Loop-information  End >>>
+        219     1   s   4v            DO 1400 IB=1,NPINLT
+        220     1   m   4v                F(LPINLT(IB)) = FLINLT
+        221     1   p   4v       1400 CONTINUE
+        222                     
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.80, ITR: 416, MVE: 7)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPFIX
+                              <<< Loop-information  End >>>
+        223     1   s   2v            DO 1500 IB = 1 , NPFIX
+        224     1   p   2v                  IP=LPFIX(IB)
+        225     1   m   2v                  RHS(IP) = F(IP)
+        226     1   p   2v       1500 CONTINUE
+        227                     
+        228                     C
+        229                     CCYY [8] SOLVE EQUATION
+        230                     C
+        231                           IF(JUNROL.EQ.1)
+        232                          *CALL CRSCVA(NP,NPPMAX,NCRS,NCRS2,NPP,ACRS,TACRS,ICRS_T)
+        233                     
+        234     1                     IF(ISOLT.EQ.1) THEN
+        235     1                         CALL BCGSTX(
+        236     1                    *         NPP,NCRS,IPCRS,ACRS,
+        237     1                    *         RHS,F,EPS,EPSRE,
+        238     1                    *         NMAX,RES,NITR,NODE,NE,NEX,NP,ME,N2,
+        239     1                    *         IPART,LDOM,NBPDOM,NDOM,
+        240     1                    *         IPSLF,IPSND,MBPDOM,NUMIP,
+        241     1                    *         RX,RY,WRK01,WRK02,WRK03,WRK04,WRK05,WRK06,WRK07,
+        242     1                    *         JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS,
+        243     1                    *         IUT0,IERR)
+        244     1                     ELSE IF(ISOLT.EQ.3) THEN
+        245     1                         CALL IDRBCG(ME,N2,NE,NP,NS,NL,NMAX,EPS,RES,RESR,NITR,
+        246     1                    *                NCRS,NPP,ACRS,IPCRS,RHS,F,NUMIP,
+        247     1                    *                IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        248     1                    *                JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS,
+        249     1                    *                IUT0,IUT6,IERR)
+        250     1                     ELSE
+        251     1                             WRITE(IUT0,*) 'INVALID VALUE FOR ISOLT'  ,ISOLT
+        252     1                             IERR=1
+        253     1                             RETURN
+        254     1                     ENDIF
+        255                     C
+        256     1                     IF(IERR.NE.0) THEN
+        257     1                         WRITE(IUT0,*)'ERROR CODE REPORTED FROM BCGSTX'
+        258     1                         WRITE(IUT0,*)ERMSGC
+        259     1                         RETURN
+        260     1                     ENDIF
+        261                     
+        262                     C
+        263                     C
+        264                     CCYY [8]  SET B.C. (1)INLET, (2)OVERSET
+        265                     C
+        266                      4000 CONTINUE
+        267                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 593
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.75, ITR: 384, MVE: 7)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      F
+                              <<< Loop-information  End >>>
+        268     1  pp   2v            DO 4100 IP = 1 , NP
+        269     1   p   2v                F(IP)  = AMAX1(FLMIN,F(IP))
+        270     1   p   2v                F(IP)  = AMIN1(1.E0 ,F(IP))
+        271     1   p   2v       4100 CONTINUE
+        272                     C
+        273     1                     IF (JSET.GE.1) THEN
+        274     1                         CALL OVRST1(IPART,NPSET,N1,N2,ME,NE,NP,NEX,NODE,F,
+        275     1                    *                LPSET1,LPSET2,LPSET3,COVER1,COVER2,COVER3,
+        276     1                    *                NDOM,MBPDOM,NPSND,NPRCV,
+        277     1                    *                LPSND,NPTSND,LPRCV,NPTRCV,IPSET,IPSRC,
+        278     1                    *                WRK01,WRK02,RX,RY,IUT0,IERR)
+        279     2                         IF(IERR.NE.0) THEN
+        280     2                             WRITE(IUT0,*)'ERROR CODE REPORTED FROM OVRST1'
+        281     2                             WRITE(IUT0,*)ERMSGC
+        282     2                             RETURN
+        283     2                         ENDIF
+        284     1                     ENDIF
+        285                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.83, ITR: 320, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPINLT
+                              <<< Loop-information  End >>>
+        286     1   s   4v            DO 4200 IB=1,NPINLT
+        287     1   m   4v                F(LPINLT(IB)) = FLINLT
+        288     1   p   4v       4200 CONTINUE
+        289                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 67
+                              <<<  [OPTIMIZATION]
+                              <<<    UNSWITCHING
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      P, FESRC
+                              <<< Loop-information  End >>>
+        290     1  pp    s            DO 4300 IE = 1 , NE
+        291     1   p    v                IP1=NODE(1,IE)
+        292     1   p    v                IP2=NODE(2,IE)
+        293     1   p    v                IP3=NODE(3,IE)
+        294     1   p    v                IP4=NODE(4,IE)
+        295     1   p    v                IP5=NODE(5,IE)
+        296     1   p    v                IP6=NODE(6,IE)
+        297     1   p    v                IP7=NODE(7,IE)
+        298     1   p    v                IP8=NODE(8,IE)
+        299     2   p    s                IF(IP8.NE.0) THEN
+        300     2   p    s                    FE(IE) = ( F(IP1)+F(IP2)+F(IP3)+F(IP4)
+        301     2                    *                  +F(IP5)+F(IP6)+F(IP7)+F(IP8))/8.0E0
+        302     2   p    s                ELSE IF(IP6.NE.0) THEN
+        303     2   p    s                    FE(IE) = ( F(IP1)+F(IP2)+F(IP3)+F(IP4)
+        304     2                    *                  +F(IP5)+F(IP6)              )/6.0E0
+        305     2   p    s                ELSE IF(IP5.NE.0) THEN
+        306     2   p    s                    FE(IE) = ( F(IP1)+F(IP2)+F(IP3)+F(IP4)
+        307     2                    *                  +F(IP5)                     )/5.0E0
+        308     2   p    s                ELSE IF(IP4.NE.0) THEN
+        309     2   p    s                    FE(IE) = ( F(IP1)+F(IP2)+F(IP3)+F(IP4))/4.0E0
+        310     2   p    v                ENDIF
+        311     1               C
+        312     1   p    v                DELTAP=P(IE)+0.5E0*SIGMA
+        313     1               C
+        314     2   p    s                IF(ICAVI.EQ.1) THEN
+        315     3                             IF(DELTAP.LE.0) THEN
+        316     3                                 SOURCE = (CGAS*(1.E0-FE(IE))+CLQD*FE(IE))*DELTAP
+        317     3                             ELSE
+        318     3                                 SOURCE = (0.1E0*CGAS*(1.E0-FE(IE))+CLQD*FE(IE))*DELTAP
+        319     3                             ENDIF
+        320     2   p    s                ELSE IF(ICAVI.EQ.2) THEN
+        321     3   p    s                    IF(DELTAP.LE.0.0) THEN
+        322     3   p    s                        SOURCE = CLQD*FE(IE)*DELTAP
+        323     3   p    s                    ELSE
+        324     3   p    s                        SOURCE = CGAS*(1.E0-FE(IE))*DELTAP
+        325     3   p    s                    ENDIF
+        326     2                         ELSE IF(ICAVI.EQ.3) THEN
+        327     3                             IF(DELTAP.LE.0) THEN
+        328     3                                 SOURCE = CLQD*FE(IE)*DELTAP
+        329     3                             ELSE
+        330     3                                 SOURCE = CGAS*((FE(IE)-F0)**0.5)*(1.0E0-FE(IE)-F0)
+        331     3                             ENDIF
+        332     2   p    v                ENDIF
+        333     1               C
+        334     1   p    s              IF(DELTAP.GE.0.0E0 .AND. FE(IE).GE.FLIMIT) SOURCE=0.0E0
+        335     1               C
+        336     1   p    v              FESRC(IE) = SOURCE
+        337     1               C
+        338     1   p    v       4300 CONTINUE
+        339                     C
+        340                           RETURN
+        341                           END
+
+ Diagnostic messages: program name(LIQUID)
+   jwd8220o-i  "liquid.f", line 1: 副作用の可能性のある最適化を行いました。
+   jwd2006i-i  "liquid.f", line 61: この名前'NB'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "liquid.f", line 61: この名前'IDIM'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "liquid.f", line 61: この名前'I'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "liquid.f", line 63: この名前'COEF'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "liquid.f", line 71: この名前'K'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "liquid.f", line 71: この名前'ICRS'は、宣言だけされていて引用されていません。
+   jwd5001p-i  "liquid.f", line 80: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "liquid.f", line 80: このDOループをSIMD化しました。(名前:IP)
+   jwd8663o-i  "liquid.f", line 80: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "liquid.f", line 80: ループを展開数2回でアンローリングしました。
+   jwd6001s-i  "liquid.f", line 85: このDOループをSIMD化しました。(名前:IB)
+   jwd8204o-i  "liquid.f", line 85: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "liquid.f", line 85: ループの繰返し数が320回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5228p-i  "liquid.f", line 86: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd6001s-i  "liquid.f", line 89: このDOループをSIMD化しました。(名前:IB)
+   jwd8204o-i  "liquid.f", line 89: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "liquid.f", line 89: ループの繰返し数が224回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5228p-i  "liquid.f", line 92: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd5228p-i  "liquid.f", line 96: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd6229s-i  "liquid.f", line 96: IF文が存在するため、このDOループのSIMD化を抑止しました。
+   jwd8670o-i  "liquid.f", line 96: ループ内に分岐命令があるため、ソフトウェアパイプライニングを適用できません。
+   jwd8202o-i  "liquid.f", line 96: ループを展開数2回でアンローリングしました。
+   jwd8321o-i  "liquid.f", line 123: ループをループアンスイッチングしました。
+   jwd5001p-i  "liquid.f", line 123: このDOループを並列化しました。(名前:IE)
+   jwd6229s-i  "liquid.f", line 123: IF文が存在するため、このDOループのSIMD化を抑止しました。
+   jwd8209o-i  "liquid.f", line 133: 多項式の演算順序を変更しました。
+   jwd8206o-i  "liquid.f", line 136: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "liquid.f", line 136: 多項式の演算順序を変更しました。
+   jwd8206o-i  "liquid.f", line 139: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "liquid.f", line 139: 多項式の演算順序を変更しました。
+   jwd8209o-i  "liquid.f", line 142: 多項式の演算順序を変更しました。
+   jwd6202s-i  "liquid.f", line 149: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:SOURCE)
+   jwd6202s-i  "liquid.f", line 155: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:SOURCE)
+   jwd8209o-i  "liquid.f", line 155: 多項式の演算順序を変更しました。
+   jwd8209o-i  "liquid.f", line 157: 多項式の演算順序を変更しました。
+   jwd8209o-i  "liquid.f", line 161: 多項式の演算順序を変更しました。
+   jwd8213o-i  "liquid.f", line 163: べき乗の計算方法を変更しました。
+   jwd8209o-i  "liquid.f", line 163: 多項式の演算順序を変更しました。
+   jwd5001p-i  "liquid.f", line 176: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "liquid.f", line 176: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "liquid.f", line 176: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "liquid.f", line 176: ループの繰返し数が256回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "liquid.f", line 177: 多項式の演算順序を変更しました。
+   jwd5001p-i  "liquid.f", line 195: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "liquid.f", line 195: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "liquid.f", line 195: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "liquid.f", line 195: ループの繰返し数が416回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd6001s-i  "liquid.f", line 219: このDOループをSIMD化しました。(名前:IB)
+   jwd8204o-i  "liquid.f", line 219: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "liquid.f", line 219: ループの繰返し数が320回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5228p-i  "liquid.f", line 220: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd6001s-i  "liquid.f", line 223: このDOループをSIMD化しました。(名前:IB)
+   jwd8204o-i  "liquid.f", line 223: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "liquid.f", line 223: ループの繰返し数が416回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5209p-i  "liquid.f", line 225: 配列'RHS'の添字式中の変数'IP'をループ中で定義しているため、このDOループは並列化できません。
+   jwd5001p-i  "liquid.f", line 268: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "liquid.f", line 268: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "liquid.f", line 268: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "liquid.f", line 268: ループの繰返し数が384回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd6001s-i  "liquid.f", line 286: このDOループをSIMD化しました。(名前:IB)
+   jwd8204o-i  "liquid.f", line 286: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "liquid.f", line 286: ループの繰返し数が320回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5228p-i  "liquid.f", line 287: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd8321o-i  "liquid.f", line 290: ループをループアンスイッチングしました。
+   jwd5001p-i  "liquid.f", line 290: このDOループを並列化しました。(名前:IE)
+   jwd6229s-i  "liquid.f", line 290: IF文が存在するため、このDOループのSIMD化を抑止しました。
+   jwd8670o-i  "liquid.f", line 290: ループ内に分岐命令があるため、ソフトウェアパイプライニングを適用できません。
+   jwd8209o-i  "liquid.f", line 300: 多項式の演算順序を変更しました。
+   jwd8206o-i  "liquid.f", line 303: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "liquid.f", line 303: 多項式の演算順序を変更しました。
+   jwd8206o-i  "liquid.f", line 306: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "liquid.f", line 306: 多項式の演算順序を変更しました。
+   jwd8209o-i  "liquid.f", line 309: 多項式の演算順序を変更しました。
+   jwd8209o-i  "liquid.f", line 322: 多項式の演算順序を変更しました。
+   jwd8209o-i  "liquid.f", line 324: 多項式の演算順序を変更しました。
+   jwd8209o-i  "liquid.f", line 328: 多項式の演算順序を変更しました。
+   jwd8213o-i  "liquid.f", line 330: べき乗の計算方法を変更しました。
+   jwd8209o-i  "liquid.f", line 330: 多項式の演算順序を変更しました。
+
+ Procedure information
+   Lines      : 341
+   Statements : 203
+   Stack(byte): 58592
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 341
+   Total statements : 203
+   Total stack(byte): 58592
+   Total prefetch num: 0
+

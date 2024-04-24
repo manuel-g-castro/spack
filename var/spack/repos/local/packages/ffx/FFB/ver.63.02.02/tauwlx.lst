@@ -1,0 +1,447 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:53:27 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : tauwlx.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "TAUWLX"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.8.1                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE : TAUWLX                                                C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY Y.YAMADE            C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C CONTACT ADDRESS : IIS, THE UNIVERSITY OF TOKYO, CISS                 C
+         11                     C                                                                      C
+         12                     C THERMO-FLUID ANALYSIS SOLVERS FOR LARGE-SCALE-ASSEMBLY               C
+         13                     C                                                                      C
+         14                     C======================================================================C
+         15                           SUBROUTINE TAUWLX
+         16                          *         ( VKAP,B,U,V,W,NODE,NE,NP,N2,NEX,NS,NSP,N2D,
+         17                          *           LOCAL,DEVLP2,
+         18                          *           LPWALL,NPWALL,UWALL,VWALL,WWALL,
+         19                          *           LEWALL,NEWALL,YP,XNWALL,YNWALL,ZNWALL,
+         20                          *           VISC,NITER,UTAU,TAUX,TAUY,TAUZ,
+         21                          *           REP,UPP,UPWL,VPWL,WPWL)
+         22                     C
+         23                           IMPLICIT NONE
+         24                     C
+         25                           INTEGER*4 NODE,NE,NP,N2,NEX,NS,NSP,N2D,LOCAL,
+         26                          *          LPWALL,NPWALL,UWALL,VWALL,WWALL,
+         27                          *          LEWALL,NEWALL,NITER
+         28                     C
+         29                           REAL*4    VKAP,B,U,V,W,DEVLP2,YP,XNWALL,YNWALL,ZNWALL,
+         30                          *          VISC,UTAU,TAUX,TAUY,TAUZ,REP,UPP,UPWL,VPWL,WPWL
+         31                     C
+         32                           INTEGER*4 MAXENT,IPWALL,IP,IEWALL,IS,IE,IETYPE,NNPE,NNPS,I,
+         33                          *          IOPPSN,II,NOPPSN,ITER,IENT
+         34                           REAL*4    UPW,VPW,WPW,UPF,VPF,WPF,UPR,TABLE,EPS,DEVLP1,VPR,WPR,
+         35                          *          COF,F,DF,UP
+         36                     C
+         37                           DIMENSION U(NP),V(NP),W(NP),NODE(N2,NE),NEX(8),
+         38                          1          LOCAL(NSP,NS,4),LPWALL(NPWALL),
+         39                          2          UWALL(NPWALL),VWALL(NPWALL),WWALL(NPWALL),
+         40                          3          LEWALL(2,NEWALL),YP(NEWALL),
+         41                          4          XNWALL(NEWALL),YNWALL(NEWALL),ZNWALL(NEWALL),VISC(NE),
+         42                          5          UTAU(NEWALL),TAUX(NEWALL),TAUY(NEWALL),TAUZ(NEWALL),
+         43                          6          REP (NEWALL),UPP (NEWALL),UPWL(NP),VPWL(NP),WPWL(NP)
+         44                     C
+         45                           PARAMETER ( MAXENT = 8 )
+         46                           DIMENSION TABLE(2,MAXENT)
+         47                           DATA TABLE / 3.0E+2, 12.43, 1.0E+3, 15.57,
+         48                          &             3.0E+3, 18.16, 1.0E+4, 20.90,
+         49                          &             3.0E+4, 23.39, 1.0E+5, 26.13,
+         50                          &             3.0E+5, 28.64, 1.0E+6, 31.42 /
+         51                     C
+         52                           DATA EPS  / 1.E-20 /
+         53                     C
+         54                           DIMENSION IOPPSN(8)
+         55                     C
+         56                     C
+         57                     C      CALCULATE WALL SHEAR STRESSES BASED ON THE SPALDING'S
+         58                     C     GENERALIZED WALL LAW.
+         59                     C         ( 3-D CALCULATION : SINGLE WORD & MULTI ELEMENT VERSION )
+         60                     C                                           CODED BASED ON 'TAUWAL'
+         61                     C
+         62                     C     ARGUMENT LISTINGS
+         63                     C       (1) INPUT
+         64                     C          VKAP        ; VON-KARMAN CONSTANT
+         65                     C          B           ; CONSTANT APPEARING IN THE UNIVERSAL FUNCTION
+         66                     C          U       (IP); X-DIR. VELOCITY COMPONENT
+         67                     C          V       (IP); Y-DIR. VELOCITY COMPONENT
+         68                     C          W       (IP); Z-DIR. VELOCITY COMPONENT
+         69                     C          NODE  (I,IE); NODE NO. TABLE BASED ON ELEMENT
+         70                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+         71                     C          NP          ; NUMBER OF TOTAL    NODES
+         72                     C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT
+         73                     C          LOCAL (I,IS); NODE NUMBER TABLE DEFINING ELEMENT SURFACES
+         74                     C          DEVLP2      ; DEVELOPMENT FUNCTION FOR WALL VELOCITIES
+         75                     C          LPWALL (IBP); WALL BOUNDARY NODES
+         76                     C          NPWALL      ; NUMBER OF WALL BOUNDARY NODES
+         77                     C          UWALL  (IBP); WALL BOUNDARY U-VELOCITIES
+         78                     C          VWALL  (IBP); WALL BOUNDARY V-VELOCITIES
+         79                     C          WWALL  (IBP); WALL BOUNDARY W-VELOCITIES
+         80                     C          LEWALL(I,IBE); WALL BOUNDARY ELEMENT AND ITS SURFACE
+         81                     C          NEWALL      ; NUMBER OF WALL BOUNDARY SURFACES
+         82                     C          YP     (IBE); DISTANCE BETWEEN WALL AND ITS OPPOSITE SURFACE
+         83                     C          XNWALL (IBE); X NORMAL OF WALL BOUNDARY SURFACE
+         84                     C          YNWALL (IBE); Y NORMAL OF WALL BOUNDARY SURFACE
+         85                     C          ZNWALL (IBE); Z NORMAL OF WALL BOUNDARY SURFACE
+         86                     C          VISC    (IE); MOLECULAR VISCOSITY
+         87                     C          NITER       ; ITERATIONS MADE FOR NEWTON LAPSON METHOD
+         88                     C
+         89                     C       (2) OUTPUT
+         90                     C          UTAU   (IBE); FRICTION VELOCITY             AT WALL SURFACES
+         91                     C          TAUX   (IBE); X-DIR. SHEAR STRESS COMPONENT AT WALL SURFACES
+         92                     C          TAUY   (IBE); Y-DIR. SHEAR STRESS COMPONENT AT WALL SURFACES
+         93                     C          TAUZ   (IBE); Z-DIR. SHEAR STRESS COMPONENT AT WALL SURFACES
+         94                     C
+         95                     C       (4) WORK
+         96                     C          REP    (IBE); STORE WALL SURFACE REYNOLDS NUMBER(UP*YP/VISC)
+         97                     C          UPP    (IBE); STORE WALL SURFACE WALL VELOCITY  (UP/UTAU)
+         98                     C          UPWL    (IP); STORE WALL U-VELOCITY AT GLOBAL NODE
+         99                     C          VPWL    (IP); STORE WALL V-VELOCITY AT GLOBAL NODE
+        100                     C          WPWL    (IP); STORE WALL W-VELOCITY AT GLOBAL NODE
+        101                     C
+        102                     C
+        103                     C  STORE WALL VELOCITIES TO GLOBAL NODE ARRAYS
+        104                     C
+        105                     C
+        106                           DEVLP1=0.0E0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.57, ITR: 160, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPWALL, (unknown)
+                              <<< Loop-information  End >>>
+        107     1   s   2v            DO 50 IPWALL = 1 , NPWALL
+        108     1   p   2v                IP = LPWALL(IPWALL)
+        109     1   m   2v                UPWL(IP) = DEVLP1*UWALL(IPWALL)
+        110     1   s   2v                VPWL(IP) = DEVLP1*VWALL(IPWALL)
+        111     1   s   2v                WPWL(IP) = DEVLP1*WWALL(IPWALL)
+        112     1   p   2v         50 CONTINUE
+        113                     C
+        114                     C
+        115                     C  CALCULATE VELOCITY COMPONENTS AT THE WALL OPPOSITE SURFACE ALIGNED
+        116                     C TO THE WALL SURFACE
+        117                     C
+        118                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LOCAL
+                              <<< Loop-information  End >>>
+        119     1                     DO 100 IEWALL = 1 , NEWALL
+        120     1                        IE  = LEWALL(1,IEWALL)
+        121     1                        IS  = LEWALL(2,IEWALL)
+        122     2                        IF(     NODE(8,IE).GE.1) THEN ! HEX
+        123     2                           IETYPE = 4
+        124     2                           NNPE   = 8
+        125     2                        ELSE IF(NODE(6,IE).GE.1) THEN ! PRS
+        126     2                           IETYPE = 3
+        127     2                           NNPE   = 6
+        128     2                        ELSE IF(NODE(5,IE).GE.1) THEN ! PYR
+        129     2                           IETYPE = 2
+        130     2                           NNPE   = 5
+        131     2                        ELSE                          ! TET
+        132     2                           IETYPE = 1
+        133     2                           NNPE   = 4
+        134     2                        ENDIF
+        135     2                        IF(LOCAL(4,IS,IETYPE).GE.1) THEN ! QUADRILATERAL
+        136     2                           NNPS = 4
+        137     2                        ELSE                             ! TRIANGLE
+        138     2                           NNPS = 3
+        139     2                        ENDIF
+        140     1                        UPW=0.0E0
+        141     1                        VPW=0.0E0
+        142     1                        WPW=0.0E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 517
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        143     2  pp    v               DO 101 I=1,NNPS
+        144     2   p    v                  UPW = UPW + UPWL(NODE(LOCAL(I,IS,IETYPE),IE))
+        145     2   p    v                  VPW = VPW + VPWL(NODE(LOCAL(I,IS,IETYPE),IE))
+        146     2   p    v                  WPW = WPW + WPWL(NODE(LOCAL(I,IS,IETYPE),IE))
+        147     2   p    v       101     CONTINUE
+        148     1                        UPW = UPW/FLOAT(NNPS)
+        149     1                        VPW = VPW/FLOAT(NNPS)
+        150     1                        WPW = WPW/FLOAT(NNPS)
+        151     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        152     2   s   4v               DO 102 I=1,NNPE
+        153     2   p   4v                  IOPPSN(I)=1
+        154     2   p   4v       102     CONTINUE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.25, ITR: 320, MVE: 5)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LOCAL, (unknown)
+                              <<< Loop-information  End >>>
+        155     2   s   2v               DO 103 I=1,N2D
+        156     2   p   2v                  II=LOCAL(I,IS,IETYPE)
+        157     2   p   2v                  IF(II.GE.1) IOPPSN(II)=0
+        158     2   p   2v       103     CONTINUE
+        159     1                        NOPPSN=0
+        160     1                        UPF=0.0E0
+        161     1                        VPF=0.0E0
+        162     1                        WPF=0.0E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 471
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        163     2  pp    v               DO 104 I=1,NNPE
+        164     3   p    v                  IF(IOPPSN(I).EQ.1) THEN
+        165     3   p    v                     NOPPSN=NOPPSN+1
+        166     3   p    v                     UPF = UPF + U(NODE(I,IE))
+        167     3   p    v                     VPF = VPF + V(NODE(I,IE))
+        168     3   p    v                     WPF = WPF + W(NODE(I,IE))
+        169     3   p    v                  ENDIF
+        170     2   p    v       104     CONTINUE
+        171     1                        UPF = UPF/FLOAT(NOPPSN)
+        172     1                        VPF = VPF/FLOAT(NOPPSN)
+        173     1                        WPF = WPF/FLOAT(NOPPSN)
+        174     1               C
+        175     1                         UPR = UPF-UPW
+        176     1                         VPR = VPF-VPW
+        177     1                         WPR = WPF-WPW
+        178     1               C
+        179     1                         COF = XNWALL(IEWALL)*UPR+YNWALL(IEWALL)*VPR+ZNWALL(IEWALL)*WPR
+        180     1               C
+        181     1                         TAUX(IEWALL) = UPR-COF*XNWALL(IEWALL)
+        182     1                         TAUY(IEWALL) = VPR-COF*YNWALL(IEWALL)
+        183     1                         TAUZ(IEWALL) = WPR-COF*ZNWALL(IEWALL)
+        184     1               C
+        185     1                         UTAU(IEWALL) = SQRT(TAUX(IEWALL)**2
+        186     1                    &                       +TAUY(IEWALL)**2
+        187     1                    &                       +TAUZ(IEWALL)**2)+EPS
+        188     1               C
+        189     1                         REP (IEWALL) = UTAU(IEWALL)*YP(IEWALL)/VISC(IE)
+        190     1                 100 CONTINUE
+        191                     C
+        192                     C
+        193                     C  CALCULATE FRICTION VELOCITY BASED ON THE SPALDING'S GENERALIZED
+        194                     C WALL LAW, USING THE NEWTON LAPSON METHOD. NOTE THAT THE GENERALIZED
+        195                     C WALL LAW CAN BE SOLVED FOR UP/UTAU WITH A SINGLE PARAMETER REP.
+        196                     C
+        197                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      UPP, REP, (unknown)
+                              <<< Loop-information  End >>>
+        198     1                     DO 310 ITER = 1 , NITER
+        199     2                         IF(ITER.EQ.1) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 92
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      REP, UPP, (unknown)
+                              <<< Loop-information  End >>>
+        200     3  pp                         DO 220 IEWALL = 1 , NEWALL
+        201     4   p                             IF(REP(IEWALL).LE.TABLE(1,1)) THEN
+        202     4   p                                 UPP(IEWALL) = SQRT(REP(IEWALL))
+        203     4   p                                 GO TO 220
+        204     4   p                             ENDIF
+        205     3               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FULL UNROLLING
+                              <<< Loop-information  End >>>
+        206     4   p   f                         DO 210 IENT = 2 , MAXENT
+        207     5   p   f                             IF(REP(IEWALL).LE.TABLE(1,IENT)) THEN
+        208     5   p   f                                 UPP(IEWALL) = TABLE(2,IENT)
+        209     5   p   f                                 GO TO 220
+        210     5   p   f                             ENDIF
+        211     4   p   f         210             CONTINUE
+        212     3               C
+        213     3   p                             UPP(IEWALL) = TABLE(2,MAXENT)
+        214     3   p             220         CONTINUE
+        215     2                         ELSE
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 39
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 0.48, ITR: 48, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      REP, UPP, (unknown)
+                              <<< Loop-information  End >>>
+        216     3  pp    v                    DO 300 IEWALL = 1 , NEWALL
+        217     3   p    v                        F  = UPP(IEWALL)-REP(IEWALL)/UPP(IEWALL)
+        218     3                    &                +EXP(-VKAP*B)*(EXP(VKAP*UPP(IEWALL))-1.E0
+        219     3                    &                              -VKAP*UPP(IEWALL)
+        220     3                    &                              -0.5E0*(VKAP*UPP(IEWALL))**2
+        221     3                    &                              -1.E0/6.E0*(VKAP*UPP(IEWALL))**3)
+        222     3               C
+        223     3   p    v                        DF = 1.E0+REP(IEWALL)/UPP(IEWALL)**2
+        224     3                    &                +EXP(-VKAP*B)*(VKAP*EXP(VKAP*UPP(IEWALL))
+        225     3                    &                              -VKAP-VKAP**2*UPP(IEWALL)
+        226     3                    &                              -0.5E0*VKAP**3*UPP(IEWALL)**2)
+        227     3               C
+        228     3   p    v                        UPP(IEWALL) = UPP(IEWALL)-F/DF
+        229     3   p    v        300         CONTINUE
+        230     2                         ENDIF
+        231     1                 310 CONTINUE
+        232                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 291
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.61, ITR: 176, MVE: 6)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      UTAU, TAUZ, TAUY, TAUX, UPP, (unknown)
+                              <<< Loop-information  End >>>
+        233     1  pp    v            DO 400 IEWALL = 1 , NEWALL
+        234     1   p    v                UP           =  UTAU(IEWALL)
+        235     1   p    v                UTAU(IEWALL) =  UP/UPP(IEWALL)
+        236     1   p    v                TAUX(IEWALL) = -UTAU(IEWALL)**2*TAUX(IEWALL)/UP
+        237     1   p    v                TAUY(IEWALL) = -UTAU(IEWALL)**2*TAUY(IEWALL)/UP
+        238     1   p    v                TAUZ(IEWALL) = -UTAU(IEWALL)**2*TAUZ(IEWALL)/UP
+        239     1   p    v        400 CONTINUE
+        240                     C
+        241                     C
+        242                           RETURN
+        243                           END
+
+ Diagnostic messages: program name(TAUWLX)
+   jwd2008i-i  "tauwlx.f", line 15: この仮引数'DEVLP2'は、副プログラム中で使用されていません。
+   jwd8220o-i  "tauwlx.f", line 15: 副作用の可能性のある最適化を行いました。
+   jwd2008i-i  "tauwlx.f", line 37: この仮引数'NEX'は、副プログラム中で使用されていません。
+   jwd6001s-i  "tauwlx.f", line 107: このDOループをSIMD化しました。(名前:IPWALL)
+   jwd8204o-i  "tauwlx.f", line 107: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "tauwlx.f", line 107: ループの繰返し数が160回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5209p-i  "tauwlx.f", line 109: 配列'UPWL'の添字式中の変数'IP'をループ中で定義しているため、このDOループは並列化できません。
+   jwd5209p-i  "tauwlx.f", line 110: 配列'VPWL'の添字式中の変数'IP'をループ中で定義しているため、このDOループは並列化できません。
+   jwd5209p-i  "tauwlx.f", line 111: 配列'WPWL'の添字式中の変数'IP'をループ中で定義しているため、このDOループは並列化できません。
+   jwd5208p-i  "tauwlx.f", line 119: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:IOPPSN)
+   jwd5004p-i  "tauwlx.f", line 143: リダクション演算を含むDOループを並列化しました。(名前:I)
+   jwd6004s-i  "tauwlx.f", line 143: リダクション演算を含むDOループをSIMD化しました。(名前:I)
+   jwd8209o-i  "tauwlx.f", line 144: 多項式の演算順序を変更しました。
+   jwd8206o-i  "tauwlx.f", line 148: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "tauwlx.f", line 149: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "tauwlx.f", line 150: 除算を逆数の乗算に変更しました。
+   jwd5143p-i  "tauwlx.f", line 152: DOループの繰返し数が少ないため、このDOループは並列化できません。
+   jwd6001s-i  "tauwlx.f", line 152: このDOループをSIMD化しました。(名前:I)
+   jwd8674o-i  "tauwlx.f", line 152: ループの繰返し数が192回より小さく、最適化の効果を得られないため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "tauwlx.f", line 152: ループを展開数4回でアンローリングしました。
+   jwd6001s-i  "tauwlx.f", line 155: このDOループをSIMD化しました。(名前:I)
+   jwd8204o-i  "tauwlx.f", line 155: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "tauwlx.f", line 155: ループの繰返し数が320回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "tauwlx.f", line 156: 多項式の演算順序を変更しました。
+   jwd5209p-i  "tauwlx.f", line 157: 配列'IOPPSN'の添字式中の変数'II'をループ中で定義しているため、このDOループは並列化できません。
+   jwd5004p-i  "tauwlx.f", line 163: リダクション演算を含むDOループを並列化しました。(名前:I)
+   jwd6004s-i  "tauwlx.f", line 163: リダクション演算を含むDOループをSIMD化しました。(名前:I)
+   jwd8206o-i  "tauwlx.f", line 175: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "tauwlx.f", line 176: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "tauwlx.f", line 177: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "tauwlx.f", line 179: 多項式の演算順序を変更しました。
+   jwd8209o-i  "tauwlx.f", line 185: 多項式の演算順序を変更しました。
+   jwd8209o-i  "tauwlx.f", line 189: 多項式の演算順序を変更しました。
+   jwd5208p-i  "tauwlx.f", line 198: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:UPP)
+   jwd5001p-i  "tauwlx.f", line 200: このDOループを並列化しました。(名前:IEWALL)
+   jwd8670o-i  "tauwlx.f", line 200: ループ内に分岐命令があるため、ソフトウェアパイプライニングを適用できません。
+   jwd5131p-i  "tauwlx.f", line 206: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd6131s-i  "tauwlx.f", line 206: ループ出口が2つ以上あるため、このDOループはSIMD化できません。
+   jwd8203o-i  "tauwlx.f", line 206: ループをフルアンローリングしました。
+   jwd5001p-i  "tauwlx.f", line 216: このDOループを並列化しました。(名前:IEWALL)
+   jwd6001s-i  "tauwlx.f", line 216: このDOループをSIMD化しました。(名前:IEWALL)
+   jwd8204o-i  "tauwlx.f", line 216: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "tauwlx.f", line 216: ループの繰返し数が48回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "tauwlx.f", line 217: 多項式の演算順序を変更しました。
+   jwd8209o-i  "tauwlx.f", line 223: 多項式の演算順序を変更しました。
+   jwd8209o-i  "tauwlx.f", line 228: 多項式の演算順序を変更しました。
+   jwd5001p-i  "tauwlx.f", line 233: このDOループを並列化しました。(名前:IEWALL)
+   jwd6001s-i  "tauwlx.f", line 233: このDOループをSIMD化しました。(名前:IEWALL)
+   jwd8204o-i  "tauwlx.f", line 233: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "tauwlx.f", line 233: ループの繰返し数が176回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "tauwlx.f", line 236: 多項式の演算順序を変更しました。
+   jwd8206o-i  "tauwlx.f", line 236: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "tauwlx.f", line 237: 多項式の演算順序を変更しました。
+   jwd8206o-i  "tauwlx.f", line 237: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "tauwlx.f", line 238: 多項式の演算順序を変更しました。
+   jwd8206o-i  "tauwlx.f", line 238: 除算を逆数の乗算に変更しました。
+
+ Procedure information
+   Lines      : 243
+   Statements : 115
+   Stack(byte): 95760
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 243
+   Total statements : 115
+   Total stack(byte): 95760
+   Total prefetch num: 0
+

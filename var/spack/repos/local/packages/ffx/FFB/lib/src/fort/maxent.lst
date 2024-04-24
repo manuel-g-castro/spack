@@ -1,0 +1,337 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:54:10 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : maxent.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "MAXENT"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    MAXENT                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE MAXENT(IMODE,X,ND,DT,MMAX,FMIN,FMAX,NF,
+         14                          *                  PWS,F,MINM,Y,FPE,R,RR,RFPE,IUT0,IERR)
+         15                           IMPLICIT REAL*4(A-H,O-Z)
+         16                           DIMENSION X(ND),PWS(NF+1),F(NF+1),
+         17                          1          Y(0:ND),FPE(MMAX),R(MMAX),RR(MMAX),RFPE(MMAX)
+         18                     C
+         19                           CHARACTER*60 ERMSGB
+         20                          & /' ## SUBROUTINE MAXENT: FATAL      ERROR OCCURENCE; RETURNED' /
+         21                           CHARACTER*60 EREXP1
+         22                          & /' SPECIFIED OPERATION MODE IS NOT SUPPORTED                 ' /
+         23                     C
+         24                     C
+         25                     C      CALCULATE POWER SPECTRUM OF GIVEN DATA BY THE MAXIMUM ENTROPY
+         26                     C     METHOD USING BURG'S ALGORITHM
+         27                     C
+         28                     C
+         29                     C     ARGUMENT LISTINGS
+         30                     C       (1) INPUT
+         31                     C          IMODE       ; DETERMINES THE DIMENSION OF AUTO REGRESSION
+         32                     C                       MODEL AS FOLLOWS:
+         33                     C                   1 --- USE MINIMUM PREDICTION ERROR ALGORITHM
+         34                     C                   2 --- USE SPECIFIED VALUE BY THE CALLING PROGRAM
+         35                     C          X        (I); INPUT HISTORY DATA
+         36                     C          ND          ; NUMBER OF SAMPLING POINTS FOR HISTORY DATA
+         37                     C          DT          ; SAMPLING INTERVAL OF HISTORY DATA
+         38                     C          MMAX        ; MAXIMUM DIMENSION OF AUTO REGRESSION MODEL
+         39                     C          FMIN        ; MINIMUM FREQUENCY FOR SPECTRUM CALCULATION
+         40                     C          FMAX        ; MAXIMUM FREQUENCY FOR SPECTRUM CALCULATION
+         41                     C          NF          ; NUMBER OF POWER SPECTRUM CALCULATION POINTS
+         42                     C          IUT0        ; FILE NUMBER TO WRITE  ERROR MESSAGE
+         43                     C
+         44                     C       (2) OUTPUT
+         45                     C          PWS     (IF); POWER SPECTRUM
+         46                     C          F       (IF); FREQUENCY WHERE POWER SPECTRUM IS CALCULATED
+         47                     C          MINM        ; DETERMINED DIMENSION OF AUTO REGRESSION MODEL
+         48                     C          IERR        ; RETURN CODE WHOSE VALUE WILL BE EITHER
+         49                     C            0       --- INDICATING SUCCESSFUL TERMINATION
+         50                     C        OR  1       --- INDICATING OCCURENCE OF SOME ERROR CONDITIONS
+         51                     C
+         52                     C       (4) WORK
+         53                     C          Y        (I); STORES COPY OF INPUT HISTORY DATA
+         54                     C          FPE      (M); STORES FINAL PREDICTION ERROR
+         55                     C          R        (M); STORES AUTO REGRESSION COEFFICIENTS
+         56                     C          RR       (M); STORES PREVIOUS AUTO REGRESSION COEFFICIENTS
+         57                     C          RFPE     (M); STORES AUTO REGRESSION COEFFICIENTS AT MINIMUM
+         58                     C                       PREDICTION ERROR
+         59                     C
+         60                     C
+         61                           IERR  = 0
+         62                     C
+         63                           COEFF = 2.E0*3.141592*DT
+         64                           DF    = (FMAX-FMIN)/FLOAT(NF)
+         65                     C
+         66                     C CHECK PASSED PARAMETERS
+         67                     C
+         68     1                     IF(IMODE.NE.1 .AND. IMODE.NE.2) THEN
+         69     1                         WRITE(IUT0,*) ERMSGB
+         70     1                         WRITE(IUT0,*) EREXP1
+         71     1                         IERR = 1
+         72     1                         RETURN
+         73     1                     ENDIF
+         74                     C
+         75                     C SET INITIAL VALUES
+         76                     C
+         77                           SUM = 0.E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1778
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+         78     1  pp    v            DO 10 I = 1 , ND
+         79     1   p    v                SUM = SUM+X(I)
+         80     1   p    v         10 CONTINUE
+         81                           AV = SUM/FLOAT(ND)
+         82                     C
+         83                           SUM = 0.E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 942
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+         84     1  pp    v            DO 20 I = 1 , ND
+         85     1   p    v                Z      = X(I)-AV
+         86     1   p    v                X(I)   = Z
+         87     1   p    v                Y(I-1) = Z
+         88     1   p    v                SUM    = SUM+Z*Z
+         89     1   p    v         20 CONTINUE
+         90                           PM     = SUM/FLOAT(ND)
+         91                           FPEMIN = FLOAT(ND+1)/FLOAT(ND-1)*PM
+         92                     C
+         93                     C INCREASE DIMENSION OF AUTO REGRESSION MODEL
+         94                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      R, RFPE
+                              <<< Loop-information  End >>>
+         95     1                     DO 160 M = 1 , MMAX
+         96     1                         SUMN = 0.E0
+         97     1                         SUMD = 0.E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 942
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+         98     2  pp    v                DO 110 I = 1 , ND-M
+         99     2   p    v                    SUMN = SUMN+X(I)*Y(I)
+        100     2   p    v                    SUMD = SUMD+X(I)*X(I)+Y(I)*Y(I)
+        101     2   p    v        110     CONTINUE
+        102     1               C
+        103     1                         RM   = -2.E0*SUMN/SUMD
+        104     1                         R(M) = RM
+        105     1                         PM   = PM*(1.E0-RM*RM)
+        106     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 889
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.40, ITR: 352, MVE: 4, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      RR, R
+                              <<< Loop-information  End >>>
+        107     2  pp   2v                DO 120 I = 1 , M-1
+        108     2   p   2v                    R(I) = RR(I)+RM*RR(M-I)
+        109     2   p   2v        120     CONTINUE
+        110     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1455
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.00, ITR: 320, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      R, RR
+                              <<< Loop-information  End >>>
+        111     2  pp   4v                DO 130 I = 1 , M
+        112     2   p   4v                    RR(I) = R(I)
+        113     2   p   4v        130     CONTINUE
+        114     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 593
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      Y, X
+                              <<< Loop-information  End >>>
+        115     2  pp    v                DO 140 I = 1 , ND-M-1
+        116     2   p    v                    X(I) = X(I)+RM*Y(I)
+        117     2   p    v                    Y(I) = Y(I+1)+RM*X(I+1)
+        118     2   p    v        140     CONTINUE
+        119     1               C
+        120     1                         FPE(M) = FLOAT(ND+M+1)/FLOAT(ND-M-1)*PM
+        121     1               C
+        122     2                         IF(IMODE.EQ.1 .AND. FPE(M).LT.FPEMIN .OR.
+        123     2                    &       IMODE.EQ.2 .AND. M.EQ.MMAX) THEN
+        124     2                             FPEMIN = FPE(M)
+        125     2                             MINM   = M
+        126     2                             PMM    = PM
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1455
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.00, ITR: 320, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      R, RFPE
+                              <<< Loop-information  End >>>
+        127     3  pp   4v                    DO 150 I = 1 , M
+        128     3   p   4v                        RFPE(I) = R(I)
+        129     3   p   4v        150         CONTINUE
+        130     2                         ENDIF
+        131     1                 160 CONTINUE
+        132                     C
+        133                     C CALCULATE POWER SPECTRUM
+        134                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      RFPE
+                              <<< Loop-information  End >>>
+        135     1  pp                 DO 210 IF = 0 , NF
+        136     1   p                     F(IF+1) = FMIN+DF*FLOAT(IF)
+        137     1               C
+        138     1   p                     SUM1 = 1.E0
+        139     1   p                     SUM2 = 0.E0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 0.75, ITR: 80, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      RFPE
+                              <<< Loop-information  End >>>
+        140     2   p    v                DO 200 J = 1 , MINM
+        141     2   p    v                    SUM1 = SUM1+RFPE(J)*COS(COEFF*F(IF+1)*J)
+        142     2   p    v                    SUM2 = SUM2+RFPE(J)*SIN(COEFF*F(IF+1)*J)
+        143     2   p    v        200     CONTINUE
+        144     1   p                     PWS(IF+1) = PMM*DT/(SUM1*SUM1+SUM2*SUM2)
+        145     1   p             210 CONTINUE
+        146                     C
+        147                     C
+        148                           RETURN
+        149                           END
+
+ Diagnostic messages: program name(MAXENT)
+   jwd8220o-i  "maxent.f", line 13: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd5004p-i  "maxent.f", line 78: DO loop with DO variable 'I' is parallelized. The DO loop contains the reduction operation.
+   jwd6004s-i  "maxent.f", line 78: SIMD conversion is applied to DO loop with DO variable 'I'. The DO loop contains a reduction operation.
+   jwd5004p-i  "maxent.f", line 84: DO loop with DO variable 'I' is parallelized. The DO loop contains the reduction operation.
+   jwd6004s-i  "maxent.f", line 84: SIMD conversion is applied to DO loop with DO variable 'I'. The DO loop contains a reduction operation.
+   jwd5202p-i  "maxent.f", line 95: DO loop is not parallelized: data dependency of variable 'PMM' may cause different results from serial execution for loop.
+   jwd5202p-i  "maxent.f", line 95: DO loop is not parallelized: data dependency of variable 'MINM' may cause different results from serial execution for loop.
+   jwd5202p-i  "maxent.f", line 95: DO loop is not parallelized: data dependency of variable 'FPEMIN' may cause different results from serial execution for loop.
+   jwd5202p-i  "maxent.f", line 95: DO loop is not parallelized: data dependency of variable 'PM' may cause different results from serial execution for loop.
+   jwd5208p-i  "maxent.f", line 95: DO loop is not parallelized: the assign-refer order of 'RFPE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "maxent.f", line 95: DO loop is not parallelized: the assign-refer order of 'RR' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "maxent.f", line 95: DO loop is not parallelized: the assign-refer order of 'R' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "maxent.f", line 95: DO loop is not parallelized: the assign-refer order of 'Y' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "maxent.f", line 95: DO loop is not parallelized: the assign-refer order of 'X' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5004p-i  "maxent.f", line 98: DO loop with DO variable 'I' is parallelized. The DO loop contains the reduction operation.
+   jwd6004s-i  "maxent.f", line 98: SIMD conversion is applied to DO loop with DO variable 'I'. The DO loop contains a reduction operation.
+   jwd8209o-i  "maxent.f", line 100: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "maxent.f", line 103: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5001p-i  "maxent.f", line 107: DO loop with DO variable 'I' is parallelized.
+   jwd6001s-i  "maxent.f", line 107: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8204o-i  "maxent.f", line 107: This loop is software pipelined.
+   jwd8205o-i  "maxent.f", line 107: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 352.
+   jwd5001p-i  "maxent.f", line 111: DO loop with DO variable 'I' is parallelized.
+   jwd6001s-i  "maxent.f", line 111: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8204o-i  "maxent.f", line 111: This loop is software pipelined.
+   jwd8205o-i  "maxent.f", line 111: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 320.
+   jwd5001p-i  "maxent.f", line 115: DO loop with DO variable 'I' is parallelized.
+   jwd6001s-i  "maxent.f", line 115: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8663o-i  "maxent.f", line 115: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd5202p-i  "maxent.f", line 116: DO loop is not parallelized: data dependency of variable 'X' may cause different results from serial execution for loop.
+   jwd5001p-i  "maxent.f", line 127: DO loop with DO variable 'I' is parallelized.
+   jwd6001s-i  "maxent.f", line 127: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8204o-i  "maxent.f", line 127: This loop is software pipelined.
+   jwd8205o-i  "maxent.f", line 127: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 320.
+   jwd5001p-i  "maxent.f", line 135: DO loop with DO variable 'IF' is parallelized.
+   jwd6004s-i  "maxent.f", line 140: SIMD conversion is applied to DO loop with DO variable 'J'. The DO loop contains a reduction operation.
+   jwd8204o-i  "maxent.f", line 140: This loop is software pipelined.
+   jwd8205o-i  "maxent.f", line 140: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 80.
+
+ Procedure information
+   Lines      : 149
+   Statements : 70
+   Stack(byte): 55456
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 149
+   Total statements : 70
+   Total stack(byte): 55456
+   Total prefetch num: 0
+

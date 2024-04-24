@@ -1,0 +1,258 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:54:08 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : lumpee.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "LUMPEE"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    LUMPEE                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE LUMPEE(IDIM,E,IENP,JENP,NEP,MEP,ME,NP,N,
+         14                          *                  IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,CM,
+         15                          *                  IUT0,IERR,WRK1,WRK2,MAXBUF)
+         16                           IMPLICIT REAL*4(A-H,O-Z)
+         17                           DIMENSION E(ME,N,N),IENP(MEP,NP),JENP(MEP,NP),NEP(NP),CM(NP)
+         18                     C
+         19                           DIMENSION LDOM(NDOM),NBPDOM(NDOM),
+         20                          1          IPSLF(MBPDOM,NDOM),IPSND(MBPDOM,NDOM),
+         21                          2          WRK1(MAXBUF),WRK2(MAXBUF)
+         22                     C
+         23                           CHARACTER*60 ERMSGC
+         24                          & / ' ## SUBROUTINE LUMPEE: FATAL      ERROR REPORT   ; RETURNED' /
+         25                     C
+         26                     C
+         27                     C
+         28                     C      LUMP ELEMENT MATRIX
+         29                     C         ( 2-D & 3-D CALCULATION : SINGLE WORD VERSION )
+         30                     C
+         31                     C
+         32                     C     ARGUMENT LISTINGS
+         33                     C       (1) INPUT
+         34                     C          IDIM        ; SPECIFIES THE SPACE DIMENSION AS FOLLOWS
+         35                     C                   2 --- TWO   DIMENSIONAL PROBLEM
+         36                     C                   3 --- THREE DIMENSIONAL PROBLEM
+         37                     C          E   (IE,I,J); ELEMENT MATRIX
+         38                     C          IENP(IEP,IP); ADJACENT ELEMENT NUMBER TO NODE IP
+         39                     C          JENP(IEP,IP); LOCAL NODE NUMBER OF IP IN ELEMENT IENP(IEP,IP)
+         40                     C          NEP     (IP); NUMBER OF ADJACENT ELEMENTS TO NODE IP
+         41                     C          MEP         ; THE FIRST DIMENSION OF ARRAY IENP,JENP
+         42                     C          ME          ; MAX. NUMBER OF TOTAL ELEMENTS
+         43                     C          NP          ; NUMBER OF TOTAL     NODES
+         44                     C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT
+         45                     C
+         46                     C          IPART       ; SUB-DOMAIN NUMBER THAT THIS TASK SHOULD TAKE/IS
+         47                     C                       TAKING CARE OF. IPART BEING SET ZERO MEANS THAT
+         48                     C                       THE PROGRAM SHOULD RUN/IS RUNNING IN SERIAL
+         49                     C                       MODE.
+         50                     C          LDOM  (IDOM); NEIBERING SUB-DOMAIN NUMBER
+         51                     C          NBPDOM(IDOM); NUMBER OF INTER-CONNECT BOUNDARY NODES
+         52                     C                       SHARING WITH THE IDOM'TH NEIBERING SUB-DOMAIN,
+         53                     C                       LDOM(IDOM)
+         54                     C          NDOM        ; NUMBER OF THE NERIBERING SUB-DOMAINS
+         55                     C          IPSLF (IBP,IDOM); INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+         56                     C                           CALLING TASK'S SUB-DOMAIN, FOR THE IDOM'TH
+         57                     C                           NEIBERING SUB-DOMAIN, LDOM(IDOM)
+         58                     C          IPSND (IBP,IDOM); INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+         59                     C                           SUB-DOMAIN THAT IS RECEIVING THE CALLING
+         60                     C                           TASK'S RESIDUALS.
+         61                     C          MBPDOM      ; THE MAXIMUM NUMBER OF THE INTER-CONNECT
+         62                     C                       BOUNDARY NODES FOR ONE NEIBERING SUB-DOMAIN
+         63                     C          MAXBUF      ; SEND/RECEIVE BUFFER SIZE IN WORDS
+         64                     C
+         65                     C
+         66                     C
+         67                     C       (2) OUTPUT
+         68                     C          CM(IP)      ; GLOBAL INVERSED LUMPED MATRIX
+         69                     C
+         70                     C       (4) WORK
+         71                     C          WRK1  (IWRK); USED IN DDCOM3
+         72                     C          WRK2  (IWRK); USED IN DDCOM3
+         73                     C
+         74                     C
+         75                     C      CLEAR ARRAY
+         76                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      CM
+                              <<< Loop-information  End >>>
+         77     1  pp   4v            DO 100 IP = 1 , NP
+         78     1   p   4v                CM(IP) = 0.E0
+         79     1   p   4v        100 CONTINUE
+         80                     C
+         81                     C      LUMP MATRIX
+         82                     C
+         83     1                     DO 310 IEP = 1 , MEP
+         84     1               C
+         85     2                         IF(IDIM.EQ.2) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 286
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NEP
+                              <<< Loop-information  End >>>
+         86     3  pp    s                    DO 200 IP = 1 , NP
+         87     4   p    m                        IF(NEP(IP).GE.IEP) THEN
+         88     4   p    s                            CM(IP) = CM(IP)+E(IENP(IEP,IP),JENP(IEP,IP),1)
+         89     4                    &                               +E(IENP(IEP,IP),JENP(IEP,IP),2)
+         90     4                    &                               +E(IENP(IEP,IP),JENP(IEP,IP),3)
+         91     4                    &                               +E(IENP(IEP,IP),JENP(IEP,IP),4)
+         92     4   p    v                        ENDIF
+         93     3   p    v        200         CONTINUE
+         94     2                         ELSE
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 200
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NEP
+                              <<< Loop-information  End >>>
+         95     3  pp    s                    DO 300 IP = 1 , NP
+         96     4   p    m                        IF(NEP(IP).GE.IEP) THEN
+         97     4   p    s                            CM(IP) = CM(IP)+E(IENP(IEP,IP),JENP(IEP,IP),1)
+         98     4                    &                               +E(IENP(IEP,IP),JENP(IEP,IP),2)
+         99     4                    &                               +E(IENP(IEP,IP),JENP(IEP,IP),3)
+        100     4                    &                               +E(IENP(IEP,IP),JENP(IEP,IP),4)
+        101     4                    &                               +E(IENP(IEP,IP),JENP(IEP,IP),5)
+        102     4                    &                               +E(IENP(IEP,IP),JENP(IEP,IP),6)
+        103     4                    &                               +E(IENP(IEP,IP),JENP(IEP,IP),7)
+        104     4                    &                               +E(IENP(IEP,IP),JENP(IEP,IP),8)
+        105     4   p    v                        ENDIF
+        106     3   p    v        300         CONTINUE
+        107     2                         ENDIF
+        108     1                 310 CONTINUE
+        109                     C
+        110                     C      SUPERIMPOSE NEIBERING ELEMENT CONTRIBUTIONS
+        111                     C
+        112     1                     IF(IPART.GE.1) THEN
+        113     1                         IDUM = 1
+        114     1                         CALL DDCOM3(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        115     1                    *                CM,CM,CM,NP,IUT0,IERR,WRK1,WRK2,MAXBUF)
+        116     2                         IF(IERR.NE.0) THEN
+        117     2                             WRITE(IUT0,*)
+        118     2                             WRITE(IUT0,*) ERMSGC
+        119     2                             RETURN
+        120     2                         ENDIF
+        121     1                     ENDIF
+        122                     C
+        123                     C      INVERSE LUMPED MATRIX
+        124                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 800
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.00, ITR: 544, MVE: 9, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      CM
+                              <<< Loop-information  End >>>
+        125     1  pp   2v            DO 400 IP = 1 , NP
+        126     1   p   2v                CM(IP) = 1.E0/CM(IP)
+        127     1   p   2v        400 CONTINUE
+        128                     C
+        129                     C
+        130                           RETURN
+        131                           END
+
+ Diagnostic messages: program name(LUMPEE)
+   jwd8220o-i  "lumpee.f", line 13: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd5001p-i  "lumpee.f", line 77: DO loop with DO variable 'IP' is parallelized.
+   jwd6001s-i  "lumpee.f", line 77: SIMD conversion is applied to DO loop with DO variable 'IP'.
+   jwd8663o-i  "lumpee.f", line 77: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "lumpee.f", line 77: Loop unrolled 4 times.
+   jwd5208p-i  "lumpee.f", line 83: DO loop is not parallelized: the assign-refer order of 'CM' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5001p-i  "lumpee.f", line 86: DO loop with DO variable 'IP' is parallelized.
+   jwd6229s-i  "lumpee.f", line 86: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8670o-i  "lumpee.f", line 86: This loop cannot be software pipelined because the loop contains a branch instruction.
+   jwd8209o-i  "lumpee.f", line 88: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5001p-i  "lumpee.f", line 95: DO loop with DO variable 'IP' is parallelized.
+   jwd6229s-i  "lumpee.f", line 95: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8670o-i  "lumpee.f", line 95: This loop cannot be software pipelined because the loop contains a branch instruction.
+   jwd8209o-i  "lumpee.f", line 97: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5001p-i  "lumpee.f", line 125: DO loop with DO variable 'IP' is parallelized.
+   jwd6001s-i  "lumpee.f", line 125: SIMD conversion is applied to DO loop with DO variable 'IP'.
+   jwd8204o-i  "lumpee.f", line 125: This loop is software pipelined.
+   jwd8205o-i  "lumpee.f", line 125: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 544.
+
+ Procedure information
+   Lines      : 131
+   Statements : 37
+   Stack(byte): 2240
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 131
+   Total statements : 37
+   Total stack(byte): 2240
+   Total prefetch num: 0
+

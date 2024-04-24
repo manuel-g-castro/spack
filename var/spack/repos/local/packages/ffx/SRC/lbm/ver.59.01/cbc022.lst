@@ -1,0 +1,273 @@
+
+ Fujitsu Fortran Version 4.8.1  Thu Nov 24 16:46:32 2022
+
+ Compilation information
+   Current directory : /vol0005/mdt2/home/u10588/SRC/lbm/ver.59.01
+   Source file       : cbc022.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -Nlst=t -Cpp -Cfpp -c -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Knointentopt
+   Cpp options          : -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Dcputime -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=8 -D__FRT_patchlevel__=1 -D__FRT_version__="4.8.1" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Knoarray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nlibomp -Nline -Nlst -Nlst=p -Nlst=t
+                          -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "CBC022"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE CBC022(ITIME,NG,NP,ILVL1,ILVL2,IPOSI,F,FEQ,
+          2                          *                  TAU3,LVEL,FBC3,FBC3W)
+          3                           IMPLICIT NONE
+          4                           INTEGER*4 ITIME,NG,NP,ILVL1,ILVL2,IPOSI,LVEL(3,NP)
+          5                           REAL*8    F  (0:NG+2,0:NG+2,0:NG+2,NP),
+          6                          *          FEQ(0:NG+2,0:NG+2,0:NG+2,NP),
+          7                          *          FBC3(NP),FBC3W(NP),TAU3(3)
+          8                           INTEGER*4 I,J,K,I1,J1,K1,I2,J2,K2,I3,J3,K3,
+          9                          *          IMODE,IOFFST,JOFFST,KOFFST,N1,IP,JP
+         10                           REAL*8    BUF(NP),COEF,FBUF,FBUF2
+         11                     C
+         12                     C     ====FUNCTION====
+         13                     C     SET B.C. DATA TO POINT-TYPE B.C. WITH B.C. FLAG-TYPE OF 022
+         14                     C
+         15                     C     ====VARIABLES LIST====
+         16                     C[IN]
+         17                     C     ITIME         :TIME STEP
+         18                     C     NG            :GRID SIZE (2^N)
+         19                     C     NP            :NUMBER OF PARTICLES (=15)
+         20                     C     ILVL1         :LEVEL (RESOLUTION) OF SELF-CUBE
+         21                     C     ILVL2         :RELATIVE LEVEL (RESOLUTION) OF ADJACENT CUBE
+         22                     C     IPOSI         :RELATIVE POSITION OF  ADJACENT CUBE
+         23                     C     F  (I,J,K,IP) :PARTICLE DISTRIBUTION FUNCTION
+         24                     C     FEQ(I,J,K,IP) :PARTICLE EQUILIBRIUM DISTRIBUTION FUNCTION
+         25                     C     TAU3(1)       :RELAXTATION TIME OF A FINER   CUBE
+         26                     C     TAU3(2)       :RELAXTATION TIME OF A SELF    CUBE
+         27                     C     TAU3(3)       :RELAXTATION TIME OF A COARSER CUBE
+         28                     C
+         29                     C[OUT]
+         30                     C     FBC3 (IP)     :WORK REGION FOR FACE-TYPE  B.C. GROUPS
+         31                     C     FBC3W(IP)     :WORK REGION FOR FACE-TYPE  B.C. GROUPS, TIME INTERPOLATION
+         32                     C
+         33                     C
+         34     1                     IF(ILVL2.EQ.0) THEN
+         35     1                         I=2
+         36     1                         J=NG
+         37     1                         K=2
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1334
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.37, ITR: 256, MVE: 4, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FBC3
+                              <<< Loop-information  End >>>
+         38     1  pp   4v                FBC3(1:NP) = F(I,J,K,1:NP)
+         39     1                     ELSE IF(ILVL2.EQ. 1) THEN
+         40     1                         I=3
+         41     1                         J=NG-1
+         42     1                         K=3
+         43     1                         COEF=2.0D0*(TAU3(3)/TAU3(2))/DBLE(NP)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LVEL
+                              <<< Loop-information  End >>>
+         44     2  pp                     DO 2000 IP=1,NP
+         45     2   p                         FBUF=0.0D0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.07, ITR: 80, MVE: 2, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LVEL
+                              <<< Loop-information  End >>>
+         46     3   p    v                    DO 2100 JP=1,NP
+         47     3   p    v                        I2=MIN( MAX(I+LVEL(1,JP),1),NG+1 )
+         48     3   p    v                        J2=MIN( MAX(J+LVEL(2,JP),1),NG+1 )
+         49     3   p    v                        K2=MIN( MAX(K+LVEL(3,JP),1),NG+1 )
+         50     3   p    v                        FBUF2=F(I2,J2,K2,IP)-FEQ(I2,J2,K2,IP)
+         51     3   p    v                        FBUF=FBUF+FBUF2
+         52     3   p    v       2100         CONTINUE
+         53     2   p                         FBC3(IP) = FEQ(I,J,K,IP)+COEF*FBUF
+         54     2   p            2000     CONTINUE
+         55     1                     ELSE IF(ILVL2.EQ.-1) THEN
+         56     1                         N1=2**(ILVL1-1)
+         57     1                         IMODE=0
+         58     2                         IF(MOD(ITIME+1,N1).EQ.1) THEN
+         59     2                             IMODE=1
+         60     2                         ELSE IF(MOD(ITIME,N1).EQ.1) THEN
+         61     2                             IMODE=2
+         62     2                         ENDIF
+         63     1               C
+         64     2                         IF(IPOSI.EQ.1) THEN
+         65     2                             I1=1
+         66     2                             J1=NG+1
+         67     2                             K1=1
+         68     2                         ELSE IF(IPOSI.EQ.2) THEN
+         69     2                             I1=1
+         70     2                             J1=NG/2+1
+         71     2                             K1=1
+         72     2                         ELSE IF(IPOSI.EQ.3) THEN
+         73     2                             I1=NG/2+1
+         74     2                             J1=NG/2+1
+         75     2                             K1=1
+         76     2                         ELSE IF(IPOSI.EQ.4) THEN
+         77     2                             I1=NG/2+1
+         78     2                             J1=NG+1
+         79     2                             K1=1
+         80     2                         ELSE IF(IPOSI.EQ.5) THEN
+         81     2                             I1=1
+         82     2                             J1=NG/2+1
+         83     2                             K1=NG/2+1
+         84     2                         ELSE IF(IPOSI.EQ.6) THEN
+         85     2                             I1=NG/2+1
+         86     2                             J1=NG+1
+         87     2                             K1=NG/2+1
+         88     2                         ELSE IF(IPOSI.EQ.7) THEN
+         89     2                             I1=1
+         90     2                             J1=NG+1
+         91     2                             K1=NG/2+1
+         92     2                         ENDIF
+         93     1               C
+         94     1                         COEF=0.5D0*(TAU3(1)/TAU3(2))
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 843
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.16, ITR: 224, MVE: 6, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      BUF
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 0
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 1  FILL 29
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+         95     2  pp   2v                DO 3000 IP=1,NP
+         96     2   p   2v                    FBUF = FEQ(I1,J1,K1,IP)
+         97     2   p   2v                    FBUF2= F  (I1,J1,K1,IP)
+         98     2   p   2v                    BUF(IP)=FBUF+COEF*(FBUF2-FBUF)
+         99     2   p   2v       3000     CONTINUE
+        100     2                         IF(IMODE.EQ.1) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1231
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.20, ITR: 96, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FBC3W, FBC3, BUF
+                              <<< Loop-information  End >>>
+        101     2  pp   2v                    FBC3 (1:NP) = BUF(1:NP)
+        102     2   p   2v                    FBC3W(1:NP) = BUF(1:NP)
+        103     2                         ELSE IF(IMODE.EQ.2) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1067
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.75, ITR: 160, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FBC3W, BUF, FBC3
+                              <<< Loop-information  End >>>
+        104     2  pp   2v                    FBC3 (1:NP) = 0.5D0*(BUF+FBC3W(1:NP))
+        105     2                         ENDIF
+        106     1                     ENDIF
+        107                     C
+        108                      4000 CONTINUE
+        109                     C
+        110                           RETURN
+        111                           END
+
+ Diagnostic messages: program name(CBC022)
+   jwd8220o-i  "cbc022.f", line 1: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd2006i-i  "cbc022.f", line 8: 'KOFFST' is declared but never referenced.
+   jwd2006i-i  "cbc022.f", line 8: 'JOFFST' is declared but never referenced.
+   jwd2006i-i  "cbc022.f", line 8: 'IOFFST' is declared but never referenced.
+   jwd2006i-i  "cbc022.f", line 8: 'K3' is declared but never referenced.
+   jwd2006i-i  "cbc022.f", line 8: 'J3' is declared but never referenced.
+   jwd2006i-i  "cbc022.f", line 8: 'I3' is declared but never referenced.
+   jwd5003p-i  "cbc022.f", line 38: Array description is parallelized.
+   jwd6003s-i  "cbc022.f", line 38: SIMD conversion is applied to array description.
+   jwd8204o-i  "cbc022.f", line 38: This loop is software pipelined.
+   jwd8205o-i  "cbc022.f", line 38: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 256.
+   jwd8209o-i  "cbc022.f", line 43: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5001p-i  "cbc022.f", line 44: DO loop with DO variable 'IP' is parallelized.
+   jwd6004s-i  "cbc022.f", line 46: SIMD conversion is applied to DO loop with DO variable 'JP'. The DO loop contains a reduction operation.
+   jwd8204o-i  "cbc022.f", line 46: This loop is software pipelined.
+   jwd8205o-i  "cbc022.f", line 46: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 80.
+   jwd8209o-i  "cbc022.f", line 94: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5001p-i  "cbc022.f", line 95: DO loop with DO variable 'IP' is parallelized.
+   jwd6001s-i  "cbc022.f", line 95: SIMD conversion is applied to DO loop with DO variable 'IP'.
+   jwd8204o-i  "cbc022.f", line 95: This loop is software pipelined.
+   jwd8205o-i  "cbc022.f", line 95: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 224.
+   jwd5003p-i  "cbc022.f", line 101: Array description is parallelized.
+   jwd6003s-i  "cbc022.f", line 101: SIMD conversion is applied to array description.
+   jwd8204o-i  "cbc022.f", line 101: This loop is software pipelined.
+   jwd8205o-i  "cbc022.f", line 101: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 96.
+   jwd5003p-i  "cbc022.f", line 104: Array description is parallelized.
+   jwd6003s-i  "cbc022.f", line 104: SIMD conversion is applied to array description.
+   jwd8204o-i  "cbc022.f", line 104: This loop is software pipelined.
+   jwd8205o-i  "cbc022.f", line 104: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 160.
+
+ Procedure information
+   Lines      : 111
+   Statements : 80
+   Stack(byte): 2336
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 111
+   Total statements : 80
+   Total stack(byte): 2336
+   Total prefetch num: 0
+

@@ -1,0 +1,1786 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:54:47 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : dyna3d.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "DYNA3D"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    DYNA3D                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE DYNA3D(VISCM,ALFDYN,GAMDYN,NAVDYN,FILTER,U,V,W,
+         14                          *                  DNXI,DNYI,DNZI,SN,EXX,EYY,EZZ,CM,
+         15                          *                  NODE,IENP,JENP,NEP,ME,MEP,NE,NP,N,
+         16                          *                  IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+         17                          *                  CS,AML,AMM,S,UI,UIJ,SIJN,SIJ,SSIJ,
+         18                          *                  RX,RY,RZ,FX,FY,FZ,DUE,DVE,DWE,
+         19                          *                  IUT0,IERR)
+         20                           IMPLICIT REAL*4(A-H,O-Z)
+         21                           DIMENSION FILTER(NE),U(NP),V(NP),W(NP),
+         22                          1          DNXI(N,NE),DNYI(N,NE),DNZI(N,NE),
+         23                          2          SN  (N,NE),EXX (ME,N,N),EYY(ME,N,N),EZZ(ME,N,N),CM(NP),
+         24                          3          NODE(N,NE),IENP(MEP,NP),JENP(MEP,NP),NEP(NP)
+         25                     C
+         26                           DIMENSION LDOM(NDOM),NBPDOM(NDOM),
+         27                          1          IPSLF(MBPDOM,NDOM),IPSND(MBPDOM,NDOM)
+         28                     C
+         29                           DIMENSION CS  (NE),AML  (NP),AMM   (NP),S     (NP),
+         30                          1          UI(3,NP),UIJ(6,NP),SIJN(6,NP),SIJ (6,NP),SSIJ(6,NP)
+         31                     C
+         32                           DIMENSION RX(N,NE),RY(N,NE),RZ(N,NE),
+         33                          1          FX(NP),FY(NP),FZ(NP),DUE(NE),DVE(NE),DWE(NE)
+         34                     C
+         35                     C
+         36                           CHARACTER*60 ERMSGC
+         37                          & /' ## SUBROUTINE DYNA3D: FATAL      ERROR REPORT   ; RETURNED' /
+         38                     C
+         39                           DATA IDIM   / 3    /
+         40                     C
+         41                           DATA CLEAR  / 0.15   /
+         42                           DATA EPS    / 1.0E-2 /
+         43                     C
+         44                     C
+         45                     C      COMPUTE SMAGIRINSKY CONSTANT BY DYNAMIC PROCEDURE PROPOSED
+         46                     C     BY GERMANO AND LILLY
+         47                     C         ( 3-D CALCULATION : SINGLE WORD VERSION )
+         48                     C
+         49                     C
+         50                     C     NOTE ; IN-DOMAIN NOR INTER-DOMAIN CYCLIC BOUNDARY CONDITIONS HAVE
+         51                     C           NOT BEEN SUPPORTED YET.
+         52                     C
+         53                     C
+         54                     C     ARGUMENT LISTINGS
+         55                     C       (1) INPUT
+         56                     C          VISCM       ; MOLECULAR VISCOSITY (USED TO CLEAR CS VALUES)
+         57                     C          ALFDYN      ; RATIO OF WIDTH OF TEST-FILTERED GRID FILTER TO
+         58                     C                       THAT OF GRID FILTER
+         59                     C          GAMDYN      ; RATIO OF WIDTH OF TEST FILTER TO THAT OF GRID
+         60                     C                       FILTER.
+         61                     C          NAVDYN      ; NUMBER OF TEST-FILTER OPERATIONS APPLIED FOR
+         62                     C                       AVERAGING LOCAL SMAGORINSKY CONSTANT
+         63                     C          FILTER  (IE); ELEMENT GRID FILTER WIDTH
+         64                     C
+         65                     C          U       (IP); X-DIR. VELOCITY COMPONENT
+         66                     C          V       (IP); Y-DIR. VELOCITY COMPONENT
+         67                     C          W       (IP); Z-DIR. VELOCITY COMPONENT
+         68                     C
+         69                     C          DNXI  (I,IE); ELEMENT CENTER VALUE OF NX
+         70                     C          DNYI  (I,IE); ELEMENT CENTER VALUE OF NY
+         71                     C          DNZI  (I,IE); ELEMENT CENTER VALUE OF NZ
+         72                     C          SN    (I,IE); INTEGRATED ELEMENT VECTOR OF N
+         73                     C          EXX (IE,I,J); INTEGRATED ELEMENT MATRIX OF NX*NXT
+         74                     C          EYY (IE,I,J); INTEGRATED ELEMENT MATRIX OF NY*NYT
+         75                     C          EZZ (IE,I,J); INTEGRATED ELEMENT MATRIX OF NZ*NZT
+         76                     C          CM      (IP); LUMPED MASS MATRIX
+         77                     C
+         78                     C          NODE  (I,IE); NODE NO. TABLE BASED ON ELEMENT
+         79                     C          IENP(IEP,IP); ADJACENT ELEMENT NUMBER TO NODE IP
+         80                     C                      ( IF NEP(IP).LT.MEP , THEN IENP(NEP(IP)+1,IP),
+         81                     C                       IENP(MEP,IP) MUST BE SET TO AN IMAGINARY
+         82                     C                       ELEMENT NO. BETWEEN NE+1,ME.)
+         83                     C          JENP(IEP,IP); LOCAL NODE NUMBER OF IP IN ELEMENT IENP(IEP,IP)
+         84                     C          NEP     (IP); NUMBER OF ADJACENT ELEMENTS TO NODE IP
+         85                     C          ME          ; MAX. NUMBER OF TOTAL ELEMENTS
+         86                     C          MEP         ; FIRST DIMENSION SIZE OF ARRAY IENP,JENP
+         87                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+         88                     C          NP          ; NUMBER OF TOTAL    NODES
+         89                     C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT ( = 8 )
+         90                     C
+         91                     C          IPART       ; SUB-DOMAIN NUMBER THAT THIS TASK SHOULD TAKE/IS
+         92                     C                       TAKING CARE OF. IPART BEING SET ZERO MEANS THAT
+         93                     C                       THE PROGRAM SHOULD RUN/IS RUNNING IN SERIAL
+         94                     C                       MODE.
+         95                     C
+         96                     C          LDOM  (IDOM); NEIBERING SUB-DOMAIN NUMBER
+         97                     C          NBPDOM(IDOM); NUMBER OF INTER-CONNECT BOUNDARY NODES
+         98                     C                       SHARING WITH THE IDOM'TH NEIBERING SUB-DOMAIN,
+         99                     C                       LDOM(IDOM)
+        100                     C          NDOM        ; NUMBER OF THE NERIBERING SUB-DOMAINS
+        101                     C          IPSLF (IBP,IDOM); INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+        102                     C                           CALLING TASK'S SUB-DOMAIN, FOR THE IDOM'TH
+        103                     C                           NEIBERING SUB-DOMAIN, LDOM(IDOM)
+        104                     C          IPSND (IBP,IDOM); INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+        105                     C                           SUB-DOMAIN THAT IS RECEIVING THE CALLING
+        106                     C                           TASK'S RESIDUALS.
+        107                     C          MBPDOM      ; THE MAXIMUM NUMBER OF THE INTER-CONNECT
+        108                     C                       BOUNDARY NODES FOR ONE NEIBERING SUB-DOMAIN
+        109                     C
+        110                     C          IUT0        ; FILE NUMBER TO REPORT ERROR OCCURENCE
+        111                     C
+        112                     C       (2) OUTPUT
+        113                     C          CS      (IE); ELEMENT SMAGORINSKY CONSTANT
+        114                     C          AML     (IP); LEAST-SQUARE AVERAGED LEONARD STRESS
+        115                     C          AMM     (IP); LEAST-SQUARE AVERAGED MODELED REYNOLDS STRESS
+        116                     C          S       (IP); TEST-FILTERED STRAIN VELOCITY TENSOR MAGNITUDE
+        117                     C          UI    (3,IP); TEST-FILTERED VELOCITIES
+        118                     C          UIJ   (6,IP); TEST-FILTERED VELOCITY CORRELATIONS
+        119                     C          SIJN  (6,IP); NODAL STRAIN VELOCITY TENSOR
+        120                     C          SIJ   (6,IP); TEST-FILTERED STRAIN VELOCITY TENSOR
+        121                     C          SSIJ  (6,IP); TEST-FILTERED STRAIN VELOCITY TENSOR MULTIPLIED
+        122                     C                       BY ITS MAGNITUDE
+        123                     C
+        124                     C          IERR        ; RETURN CODE TO REPORT ERROR OCCURENCE
+        125                     C                   0 --- NORMAL TERMINATION
+        126                     C                   1 --- A FATAL ERROR HAS OCCURED
+        127                     C
+        128                     C       (4) WORK
+        129                     C          RX    (I,IE); HOLDS X-DIR. ELEMENT RESIDUAL
+        130                     C          RY    (I,IE); HOLDS Y-DIR. ELEMENT RESIDUAL
+        131                     C          RZ    (I,IE); HOLDS Z-DIR. ELEMENT RESIDUAL
+        132                     C          FX      (IP); HOLDS X-DIR. NODE    RESIDUAL
+        133                     C          FY      (IP); HOLDS Y-DIR. NODE    RESIDUAL
+        134                     C          FZ      (IP); HOLDS Z-DIR. NODE    RESIDUAL
+        135                     C          DUE     (IE); HOLDS ELEMENT VELOCITY GRADIENT
+        136                     C          DVE     (IE); HOLDS ELEMENT VELOCITY GRADIENT
+        137                     C          DWE     (IE); HOLDS ELEMENT VELOCITY GRADIENT
+        138                     C
+        139                     C
+        140                           ALF2   = ALFDYN*ALFDYN
+        141                           GAM2   = GAMDYN*GAMDYN
+        142                     C
+        143                           MAXBUF = NE*N
+        144                     C
+        145                     C
+        146                     C
+        147                     C COMPUTE NODAL VALUE OF STRAIN VELOCITY TENSOR
+        148                     C
+        149                     C
+        150                     C  (1) DIAGONAL TERMS
+        151                     C
+        152                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 64
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.76, ITR: 64, MVE: 2, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      DVE, DWE, DUE
+                              <<< Loop-information  End >>>
+        153     1  pp    v            DO 100 IE = 1 , NE
+        154     1   p    v                DUE(IE) = DNXI(1,IE)*U(NODE(1,IE))+DNXI(5,IE)*U(NODE(5,IE))
+        155     1                    &             +DNXI(2,IE)*U(NODE(2,IE))+DNXI(6,IE)*U(NODE(6,IE))
+        156     1                    &             +DNXI(3,IE)*U(NODE(3,IE))+DNXI(7,IE)*U(NODE(7,IE))
+        157     1                    &             +DNXI(4,IE)*U(NODE(4,IE))+DNXI(8,IE)*U(NODE(8,IE))
+        158     1               C
+        159     1   p    v                DVE(IE) = DNYI(1,IE)*V(NODE(1,IE))+DNYI(5,IE)*V(NODE(5,IE))
+        160     1                    &             +DNYI(2,IE)*V(NODE(2,IE))+DNYI(6,IE)*V(NODE(6,IE))
+        161     1                    &             +DNYI(3,IE)*V(NODE(3,IE))+DNYI(7,IE)*V(NODE(7,IE))
+        162     1                    &             +DNYI(4,IE)*V(NODE(4,IE))+DNYI(8,IE)*V(NODE(8,IE))
+        163     1               C
+        164     1   p    v                DWE(IE) = DNZI(1,IE)*W(NODE(1,IE))+DNZI(5,IE)*W(NODE(5,IE))
+        165     1                    &             +DNZI(2,IE)*W(NODE(2,IE))+DNZI(6,IE)*W(NODE(6,IE))
+        166     1                    &             +DNZI(3,IE)*W(NODE(3,IE))+DNZI(7,IE)*W(NODE(7,IE))
+        167     1                    &             +DNZI(4,IE)*W(NODE(4,IE))+DNZI(8,IE)*W(NODE(8,IE))
+        168     1   p    v        100 CONTINUE
+        169                     C
+        170                           CALL SUPUE1(IDIM,DUE,SN,IENP,JENP,NEP,ME,MEP,NE,NP,N,
+        171                          *            FX,IUT0,IERR)
+        172                           CALL SUPUE1(IDIM,DVE,SN,IENP,JENP,NEP,ME,MEP,NE,NP,N,
+        173                          *            FY,IUT0,IERR)
+        174                           CALL SUPUE1(IDIM,DWE,SN,IENP,JENP,NEP,ME,MEP,NE,NP,N,
+        175                          *            FZ,IUT0,IERR)
+        176                     C
+        177     1                     IF(IERR.NE.0) THEN
+        178     1                         WRITE(IUT0,*)
+        179     1                         WRITE(IUT0,*) ERMSGC
+        180     1                         RETURN
+        181     1                     ENDIF
+        182                     C
+        183     1                     IF(IPART.GE.1) THEN
+        184     1                         IDUM = 3
+        185     1                         CALL DDCOM3(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        186     1                    *                FX,FY,FZ,NP,IUT0,IERR,RX,RY,MAXBUF)
+        187     2                         IF(IERR.NE.0) THEN
+        188     2                             WRITE(IUT0,*)
+        189     2                             WRITE(IUT0,*) ERMSGC
+        190     2                             RETURN
+        191     2                         ENDIF
+        192     1                     ENDIF
+        193                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 534
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.14, ITR: 96, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FX, FZ, SIJN, CM, FY
+                              <<< Loop-information  End >>>
+        194     1  pp    v            DO 110 IP = 1 , NP
+        195     1   p    v                SIJN(1,IP) = CM(IP)*FX(IP)
+        196     1   p    v                SIJN(2,IP) = CM(IP)*FY(IP)
+        197     1   p    v                SIJN(3,IP) = CM(IP)*FZ(IP)
+        198     1   p    v        110 CONTINUE
+        199                     C
+        200                     C
+        201                     C  (2) OFF-DIAGONAL TERMS
+        202                     C
+        203                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 54
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      DWE, DVE, DUE
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 0
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 12  FILL 12
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        204     1  pp    v            DO 120 IE = 1 , NE
+        205     1   p    v                DUE(IE) = DNZI(1,IE)*V(NODE(1,IE))+DNYI(1,IE)*W(NODE(1,IE))
+        206     1                    &             +DNZI(2,IE)*V(NODE(2,IE))+DNYI(2,IE)*W(NODE(2,IE))
+        207     1                    &             +DNZI(3,IE)*V(NODE(3,IE))+DNYI(3,IE)*W(NODE(3,IE))
+        208     1                    &             +DNZI(4,IE)*V(NODE(4,IE))+DNYI(4,IE)*W(NODE(4,IE))
+        209     1                    &             +DNZI(5,IE)*V(NODE(5,IE))+DNYI(5,IE)*W(NODE(5,IE))
+        210     1                    &             +DNZI(6,IE)*V(NODE(6,IE))+DNYI(6,IE)*W(NODE(6,IE))
+        211     1                    &             +DNZI(7,IE)*V(NODE(7,IE))+DNYI(7,IE)*W(NODE(7,IE))
+        212     1                    &             +DNZI(8,IE)*V(NODE(8,IE))+DNYI(8,IE)*W(NODE(8,IE))
+        213     1               C
+        214     1   p    v                DVE(IE) = DNXI(1,IE)*W(NODE(1,IE))+DNZI(1,IE)*U(NODE(1,IE))
+        215     1                    &             +DNXI(2,IE)*W(NODE(2,IE))+DNZI(2,IE)*U(NODE(2,IE))
+        216     1                    &             +DNXI(3,IE)*W(NODE(3,IE))+DNZI(3,IE)*U(NODE(3,IE))
+        217     1                    &             +DNXI(4,IE)*W(NODE(4,IE))+DNZI(4,IE)*U(NODE(4,IE))
+        218     1                    &             +DNXI(5,IE)*W(NODE(5,IE))+DNZI(5,IE)*U(NODE(5,IE))
+        219     1                    &             +DNXI(6,IE)*W(NODE(6,IE))+DNZI(6,IE)*U(NODE(6,IE))
+        220     1                    &             +DNXI(7,IE)*W(NODE(7,IE))+DNZI(7,IE)*U(NODE(7,IE))
+        221     1                    &             +DNXI(8,IE)*W(NODE(8,IE))+DNZI(8,IE)*U(NODE(8,IE))
+        222     1               C
+        223     1   p    v                DWE(IE) = DNYI(1,IE)*U(NODE(1,IE))+DNXI(1,IE)*V(NODE(1,IE))
+        224     1                    &             +DNYI(2,IE)*U(NODE(2,IE))+DNXI(2,IE)*V(NODE(2,IE))
+        225     1                    &             +DNYI(3,IE)*U(NODE(3,IE))+DNXI(3,IE)*V(NODE(3,IE))
+        226     1                    &             +DNYI(4,IE)*U(NODE(4,IE))+DNXI(4,IE)*V(NODE(4,IE))
+        227     1                    &             +DNYI(5,IE)*U(NODE(5,IE))+DNXI(5,IE)*V(NODE(5,IE))
+        228     1                    &             +DNYI(6,IE)*U(NODE(6,IE))+DNXI(6,IE)*V(NODE(6,IE))
+        229     1                    &             +DNYI(7,IE)*U(NODE(7,IE))+DNXI(7,IE)*V(NODE(7,IE))
+        230     1                    &             +DNYI(8,IE)*U(NODE(8,IE))+DNXI(8,IE)*V(NODE(8,IE))
+        231     1   p    v        120 CONTINUE
+        232                     C
+        233                           CALL SUPUE1(IDIM,DUE,SN,IENP,JENP,NEP,ME,MEP,NE,NP,N,
+        234                          *            FX,IUT0,IERR)
+        235                           CALL SUPUE1(IDIM,DVE,SN,IENP,JENP,NEP,ME,MEP,NE,NP,N,
+        236                          *            FY,IUT0,IERR)
+        237                           CALL SUPUE1(IDIM,DWE,SN,IENP,JENP,NEP,ME,MEP,NE,NP,N,
+        238                          *            FZ,IUT0,IERR)
+        239                     C
+        240     1                     IF(IPART.GE.1) THEN
+        241     1                         IDUM = 3
+        242     1                         CALL DDCOM3(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        243     1                    *                FX,FY,FZ,NP,IUT0,IERR,RX,RY,MAXBUF)
+        244     2                         IF(IERR.NE.0) THEN
+        245     2                             WRITE(IUT0,*)
+        246     2                             WRITE(IUT0,*) ERMSGC
+        247     2                             RETURN
+        248     2                         ENDIF
+        249     1                     ENDIF
+        250                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 232
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED(lines: 251,263)
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.67, ITR: 112, MVE: 4, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      SIJN, FZ, CM, FX, FY, S
+                              <<< Loop-information  End >>>
+        251     1  pp    v            DO 130 IP = 1 , NP
+        252     1   p    v                SIJN(4,IP) = 0.5E0*CM(IP)*FX(IP)
+        253     1   p    v                SIJN(5,IP) = 0.5E0*CM(IP)*FY(IP)
+        254     1   p    v                SIJN(6,IP) = 0.5E0*CM(IP)*FZ(IP)
+        255     1   p    v        130 CONTINUE
+        256                     C
+        257                     C
+        258                     C
+        259                     C COMPUTE CONTRACTION OF STRAIN VELOCITY TENSOR
+        260                     C
+        261                     C
+        262                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED
+                              <<< Loop-information  End >>>
+        263     1                     DO 200 IP = 1 , NP
+        264     1                         S(IP) = SQRT(2.E0*SIJN(1,IP)*SIJN(1,IP)
+        265     1                    &                +2.E0*SIJN(2,IP)*SIJN(2,IP)
+        266     1                    &                +2.E0*SIJN(3,IP)*SIJN(3,IP)
+        267     1                    &                +4.E0*SIJN(4,IP)*SIJN(4,IP)
+        268     1                    &                +4.E0*SIJN(5,IP)*SIJN(5,IP)
+        269     1                    &                +4.E0*SIJN(6,IP)*SIJN(6,IP))
+        270     1                 200 CONTINUE
+        271                     C
+        272                     C
+        273                     C
+        274                     C TEST-FILTER VELOCITY VECTOR
+        275                     C
+        276                     C
+        277                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      RZ, RY, RX
+                              <<< Loop-information  End >>>
+        278     1   p   2v            DO 310 I = 1 , N
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 4
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<< Loop-information  End >>>
+        279     2  pp   2                 DO 300 IE = 1 , NE
+        280     2   p   2v                    RX(I,IE) = 0.E0
+        281     2   p   2v                    RY(I,IE) = 0.E0
+        282     2   p   2v                    RZ(I,IE) = 0.E0
+        283     2   p   2         300     CONTINUE
+        284     1   p             310 CONTINUE
+        285                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 5
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 5  FILL 22
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        286     1   p    v            DO 340 J = 1 , N
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<<    FUSED(lines: 287,293)
+                              <<< Loop-information  End >>>
+        287     2  pp                     DO 320 IE = 1 , NE
+        288     2   p    v                    FX(IE) = U(NODE(J,IE))
+        289     2   p    v                    FY(IE) = V(NODE(J,IE))
+        290     2   p    v                    FZ(IE) = W(NODE(J,IE))
+        291     2   p             320     CONTINUE
+        292     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED
+                              <<< Loop-information  End >>>
+        293     2   p                     DO 330 IE = 1 , NE
+        294     2   p    v                    D1=FILTER(IE)**2*(EXX(IE,1,J)+EYY(IE,1,J)+EZZ(IE,1,J))
+        295     2   p    v                    D2=FILTER(IE)**2*(EXX(IE,2,J)+EYY(IE,2,J)+EZZ(IE,2,J))
+        296     2   p    v                    D3=FILTER(IE)**2*(EXX(IE,3,J)+EYY(IE,3,J)+EZZ(IE,3,J))
+        297     2   p    v                    D4=FILTER(IE)**2*(EXX(IE,4,J)+EYY(IE,4,J)+EZZ(IE,4,J))
+        298     2   p    v                    D5=FILTER(IE)**2*(EXX(IE,5,J)+EYY(IE,5,J)+EZZ(IE,5,J))
+        299     2   p    v                    D6=FILTER(IE)**2*(EXX(IE,6,J)+EYY(IE,6,J)+EZZ(IE,6,J))
+        300     2   p    v                    D7=FILTER(IE)**2*(EXX(IE,7,J)+EYY(IE,7,J)+EZZ(IE,7,J))
+        301     2   p    v                    D8=FILTER(IE)**2*(EXX(IE,8,J)+EYY(IE,8,J)+EZZ(IE,8,J))
+        302     2               C
+        303     2   p    v                    RX(1,IE)=RX(1,IE)-D1*FX(IE)
+        304     2   p    v                    RX(2,IE)=RX(2,IE)-D2*FX(IE)
+        305     2   p    v                    RX(3,IE)=RX(3,IE)-D3*FX(IE)
+        306     2   p    v                    RX(4,IE)=RX(4,IE)-D4*FX(IE)
+        307     2   p    v                    RX(5,IE)=RX(5,IE)-D5*FX(IE)
+        308     2   p    v                    RX(6,IE)=RX(6,IE)-D6*FX(IE)
+        309     2   p    v                    RX(7,IE)=RX(7,IE)-D7*FX(IE)
+        310     2   p    v                    RX(8,IE)=RX(8,IE)-D8*FX(IE)
+        311     2               C
+        312     2   p    v                    RY(1,IE)=RY(1,IE)-D1*FY(IE)
+        313     2   p    v                    RY(2,IE)=RY(2,IE)-D2*FY(IE)
+        314     2   p    v                    RY(3,IE)=RY(3,IE)-D3*FY(IE)
+        315     2   p    v                    RY(4,IE)=RY(4,IE)-D4*FY(IE)
+        316     2   p    v                    RY(5,IE)=RY(5,IE)-D5*FY(IE)
+        317     2   p    v                    RY(6,IE)=RY(6,IE)-D6*FY(IE)
+        318     2   p    v                    RY(7,IE)=RY(7,IE)-D7*FY(IE)
+        319     2   p    v                    RY(8,IE)=RY(8,IE)-D8*FY(IE)
+        320     2               C
+        321     2   p    v                    RZ(1,IE)=RZ(1,IE)-D1*FZ(IE)
+        322     2   p    v                    RZ(2,IE)=RZ(2,IE)-D2*FZ(IE)
+        323     2   p    v                    RZ(3,IE)=RZ(3,IE)-D3*FZ(IE)
+        324     2   p    v                    RZ(4,IE)=RZ(4,IE)-D4*FZ(IE)
+        325     2   p    v                    RZ(5,IE)=RZ(5,IE)-D5*FZ(IE)
+        326     2   p    v                    RZ(6,IE)=RZ(6,IE)-D6*FZ(IE)
+        327     2   p    v                    RZ(7,IE)=RZ(7,IE)-D7*FZ(IE)
+        328     2   p    v                    RZ(8,IE)=RZ(8,IE)-D8*FZ(IE)
+        329     2   p             330     CONTINUE
+        330     1   p    v        340 CONTINUE
+        331                     C
+        332                           CALL SUPUE2(IDIM,RX,IENP,JENP,NEP,ME,MEP,NE,NP,N,
+        333                          *            FX,IUT0,IERR)
+        334                           CALL SUPUE2(IDIM,RY,IENP,JENP,NEP,ME,MEP,NE,NP,N,
+        335                          *            FY,IUT0,IERR)
+        336                           CALL SUPUE2(IDIM,RZ,IENP,JENP,NEP,ME,MEP,NE,NP,N,
+        337                          *            FZ,IUT0,IERR)
+        338                     C
+        339     1                     IF(IERR.EQ.1) THEN
+        340     1                         WRITE(IUT0,*) ERMSGC
+        341     1                         RETURN
+        342     1                     ENDIF
+        343                     C
+        344     1                     IF(IPART.GE.1) THEN
+        345     1                         IDUM = 3
+        346     1                         CALL DDCOM3(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        347     1                    *                FX,FY,FZ,NP,IUT0,IERR,RX,RY,MAXBUF)
+        348     2                         IF(IERR.NE.0) THEN
+        349     2                             WRITE(IUT0,*)
+        350     2                             WRITE(IUT0,*) ERMSGC
+        351     2                             RETURN
+        352     2                         ENDIF
+        353     1                     ENDIF
+        354                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 356
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.77, ITR: 96, MVE: 2, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FX, U, FZ, CM, W, FY, V, UI
+                              <<< Loop-information  End >>>
+        355     1  pp    v            DO 350 IP = 1 , NP
+        356     1   p    v                UI(1,IP) = U(IP)+GAM2/24.E0*CM(IP)*FX(IP)
+        357     1   p    v                UI(2,IP) = V(IP)+GAM2/24.E0*CM(IP)*FY(IP)
+        358     1   p    v                UI(3,IP) = W(IP)+GAM2/24.E0*CM(IP)*FZ(IP)
+        359     1   p    v        350 CONTINUE
+        360                     C
+        361                     C
+        362                     C
+        363                     C TEST-FILTER VELOCITY CORRELATION TENSOR
+        364                     C
+        365                     C
+        366                     C  (1) DIAGONAL TERMS
+        367                     C
+        368                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      RZ, RY, RX
+                              <<< Loop-information  End >>>
+        369     1   p   2v            DO 410 I = 1 , N
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 4
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<< Loop-information  End >>>
+        370     2  pp   2                 DO 400 IE = 1 , NE
+        371     2   p   2v                    RX(I,IE) = 0.E0
+        372     2   p   2v                    RY(I,IE) = 0.E0
+        373     2   p   2v                    RZ(I,IE) = 0.E0
+        374     2   p   2         400     CONTINUE
+        375     1   p             410 CONTINUE
+        376                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 5
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 5  FILL 22
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        377     1   p    v            DO 440 J = 1 , N
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<<    FUSED(lines: 378,384)
+                              <<< Loop-information  End >>>
+        378     2  pp                     DO 420 IE = 1 , NE
+        379     2   p    v                    FX(IE) = U(NODE(J,IE))*U(NODE(J,IE))
+        380     2   p    v                    FY(IE) = V(NODE(J,IE))*V(NODE(J,IE))
+        381     2   p    v                    FZ(IE) = W(NODE(J,IE))*W(NODE(J,IE))
+        382     2   p             420     CONTINUE
+        383     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED
+                              <<< Loop-information  End >>>
+        384     2   p                     DO 430 IE = 1 , NE
+        385     2   p    v                    D1=FILTER(IE)**2*(EXX(IE,1,J)+EYY(IE,1,J)+EZZ(IE,1,J))
+        386     2   p    v                    D2=FILTER(IE)**2*(EXX(IE,2,J)+EYY(IE,2,J)+EZZ(IE,2,J))
+        387     2   p    v                    D3=FILTER(IE)**2*(EXX(IE,3,J)+EYY(IE,3,J)+EZZ(IE,3,J))
+        388     2   p    v                    D4=FILTER(IE)**2*(EXX(IE,4,J)+EYY(IE,4,J)+EZZ(IE,4,J))
+        389     2   p    v                    D5=FILTER(IE)**2*(EXX(IE,5,J)+EYY(IE,5,J)+EZZ(IE,5,J))
+        390     2   p    v                    D6=FILTER(IE)**2*(EXX(IE,6,J)+EYY(IE,6,J)+EZZ(IE,6,J))
+        391     2   p    v                    D7=FILTER(IE)**2*(EXX(IE,7,J)+EYY(IE,7,J)+EZZ(IE,7,J))
+        392     2   p    v                    D8=FILTER(IE)**2*(EXX(IE,8,J)+EYY(IE,8,J)+EZZ(IE,8,J))
+        393     2               C
+        394     2   p    v                    RX(1,IE)=RX(1,IE)-D1*FX(IE)
+        395     2   p    v                    RX(2,IE)=RX(2,IE)-D2*FX(IE)
+        396     2   p    v                    RX(3,IE)=RX(3,IE)-D3*FX(IE)
+        397     2   p    v                    RX(4,IE)=RX(4,IE)-D4*FX(IE)
+        398     2   p    v                    RX(5,IE)=RX(5,IE)-D5*FX(IE)
+        399     2   p    v                    RX(6,IE)=RX(6,IE)-D6*FX(IE)
+        400     2   p    v                    RX(7,IE)=RX(7,IE)-D7*FX(IE)
+        401     2   p    v                    RX(8,IE)=RX(8,IE)-D8*FX(IE)
+        402     2               C
+        403     2   p    v                    RY(1,IE)=RY(1,IE)-D1*FY(IE)
+        404     2   p    v                    RY(2,IE)=RY(2,IE)-D2*FY(IE)
+        405     2   p    v                    RY(3,IE)=RY(3,IE)-D3*FY(IE)
+        406     2   p    v                    RY(4,IE)=RY(4,IE)-D4*FY(IE)
+        407     2   p    v                    RY(5,IE)=RY(5,IE)-D5*FY(IE)
+        408     2   p    v                    RY(6,IE)=RY(6,IE)-D6*FY(IE)
+        409     2   p    v                    RY(7,IE)=RY(7,IE)-D7*FY(IE)
+        410     2   p    v                    RY(8,IE)=RY(8,IE)-D8*FY(IE)
+        411     2               C
+        412     2   p    v                    RZ(1,IE)=RZ(1,IE)-D1*FZ(IE)
+        413     2   p    v                    RZ(2,IE)=RZ(2,IE)-D2*FZ(IE)
+        414     2   p    v                    RZ(3,IE)=RZ(3,IE)-D3*FZ(IE)
+        415     2   p    v                    RZ(4,IE)=RZ(4,IE)-D4*FZ(IE)
+        416     2   p    v                    RZ(5,IE)=RZ(5,IE)-D5*FZ(IE)
+        417     2   p    v                    RZ(6,IE)=RZ(6,IE)-D6*FZ(IE)
+        418     2   p    v                    RZ(7,IE)=RZ(7,IE)-D7*FZ(IE)
+        419     2   p    v                    RZ(8,IE)=RZ(8,IE)-D8*FZ(IE)
+        420     2   p             430     CONTINUE
+        421     1   p    v        440 CONTINUE
+        422                     C
+        423                           CALL SUPUE2(IDIM,RX,IENP,JENP,NEP,ME,MEP,NE,NP,N,
+        424                          *            FX,IUT0,IERR)
+        425                           CALL SUPUE2(IDIM,RY,IENP,JENP,NEP,ME,MEP,NE,NP,N,
+        426                          *            FY,IUT0,IERR)
+        427                           CALL SUPUE2(IDIM,RZ,IENP,JENP,NEP,ME,MEP,NE,NP,N,
+        428                          *            FZ,IUT0,IERR)
+        429                     C
+        430     1                     IF(IERR.EQ.1) THEN
+        431     1                         WRITE(IUT0,*) ERMSGC
+        432     1                         RETURN
+        433     1                     ENDIF
+        434                     C
+        435     1                     IF(IPART.GE.1) THEN
+        436     1                         IDUM = 3
+        437     1                         CALL DDCOM3(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        438     1                    *                FX,FY,FZ,NP,IUT0,IERR,RX,RY,MAXBUF)
+        439     2                         IF(IERR.NE.0) THEN
+        440     2                             WRITE(IUT0,*)
+        441     2                             WRITE(IUT0,*) ERMSGC
+        442     2                             RETURN
+        443     2                         ENDIF
+        444     1                     ENDIF
+        445                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 334
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.77, ITR: 112, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      W, FZ, CM, FY, V, UIJ, U, FX
+                              <<< Loop-information  End >>>
+        446     1  pp    v            DO 450 IP = 1 , NP
+        447     1   p    v                UIJ(1,IP) = U(IP)*U(IP)+GAM2/24.E0*CM(IP)*FX(IP)
+        448     1   p    v                UIJ(2,IP) = V(IP)*V(IP)+GAM2/24.E0*CM(IP)*FY(IP)
+        449     1   p    v                UIJ(3,IP) = W(IP)*W(IP)+GAM2/24.E0*CM(IP)*FZ(IP)
+        450     1   p    v        450 CONTINUE
+        451                     C
+        452                     C
+        453                     C  (2) OFF-DIAGONAL TERMS
+        454                     C
+        455                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      RZ, RY, RX
+                              <<< Loop-information  End >>>
+        456     1   p   2v            DO 510 I = 1 , N
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 4
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<< Loop-information  End >>>
+        457     2  pp   2                 DO 500 IE = 1 , NE
+        458     2   p   2v                    RX(I,IE) = 0.E0
+        459     2   p   2v                    RY(I,IE) = 0.E0
+        460     2   p   2v                    RZ(I,IE) = 0.E0
+        461     2   p   2         500     CONTINUE
+        462     1   p             510 CONTINUE
+        463                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 5
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 7  FILL 22
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        464     1   p    v            DO 540 J = 1 , N
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<<    FUSED(lines: 465,471)
+                              <<< Loop-information  End >>>
+        465     2  pp                     DO 520 IE = 1 , NE
+        466     2   p    v                    FX(IE) = V(NODE(J,IE))*W(NODE(J,IE))
+        467     2   p    v                    FY(IE) = W(NODE(J,IE))*U(NODE(J,IE))
+        468     2   p    v                    FZ(IE) = U(NODE(J,IE))*V(NODE(J,IE))
+        469     2   p             520     CONTINUE
+        470     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED
+                              <<< Loop-information  End >>>
+        471     2   p                     DO 530 IE = 1 , NE
+        472     2   p    v                    D1=FILTER(IE)**2*(EXX(IE,1,J)+EYY(IE,1,J)+EZZ(IE,1,J))
+        473     2   p    v                    D2=FILTER(IE)**2*(EXX(IE,2,J)+EYY(IE,2,J)+EZZ(IE,2,J))
+        474     2   p    v                    D3=FILTER(IE)**2*(EXX(IE,3,J)+EYY(IE,3,J)+EZZ(IE,3,J))
+        475     2   p    v                    D4=FILTER(IE)**2*(EXX(IE,4,J)+EYY(IE,4,J)+EZZ(IE,4,J))
+        476     2   p    v                    D5=FILTER(IE)**2*(EXX(IE,5,J)+EYY(IE,5,J)+EZZ(IE,5,J))
+        477     2   p    v                    D6=FILTER(IE)**2*(EXX(IE,6,J)+EYY(IE,6,J)+EZZ(IE,6,J))
+        478     2   p    v                    D7=FILTER(IE)**2*(EXX(IE,7,J)+EYY(IE,7,J)+EZZ(IE,7,J))
+        479     2   p    v                    D8=FILTER(IE)**2*(EXX(IE,8,J)+EYY(IE,8,J)+EZZ(IE,8,J))
+        480     2               C
+        481     2   p    v                    RX(1,IE)=RX(1,IE)-D1*FX(IE)
+        482     2   p    v                    RX(2,IE)=RX(2,IE)-D2*FX(IE)
+        483     2   p    v                    RX(3,IE)=RX(3,IE)-D3*FX(IE)
+        484     2   p    v                    RX(4,IE)=RX(4,IE)-D4*FX(IE)
+        485     2   p    v                    RX(5,IE)=RX(5,IE)-D5*FX(IE)
+        486     2   p    v                    RX(6,IE)=RX(6,IE)-D6*FX(IE)
+        487     2   p    v                    RX(7,IE)=RX(7,IE)-D7*FX(IE)
+        488     2   p    v                    RX(8,IE)=RX(8,IE)-D8*FX(IE)
+        489     2               C
+        490     2   p    v                    RY(1,IE)=RY(1,IE)-D1*FY(IE)
+        491     2   p    v                    RY(2,IE)=RY(2,IE)-D2*FY(IE)
+        492     2   p    v                    RY(3,IE)=RY(3,IE)-D3*FY(IE)
+        493     2   p    v                    RY(4,IE)=RY(4,IE)-D4*FY(IE)
+        494     2   p    v                    RY(5,IE)=RY(5,IE)-D5*FY(IE)
+        495     2   p    v                    RY(6,IE)=RY(6,IE)-D6*FY(IE)
+        496     2   p    v                    RY(7,IE)=RY(7,IE)-D7*FY(IE)
+        497     2   p    v                    RY(8,IE)=RY(8,IE)-D8*FY(IE)
+        498     2               C
+        499     2   p    v                    RZ(1,IE)=RZ(1,IE)-D1*FZ(IE)
+        500     2   p    v                    RZ(2,IE)=RZ(2,IE)-D2*FZ(IE)
+        501     2   p    v                    RZ(3,IE)=RZ(3,IE)-D3*FZ(IE)
+        502     2   p    v                    RZ(4,IE)=RZ(4,IE)-D4*FZ(IE)
+        503     2   p    v                    RZ(5,IE)=RZ(5,IE)-D5*FZ(IE)
+        504     2   p    v                    RZ(6,IE)=RZ(6,IE)-D6*FZ(IE)
+        505     2   p    v                    RZ(7,IE)=RZ(7,IE)-D7*FZ(IE)
+        506     2   p    v                    RZ(8,IE)=RZ(8,IE)-D8*FZ(IE)
+        507     2   p             530     CONTINUE
+        508     1   p    v        540 CONTINUE
+        509                     C
+        510                           CALL SUPUE2(IDIM,RX,IENP,JENP,NEP,ME,MEP,NE,NP,N,
+        511                          *            FX,IUT0,IERR)
+        512                           CALL SUPUE2(IDIM,RY,IENP,JENP,NEP,ME,MEP,NE,NP,N,
+        513                          *            FY,IUT0,IERR)
+        514                           CALL SUPUE2(IDIM,RZ,IENP,JENP,NEP,ME,MEP,NE,NP,N,
+        515                          *            FZ,IUT0,IERR)
+        516                     C
+        517     1                     IF(IERR.EQ.1) THEN
+        518     1                         WRITE(IUT0,*) ERMSGC
+        519     1                         RETURN
+        520     1                     ENDIF
+        521                     C
+        522     1                     IF(IPART.GE.1) THEN
+        523     1                         IDUM = 3
+        524     1                         CALL DDCOM3(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        525     1                    *                FX,FY,FZ,NP,IUT0,IERR,RX,RY,MAXBUF)
+        526     2                         IF(IERR.NE.0) THEN
+        527     2                             WRITE(IUT0,*)
+        528     2                             WRITE(IUT0,*) ERMSGC
+        529     2                             RETURN
+        530     2                         ENDIF
+        531     1                     ENDIF
+        532                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 334
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.77, ITR: 112, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      CM, FY, U, W, V, FZ, UIJ, FX
+                              <<< Loop-information  End >>>
+        533     1  pp    v            DO 550 IP = 1 , NP
+        534     1   p    v                UIJ(4,IP) = V(IP)*W(IP)+GAM2/24.E0*CM(IP)*FX(IP)
+        535     1   p    v                UIJ(5,IP) = W(IP)*U(IP)+GAM2/24.E0*CM(IP)*FY(IP)
+        536     1   p    v                UIJ(6,IP) = U(IP)*V(IP)+GAM2/24.E0*CM(IP)*FZ(IP)
+        537     1   p    v        550 CONTINUE
+        538                     C
+        539                     C
+        540                     C
+        541                     C TEST-FILTER STRAIN VELOCITY TENSOR
+        542                     C
+        543                     C
+        544                     C  (1) DIAGONAL TERMS
+        545                     C
+        546                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      RZ, RY, RX
+                              <<< Loop-information  End >>>
+        547     1   p   2v            DO 610 I = 1 , N
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 4
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<< Loop-information  End >>>
+        548     2  pp   2                 DO 600 IE = 1 , NE
+        549     2   p   2v                    RX(I,IE) = 0.E0
+        550     2   p   2v                    RY(I,IE) = 0.E0
+        551     2   p   2v                    RZ(I,IE) = 0.E0
+        552     2   p   2         600     CONTINUE
+        553     1   p             610 CONTINUE
+        554                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 4
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 5  FILL 22
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        555     1   p    v            DO 640 J = 1 , N
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<<    FUSED(lines: 556,562)
+                              <<< Loop-information  End >>>
+        556     2  pp                     DO 620 IE = 1 , NE
+        557     2   p    v                    FX(IE) = SIJN(1,NODE(J,IE))
+        558     2   p    v                    FY(IE) = SIJN(2,NODE(J,IE))
+        559     2   p    v                    FZ(IE) = SIJN(3,NODE(J,IE))
+        560     2   p             620     CONTINUE
+        561     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED
+                              <<< Loop-information  End >>>
+        562     2   p                     DO 630 IE = 1 , NE
+        563     2   p    v                    D1=FILTER(IE)**2*(EXX(IE,1,J)+EYY(IE,1,J)+EZZ(IE,1,J))
+        564     2   p    v                    D2=FILTER(IE)**2*(EXX(IE,2,J)+EYY(IE,2,J)+EZZ(IE,2,J))
+        565     2   p    v                    D3=FILTER(IE)**2*(EXX(IE,3,J)+EYY(IE,3,J)+EZZ(IE,3,J))
+        566     2   p    v                    D4=FILTER(IE)**2*(EXX(IE,4,J)+EYY(IE,4,J)+EZZ(IE,4,J))
+        567     2   p    v                    D5=FILTER(IE)**2*(EXX(IE,5,J)+EYY(IE,5,J)+EZZ(IE,5,J))
+        568     2   p    v                    D6=FILTER(IE)**2*(EXX(IE,6,J)+EYY(IE,6,J)+EZZ(IE,6,J))
+        569     2   p    v                    D7=FILTER(IE)**2*(EXX(IE,7,J)+EYY(IE,7,J)+EZZ(IE,7,J))
+        570     2   p    v                    D8=FILTER(IE)**2*(EXX(IE,8,J)+EYY(IE,8,J)+EZZ(IE,8,J))
+        571     2               C
+        572     2   p    v                    RX(1,IE)=RX(1,IE)-D1*FX(IE)
+        573     2   p    v                    RX(2,IE)=RX(2,IE)-D2*FX(IE)
+        574     2   p    v                    RX(3,IE)=RX(3,IE)-D3*FX(IE)
+        575     2   p    v                    RX(4,IE)=RX(4,IE)-D4*FX(IE)
+        576     2   p    v                    RX(5,IE)=RX(5,IE)-D5*FX(IE)
+        577     2   p    v                    RX(6,IE)=RX(6,IE)-D6*FX(IE)
+        578     2   p    v                    RX(7,IE)=RX(7,IE)-D7*FX(IE)
+        579     2   p    v                    RX(8,IE)=RX(8,IE)-D8*FX(IE)
+        580     2               C
+        581     2   p    v                    RY(1,IE)=RY(1,IE)-D1*FY(IE)
+        582     2   p    v                    RY(2,IE)=RY(2,IE)-D2*FY(IE)
+        583     2   p    v                    RY(3,IE)=RY(3,IE)-D3*FY(IE)
+        584     2   p    v                    RY(4,IE)=RY(4,IE)-D4*FY(IE)
+        585     2   p    v                    RY(5,IE)=RY(5,IE)-D5*FY(IE)
+        586     2   p    v                    RY(6,IE)=RY(6,IE)-D6*FY(IE)
+        587     2   p    v                    RY(7,IE)=RY(7,IE)-D7*FY(IE)
+        588     2   p    v                    RY(8,IE)=RY(8,IE)-D8*FY(IE)
+        589     2               C
+        590     2   p    v                    RZ(1,IE)=RZ(1,IE)-D1*FZ(IE)
+        591     2   p    v                    RZ(2,IE)=RZ(2,IE)-D2*FZ(IE)
+        592     2   p    v                    RZ(3,IE)=RZ(3,IE)-D3*FZ(IE)
+        593     2   p    v                    RZ(4,IE)=RZ(4,IE)-D4*FZ(IE)
+        594     2   p    v                    RZ(5,IE)=RZ(5,IE)-D5*FZ(IE)
+        595     2   p    v                    RZ(6,IE)=RZ(6,IE)-D6*FZ(IE)
+        596     2   p    v                    RZ(7,IE)=RZ(7,IE)-D7*FZ(IE)
+        597     2   p    v                    RZ(8,IE)=RZ(8,IE)-D8*FZ(IE)
+        598     2   p             630     CONTINUE
+        599     1   p    v        640 CONTINUE
+        600                     C
+        601                           CALL SUPUE2(IDIM,RX,IENP,JENP,NEP,ME,MEP,NE,NP,N,
+        602                          *            FX,IUT0,IERR)
+        603                           CALL SUPUE2(IDIM,RY,IENP,JENP,NEP,ME,MEP,NE,NP,N,
+        604                          *            FY,IUT0,IERR)
+        605                           CALL SUPUE2(IDIM,RZ,IENP,JENP,NEP,ME,MEP,NE,NP,N,
+        606                          *            FZ,IUT0,IERR)
+        607                     C
+        608     1                     IF(IERR.EQ.1) THEN
+        609     1                         WRITE(IUT0,*) ERMSGC
+        610     1                         RETURN
+        611     1                     ENDIF
+        612                     C
+        613     1                     IF(IPART.GE.1) THEN
+        614     1                         IDUM = 3
+        615     1                         CALL DDCOM3(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        616     1                    *                FX,FY,FZ,NP,IUT0,IERR,RX,RY,MAXBUF)
+        617     2                         IF(IERR.NE.0) THEN
+        618     2                             WRITE(IUT0,*)
+        619     2                             WRITE(IUT0,*) ERMSGC
+        620     2                             RETURN
+        621     2                         ENDIF
+        622     1                     ENDIF
+        623                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 356
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.58, ITR: 96, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FY, FX, SIJN, FZ, SIJ, CM
+                              <<< Loop-information  End >>>
+        624     1  pp    v            DO 650 IP = 1 , NP
+        625     1   p    v                SIJ(1,IP) = SIJN(1,IP)+GAM2/24.E0*CM(IP)*FX(IP)
+        626     1   p    v                SIJ(2,IP) = SIJN(2,IP)+GAM2/24.E0*CM(IP)*FY(IP)
+        627     1   p    v                SIJ(3,IP) = SIJN(3,IP)+GAM2/24.E0*CM(IP)*FZ(IP)
+        628     1   p    v        650 CONTINUE
+        629                     C
+        630                     C
+        631                     C  (2) OFF-DIAGONAL TERMS
+        632                     C
+        633                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      RZ, RY, RX
+                              <<< Loop-information  End >>>
+        634     1   p   2v            DO 710 I = 1 , N
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 4
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<< Loop-information  End >>>
+        635     2  pp   2                 DO 700 IE = 1 , NE
+        636     2   p   2v                    RX(I,IE) = 0.E0
+        637     2   p   2v                    RY(I,IE) = 0.E0
+        638     2   p   2v                    RZ(I,IE) = 0.E0
+        639     2   p   2         700     CONTINUE
+        640     1   p             710 CONTINUE
+        641                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 4
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 5  FILL 22
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        642     1   p    v            DO 740 J = 1 , N
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<<    FUSED(lines: 643,649)
+                              <<< Loop-information  End >>>
+        643     2  pp                     DO 720 IE = 1 , NE
+        644     2   p    v                    FX(IE) = SIJN(4,NODE(J,IE))
+        645     2   p    v                    FY(IE) = SIJN(5,NODE(J,IE))
+        646     2   p    v                    FZ(IE) = SIJN(6,NODE(J,IE))
+        647     2   p             720     CONTINUE
+        648     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED
+                              <<< Loop-information  End >>>
+        649     2   p                     DO 730 IE = 1 , NE
+        650     2   p    v                    D1=FILTER(IE)**2*(EXX(IE,1,J)+EYY(IE,1,J)+EZZ(IE,1,J))
+        651     2   p    v                    D2=FILTER(IE)**2*(EXX(IE,2,J)+EYY(IE,2,J)+EZZ(IE,2,J))
+        652     2   p    v                    D3=FILTER(IE)**2*(EXX(IE,3,J)+EYY(IE,3,J)+EZZ(IE,3,J))
+        653     2   p    v                    D4=FILTER(IE)**2*(EXX(IE,4,J)+EYY(IE,4,J)+EZZ(IE,4,J))
+        654     2   p    v                    D5=FILTER(IE)**2*(EXX(IE,5,J)+EYY(IE,5,J)+EZZ(IE,5,J))
+        655     2   p    v                    D6=FILTER(IE)**2*(EXX(IE,6,J)+EYY(IE,6,J)+EZZ(IE,6,J))
+        656     2   p    v                    D7=FILTER(IE)**2*(EXX(IE,7,J)+EYY(IE,7,J)+EZZ(IE,7,J))
+        657     2   p    v                    D8=FILTER(IE)**2*(EXX(IE,8,J)+EYY(IE,8,J)+EZZ(IE,8,J))
+        658     2               C
+        659     2   p    v                    RX(1,IE)=RX(1,IE)-D1*FX(IE)
+        660     2   p    v                    RX(2,IE)=RX(2,IE)-D2*FX(IE)
+        661     2   p    v                    RX(3,IE)=RX(3,IE)-D3*FX(IE)
+        662     2   p    v                    RX(4,IE)=RX(4,IE)-D4*FX(IE)
+        663     2   p    v                    RX(5,IE)=RX(5,IE)-D5*FX(IE)
+        664     2   p    v                    RX(6,IE)=RX(6,IE)-D6*FX(IE)
+        665     2   p    v                    RX(7,IE)=RX(7,IE)-D7*FX(IE)
+        666     2   p    v                    RX(8,IE)=RX(8,IE)-D8*FX(IE)
+        667     2               C
+        668     2   p    v                    RY(1,IE)=RY(1,IE)-D1*FY(IE)
+        669     2   p    v                    RY(2,IE)=RY(2,IE)-D2*FY(IE)
+        670     2   p    v                    RY(3,IE)=RY(3,IE)-D3*FY(IE)
+        671     2   p    v                    RY(4,IE)=RY(4,IE)-D4*FY(IE)
+        672     2   p    v                    RY(5,IE)=RY(5,IE)-D5*FY(IE)
+        673     2   p    v                    RY(6,IE)=RY(6,IE)-D6*FY(IE)
+        674     2   p    v                    RY(7,IE)=RY(7,IE)-D7*FY(IE)
+        675     2   p    v                    RY(8,IE)=RY(8,IE)-D8*FY(IE)
+        676     2               C
+        677     2   p    v                    RZ(1,IE)=RZ(1,IE)-D1*FZ(IE)
+        678     2   p    v                    RZ(2,IE)=RZ(2,IE)-D2*FZ(IE)
+        679     2   p    v                    RZ(3,IE)=RZ(3,IE)-D3*FZ(IE)
+        680     2   p    v                    RZ(4,IE)=RZ(4,IE)-D4*FZ(IE)
+        681     2   p    v                    RZ(5,IE)=RZ(5,IE)-D5*FZ(IE)
+        682     2   p    v                    RZ(6,IE)=RZ(6,IE)-D6*FZ(IE)
+        683     2   p    v                    RZ(7,IE)=RZ(7,IE)-D7*FZ(IE)
+        684     2   p    v                    RZ(8,IE)=RZ(8,IE)-D8*FZ(IE)
+        685     2   p             730     CONTINUE
+        686     1   p    v        740 CONTINUE
+        687                     C
+        688                           CALL SUPUE2(IDIM,RX,IENP,JENP,NEP,ME,MEP,NE,NP,N,
+        689                          *            FX,IUT0,IERR)
+        690                           CALL SUPUE2(IDIM,RY,IENP,JENP,NEP,ME,MEP,NE,NP,N,
+        691                          *            FY,IUT0,IERR)
+        692                           CALL SUPUE2(IDIM,RZ,IENP,JENP,NEP,ME,MEP,NE,NP,N,
+        693                          *            FZ,IUT0,IERR)
+        694                     C
+        695     1                     IF(IERR.EQ.1) THEN
+        696     1                         WRITE(IUT0,*) ERMSGC
+        697     1                         RETURN
+        698     1                     ENDIF
+        699                     C
+        700     1                     IF(IPART.GE.1) THEN
+        701     1                         IDUM = 3
+        702     1                         CALL DDCOM3(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        703     1                    *                FX,FY,FZ,NP,IUT0,IERR,RX,RY,MAXBUF)
+        704     2                         IF(IERR.NE.0) THEN
+        705     2                             WRITE(IUT0,*)
+        706     2                             WRITE(IUT0,*) ERMSGC
+        707     2                             RETURN
+        708     2                         ENDIF
+        709     1                     ENDIF
+        710                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 356
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.58, ITR: 96, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FY, FX, SIJN, FZ, SIJ, CM
+                              <<< Loop-information  End >>>
+        711     1  pp    v            DO 750 IP = 1 , NP
+        712     1   p    v                SIJ(4,IP) = SIJN(4,IP)+GAM2/24.E0*CM(IP)*FX(IP)
+        713     1   p    v                SIJ(5,IP) = SIJN(5,IP)+GAM2/24.E0*CM(IP)*FY(IP)
+        714     1   p    v                SIJ(6,IP) = SIJN(6,IP)+GAM2/24.E0*CM(IP)*FZ(IP)
+        715     1   p    v        750 CONTINUE
+        716                     C
+        717                     C
+        718                     C
+        719                     C TEST-FILTER STRAIN VELOCITY TENSOR MULTIPLIED BY ITS MAGNITUDE
+        720                     C
+        721                     C
+        722                     C  (1) DIAGONAL TERMS
+        723                     C
+        724                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      RZ, RY, RX
+                              <<< Loop-information  End >>>
+        725     1   p   2v            DO 810 I = 1 , N
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 4
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<< Loop-information  End >>>
+        726     2  pp   2                 DO 800 IE = 1 , NE
+        727     2   p   2v                    RX(I,IE) = 0.E0
+        728     2   p   2v                    RY(I,IE) = 0.E0
+        729     2   p   2v                    RZ(I,IE) = 0.E0
+        730     2   p   2         800     CONTINUE
+        731     1   p             810 CONTINUE
+        732                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 5
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 6  FILL 24
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        733     1   p    v            DO 840 J = 1 , N
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<<    FUSED(lines: 734,740)
+                              <<< Loop-information  End >>>
+        734     2  pp                     DO 820 IE = 1 , NE
+        735     2   p    v                    FX(IE) = S(NODE(J,IE))*SIJN(1,NODE(J,IE))
+        736     2   p    v                    FY(IE) = S(NODE(J,IE))*SIJN(2,NODE(J,IE))
+        737     2   p    v                    FZ(IE) = S(NODE(J,IE))*SIJN(3,NODE(J,IE))
+        738     2   p             820     CONTINUE
+        739     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED
+                              <<< Loop-information  End >>>
+        740     2   p                     DO 830 IE = 1 , NE
+        741     2   p    v                    D1=FILTER(IE)**2*(EXX(IE,1,J)+EYY(IE,1,J)+EZZ(IE,1,J))
+        742     2   p    v                    D2=FILTER(IE)**2*(EXX(IE,2,J)+EYY(IE,2,J)+EZZ(IE,2,J))
+        743     2   p    v                    D3=FILTER(IE)**2*(EXX(IE,3,J)+EYY(IE,3,J)+EZZ(IE,3,J))
+        744     2   p    v                    D4=FILTER(IE)**2*(EXX(IE,4,J)+EYY(IE,4,J)+EZZ(IE,4,J))
+        745     2   p    v                    D5=FILTER(IE)**2*(EXX(IE,5,J)+EYY(IE,5,J)+EZZ(IE,5,J))
+        746     2   p    v                    D6=FILTER(IE)**2*(EXX(IE,6,J)+EYY(IE,6,J)+EZZ(IE,6,J))
+        747     2   p    v                    D7=FILTER(IE)**2*(EXX(IE,7,J)+EYY(IE,7,J)+EZZ(IE,7,J))
+        748     2   p    v                    D8=FILTER(IE)**2*(EXX(IE,8,J)+EYY(IE,8,J)+EZZ(IE,8,J))
+        749     2               C
+        750     2   p    v                    RX(1,IE)=RX(1,IE)-D1*FX(IE)
+        751     2   p    v                    RX(2,IE)=RX(2,IE)-D2*FX(IE)
+        752     2   p    v                    RX(3,IE)=RX(3,IE)-D3*FX(IE)
+        753     2   p    v                    RX(4,IE)=RX(4,IE)-D4*FX(IE)
+        754     2   p    v                    RX(5,IE)=RX(5,IE)-D5*FX(IE)
+        755     2   p    v                    RX(6,IE)=RX(6,IE)-D6*FX(IE)
+        756     2   p    v                    RX(7,IE)=RX(7,IE)-D7*FX(IE)
+        757     2   p    v                    RX(8,IE)=RX(8,IE)-D8*FX(IE)
+        758     2               C
+        759     2   p    v                    RY(1,IE)=RY(1,IE)-D1*FY(IE)
+        760     2   p    v                    RY(2,IE)=RY(2,IE)-D2*FY(IE)
+        761     2   p    v                    RY(3,IE)=RY(3,IE)-D3*FY(IE)
+        762     2   p    v                    RY(4,IE)=RY(4,IE)-D4*FY(IE)
+        763     2   p    v                    RY(5,IE)=RY(5,IE)-D5*FY(IE)
+        764     2   p    v                    RY(6,IE)=RY(6,IE)-D6*FY(IE)
+        765     2   p    v                    RY(7,IE)=RY(7,IE)-D7*FY(IE)
+        766     2   p    v                    RY(8,IE)=RY(8,IE)-D8*FY(IE)
+        767     2               C
+        768     2   p    v                    RZ(1,IE)=RZ(1,IE)-D1*FZ(IE)
+        769     2   p    v                    RZ(2,IE)=RZ(2,IE)-D2*FZ(IE)
+        770     2   p    v                    RZ(3,IE)=RZ(3,IE)-D3*FZ(IE)
+        771     2   p    v                    RZ(4,IE)=RZ(4,IE)-D4*FZ(IE)
+        772     2   p    v                    RZ(5,IE)=RZ(5,IE)-D5*FZ(IE)
+        773     2   p    v                    RZ(6,IE)=RZ(6,IE)-D6*FZ(IE)
+        774     2   p    v                    RZ(7,IE)=RZ(7,IE)-D7*FZ(IE)
+        775     2   p    v                    RZ(8,IE)=RZ(8,IE)-D8*FZ(IE)
+        776     2   p             830     CONTINUE
+        777     1   p    v        840 CONTINUE
+        778                     C
+        779                           CALL SUPUE2(IDIM,RX,IENP,JENP,NEP,ME,MEP,NE,NP,N,
+        780                          *            FX,IUT0,IERR)
+        781                           CALL SUPUE2(IDIM,RY,IENP,JENP,NEP,ME,MEP,NE,NP,N,
+        782                          *            FY,IUT0,IERR)
+        783                           CALL SUPUE2(IDIM,RZ,IENP,JENP,NEP,ME,MEP,NE,NP,N,
+        784                          *            FZ,IUT0,IERR)
+        785                     C
+        786     1                     IF(IERR.EQ.1) THEN
+        787     1                         WRITE(IUT0,*) ERMSGC
+        788     1                         RETURN
+        789     1                     ENDIF
+        790                     C
+        791     1                     IF(IPART.GE.1) THEN
+        792     1                         IDUM = 3
+        793     1                         CALL DDCOM3(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        794     1                    *                FX,FY,FZ,NP,IUT0,IERR,RX,RY,MAXBUF)
+        795     2                         IF(IERR.NE.0) THEN
+        796     2                             WRITE(IUT0,*)
+        797     2                             WRITE(IUT0,*) ERMSGC
+        798     2                             RETURN
+        799     2                         ENDIF
+        800     1                     ENDIF
+        801                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 314
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.76, ITR: 128, MVE: 4, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      SIJN, S, CM, FZ, FY, FX, SSIJ
+                              <<< Loop-information  End >>>
+        802     1  pp    v            DO 850 IP = 1 , NP
+        803     1   p    v               SSIJ(1,IP) = S(IP)*SIJN(1,IP)+GAM2/24.E0*CM(IP)*FX(IP)
+        804     1   p    v               SSIJ(2,IP) = S(IP)*SIJN(2,IP)+GAM2/24.E0*CM(IP)*FY(IP)
+        805     1   p    v               SSIJ(3,IP) = S(IP)*SIJN(3,IP)+GAM2/24.E0*CM(IP)*FZ(IP)
+        806     1   p    v        850 CONTINUE
+        807                     C
+        808                     C
+        809                     C  (2) OFF-DIAGONAL TERMS
+        810                     C
+        811                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      RZ, RY, RX
+                              <<< Loop-information  End >>>
+        812     1   p   2v            DO 910 I = 1 , N
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 4
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<< Loop-information  End >>>
+        813     2  pp   2                 DO 900 IE = 1 , NE
+        814     2   p   2v                    RX(I,IE) = 0.E0
+        815     2   p   2v                    RY(I,IE) = 0.E0
+        816     2   p   2v                    RZ(I,IE) = 0.E0
+        817     2   p   2         900     CONTINUE
+        818     1   p             910 CONTINUE
+        819                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 5
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 6  FILL 24
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        820     1   p    v            DO 940 J = 1 , N
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<<    FUSED(lines: 821,827)
+                              <<< Loop-information  End >>>
+        821     2  pp                     DO 920 IE = 1 , NE
+        822     2   p    v                    FX(IE) = S(NODE(J,IE))*SIJN(4,NODE(J,IE))
+        823     2   p    v                    FY(IE) = S(NODE(J,IE))*SIJN(5,NODE(J,IE))
+        824     2   p    v                    FZ(IE) = S(NODE(J,IE))*SIJN(6,NODE(J,IE))
+        825     2   p             920     CONTINUE
+        826     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED
+                              <<< Loop-information  End >>>
+        827     2   p                     DO 930 IE = 1 , NE
+        828     2   p    v                    D1=FILTER(IE)**2*(EXX(IE,1,J)+EYY(IE,1,J)+EZZ(IE,1,J))
+        829     2   p    v                    D2=FILTER(IE)**2*(EXX(IE,2,J)+EYY(IE,2,J)+EZZ(IE,2,J))
+        830     2   p    v                    D3=FILTER(IE)**2*(EXX(IE,3,J)+EYY(IE,3,J)+EZZ(IE,3,J))
+        831     2   p    v                    D4=FILTER(IE)**2*(EXX(IE,4,J)+EYY(IE,4,J)+EZZ(IE,4,J))
+        832     2   p    v                    D5=FILTER(IE)**2*(EXX(IE,5,J)+EYY(IE,5,J)+EZZ(IE,5,J))
+        833     2   p    v                    D6=FILTER(IE)**2*(EXX(IE,6,J)+EYY(IE,6,J)+EZZ(IE,6,J))
+        834     2   p    v                    D7=FILTER(IE)**2*(EXX(IE,7,J)+EYY(IE,7,J)+EZZ(IE,7,J))
+        835     2   p    v                    D8=FILTER(IE)**2*(EXX(IE,8,J)+EYY(IE,8,J)+EZZ(IE,8,J))
+        836     2               C
+        837     2   p    v                    RX(1,IE)=RX(1,IE)-D1*FX(IE)
+        838     2   p    v                    RX(2,IE)=RX(2,IE)-D2*FX(IE)
+        839     2   p    v                    RX(3,IE)=RX(3,IE)-D3*FX(IE)
+        840     2   p    v                    RX(4,IE)=RX(4,IE)-D4*FX(IE)
+        841     2   p    v                    RX(5,IE)=RX(5,IE)-D5*FX(IE)
+        842     2   p    v                    RX(6,IE)=RX(6,IE)-D6*FX(IE)
+        843     2   p    v                    RX(7,IE)=RX(7,IE)-D7*FX(IE)
+        844     2   p    v                    RX(8,IE)=RX(8,IE)-D8*FX(IE)
+        845     2               C
+        846     2   p    v                    RY(1,IE)=RY(1,IE)-D1*FY(IE)
+        847     2   p    v                    RY(2,IE)=RY(2,IE)-D2*FY(IE)
+        848     2   p    v                    RY(3,IE)=RY(3,IE)-D3*FY(IE)
+        849     2   p    v                    RY(4,IE)=RY(4,IE)-D4*FY(IE)
+        850     2   p    v                    RY(5,IE)=RY(5,IE)-D5*FY(IE)
+        851     2   p    v                    RY(6,IE)=RY(6,IE)-D6*FY(IE)
+        852     2   p    v                    RY(7,IE)=RY(7,IE)-D7*FY(IE)
+        853     2   p    v                    RY(8,IE)=RY(8,IE)-D8*FY(IE)
+        854     2               C
+        855     2   p    v                    RZ(1,IE)=RZ(1,IE)-D1*FZ(IE)
+        856     2   p    v                    RZ(2,IE)=RZ(2,IE)-D2*FZ(IE)
+        857     2   p    v                    RZ(3,IE)=RZ(3,IE)-D3*FZ(IE)
+        858     2   p    v                    RZ(4,IE)=RZ(4,IE)-D4*FZ(IE)
+        859     2   p    v                    RZ(5,IE)=RZ(5,IE)-D5*FZ(IE)
+        860     2   p    v                    RZ(6,IE)=RZ(6,IE)-D6*FZ(IE)
+        861     2   p    v                    RZ(7,IE)=RZ(7,IE)-D7*FZ(IE)
+        862     2   p    v                    RZ(8,IE)=RZ(8,IE)-D8*FZ(IE)
+        863     2   p             930     CONTINUE
+        864     1   p    v        940 CONTINUE
+        865                     C
+        866                           CALL SUPUE2(IDIM,RX,IENP,JENP,NEP,ME,MEP,NE,NP,N,
+        867                          *            FX,IUT0,IERR)
+        868                           CALL SUPUE2(IDIM,RY,IENP,JENP,NEP,ME,MEP,NE,NP,N,
+        869                          *            FY,IUT0,IERR)
+        870                           CALL SUPUE2(IDIM,RZ,IENP,JENP,NEP,ME,MEP,NE,NP,N,
+        871                          *            FZ,IUT0,IERR)
+        872                     C
+        873     1                     IF(IERR.EQ.1) THEN
+        874     1                         WRITE(IUT0,*) ERMSGC
+        875     1                         RETURN
+        876     1                     ENDIF
+        877                     C
+        878     1                     IF(IPART.GE.1) THEN
+        879     1                         IDUM = 3
+        880     1                         CALL DDCOM3(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        881     1                    *                FX,FY,FZ,NP,IUT0,IERR,RX,RY,MAXBUF)
+        882     2                         IF(IERR.NE.0) THEN
+        883     2                             WRITE(IUT0,*)
+        884     2                             WRITE(IUT0,*) ERMSGC
+        885     2                             RETURN
+        886     2                         ENDIF
+        887     1                     ENDIF
+        888                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 79
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED(lines: 889,901,916)
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      S, SIJ, CM, SIJN, FZ, SSIJ, FY, FX, UI
+                              <<<      UIJ, AMM, AML
+                              <<< Loop-information  End >>>
+        889     1  pp    v            DO 950 IP = 1 , NP
+        890     1   p    v                SSIJ(4,IP)=S(IP)*SIJN(4,IP)+GAM2/24.E0*CM(IP)*FX(IP)
+        891     1   p    v                SSIJ(5,IP)=S(IP)*SIJN(5,IP)+GAM2/24.E0*CM(IP)*FY(IP)
+        892     1   p    v                SSIJ(6,IP)=S(IP)*SIJN(6,IP)+GAM2/24.E0*CM(IP)*FZ(IP)
+        893     1   p    v        950 CONTINUE
+        894                     C
+        895                     C
+        896                     C
+        897                     C COMPUTE CONTRACTION OF TEST-FILTERED STRAIN VELOCITY TENSOR
+        898                     C
+        899                     C
+        900                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED
+                              <<< Loop-information  End >>>
+        901     1                     DO 1000 IP = 1 , NP
+        902     1                         S(IP) = SQRT(2.E0*SIJ(1,IP)*SIJ(1,IP)
+        903     1                    &                +2.E0*SIJ(2,IP)*SIJ(2,IP)
+        904     1                    &                +2.E0*SIJ(3,IP)*SIJ(3,IP)
+        905     1                    &                +4.E0*SIJ(4,IP)*SIJ(4,IP)
+        906     1                    &                +4.E0*SIJ(5,IP)*SIJ(5,IP)
+        907     1                    &                +4.E0*SIJ(6,IP)*SIJ(6,IP))
+        908     1                1000 CONTINUE
+        909                     C
+        910                     C
+        911                     C
+        912                     C LEAST-SQUARE AVERAGE LEONARD STRESS TENSOR AND SGS STRESS TENSOR
+        913                     C
+        914                     C
+        915                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED
+                              <<< Loop-information  End >>>
+        916     1                     DO 1100 IP = 1 , NP
+        917     1                         UKK     = 0.333333E0*(UIJ(1,IP)-UI(1,IP)*UI(1,IP)
+        918     1                    &                         +UIJ(2,IP)-UI(2,IP)*UI(2,IP)
+        919     1                    &                         +UIJ(3,IP)-UI(3,IP)*UI(3,IP))
+        920     1               C
+        921     1                         AML(IP) = (SSIJ(1,IP)-ALF2*S(IP)*SIJ(1,IP))
+        922     1                    &             *( UIJ(1,IP)-UI(1,IP)*UI(1,IP)-UKK)
+        923     1                    &             +(SSIJ(2,IP)-ALF2*S(IP)*SIJ(2,IP))
+        924     1                    &             *( UIJ(2,IP)-UI(2,IP)*UI(2,IP)-UKK)
+        925     1                    &             +(SSIJ(3,IP)-ALF2*S(IP)*SIJ(3,IP))
+        926     1                    &             *( UIJ(3,IP)-UI(3,IP)*UI(3,IP)-UKK)
+        927     1                    &        +2.E0*(SSIJ(4,IP)-ALF2*S(IP)*SIJ(4,IP))
+        928     1                    &             *( UIJ(4,IP)-UI(2,IP)*UI(3,IP))
+        929     1                    &        +2.E0*(SSIJ(5,IP)-ALF2*S(IP)*SIJ(5,IP))
+        930     1                    &             *( UIJ(5,IP)-UI(3,IP)*UI(1,IP))
+        931     1                    &        +2.E0*(SSIJ(6,IP)-ALF2*S(IP)*SIJ(6,IP))
+        932     1                    &             *( UIJ(6,IP)-UI(1,IP)*UI(2,IP))
+        933     1               C
+        934     1                         AMM(IP) = (SSIJ(1,IP)-ALF2*S(IP)*SIJ(1,IP))**2
+        935     1                    &             +(SSIJ(2,IP)-ALF2*S(IP)*SIJ(2,IP))**2
+        936     1                    &             +(SSIJ(3,IP)-ALF2*S(IP)*SIJ(3,IP))**2
+        937     1                    &        +2.E0*(SSIJ(4,IP)-ALF2*S(IP)*SIJ(4,IP))**2
+        938     1                    &        +2.E0*(SSIJ(5,IP)-ALF2*S(IP)*SIJ(5,IP))**2
+        939     1                    &        +2.E0*(SSIJ(6,IP)-ALF2*S(IP)*SIJ(6,IP))**2
+        940     1                1100 CONTINUE
+        941                     C
+        942                     C
+        943                     C
+        944                     C RECURSIVELY TEST-FILTER LEAST-SQUARE AVERAGED LEONARD STRESS
+        945                     C AND SGS STRESS FOR AVERAGING PURPOSE
+        946                     C
+        947                     C
+        948                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      CM, FY, FX, AMM, AML
+                              <<< Loop-information  End >>>
+        949     1                     DO 2000 IAVDYN = 1 , NAVDYN
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 3)
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      RY, RX
+                              <<< Loop-information  End >>>
+        950     2   p   2v                DO 1210 I = 1 , N
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 4
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<< Loop-information  End >>>
+        951     3  pp   2                     DO 1200 IE = 1 , NE
+        952     3   p   2v                        RX(I,IE) = 0.E0
+        953     3   p   2v                        RY(I,IE) = 0.E0
+        954     3   p   2        1200         CONTINUE
+        955     2   p            1210     CONTINUE
+        956     1               C
+        957     2                         DO 1240 J = 1 , N
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 63
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED(lines: 958,963)
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FILTER, EXX, EYY, EZZ
+                              <<<    PREFETCH(SOFT) : 22
+                              <<<     SEQUENTIAL : 22
+                              <<<      EXX: 6, EYY: 6, EZZ: 6, FX: 2, FY: 2
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 16
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        958     3  pp    v                    DO 1220 IE = 1 , NE
+        959     3   p    v                        FX(IE) = AML(NODE(J,IE))
+        960     3   p    v                        FY(IE) = AMM(NODE(J,IE))
+        961     3   p    v       1220         CONTINUE
+        962     2               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED
+                              <<< Loop-information  End >>>
+        963     3                             DO 1230 IE = 1 , NE
+        964     3                                 D1=FILTER(IE)**2*(EXX(IE,1,J)+EYY(IE,1,J)+EZZ(IE,1,J))
+        965     3                                 D2=FILTER(IE)**2*(EXX(IE,2,J)+EYY(IE,2,J)+EZZ(IE,2,J))
+        966     3                                 D3=FILTER(IE)**2*(EXX(IE,3,J)+EYY(IE,3,J)+EZZ(IE,3,J))
+        967     3                                 D4=FILTER(IE)**2*(EXX(IE,4,J)+EYY(IE,4,J)+EZZ(IE,4,J))
+        968     3                                 D5=FILTER(IE)**2*(EXX(IE,5,J)+EYY(IE,5,J)+EZZ(IE,5,J))
+        969     3                                 D6=FILTER(IE)**2*(EXX(IE,6,J)+EYY(IE,6,J)+EZZ(IE,6,J))
+        970     3                                 D7=FILTER(IE)**2*(EXX(IE,7,J)+EYY(IE,7,J)+EZZ(IE,7,J))
+        971     3                                 D8=FILTER(IE)**2*(EXX(IE,8,J)+EYY(IE,8,J)+EZZ(IE,8,J))
+        972     3               C
+        973     3                                 RX(1,IE)=RX(1,IE)-D1*FX(IE)
+        974     3                                 RX(2,IE)=RX(2,IE)-D2*FX(IE)
+        975     3                                 RX(3,IE)=RX(3,IE)-D3*FX(IE)
+        976     3                                 RX(4,IE)=RX(4,IE)-D4*FX(IE)
+        977     3                                 RX(5,IE)=RX(5,IE)-D5*FX(IE)
+        978     3                                 RX(6,IE)=RX(6,IE)-D6*FX(IE)
+        979     3                                 RX(7,IE)=RX(7,IE)-D7*FX(IE)
+        980     3                                 RX(8,IE)=RX(8,IE)-D8*FX(IE)
+        981     3               C
+        982     3                                 RY(1,IE)=RY(1,IE)-D1*FY(IE)
+        983     3                                 RY(2,IE)=RY(2,IE)-D2*FY(IE)
+        984     3                                 RY(3,IE)=RY(3,IE)-D3*FY(IE)
+        985     3                                 RY(4,IE)=RY(4,IE)-D4*FY(IE)
+        986     3                                 RY(5,IE)=RY(5,IE)-D5*FY(IE)
+        987     3                                 RY(6,IE)=RY(6,IE)-D6*FY(IE)
+        988     3                                 RY(7,IE)=RY(7,IE)-D7*FY(IE)
+        989     3                                 RY(8,IE)=RY(8,IE)-D8*FY(IE)
+        990     3                1230         CONTINUE
+        991     2                1240     CONTINUE
+        992     1               C
+        993     1                         CALL SUPUE2(IDIM,RX,IENP,JENP,NEP,ME,MEP,NE,NP,N,
+        994     1                    *                FX,IUT0,IERR)
+        995     1                         CALL SUPUE2(IDIM,RY,IENP,JENP,NEP,ME,MEP,NE,NP,N,
+        996     1                    *                FY,IUT0,IERR)
+        997     1               C
+        998     2                         IF(IERR.EQ.1) THEN
+        999     2                             WRITE(IUT0,*) ERMSGC
+       1000     2                             RETURN
+       1001     2                         ENDIF
+       1002     1               C
+       1003     2                         IF(IPART.GE.1) THEN
+       1004     2                            IDUM = 2
+       1005     2                            CALL DDCOM3(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+       1006     2                    *                   FX,FY,FZ,NP,IUT0,IERR,RX,RY,MAXBUF)
+       1007     3                            IF(IERR.NE.0) THEN
+       1008     3                                WRITE(IUT0,*)
+       1009     3                                WRITE(IUT0,*) ERMSGC
+       1010     3                                RETURN
+       1011     3                            ENDIF
+       1012     2                         ENDIF
+       1013     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 500
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.40, ITR: 176, MVE: 5, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FX, CM, AMM, AML, FY
+                              <<< Loop-information  End >>>
+       1014     2  pp    v                DO 1250 IP = 1 , NP
+       1015     2   p    v                    AML(IP) = AML(IP)+GAM2/24.E0*CM(IP)*FX(IP)
+       1016     2   p    v                    AMM(IP) = AMM(IP)+GAM2/24.E0*CM(IP)*FY(IP)
+       1017     2   p    v       1250     CONTINUE
+       1018     1                2000 CONTINUE
+       1019                     C
+       1020                     C
+       1021                     C
+       1022                     C COMPUTE ELEMENT SMAGORINSKY CONSTANT
+       1023                     C
+       1024                     C
+       1025                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 80
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED(lines: 1026,1051)
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FILTER, CS
+                              <<< Loop-information  End >>>
+       1026     1  pp    v            DO 3000 IE = 1 , NE
+       1027     1   p    v                AMLE = 0.125E0*(AML(NODE(1,IE))+AML(NODE(5,IE))
+       1028     1                    &                   +AML(NODE(2,IE))+AML(NODE(6,IE))
+       1029     1                    &                   +AML(NODE(3,IE))+AML(NODE(7,IE))
+       1030     1                    &                   +AML(NODE(4,IE))+AML(NODE(8,IE)))
+       1031     1               C
+       1032     1   p    v                AMME = 0.125E0*(AMM(NODE(1,IE))+AMM(NODE(5,IE))
+       1033     1                    &                   +AMM(NODE(2,IE))+AMM(NODE(6,IE))
+       1034     1                    &                   +AMM(NODE(3,IE))+AMM(NODE(7,IE))
+       1035     1                    &                   +AMM(NODE(4,IE))+AMM(NODE(8,IE)))
+       1036     1               C
+       1037     2   p    v                IF(AMLE.GT.0.E0 .AND. AMME.GT.0.E0) THEN
+       1038     2   p    v                    CS(IE) = SQRT(0.5E0*AMLE/AMME)/FILTER(IE)
+       1039     2   p    v                ELSE
+       1040     2   p    v                    CS(IE) = 0.E0
+       1041     2   p    v                ENDIF
+       1042     1   p    v       3000 CONTINUE
+       1043                     C
+       1044                     C
+       1045                     C
+       1046                     C FINALLY, CLEAR ELEMENT SMAGORINSKY CONSTANT DOMINATED BY
+       1047                     C THE ROUND-OFF ERRORS
+       1048                     C
+       1049                     C
+       1050                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED
+                              <<< Loop-information  End >>>
+       1051     1                     DO 4000 IE = 1 , NE
+       1052     1                         SE = 0.125E0*(S(NODE(1,IE))+S(NODE(5,IE))
+       1053     1                    &                 +S(NODE(2,IE))+S(NODE(6,IE))
+       1054     1                    &                 +S(NODE(3,IE))+S(NODE(7,IE))
+       1055     1                    &                 +S(NODE(4,IE))+S(NODE(8,IE)))
+       1056     1               C
+       1057     1                         SGS = CLEAR*CLEAR*FILTER(IE)*FILTER(IE)*SE
+       1058     1                         IF(SGS .LT. EPS*VISCM) CS(IE) = 0.E0
+       1059     1                4000 CONTINUE
+       1060                     C
+       1061                     C
+       1062                           RETURN
+       1063                           END
+
+ Diagnostic messages: program name(DYNA3D)
+   jwd8220o-i  "dyna3d.f", line 13: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd5001p-i  "dyna3d.f", line 153: DO loop with DO variable 'IE' is parallelized.
+   jwd6001s-i  "dyna3d.f", line 153: SIMD conversion is applied to DO loop with DO variable 'IE'.
+   jwd8204o-i  "dyna3d.f", line 153: This loop is software pipelined.
+   jwd8205o-i  "dyna3d.f", line 153: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 64.
+   jwd8209o-i  "dyna3d.f", line 159: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "dyna3d.f", line 164: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5001p-i  "dyna3d.f", line 194: DO loop with DO variable 'IP' is parallelized.
+   jwd6001s-i  "dyna3d.f", line 194: SIMD conversion is applied to DO loop with DO variable 'IP'.
+   jwd8204o-i  "dyna3d.f", line 194: This loop is software pipelined.
+   jwd8205o-i  "dyna3d.f", line 194: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 96.
+   jwd5001p-i  "dyna3d.f", line 204: DO loop with DO variable 'IE' is parallelized.
+   jwd6001s-i  "dyna3d.f", line 204: SIMD conversion is applied to DO loop with DO variable 'IE'.
+   jwd8666o-i  "dyna3d.f", line 204: This loop cannot be software pipelined because of shortage of floating-point registers.
+   jwd8209o-i  "dyna3d.f", line 205: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "dyna3d.f", line 214: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "dyna3d.f", line 223: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8210o-i  "dyna3d.f", line 251: Loops fused at line 263.
+   jwd5001p-i  "dyna3d.f", line 251: DO loop with DO variable 'IP' is parallelized.
+   jwd6001s-i  "dyna3d.f", line 251: SIMD conversion is applied to DO loop with DO variable 'IP'.
+   jwd8204o-i  "dyna3d.f", line 251: This loop is software pipelined.
+   jwd8205o-i  "dyna3d.f", line 251: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 112.
+   jwd8209o-i  "dyna3d.f", line 252: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "dyna3d.f", line 253: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "dyna3d.f", line 254: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "dyna3d.f", line 264: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8211o-i  "dyna3d.f", line 278: Loops interchanged at line 279.
+   jwd6001s-i  "dyna3d.f", line 278: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8663o-i  "dyna3d.f", line 278: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "dyna3d.f", line 278: Loop unrolled 2 times.
+   jwd8211o-i  "dyna3d.f", line 279: Loops interchanged at line 278.
+   jwd5001p-i  "dyna3d.f", line 279: DO loop with DO variable 'IE' is parallelized.
+   jwd8211o-i  "dyna3d.f", line 286: Loops interchanged at line 287.
+   jwd6004s-i  "dyna3d.f", line 286: SIMD conversion is applied to DO loop with DO variable 'J'. The DO loop contains a reduction operation.
+   jwd8666o-i  "dyna3d.f", line 286: This loop cannot be software pipelined because of shortage of floating-point registers.
+   jwd8210o-i  "dyna3d.f", line 287: Loops fused at line 293.
+   jwd8211o-i  "dyna3d.f", line 287: Loops interchanged at line 286.
+   jwd5001p-i  "dyna3d.f", line 287: DO loop with DO variable 'IE' is parallelized.
+   jwd5001p-i  "dyna3d.f", line 355: DO loop with DO variable 'IP' is parallelized.
+   jwd6001s-i  "dyna3d.f", line 355: SIMD conversion is applied to DO loop with DO variable 'IP'.
+   jwd8204o-i  "dyna3d.f", line 355: This loop is software pipelined.
+   jwd8205o-i  "dyna3d.f", line 355: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 96.
+   jwd8206o-i  "dyna3d.f", line 356: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "dyna3d.f", line 356: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "dyna3d.f", line 357: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "dyna3d.f", line 357: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "dyna3d.f", line 358: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "dyna3d.f", line 358: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8211o-i  "dyna3d.f", line 369: Loops interchanged at line 370.
+   jwd6001s-i  "dyna3d.f", line 369: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8663o-i  "dyna3d.f", line 369: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "dyna3d.f", line 369: Loop unrolled 2 times.
+   jwd8211o-i  "dyna3d.f", line 370: Loops interchanged at line 369.
+   jwd5001p-i  "dyna3d.f", line 370: DO loop with DO variable 'IE' is parallelized.
+   jwd8211o-i  "dyna3d.f", line 377: Loops interchanged at line 378.
+   jwd6004s-i  "dyna3d.f", line 377: SIMD conversion is applied to DO loop with DO variable 'J'. The DO loop contains a reduction operation.
+   jwd8666o-i  "dyna3d.f", line 377: This loop cannot be software pipelined because of shortage of floating-point registers.
+   jwd8210o-i  "dyna3d.f", line 378: Loops fused at line 384.
+   jwd8211o-i  "dyna3d.f", line 378: Loops interchanged at line 377.
+   jwd5001p-i  "dyna3d.f", line 378: DO loop with DO variable 'IE' is parallelized.
+   jwd5001p-i  "dyna3d.f", line 446: DO loop with DO variable 'IP' is parallelized.
+   jwd6001s-i  "dyna3d.f", line 446: SIMD conversion is applied to DO loop with DO variable 'IP'.
+   jwd8204o-i  "dyna3d.f", line 446: This loop is software pipelined.
+   jwd8205o-i  "dyna3d.f", line 446: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 112.
+   jwd8206o-i  "dyna3d.f", line 447: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "dyna3d.f", line 447: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "dyna3d.f", line 448: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "dyna3d.f", line 448: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "dyna3d.f", line 449: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "dyna3d.f", line 449: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8211o-i  "dyna3d.f", line 456: Loops interchanged at line 457.
+   jwd6001s-i  "dyna3d.f", line 456: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8663o-i  "dyna3d.f", line 456: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "dyna3d.f", line 456: Loop unrolled 2 times.
+   jwd8211o-i  "dyna3d.f", line 457: Loops interchanged at line 456.
+   jwd5001p-i  "dyna3d.f", line 457: DO loop with DO variable 'IE' is parallelized.
+   jwd8211o-i  "dyna3d.f", line 464: Loops interchanged at line 465.
+   jwd6004s-i  "dyna3d.f", line 464: SIMD conversion is applied to DO loop with DO variable 'J'. The DO loop contains a reduction operation.
+   jwd8666o-i  "dyna3d.f", line 464: This loop cannot be software pipelined because of shortage of floating-point registers.
+   jwd8210o-i  "dyna3d.f", line 465: Loops fused at line 471.
+   jwd8211o-i  "dyna3d.f", line 465: Loops interchanged at line 464.
+   jwd5001p-i  "dyna3d.f", line 465: DO loop with DO variable 'IE' is parallelized.
+   jwd5001p-i  "dyna3d.f", line 533: DO loop with DO variable 'IP' is parallelized.
+   jwd6001s-i  "dyna3d.f", line 533: SIMD conversion is applied to DO loop with DO variable 'IP'.
+   jwd8204o-i  "dyna3d.f", line 533: This loop is software pipelined.
+   jwd8205o-i  "dyna3d.f", line 533: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 112.
+   jwd8206o-i  "dyna3d.f", line 534: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "dyna3d.f", line 534: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "dyna3d.f", line 535: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "dyna3d.f", line 535: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "dyna3d.f", line 536: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "dyna3d.f", line 536: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8211o-i  "dyna3d.f", line 547: Loops interchanged at line 548.
+   jwd6001s-i  "dyna3d.f", line 547: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8663o-i  "dyna3d.f", line 547: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "dyna3d.f", line 547: Loop unrolled 2 times.
+   jwd8211o-i  "dyna3d.f", line 548: Loops interchanged at line 547.
+   jwd5001p-i  "dyna3d.f", line 548: DO loop with DO variable 'IE' is parallelized.
+   jwd8211o-i  "dyna3d.f", line 555: Loops interchanged at line 556.
+   jwd6004s-i  "dyna3d.f", line 555: SIMD conversion is applied to DO loop with DO variable 'J'. The DO loop contains a reduction operation.
+   jwd8666o-i  "dyna3d.f", line 555: This loop cannot be software pipelined because of shortage of floating-point registers.
+   jwd8210o-i  "dyna3d.f", line 556: Loops fused at line 562.
+   jwd8211o-i  "dyna3d.f", line 556: Loops interchanged at line 555.
+   jwd5001p-i  "dyna3d.f", line 556: DO loop with DO variable 'IE' is parallelized.
+   jwd5001p-i  "dyna3d.f", line 624: DO loop with DO variable 'IP' is parallelized.
+   jwd6001s-i  "dyna3d.f", line 624: SIMD conversion is applied to DO loop with DO variable 'IP'.
+   jwd8204o-i  "dyna3d.f", line 624: This loop is software pipelined.
+   jwd8205o-i  "dyna3d.f", line 624: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 96.
+   jwd8206o-i  "dyna3d.f", line 625: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "dyna3d.f", line 625: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "dyna3d.f", line 626: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "dyna3d.f", line 626: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "dyna3d.f", line 627: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "dyna3d.f", line 627: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8211o-i  "dyna3d.f", line 634: Loops interchanged at line 635.
+   jwd6001s-i  "dyna3d.f", line 634: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8663o-i  "dyna3d.f", line 634: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "dyna3d.f", line 634: Loop unrolled 2 times.
+   jwd8211o-i  "dyna3d.f", line 635: Loops interchanged at line 634.
+   jwd5001p-i  "dyna3d.f", line 635: DO loop with DO variable 'IE' is parallelized.
+   jwd8211o-i  "dyna3d.f", line 642: Loops interchanged at line 643.
+   jwd6004s-i  "dyna3d.f", line 642: SIMD conversion is applied to DO loop with DO variable 'J'. The DO loop contains a reduction operation.
+   jwd8666o-i  "dyna3d.f", line 642: This loop cannot be software pipelined because of shortage of floating-point registers.
+   jwd8210o-i  "dyna3d.f", line 643: Loops fused at line 649.
+   jwd8211o-i  "dyna3d.f", line 643: Loops interchanged at line 642.
+   jwd5001p-i  "dyna3d.f", line 643: DO loop with DO variable 'IE' is parallelized.
+   jwd5001p-i  "dyna3d.f", line 711: DO loop with DO variable 'IP' is parallelized.
+   jwd6001s-i  "dyna3d.f", line 711: SIMD conversion is applied to DO loop with DO variable 'IP'.
+   jwd8204o-i  "dyna3d.f", line 711: This loop is software pipelined.
+   jwd8205o-i  "dyna3d.f", line 711: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 96.
+   jwd8206o-i  "dyna3d.f", line 712: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "dyna3d.f", line 712: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "dyna3d.f", line 713: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "dyna3d.f", line 713: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "dyna3d.f", line 714: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "dyna3d.f", line 714: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8211o-i  "dyna3d.f", line 725: Loops interchanged at line 726.
+   jwd6001s-i  "dyna3d.f", line 725: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8663o-i  "dyna3d.f", line 725: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "dyna3d.f", line 725: Loop unrolled 2 times.
+   jwd8211o-i  "dyna3d.f", line 726: Loops interchanged at line 725.
+   jwd5001p-i  "dyna3d.f", line 726: DO loop with DO variable 'IE' is parallelized.
+   jwd8211o-i  "dyna3d.f", line 733: Loops interchanged at line 734.
+   jwd6004s-i  "dyna3d.f", line 733: SIMD conversion is applied to DO loop with DO variable 'J'. The DO loop contains a reduction operation.
+   jwd8666o-i  "dyna3d.f", line 733: This loop cannot be software pipelined because of shortage of floating-point registers.
+   jwd8210o-i  "dyna3d.f", line 734: Loops fused at line 740.
+   jwd8211o-i  "dyna3d.f", line 734: Loops interchanged at line 733.
+   jwd5001p-i  "dyna3d.f", line 734: DO loop with DO variable 'IE' is parallelized.
+   jwd5001p-i  "dyna3d.f", line 802: DO loop with DO variable 'IP' is parallelized.
+   jwd6001s-i  "dyna3d.f", line 802: SIMD conversion is applied to DO loop with DO variable 'IP'.
+   jwd8204o-i  "dyna3d.f", line 802: This loop is software pipelined.
+   jwd8205o-i  "dyna3d.f", line 802: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 128.
+   jwd8206o-i  "dyna3d.f", line 803: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "dyna3d.f", line 803: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "dyna3d.f", line 804: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "dyna3d.f", line 804: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "dyna3d.f", line 805: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "dyna3d.f", line 805: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8211o-i  "dyna3d.f", line 812: Loops interchanged at line 813.
+   jwd6001s-i  "dyna3d.f", line 812: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8663o-i  "dyna3d.f", line 812: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "dyna3d.f", line 812: Loop unrolled 2 times.
+   jwd8211o-i  "dyna3d.f", line 813: Loops interchanged at line 812.
+   jwd5001p-i  "dyna3d.f", line 813: DO loop with DO variable 'IE' is parallelized.
+   jwd8211o-i  "dyna3d.f", line 820: Loops interchanged at line 821.
+   jwd6004s-i  "dyna3d.f", line 820: SIMD conversion is applied to DO loop with DO variable 'J'. The DO loop contains a reduction operation.
+   jwd8666o-i  "dyna3d.f", line 820: This loop cannot be software pipelined because of shortage of floating-point registers.
+   jwd8210o-i  "dyna3d.f", line 821: Loops fused at line 827.
+   jwd8211o-i  "dyna3d.f", line 821: Loops interchanged at line 820.
+   jwd5001p-i  "dyna3d.f", line 821: DO loop with DO variable 'IE' is parallelized.
+   jwd8210o-i  "dyna3d.f", line 889: Loops fused at line 901.
+   jwd8210o-i  "dyna3d.f", line 889: Loops fused at line 916.
+   jwd5001p-i  "dyna3d.f", line 889: DO loop with DO variable 'IP' is parallelized.
+   jwd6001s-i  "dyna3d.f", line 889: SIMD conversion is applied to DO loop with DO variable 'IP'.
+   jwd8666o-i  "dyna3d.f", line 889: This loop cannot be software pipelined because of shortage of floating-point registers.
+   jwd8206o-i  "dyna3d.f", line 890: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "dyna3d.f", line 890: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "dyna3d.f", line 891: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "dyna3d.f", line 891: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "dyna3d.f", line 892: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "dyna3d.f", line 892: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "dyna3d.f", line 902: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "dyna3d.f", line 917: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "dyna3d.f", line 921: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "dyna3d.f", line 934: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5131p-i  "dyna3d.f", line 949: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd8211o-i  "dyna3d.f", line 950: Loops interchanged at line 951.
+   jwd6001s-i  "dyna3d.f", line 950: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8663o-i  "dyna3d.f", line 950: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "dyna3d.f", line 950: Loop unrolled 2 times.
+   jwd8211o-i  "dyna3d.f", line 951: Loops interchanged at line 950.
+   jwd5001p-i  "dyna3d.f", line 951: DO loop with DO variable 'IE' is parallelized.
+   jwd5208p-i  "dyna3d.f", line 957: DO loop is not parallelized: the assign-refer order of 'FY' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "dyna3d.f", line 957: DO loop is not parallelized: the assign-refer order of 'FX' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "dyna3d.f", line 957: DO loop is not parallelized: the assign-refer order of 'RY' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "dyna3d.f", line 957: DO loop is not parallelized: the assign-refer order of 'RX' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd8210o-i  "dyna3d.f", line 958: Loops fused at line 963.
+   jwd5001p-i  "dyna3d.f", line 958: DO loop with DO variable 'IE' is parallelized.
+   jwd6001s-i  "dyna3d.f", line 958: SIMD conversion is applied to DO loop with DO variable 'IE'.
+   jwd8222o-i  "dyna3d.f", line 958: The prefetch instruction was output due to the number of prefetch required in this loop is greater than the allowable number of hardware-prefetch.
+   jwd8665o-i  "dyna3d.f", line 958: This loop cannot be software pipelined because of shortage of integer registers.
+   jwd5001p-i  "dyna3d.f", line 1014: DO loop with DO variable 'IP' is parallelized.
+   jwd6001s-i  "dyna3d.f", line 1014: SIMD conversion is applied to DO loop with DO variable 'IP'.
+   jwd8204o-i  "dyna3d.f", line 1014: This loop is software pipelined.
+   jwd8205o-i  "dyna3d.f", line 1014: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 176.
+   jwd8206o-i  "dyna3d.f", line 1015: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "dyna3d.f", line 1015: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "dyna3d.f", line 1016: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "dyna3d.f", line 1016: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8210o-i  "dyna3d.f", line 1026: Loops fused at line 1051.
+   jwd5001p-i  "dyna3d.f", line 1026: DO loop with DO variable 'IE' is parallelized.
+   jwd6001s-i  "dyna3d.f", line 1026: SIMD conversion is applied to DO loop with DO variable 'IE'.
+   jwd8666o-i  "dyna3d.f", line 1026: This loop cannot be software pipelined because of shortage of floating-point registers.
+   jwd8209o-i  "dyna3d.f", line 1032: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "dyna3d.f", line 1057: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+
+ Procedure information
+   Lines      : 1063
+   Statements : 631
+   Stack(byte): 13440
+   Prefetch num: 22
+
+ Total information
+   Procedures       : 1
+   Total lines      : 1063
+   Total statements : 631
+   Total stack(byte): 13440
+   Total prefetch num: 22
+

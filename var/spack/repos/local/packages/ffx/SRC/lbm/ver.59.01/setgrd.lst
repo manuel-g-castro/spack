@@ -1,0 +1,302 @@
+
+ Fujitsu Fortran Version 4.8.1  Thu Nov 24 16:46:09 2022
+
+ Compilation information
+   Current directory : /vol0005/mdt2/home/u10588/SRC/lbm/ver.59.01
+   Source file       : setgrd.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -Nlst=t -Cpp -Cfpp -c -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Knointentopt
+   Cpp options          : -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Dcputime -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=8 -D__FRT_patchlevel__=1 -D__FRT_version__="4.8.1" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Knoarray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nlibomp -Nline -Nlst -Nlst=p -Nlst=t
+                          -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "SETGRD"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE SETGRD(IMODE,MP,NP,A,B,C,D,XP,YP,ZP)
+          2                           IMPLICIT NONE
+          3                           INTEGER*4 IMODE,MP,NP
+          4                           REAL*4 A(3),B(3),C(3),D
+          5                           REAL*4 XP(MP),YP(MP),ZP(MP)
+          6                     C
+          7                           INTEGER*4 I,J,NPX,NPY,NPZ
+          8                           REAL*4    VN(3),VNABS,AB(3),AC(3),XMIN,YMIN,ZMIN,XLEN,YLEN,ZLEN,
+          9                          *          XL,YL,ZL,PX,PY,PZ,X12,X23,X31,Y12,Y23,Y31,Z12,Z23,Z31,
+         10                          *          CP1,CP2,CP3
+         11                     C
+         12                           XMIN = MIN(A(1), B(1), C(1))
+         13                           YMIN = MIN(A(2), B(2), C(2))
+         14                           ZMIN = MIN(A(3), B(3), C(3))
+         15                           X12  = A(1) - B(1)
+         16                           X23  = B(1) - C(1)
+         17                           X31  = C(1) - A(1)
+         18                           XLEN = MAX(ABS(X12), ABS(X23), ABS(X31))
+         19                           Y12  = A(2) - B(2)
+         20                           Y23  = B(2) - C(2)
+         21                           Y31  = C(2) - A(2)
+         22                           YLEN = MAX(ABS(Y12), ABS(Y23), ABS(Y31))
+         23                           Z12  = A(3) - B(3)
+         24                           Z23  = B(3) - C(3)
+         25                           Z31  = C(3) - A(3)
+         26                           ZLEN = MAX(ABS(Z12), ABS(Z23), ABS(Z31))
+         27                     C
+         28                           AB(1)=B(1)-A(1)
+         29                           AB(2)=B(2)-A(2)
+         30                           AB(3)=B(3)-A(3)
+         31                           AC(1)=C(1)-A(1)
+         32                           AC(2)=C(2)-A(2)
+         33                           AC(3)=C(3)-A(3)
+         34                           VN(1)=AB(2)*AC(3)-AB(3)*AC(2)
+         35                           VN(2)=AB(3)*AC(1)-AB(1)*AC(3)
+         36                           VN(3)=AB(1)*AC(2)-AB(2)*AC(1)
+         37                           VNABS=VN(1)*VN(1)+VN(2)*VN(2)+VN(3)*VN(3)
+         38     1                     IF(VNABS.NE.0.0E0) THEN
+         39     1                         VNABS=SQRT(VNABS)
+         40     1                         VN(1)=VN(1)/VNABS
+         41     1                         VN(2)=VN(2)/VNABS
+         42     1                         VN(3)=VN(3)/VNABS
+         43     1                     ENDIF
+         44                     C
+         45                           NP=0
+         46     1                     IF (VN(2).EQ.1.0 .OR. VN(2).EQ.-1.0) THEN
+         47     1                         XL  = D
+         48     1                         YL  = 0
+         49     1                         ZL  = D
+         50     1                         NPX = NINT(XLEN/XL)
+         51     1                         NPZ = NINT(ZLEN/ZL)
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    UNSWITCHING
+                              <<< Loop-information  End >>>
+         52     2                         DO 1000 I = 0, NPX
+         53     2                             PX = XMIN + I*XL
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 182
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+         54     3   m    v                    DO 1100 J = 0, NPZ
+         55     3   p    v                        PZ = ZMIN + J*ZL
+         56     3   p    v                        CP1 = X12*(PZ-A(3)) - Z12*(PX-A(1))
+         57     3   p    v                        CP2 = X23*(PZ-B(3)) - Z23*(PX-B(1))
+         58     3   p    v                        CP3 = X31*(PZ-C(3)) - Z31*(PX-C(1))
+         59     4   p    s                        IF ((CP1.GE.0 .AND. CP2.GE.0 .AND. CP3.GE.0).OR.
+         60     4                    *                (CP1.LE.0 .AND. CP2.LE.0 .AND. CP3.LE.0)) THEN
+         61     4   m    s                            PY = A(2)
+         62     4   s    s                            NP = NP + 1
+         63     5   p    s                            IF(IMODE.EQ.2) THEN
+         64     5   m    s                                XP(NP) = PX
+         65     5   s    s                                YP(NP) = PY
+         66     5   s    s                                ZP(NP) = PZ
+         67     5   p    v                            ENDIF
+         68     4   p    v                        ENDIF
+         69     3   p    v       1100          CONTINUE
+         70     2                1000      CONTINUE
+         71     1                     ELSE IF (VN(1).EQ.1.0 .OR. VN(1).EQ.-1.0) THEN
+         72     1                         XL  = 0
+         73     1                         YL  = D
+         74     1                         ZL  = D
+         75     1                         NPY = NINT(YLEN/YL)
+         76     1                         NPZ = NINT(ZLEN/ZL)
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    UNSWITCHING
+                              <<< Loop-information  End >>>
+         77     2                         DO 2000 I = 0, NPY
+         78     2                             PY = YMIN + I*YL
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 182
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+         79     3   m    v                    DO 2100 J = 0, NPZ
+         80     3   p    v                        PZ = ZMIN + J*ZL
+         81     3   p    v                        CP1 = Z12*(PY-A(2)) - Y12*(PZ-A(3))
+         82     3   p    v                        CP2 = Z23*(PY-B(2)) - Y23*(PZ-B(3))
+         83     3   p    v                        CP3 = Z31*(PY-C(2)) - Y31*(PZ-C(3))
+         84     4   p    s                        IF ((CP1.GE.0 .AND. CP2.GE.0 .AND. CP3.GE.0).OR.
+         85     4                    *                (CP1.LE.0 .AND. CP2.LE.0 .AND. CP3.LE.0)) THEN
+         86     4   m    s                            PX = A(1)
+         87     4   s    s                            NP = NP + 1
+         88     5   p    s                            IF(IMODE.EQ.2) THEN
+         89     5   m    s                                XP(NP) = PX
+         90     5   s    s                                YP(NP) = PY
+         91     5   s    s                                ZP(NP) = PZ
+         92     5   p    v                            ENDIF
+         93     4   p    v                        ENDIF
+         94     3   p    v       2100         CONTINUE
+         95     2                2000     CONTINUE
+         96     1                     ELSE
+         97     1                         XL  = ABS( (D*VN(3))/SQRT(VN(1)*VN(1)+VN(3)*VN(3)) )
+         98     1                         YL  = ABS( (D*VN(3))/SQRT(VN(2)*VN(2)+VN(3)*VN(3)) )
+         99     1                         NPX = NINT(XLEN/XL)
+        100     1                         NPY = NINT(YLEN/YL)
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    UNSWITCHING
+                              <<< Loop-information  End >>>
+        101     2                         DO 3000 I = 0, NPX
+        102     2                             PX = XMIN + I*XL
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 182
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        103     3   m    v                    DO 3100 J = 0, NPY
+        104     3   p    v                        PY  = YMIN + J*YL
+        105     3   p    v                        CP1 = Y12*(PX-A(1)) - X12*(PY-A(2))
+        106     3   p    v                        CP2 = Y23*(PX-B(1)) - X23*(PY-B(2))
+        107     3   p    v                        CP3 = Y31*(PX-C(1)) - X31*(PY-C(2))
+        108     4   p    s                        IF ((CP1.GE.0 .AND. CP2.GE.0 .AND. CP3.GE.0).OR.
+        109     4                    *                (CP1.LE.0 .AND. CP2.LE.0 .AND. CP3.LE.0)) THEN
+        110     4   p    s                            PZ = A(3) - ((VN(1)*(PX-A(1))
+        111     4                    *                            + VN(2)*(PY-A(2)))/VN(3))
+        112     4   s    s                            NP = NP + 1
+        113     5   p    s                            IF(IMODE.EQ.2) THEN
+        114     5   m    s                                XP(NP) = PX
+        115     5   s    s                                YP(NP) = PY
+        116     5   s    s                                ZP(NP) = PZ
+        117     5   p    v                            ENDIF
+        118     4   p    v                        ENDIF
+        119     3   p    v       3100         CONTINUE
+        120     2                3000     CONTINUE
+        121     1                     ENDIF
+        122                     C
+        123                           NP=NP+1
+        124     1                     IF(IMODE.EQ.2) THEN
+        125     1                         XP(NP) = A(1)
+        126     1                         YP(NP) = A(2)
+        127     1                         ZP(NP) = A(3)
+        128     1                     ENDIF
+        129                           NP=NP+1
+        130     1                     IF(IMODE.EQ.2) THEN
+        131     1                         XP(NP) = B(1)
+        132     1                         YP(NP) = B(2)
+        133     1                         ZP(NP) = B(3)
+        134     1                     ENDIF
+        135                           NP=NP+1
+        136     1                     IF(IMODE.EQ.2) THEN
+        137     1                         XP(NP) = C(1)
+        138     1                         YP(NP) = C(2)
+        139     1                         ZP(NP) = C(3)
+        140     1                     ENDIF
+        141                     C
+        142                           RETURN
+        143                           END
+
+ Diagnostic messages: program name(SETGRD)
+   jwd8220o-i  "setgrd.f", line 1: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd8209o-i  "setgrd.f", line 37: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8321o-i  "setgrd.f", line 52: Loop unswitched.
+   jwd5202p-i  "setgrd.f", line 52: DO loop is not parallelized: data dependency of variable 'NP' may cause different results from serial execution for loop.
+   jwd5208p-i  "setgrd.f", line 52: DO loop is not parallelized: the assign-refer order of 'ZP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setgrd.f", line 52: DO loop is not parallelized: the assign-refer order of 'YP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setgrd.f", line 52: DO loop is not parallelized: the assign-refer order of 'XP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5005p-i  "setgrd.f", line 54: DO loop with DO variable 'J' is partially parallelized.
+   jwd5004p-i  "setgrd.f", line 54: DO loop with DO variable 'J' is parallelized. The DO loop contains the reduction operation.
+   jwd6004s-i  "setgrd.f", line 54: SIMD conversion is applied to DO loop with DO variable 'J'. The DO loop contains a reduction operation.
+   jwd6229s-i  "setgrd.f", line 54: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd5202p-i  "setgrd.f", line 62: DO loop is not parallelized: data dependency of variable 'NP' may cause different results from serial execution for loop.
+   jwd6202s-i  "setgrd.f", line 62: SIMD conversion cannot be applied to DO loop: data dependency of variable 'NP' may cause different results from serial execution for loop.
+   jwd5209p-i  "setgrd.f", line 64: DO loop is not parallelized: the variable 'NP' referenced in the subscript expression of array 'XP' is assigned to in DO loop.
+   jwd5209p-i  "setgrd.f", line 65: DO loop is not parallelized: the variable 'NP' referenced in the subscript expression of array 'YP' is assigned to in DO loop.
+   jwd5209p-i  "setgrd.f", line 66: DO loop is not parallelized: the variable 'NP' referenced in the subscript expression of array 'ZP' is assigned to in DO loop.
+   jwd8321o-i  "setgrd.f", line 77: Loop unswitched.
+   jwd5208p-i  "setgrd.f", line 77: DO loop is not parallelized: the assign-refer order of 'ZP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setgrd.f", line 77: DO loop is not parallelized: the assign-refer order of 'YP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setgrd.f", line 77: DO loop is not parallelized: the assign-refer order of 'XP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5202p-i  "setgrd.f", line 77: DO loop is not parallelized: data dependency of variable 'NP' may cause different results from serial execution for loop.
+   jwd5005p-i  "setgrd.f", line 79: DO loop with DO variable 'J' is partially parallelized.
+   jwd5004p-i  "setgrd.f", line 79: DO loop with DO variable 'J' is parallelized. The DO loop contains the reduction operation.
+   jwd6004s-i  "setgrd.f", line 79: SIMD conversion is applied to DO loop with DO variable 'J'. The DO loop contains a reduction operation.
+   jwd6229s-i  "setgrd.f", line 79: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8209o-i  "setgrd.f", line 81: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "setgrd.f", line 82: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "setgrd.f", line 83: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5202p-i  "setgrd.f", line 87: DO loop is not parallelized: data dependency of variable 'NP' may cause different results from serial execution for loop.
+   jwd6202s-i  "setgrd.f", line 87: SIMD conversion cannot be applied to DO loop: data dependency of variable 'NP' may cause different results from serial execution for loop.
+   jwd5209p-i  "setgrd.f", line 89: DO loop is not parallelized: the variable 'NP' referenced in the subscript expression of array 'XP' is assigned to in DO loop.
+   jwd5209p-i  "setgrd.f", line 90: DO loop is not parallelized: the variable 'NP' referenced in the subscript expression of array 'YP' is assigned to in DO loop.
+   jwd5209p-i  "setgrd.f", line 91: DO loop is not parallelized: the variable 'NP' referenced in the subscript expression of array 'ZP' is assigned to in DO loop.
+   jwd8206o-i  "setgrd.f", line 97: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "setgrd.f", line 98: Division is changed to multiplication by reciprocal.
+   jwd8321o-i  "setgrd.f", line 101: Loop unswitched.
+   jwd5208p-i  "setgrd.f", line 101: DO loop is not parallelized: the assign-refer order of 'ZP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setgrd.f", line 101: DO loop is not parallelized: the assign-refer order of 'YP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "setgrd.f", line 101: DO loop is not parallelized: the assign-refer order of 'XP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5202p-i  "setgrd.f", line 101: DO loop is not parallelized: data dependency of variable 'NP' may cause different results from serial execution for loop.
+   jwd5005p-i  "setgrd.f", line 103: DO loop with DO variable 'J' is partially parallelized.
+   jwd5004p-i  "setgrd.f", line 103: DO loop with DO variable 'J' is parallelized. The DO loop contains the reduction operation.
+   jwd6004s-i  "setgrd.f", line 103: SIMD conversion is applied to DO loop with DO variable 'J'. The DO loop contains a reduction operation.
+   jwd6229s-i  "setgrd.f", line 103: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8209o-i  "setgrd.f", line 106: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "setgrd.f", line 107: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5202p-i  "setgrd.f", line 112: DO loop is not parallelized: data dependency of variable 'NP' may cause different results from serial execution for loop.
+   jwd6202s-i  "setgrd.f", line 112: SIMD conversion cannot be applied to DO loop: data dependency of variable 'NP' may cause different results from serial execution for loop.
+   jwd5209p-i  "setgrd.f", line 114: DO loop is not parallelized: the variable 'NP' referenced in the subscript expression of array 'XP' is assigned to in DO loop.
+   jwd5209p-i  "setgrd.f", line 115: DO loop is not parallelized: the variable 'NP' referenced in the subscript expression of array 'YP' is assigned to in DO loop.
+   jwd5209p-i  "setgrd.f", line 116: DO loop is not parallelized: the variable 'NP' referenced in the subscript expression of array 'ZP' is assigned to in DO loop.
+
+ Procedure information
+   Lines      : 143
+   Statements : 131
+   Stack(byte): 41648
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 143
+   Total statements : 131
+   Total stack(byte): 41648
+   Total prefetch num: 0
+

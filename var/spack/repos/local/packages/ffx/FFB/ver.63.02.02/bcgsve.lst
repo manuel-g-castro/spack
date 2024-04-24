@@ -1,0 +1,436 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:53:34 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : bcgsve.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "BCGSVE"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.8.1                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE : BCGSVE                                                C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY H.YOSHIMURA         C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C CONTACT ADDRESS : IIS, THE UNIVERSITY OF TOKYO, CISS                 C
+         11                     C                                                                      C
+         12                     C THERMO-FLUID ANALYSIS SOLVERS FOR LARGE-SCALE-ASSEMBLY               C
+         13                     C                                                                      C
+         14                     C======================================================================C
+         15                           SUBROUTINE BCGSVE(NE,NFACE,NFACE1,NFACE2,NFACE3,LEFACE,LFACE,
+         16                          *                  A,AD,B,EPS,EPSRE,NMAX,NITR,S,RES,
+         17                          *                  IPART,MBFDOM,NDOMF,LDOMF,NBFDOM,IFSLF,IFSND,
+         18                          *                  SWRK,BUFSND,BUFRCV,R0,RK,PK,APK,ATK,TK,
+         19                          *                  IUT6,IUT0,IERR)
+         20                     C
+         21                           IMPLICIT NONE
+         22                     C
+         23                     C     [INPUT]
+         24                           INTEGER*4 NE,NFACE,NFACE1,NFACE2,NFACE3
+         25                           INTEGER*4 LFACE(5,NFACE),LEFACE(6,NE),NMAX
+         26                           REAL*4    A(6,NE),AD(NE),B(NE)
+         27                           REAL*4    EPS,EPSRE
+         28                     C
+         29                     C     [IN-OUTPUT]
+         30                           INTEGER*4 NITR,IUT6,IUT0,IERR
+         31                           REAL*4    S(NE),RES
+         32                     C
+         33                     C     [WORK]
+         34                           INTEGER*4 IPART,MBFDOM,NDOMF,LDOMF(NDOMF),NBFDOM(NDOMF)
+         35                           INTEGER*4 IFSLF(MBFDOM,NDOMF),IFSND(MBFDOM,NDOMF)
+         36                           REAL*4    SWRK(NFACE3),BUFSND,BUFRCV,
+         37                          *          R0(NE),RK(NE),PK(NE),APK(NE),ATK(NE),TK(NE)
+         38                     C
+         39                     C     [LOCL]
+         40                           INTEGER*4 IE,IFACE,IFACE3,MAXBUF,IDIM,IERRA
+         41                           REAL*4    RKDOT,RKDOTA,BDOT,BDOTA,RESR,APDOT,APDOTA,
+         42                          *          ATTDOT,ATTDTA,AT2DOT,AT2DTA,
+         43                          *          RKDOTP,RSDOT,RSDOTA,
+         44                          *          ALFA,BETA,QK
+         45                           REAL*4    EPS0
+         46                           DATA EPS0 / 1.E-30 /
+         47                     C
+         48                           CHARACTER*60 ERMSGC
+         49                          & /' ## SUBROUTINE BCGSVE: FATAL      ERROR REPORT   ; RETURNED' /
+         50                     C
+         51                     C
+         52                           MAXBUF=5*NFACE
+         53                           IF(NMAX.EQ.0) RETURN
+         54                     C
+         55                           NITR=0
+         56                     C
+         57                     C
+         58                     CCC   1. SET INITIAL RESIDUAL VECTOR AND SEARCH-DIRECTION VECTOR
+         59                     C
+         60                     C
+         61                     C          OPERATION COUNTS:   FLOP /ELEMENT
+         62                     C          DATA LOADINGS   :   WORDS/ELEMENT
+         63                     C                           (  WORDS CONTIGUOUSLY,
+         64                     C                              WORDS BY 4-WORD STRIDE, AND
+         65                     C                              WORDS BY LIST )
+         66                           CALL CALAXV(NE,NFACE3,LEFACE,A,AD,S,RK,SWRK,IUT6,IUT0,IERR)
+         67                     C
+         68     1                     IF(IERR.EQ.1) THEN
+         69     1                         WRITE(IUT0,*) ERMSGC
+         70     1                         RETURN
+         71     1                     ENDIF
+         72                     C
+         73                           RKDOT = 0.E0
+         74                           BDOT = 0.E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 572
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+         75     1  pp    v            DO 300 IE = 1 , NE
+         76     1   p    v                RK (IE) = B (IE)-RK (IE)
+         77     1   p    v                R0 (IE) = RK(IE)
+         78     1   p    v                PK (IE) = RK(IE)
+         79     1   p    v                TK (IE) = 0.E0
+         80     1   p    v                RKDOT = RKDOT+R0(IE)*RK(IE)
+         81     1   p    v                BDOT =  BDOT +B (IE)*B (IE)
+         82     1   p    v        300 CONTINUE
+         83                     C
+         84     1                     IF(IPART.GE.1) THEN
+         85     1                         CALL DDCOM2(RKDOT,RKDOTA)
+         86     1                         CALL DDCOM2(BDOT,BDOTA)
+         87     1                         RKDOT = RKDOTA
+         88     1                         BDOT = BDOTA
+         89     1                     ENDIF
+         90                     C
+         91                           IF(ABS(BDOT).LE.EPS0) BDOT = 1.0E0
+         92                     C
+         93                           RES  = SQRT(RKDOT)
+         94                           RESR = RES/SQRT(BDOT)
+         95                     C
+         96                           IF(RES.LE.EPS.OR.RESR.LE.EPSRE) RETURN
+         97                     C
+         98                     C
+         99                     CCC   2. COMPUTE PRODUCT OF COEFFICIENT MATRIX AND SEARCH-DIRECTION VECTOR
+        100                     CCC      AND INNER PRODUCT OF COMPUTED PRODUCT AND SEARCH-DIRECTION VECTOR
+        101                     C
+        102                     C
+        103                      10   CONTINUE
+        104                     C
+        105                           NITR=NITR+1
+        106                     C
+        107                     CC
+        108                     CC    [] COMMUNICATE PK
+        109                     CC
+        110     1                     IF (IPART.NE.0) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 800
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.33, ITR: 352, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LFACE, SWRK
+                              <<< Loop-information  End >>>
+        111     2  pp   2v            DO 310 IFACE3=1,NFACE3
+        112     2   p   2v               IFACE=NFACE1+NFACE2+IFACE3
+        113     2   p   2v               IE=LFACE(1,IFACE)
+        114     2   p   2v               SWRK(IFACE3)=PK(IE)
+        115     2   p   2v       310  CONTINUE
+        116     1               C
+        117     1                     IDIM=1
+        118     1                     CALL DDFAC1(IDIM,MBFDOM,NDOMF,LDOMF,NBFDOM,IFSLF,IFSND,NFACE3,
+        119     1                    *            SWRK,SWRK,SWRK,BUFSND,BUFRCV,MAXBUF,IUT0,IERR)
+        120     1                     CALL ERCHK2(IUT6,IPART,1,IERR,IERRA)
+        121     1                     IF(IERRA.NE.0) GOTO 9999
+        122     1                     ENDIF
+        123                     C
+        124                     CCC   2.1 COMPUTE APK,ALFA
+        125                     C
+        126                     C
+        127                     C          OPERATION COUNTS:   FLOP /ELEMENT
+        128                     C          DATA LOADINGS   :   WORDS/ELEMENT
+        129                     C                           (  WORDS CONTIGUOUSLY,
+        130                     C                              WORDS BY 4-WORD STRIDE, AND
+        131                     C                              WORDS BY LIST )
+        132                           CALL CALAXV(NE,NFACE3,LEFACE,A,AD,PK,APK,SWRK,IUT6,IUT0,IERR)
+        133                     C
+        134     1                     IF(IERR.EQ.1) THEN
+        135     1                         WRITE(IUT0,*) ERMSGC
+        136     1                         RETURN
+        137     1                     ENDIF
+        138                     C
+        139                           APDOT = 0.E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1231
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        140     1  pp    v            DO 400 IE = 1 , NE
+        141     1   p    v                APDOT = APDOT+R0(IE)*APK(IE)
+        142     1   p    v        400 CONTINUE
+        143                     C
+        144     1                     IF(IPART.GE.1) THEN
+        145     1                         CALL DDCOM2(APDOT,APDOTA)
+        146     1                         APDOT = APDOTA
+        147     1                     ENDIF
+        148                     C
+        149                           IF(APDOT .EQ. 0.0E0) RETURN
+        150                           ALFA = RKDOT/APDOT
+        151                     C
+        152                     C
+        153                     CCC   2.2 COMPUTE TK=RK-ALFA*APK
+        154                     C
+        155                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.25, ITR: 288, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      APK, RK, TK
+                              <<< Loop-information  End >>>
+        156     1  pp   2v            DO 500 IE = 1 , NE
+        157     1   p   2v                TK (IE) = RK(IE)-ALFA*APK(IE)
+        158     1   p   2v        500 CONTINUE
+        159                     C
+        160                     CC
+        161                     CC    [] COMMUNICATE TK
+        162                     CC
+        163     1                     IF (IPART.NE.0) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 800
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.33, ITR: 352, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LFACE, SWRK
+                              <<< Loop-information  End >>>
+        164     2  pp   2v            DO 510 IFACE3=1,NFACE3
+        165     2   p   2v               IFACE=NFACE1+NFACE2+IFACE3
+        166     2   p   2v               IE=LFACE(1,IFACE)
+        167     2   p   2v               SWRK(IFACE3)=TK(IE)
+        168     2   p   2v       510  CONTINUE
+        169     1               C
+        170     1                     IDIM=1
+        171     1                     CALL DDFAC1(IDIM,MBFDOM,NDOMF,LDOMF,NBFDOM,IFSLF,IFSND,NFACE3,
+        172     1                    *            SWRK,SWRK,SWRK,BUFSND,BUFRCV,MAXBUF,IUT0,IERR)
+        173     1                     CALL ERCHK2(IUT6,IPART,1,IERR,IERRA)
+        174     1                     IF(IERRA.NE.0) GOTO 9999
+        175     1                     ENDIF
+        176                     C
+        177                     CCC   2.3 COMPUTE ATK
+        178                     C
+        179                     C
+        180                     C          OPERATION COUNTS:   36 FLOP /ELEMENT
+        181                     C          DATA LOADINGS   :   48 WORDS/ELEMENT
+        182                     C                           (  32 WORDS CONTIGUOUSLY,
+        183                     C                               4 WORDS BY 4-WORD STRIDE, AND
+        184                     C                              12 WORDS BY LIST )
+        185                           CALL CALAXV(NE,NFACE3,LEFACE,A,AD,TK,ATK,SWRK,IUT6,IUT0,IERR)
+        186                     C
+        187     1                     IF(IERR.EQ.1) THEN
+        188     1                         WRITE(IUT0,*) ERMSGC
+        189     1                         RETURN
+        190     1                     ENDIF
+        191                     C
+        192                     C
+        193                     CCC   2.4 COMPUTE QK
+        194                     C
+        195                     C
+        196                           ATTDOT  = 0.E0
+        197                           AT2DOT  = 0.E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1067
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        198     1  pp    v            DO 600 IE = 1 , NE
+        199     1   p    v                ATTDOT = ATTDOT+ATK(IE)* TK(IE)
+        200     1   p    v                AT2DOT = AT2DOT+ATK(IE)*ATK(IE)
+        201     1   p    v        600 CONTINUE
+        202                     C
+        203     1                     IF(IPART.GE.1) THEN
+        204     1                         CALL DDCOM2(ATTDOT,ATTDTA)
+        205     1                         CALL DDCOM2(AT2DOT,AT2DTA)
+        206     1                         ATTDOT = ATTDTA
+        207     1                         AT2DOT = AT2DTA
+        208     1                     ENDIF
+        209                     C
+        210                           IF(AT2DOT .EQ. 0.E0) RETURN
+        211                           QK = ATTDOT/AT2DOT
+        212                     C
+        213                     C
+        214                     CCC   2.5 UPDATE SOLUTION VECTOR AND RESIDUAL VECTOR
+        215                     CCC   2.6 RETURN IF L2-NORM OF UPDATED SOLUTION VECTOR IS LESS THAN CRITERIA
+        216                     C
+        217                     C
+        218                           RKDOTP = RKDOT
+        219                           RKDOT  = 0.E0
+        220                           RSDOT  = 0.E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 445
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        221     1  pp    v            DO 700 IE = 1 , NE
+        222     1   p    v                S  (IE) = S (IE)+ ALFA*PK(IE) + QK*TK (IE)
+        223     1   p    v                RK (IE) = TK(IE)              - QK*ATK(IE)
+        224     1   p    v                RKDOT = RKDOT+R0(IE)*RK(IE)
+        225     1   p    v                RSDOT = RSDOT+RK(IE)*RK(IE)
+        226     1   p    v        700 CONTINUE
+        227                     C
+        228                     C
+        229     1                     IF(IPART.GE.1) THEN
+        230     1                         CALL DDCOM2(RKDOT,RKDOTA)
+        231     1                         CALL DDCOM2(RSDOT,RSDOTA)
+        232     1                         RKDOT = RKDOTA
+        233     1                         RSDOT = RSDOTA
+        234     1                     ENDIF
+        235                     C
+        236                           RES  = SQRT(RSDOT)
+        237                           RESR = RES/SQRT(BDOT)
+        238                     C
+        239                           IF(RES.LE.EPS.OR.RESR.LE.EPSRE) RETURN
+        240                     C
+        241                     C
+        242                     CCC   2.7 UPDATE SEARCH-DIRECTION VECTOR
+        243                     C
+        244                     C
+        245                           IF(QK     .EQ. 0.E0) RETURN
+        246                           IF(RKDOTP .EQ. 0.E0) RETURN
+        247                           BETA = (ALFA/QK)*(RKDOT/RKDOTP)
+        248                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 762
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.40, ITR: 416, MVE: 7)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      APK, PK, RK
+                              <<< Loop-information  End >>>
+        249     1  pp   2v            DO 800 IE = 1 , NE
+        250     1   p   2v                PK (IE) = RK(IE)+BETA*(PK(IE)-QK*APK(IE))
+        251     1   p   2v        800 CONTINUE
+        252                     C
+        253                     C
+        254                     CCC   2.7 RETURN IF ITERATION NUMBER HAS REACHED THE GIVEN MAXIMUM NUMBER,
+        255                     CCC       OTHERWISE CONTINUE ITERATIONS UNTIL SOLUTION IS CONVERGED
+        256                     C
+        257                     C
+        258     1                     IF(NITR.EQ.NMAX) THEN
+        259     1                         RETURN
+        260     1                     END IF
+        261                     C
+        262                           GO TO 10
+        263                     C
+        264                      9999 CONTINUE
+        265                           WRITE(IUT0,*) ERMSGC
+        266                           IERR=1
+        267                     C
+        268                           RETURN
+        269                           END
+
+ Diagnostic messages: program name(BCGSVE)
+   jwd8220o-i  "bcgsve.f", line 15: 副作用の可能性のある最適化を行いました。
+   jwd5004p-i  "bcgsve.f", line 75: リダクション演算を含むDOループを並列化しました。(名前:IE)
+   jwd6004s-i  "bcgsve.f", line 75: リダクション演算を含むDOループをSIMD化しました。(名前:IE)
+   jwd8206o-i  "bcgsve.f", line 94: 除算を逆数の乗算に変更しました。
+   jwd5132p-i  "bcgsve.f", line 103: DO WHILE文、DO UNTIL文、およびIF/GO TO文によるループは並列化できません。
+   jwd5001p-i  "bcgsve.f", line 111: このDOループを並列化しました。(名前:IFACE3)
+   jwd6001s-i  "bcgsve.f", line 111: このDOループをSIMD化しました。(名前:IFACE3)
+   jwd8204o-i  "bcgsve.f", line 111: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "bcgsve.f", line 111: ループの繰返し数が352回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5004p-i  "bcgsve.f", line 140: リダクション演算を含むDOループを並列化しました。(名前:IE)
+   jwd6004s-i  "bcgsve.f", line 140: リダクション演算を含むDOループをSIMD化しました。(名前:IE)
+   jwd5001p-i  "bcgsve.f", line 156: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "bcgsve.f", line 156: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "bcgsve.f", line 156: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "bcgsve.f", line 156: ループの繰返し数が288回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "bcgsve.f", line 164: このDOループを並列化しました。(名前:IFACE3)
+   jwd6001s-i  "bcgsve.f", line 164: このDOループをSIMD化しました。(名前:IFACE3)
+   jwd8204o-i  "bcgsve.f", line 164: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "bcgsve.f", line 164: ループの繰返し数が352回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5004p-i  "bcgsve.f", line 198: リダクション演算を含むDOループを並列化しました。(名前:IE)
+   jwd6004s-i  "bcgsve.f", line 198: リダクション演算を含むDOループをSIMD化しました。(名前:IE)
+   jwd5004p-i  "bcgsve.f", line 221: リダクション演算を含むDOループを並列化しました。(名前:IE)
+   jwd6004s-i  "bcgsve.f", line 221: リダクション演算を含むDOループをSIMD化しました。(名前:IE)
+   jwd8209o-i  "bcgsve.f", line 222: 多項式の演算順序を変更しました。
+   jwd8206o-i  "bcgsve.f", line 237: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "bcgsve.f", line 247: 多項式の演算順序を変更しました。
+   jwd5001p-i  "bcgsve.f", line 249: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "bcgsve.f", line 249: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "bcgsve.f", line 249: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "bcgsve.f", line 249: ループの繰返し数が416回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+
+ Procedure information
+   Lines      : 269
+   Statements : 138
+   Stack(byte): 97232
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 269
+   Total statements : 138
+   Total stack(byte): 97232
+   Total prefetch num: 0
+

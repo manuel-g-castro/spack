@@ -1,0 +1,179 @@
+
+ Fujitsu Fortran Version 4.7.0  Tue Dec 21 10:39:33 2021
+
+ Compilation information
+   Current directory : /vol0005/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/dd_mpi
+   Source file       : ddcom2.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0005/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -Nlst=t -Cpp -Cfpp -c -I/opt/FJSVxtclanga/.common/MELI026/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI026/lib64 -Knointentopt
+   Cpp options          : -I/vol0005/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -I/opt/FJSVxtclanga/.common/MELI026/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI026/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=7 -D__FRT_patchlevel__=0 -D__FRT_version__="4.7.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Knoarray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nlibomp -Nline -Nlst -Nlst=p -Nlst=t
+                          -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "DDCOM2"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE DDCOM2(SEND,RECV)
+          2                           IMPLICIT REAL*4(A-H,O-Z)
+          3                     C
+          4                           INCLUDE 'mpif.h'
+          5                     C
+          6                     #ifdef cputime
+          7                           INTEGER*4 NUMALL
+          8                           REAL*4 DTALLA,DTALLR
+          9                           COMMON /CPUALL/ NUMALL,DTALLA,DTALLR
+         10                           REAL*4 DTCPU,TBUF1,TBUF2
+         11                     #endif
+         12                     #ifdef USE_TIMER
+         13                           include 'timer.h'
+         14                     #endif
+         15                     C
+         16                     C
+         17                     C      SUM UP A SINGLE SCALAR AMONG ALL THE PARTICIPATING TASKS FOR
+         18                     C     DOMAIN-DECOMPOSITION PROGRAMMING MODEL
+         19                     C
+         20                     C                            ( MPI VERSION )
+         21                     C
+         22                     C
+         23                     C NOTE 1; ALL 'MPI' ROUTINES RETURN AN ERROR CODE 'IERR' WHICH INDICATES
+         24                     C       THE STATUS OF ITS EXECUTION. THIS SUBROUTINE IGNORES SUCH ERROR
+         25                     C       CODE AND RETURNS THE SEQUENCE TO THE CALLING PROGRAM UNIT,
+         26                     C       REGARDLESS OF THE VALUE OF THE 'MPI' RETURN CODE.
+         27                     C
+         28                     C NOTE 2; SOME COMPILERS, SUCH AS OFORT90 IN HI-UXMPP, SUPPORT AUTOMATIC
+         29                     C       PRECISION EXPANSION, WHERE ALL THE CONSTANTS, VARIABLES AND
+         30                     C       ARRAYS OF 4-BYTE PRECISION (REAL*4) ARE AUTOMATICALLY CONVERTED
+         31                     C       TO THOSE OF 8-BYTE PRECISION (REAL*8) WITH UNFORMATTED I/O DATA
+         32                     C       BEING KEPT AS THEY ARE (IF SO SPECIFIED). WHEN USING SUCH
+         33                     C       FEATURES (FUNCTIONS) OF A COMPILER, SPECIAL CARE IS NEEDED
+         34                     C       BECAUSE A COUPLE OF MPI SUBROUTINES CALLED IN THIS SUBPROGRAM
+         35                     C       ACCEPT THE DATA TYPE (DATA PRECISION) AS THEIR INPUT AND
+         36                     C       PERFORM THE OPERATIONS ACCORDING TO THIS INPUT VALUE. THIS
+         37                     C       INTERFACE SUPPORTS THE AUTOMATIC PRECISION EXPANSION MENTIONED
+         38                     C       ABOVE. IF YOU WISH TO USE SUCH FEATURE, ADD '-DPRECEXP' OPTION
+         39                     C       WHEN INVOKING 'cpp' FOR PRI-PROCESSING THIS SOURCE PROGRAM FILE.
+         40                     C
+         41                     C
+         42                     C     ARGUMENT LISTINGS
+         43                     C       (1) INPUT
+         44                     C REAL*4   SEND             ; SCALAR VARIABLE TO SUM UP
+         45                     C
+         46                     C       (2) OUTPUT
+         47                     C REAL*4   RECV             ; SCALAR VARIABLE SUMMED UP AMONG ALL TASKS
+         48                     C
+         49                     C
+         50                     #ifdef cputime
+         51                           NUMALL=NUMALL+1
+         52                           CALL CPU_TIME( TBUF1 )
+         53                     #endif
+         54                     
+         55                     #ifdef USE_BARRIER
+         56                     #ifdef USE_TIMER
+         57                           tstart   = MPI_WTIME()
+         58                           nddcom2b = nddcom2b + 1
+         59                     #endif
+         60                           CALL MPI_BARRIER(MPI_COMM_WORLD,IERR)
+         61                     #ifdef USE_TIMER
+         62                           tend = MPI_WTIME()
+         63                           tddcom2b = tddcom2b + (tend - tstart)
+         64                     #endif
+         65                     #endif
+         66                     
+         67                     #ifdef USE_TIMER
+         68                           tstart  = MPI_WTIME()
+         69                           nddcom2 = nddcom2 + 1
+         70                     #endif
+         71                     #ifdef PRECEXP
+         72                           CALL MPI_ALLREDUCE(SEND,RECV,1,MPI_REAL8,MPI_SUM,
+         73                          &                   MPI_COMM_WORLD,IERR)
+         74                     #else
+         75                           CALL MPI_ALLREDUCE(SEND,RECV,1,MPI_REAL ,MPI_SUM,
+         76                          &                   MPI_COMM_WORLD,IERR)
+         77                     #endif
+         78                     #ifdef USE_TIMER
+         79                           tend = MPI_WTIME()
+         80                           tddcom2  = tddcom2 + (tend - tstart)
+         81                     #endif
+         82                     
+         83                     #ifdef USE_BARRIER
+         84                     #ifdef USE_TIMER
+         85                           tstart   = MPI_WTIME()
+         86                           nddcom2a = nddcom2a + 1
+         87                     #endif
+         88                           CALL MPI_BARRIER(MPI_COMM_WORLD,IERR)
+         89                     #ifdef USE_TIMER
+         90                           tend = MPI_WTIME()
+         91                           tddcom2a = tddcom2a + (tend - tstart)
+         92                     #endif
+         93                     #endif
+         94                     
+         95                     #ifdef cputime
+         96                           CALL CPU_TIME( TBUF2 )
+         97                           DTCPU=TBUF2-TBUF1
+         98                           DTALLA=DTALLA+DTCPU
+         99                           DTALLR=DTALLR+DTCPU*DTCPU
+        100                     #endif
+        101                     C
+        102                           RETURN
+        103                           END
+
+ Procedure information
+   Lines      : 4132
+   Statements : 3272
+   Stack(byte): 400
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 4132
+   Total statements : 3272
+   Total stack(byte): 400
+   Total prefetch num: 0
+

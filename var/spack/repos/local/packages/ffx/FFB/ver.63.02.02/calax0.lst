@@ -1,0 +1,510 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:52:55 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : calax0.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "CALAX0"
+  (line-no.)(nest)(optimize)
+          1                     C=======================================================================
+          2                           SUBROUTINE CALAX0(A, S, AS, NP, NE, NCRS, IPCRS, NPP,
+          3                          *                  N2,ME,IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+          4                          *                  RX,RY,JUNROL,NPPMAX,NCRS2,TS,TA,ITPCRS,
+          5                          *                  IUT0,IERR)
+          6                     C=======================================================================
+          7                           IMPLICIT NONE
+          8                           INTEGER NP, NE, NCRS
+          9                           REAL*4 A(NCRS), S(NP), AS(NP)
+         10                           INTEGER IPCRS(NCRS), NPP(NP)
+         11                           INTEGER IP, K, ICRS, IP2
+         12                           REAL*4  BUF
+         13                     C
+         14                           INTEGER MAXBUF,IDUM
+         15                           INTEGER N2,ME,IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,IUT0,IERR
+         16                           REAL*4  RX,RY
+         17                     C
+         18                           DIMENSION LDOM(NDOM),NBPDOM(NDOM)
+         19                           DIMENSION IPSLF(MBPDOM,NDOM),IPSND(MBPDOM,NDOM)
+         20                           DIMENSION RX(0:N2,ME),RY(0:N2,ME)
+         21                     C
+         22                     C     [FULL UNROOL]
+         23                           INTEGER*4 JUNROL
+         24                           INTEGER*4 NPPMAX,NCRS2,ITPCRS(NCRS2),ITCRS
+         25                           REAL*4    TS(0:NP),TA(NCRS2)
+         26                     C
+         27                           CHARACTER*60 ERMSGC
+         28                          & /' ## SUBROUTINE CALAXC: FATAL      ERROR REPORT   ; RETURNED'/
+         29                     C
+         30                     #ifdef cputime
+         31                     C     include 'timer.h'
+         32                           include 'mpif.h'
+         33                     C
+         34                           INTEGER*4 NUMCRS
+         35                           REAL*4 DTCRSA,DTCRSR,DTCRS2
+         36                           COMMON /CPUCRS/ NUMCRS,DTCRSA,DTCRSR,DTCRS2
+         37                           REAL*4 DTCPU,TBUF1,TBUF2,TBUF3
+         38                     #endif
+         39                     C
+         40                     C     CALCULATE THE PRODUCT OF MATRIX A AND VECTOR X IN PRESSURE EQUATION
+         41                     C         ( 3-D CALCULATION : SINGLE WORD & MULTI ELEMENT VERSION )
+         42                     C                                              2009.12.01 RIST
+         43                     C
+         44                     C          OPERATION COUNTS:   FLOP /ELEMENT
+         45                     C          DATA LOADINGS   :   WORDS/ELEMENT
+         46                     C                           (  WORDS CONTIGUOUSLY,
+         47                     C                              WORDS BY 4-WORD STRIDE, AND
+         48                     C                              WORDS BY LIST )
+         49                     C
+         50                     C     ARGUMENT LISTINGS
+         51                     C
+         52                     C       (1) INPUT
+         53                     C          ME          ; MAX. NUMBER OF TOTAL ELEMENTS
+         54                     C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT
+         55                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+         56                     C          NP          ; NUMBER OF TOTAL    NODES
+         57                     C
+         58                     C          NCRS        ; NUMBER OF NONZERO ELEMENTS IN MATRIX
+         59                     C                        OF CRS FORMAT
+         60                     C          A     (ICRS); NODE-WISE COEFFICIENT MATRIX IN CRS FORMAT
+         61                     C          S       (IP); GLOBAL FORCE VECTOR
+         62                     C          IPCRS (ICRS); NODE NO. TABLE BASED ON CRS FORMAT
+         63                     C          NPP     (IP); NUMBER OF ADJACENT NODES    TO NODE    IP
+         64                     C
+         65                     C          IPART       ; SUB-DOMAIN NUMBER THAT THIS TASK SHOULD TAKE/IS
+         66                     C                       TAKING CARE OF. IPART BEING SET ZERO MEANS THAT
+         67                     C                       THE PROGRAM SHOULD RUN/IS RUNNING IN SERIAL
+         68                     C                       MODE.
+         69                     C          LDOM  (IDOM); NEIBERING SUB-DOMAIN NUMBER
+         70                     C          NBPDOM(IDOM); NUMBER OF INTER-CONNECT BOUNDARY NODES
+         71                     C                       SHARING WITH THE IDOM'TH NEIBERING SUB-DOMAIN,
+         72                     C                       LDOM(IDOM)
+         73                     C          NDOM        ; NUMBER OF THE NERIBERING SUB-DOMAINS
+         74                     C          IPSLF (IBP,IDOM); INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+         75                     C                           CALLING TASK'S SUB-DOMAIN, FOR THE IDOM'TH
+         76                     C                           NEIBERING SUB-DOMAIN, LDOM(IDOM)
+         77                     C          IPSND (IBP,IDOM); INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+         78                     C                           SUB-DOMAIN THAT IS RECEIVING THE CALLING
+         79                     C                           TASK'S RESIDUALS.
+         80                     C          MBPDOM      ; THE MAXIMUM NUMBER OF THE INTER-CONNECT
+         81                     C                       BOUNDARY NODES FOR ONE NEIBERING SUB-DOMAIN
+         82                     C
+         83                     C          IUT0        ; FILE NUMBER TO REPORT ERROR OCCURRENCE
+         84                     C
+         85                     C       (2) OUTPUT
+         86                     C          AS      (IP); GLOBAL SOLUTION VECTOR (PROVIDE INITIAL GUESS)
+         87                     C          IERR        ; RETURN CODE TO REPORT ERROR OCCURENCE
+         88                     C
+         89                     C       (3) WORK
+         90                     C          RX    (I,IE); USED IN DDCOMX
+         91                     C          RY    (I,IE); USED IN DDCOMX
+         92                     C
+         93                     C
+         94                     #ifdef cputime
+         95                           NUMCRS=NUMCRS+1
+         96                     C     CALL CPU_TIME( TBUF1 )
+         97                           TBUF1 = MPI_WTIME()
+         98                     #endif
+         99                           IERR=0
+        100                     C
+        101                           MAXBUF = NE*(N2+1)
+        102                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      AS
+                              <<< Loop-information  End >>>
+        103     1  pp   4v            DO 10 IP=1,NP
+        104     1   p   4v               AS(IP)=0.0E0
+        105     1   p   4v       10   CONTINUE
+        106                     C
+        107                           IF (JUNROL.EQ.0) GOTO 500
+        108                     C
+        109                     CC
+        110                     CC    FULL UNROL
+        111                     CC
+        112                           TS(0)=0.0E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1455
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.00, ITR: 320, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      S, TS
+                              <<< Loop-information  End >>>
+        113     1  pp   4v            DO 100 IP=1,NP
+        114     1   p   4v               TS (IP)=S(IP)
+        115     1   p   4v       100  CONTINUE
+        116                     C
+        117                           IF (NPPMAX.EQ.30) GOTO 200
+        118                           IF (NPPMAX.EQ.40) GOTO 300
+        119                           IF (NPPMAX.EQ.50) GOTO 400
+        120                     C
+        121                     CC
+        122                     CC    FULL UNROL : NPPMAX <= 30
+        123                     CC
+        124                     #ifndef __AIX__
+        125                     !ocl CACHE_SECTOR_SIZE(1,11)
+        126                     !ocl CACHE_SUBSECTOR_ASSIGN(TS)
+        127                     !!ocl UNROLL(0)
+        128                     #endif
+        129                      200  CONTINUE
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 37
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      ITPCRS, TA
+                              <<<    PREFETCH(SOFT) : 1
+                              <<<     SEQUENTIAL : 1
+                              <<<      AS: 1
+                              <<< Loop-information  End >>>
+        130     1  pp    v            DO 210 IP=1,NP
+        131     1   p    v               BUF=0.0E0
+        132     1   p    v               ICRS=(IP-1)*30
+        133     1   p    v               BUF=BUF+  TA(ICRS+ 1)*TS(ITPCRS(ICRS+ 1))
+        134     1                    &            +TA(ICRS+ 2)*TS(ITPCRS(ICRS+ 2))
+        135     1                    &            +TA(ICRS+ 3)*TS(ITPCRS(ICRS+ 3))
+        136     1                    &            +TA(ICRS+ 4)*TS(ITPCRS(ICRS+ 4))
+        137     1                    &            +TA(ICRS+ 5)*TS(ITPCRS(ICRS+ 5))
+        138     1                    &            +TA(ICRS+ 6)*TS(ITPCRS(ICRS+ 6))
+        139     1                    &            +TA(ICRS+ 7)*TS(ITPCRS(ICRS+ 7))
+        140     1                    &            +TA(ICRS+ 8)*TS(ITPCRS(ICRS+ 8))
+        141     1                    &            +TA(ICRS+ 9)*TS(ITPCRS(ICRS+ 9))
+        142     1                    &            +TA(ICRS+10)*TS(ITPCRS(ICRS+10))
+        143     1                    &            +TA(ICRS+11)*TS(ITPCRS(ICRS+11))
+        144     1                    &            +TA(ICRS+12)*TS(ITPCRS(ICRS+12))
+        145     1                    &            +TA(ICRS+13)*TS(ITPCRS(ICRS+13))
+        146     1                    &            +TA(ICRS+14)*TS(ITPCRS(ICRS+14))
+        147     1                    &            +TA(ICRS+15)*TS(ITPCRS(ICRS+15))
+        148     1                    &            +TA(ICRS+16)*TS(ITPCRS(ICRS+16))
+        149     1                    &            +TA(ICRS+17)*TS(ITPCRS(ICRS+17))
+        150     1                    &            +TA(ICRS+18)*TS(ITPCRS(ICRS+18))
+        151     1                    &            +TA(ICRS+19)*TS(ITPCRS(ICRS+19))
+        152     1                    &            +TA(ICRS+20)*TS(ITPCRS(ICRS+20))
+        153     1                    &            +TA(ICRS+21)*TS(ITPCRS(ICRS+21))
+        154     1                    &            +TA(ICRS+22)*TS(ITPCRS(ICRS+22))
+        155     1                    &            +TA(ICRS+23)*TS(ITPCRS(ICRS+23))
+        156     1                    &            +TA(ICRS+24)*TS(ITPCRS(ICRS+24))
+        157     1                    &            +TA(ICRS+25)*TS(ITPCRS(ICRS+25))
+        158     1                    &            +TA(ICRS+26)*TS(ITPCRS(ICRS+26))
+        159     1                    &            +TA(ICRS+27)*TS(ITPCRS(ICRS+27))
+        160     1                    &            +TA(ICRS+28)*TS(ITPCRS(ICRS+28))
+        161     1                    &            +TA(ICRS+29)*TS(ITPCRS(ICRS+29))
+        162     1                    &            +TA(ICRS+30)*TS(ITPCRS(ICRS+30))
+        163     1   p    v               AS(IP)=AS(IP)+BUF
+        164     1   p    v       210  CONTINUE
+        165                     #ifndef __AIX__
+        166                     !ocl END_CACHE_SUBSECTOR
+        167                     !ocl END_CACHE_SECTOR_SIZE
+        168                     #endif
+        169                     C
+        170                           GOTO 900
+        171                     C
+        172                     CC
+        173                     CC    FULL UNROL : 30 < NPPMAX <= 40
+        174                     CC
+        175                     #ifndef __AIX__
+        176                     !ocl CACHE_SECTOR_SIZE(1,11)
+        177                     !ocl CACHE_SUBSECTOR_ASSIGN(TS)
+        178                     !!ocl UNROLL(0)
+        179                     #endif
+        180                      300  CONTINUE
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 28
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      ITPCRS, AS
+                              <<<    PREFETCH(SOFT) : 10
+                              <<<     SEQUENTIAL : 10
+                              <<<      TA: 10
+                              <<< Loop-information  End >>>
+        181     1  pp    v            DO 310 IP=1,NP
+        182     1   p    v               BUF=0.0E0
+        183     1   p    v               ICRS=(IP-1)*40
+        184     1   p    v               BUF=BUF+  TA(ICRS+ 1)*TS(ITPCRS(ICRS+ 1))
+        185     1                    &            +TA(ICRS+ 2)*TS(ITPCRS(ICRS+ 2))
+        186     1                    &            +TA(ICRS+ 3)*TS(ITPCRS(ICRS+ 3))
+        187     1                    &            +TA(ICRS+ 4)*TS(ITPCRS(ICRS+ 4))
+        188     1                    &            +TA(ICRS+ 5)*TS(ITPCRS(ICRS+ 5))
+        189     1                    &            +TA(ICRS+ 6)*TS(ITPCRS(ICRS+ 6))
+        190     1                    &            +TA(ICRS+ 7)*TS(ITPCRS(ICRS+ 7))
+        191     1                    &            +TA(ICRS+ 8)*TS(ITPCRS(ICRS+ 8))
+        192     1                    &            +TA(ICRS+ 9)*TS(ITPCRS(ICRS+ 9))
+        193     1                    &            +TA(ICRS+10)*TS(ITPCRS(ICRS+10))
+        194     1                    &            +TA(ICRS+11)*TS(ITPCRS(ICRS+11))
+        195     1                    &            +TA(ICRS+12)*TS(ITPCRS(ICRS+12))
+        196     1                    &            +TA(ICRS+13)*TS(ITPCRS(ICRS+13))
+        197     1                    &            +TA(ICRS+14)*TS(ITPCRS(ICRS+14))
+        198     1                    &            +TA(ICRS+15)*TS(ITPCRS(ICRS+15))
+        199     1                    &            +TA(ICRS+16)*TS(ITPCRS(ICRS+16))
+        200     1                    &            +TA(ICRS+17)*TS(ITPCRS(ICRS+17))
+        201     1                    &            +TA(ICRS+18)*TS(ITPCRS(ICRS+18))
+        202     1                    &            +TA(ICRS+19)*TS(ITPCRS(ICRS+19))
+        203     1                    &            +TA(ICRS+20)*TS(ITPCRS(ICRS+20))
+        204     1                    &            +TA(ICRS+21)*TS(ITPCRS(ICRS+21))
+        205     1                    &            +TA(ICRS+22)*TS(ITPCRS(ICRS+22))
+        206     1                    &            +TA(ICRS+23)*TS(ITPCRS(ICRS+23))
+        207     1                    &            +TA(ICRS+24)*TS(ITPCRS(ICRS+24))
+        208     1                    &            +TA(ICRS+25)*TS(ITPCRS(ICRS+25))
+        209     1                    &            +TA(ICRS+26)*TS(ITPCRS(ICRS+26))
+        210     1                    &            +TA(ICRS+27)*TS(ITPCRS(ICRS+27))
+        211     1                    &            +TA(ICRS+28)*TS(ITPCRS(ICRS+28))
+        212     1                    &            +TA(ICRS+29)*TS(ITPCRS(ICRS+29))
+        213     1                    &            +TA(ICRS+30)*TS(ITPCRS(ICRS+30))
+        214     1                    &            +TA(ICRS+31)*TS(ITPCRS(ICRS+31))
+        215     1                    &            +TA(ICRS+32)*TS(ITPCRS(ICRS+32))
+        216     1                    &            +TA(ICRS+33)*TS(ITPCRS(ICRS+33))
+        217     1                    &            +TA(ICRS+34)*TS(ITPCRS(ICRS+34))
+        218     1                    &            +TA(ICRS+35)*TS(ITPCRS(ICRS+35))
+        219     1                    &            +TA(ICRS+36)*TS(ITPCRS(ICRS+36))
+        220     1                    &            +TA(ICRS+37)*TS(ITPCRS(ICRS+37))
+        221     1                    &            +TA(ICRS+38)*TS(ITPCRS(ICRS+38))
+        222     1                    &            +TA(ICRS+39)*TS(ITPCRS(ICRS+39))
+        223     1                    &            +TA(ICRS+40)*TS(ITPCRS(ICRS+40))
+        224     1   p    v               AS(IP)=AS(IP)+BUF
+        225     1   p    v       310  CONTINUE
+        226                     #ifndef __AIX__
+        227                     !ocl END_CACHE_SUBSECTOR
+        228                     !ocl END_CACHE_SECTOR_SIZE
+        229                     #endif
+        230                     C
+        231                           GOTO 900
+        232                     C
+        233                     CC
+        234                     CC    FULL UNROL : 40 < NPPMAX <= 50
+        235                     CC
+        236                     #ifndef __AIX__
+        237                     !ocl CACHE_SECTOR_SIZE(1,11)
+        238                     !ocl CACHE_SUBSECTOR_ASSIGN(TS)
+        239                     !!ocl UNROLL(0)
+        240                     #endif
+        241                      400  CONTINUE
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 23
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      ITPCRS, AS
+                              <<<    PREFETCH(SOFT) : 13
+                              <<<     SEQUENTIAL : 13
+                              <<<      TA: 13
+                              <<< Loop-information  End >>>
+        242     1  pp    v            DO 410 IP=1,NP
+        243     1   p    v               BUF=0.0E0
+        244     1   p    v               ICRS=(IP-1)*50
+        245     1   p    v               BUF=BUF+  TA(ICRS+ 1)*TS(ITPCRS(ICRS+ 1))
+        246     1                    &            +TA(ICRS+ 2)*TS(ITPCRS(ICRS+ 2))
+        247     1                    &            +TA(ICRS+ 3)*TS(ITPCRS(ICRS+ 3))
+        248     1                    &            +TA(ICRS+ 4)*TS(ITPCRS(ICRS+ 4))
+        249     1                    &            +TA(ICRS+ 5)*TS(ITPCRS(ICRS+ 5))
+        250     1                    &            +TA(ICRS+ 6)*TS(ITPCRS(ICRS+ 6))
+        251     1                    &            +TA(ICRS+ 7)*TS(ITPCRS(ICRS+ 7))
+        252     1                    &            +TA(ICRS+ 8)*TS(ITPCRS(ICRS+ 8))
+        253     1                    &            +TA(ICRS+ 9)*TS(ITPCRS(ICRS+ 9))
+        254     1                    &            +TA(ICRS+10)*TS(ITPCRS(ICRS+10))
+        255     1                    &            +TA(ICRS+11)*TS(ITPCRS(ICRS+11))
+        256     1                    &            +TA(ICRS+12)*TS(ITPCRS(ICRS+12))
+        257     1                    &            +TA(ICRS+13)*TS(ITPCRS(ICRS+13))
+        258     1                    &            +TA(ICRS+14)*TS(ITPCRS(ICRS+14))
+        259     1                    &            +TA(ICRS+15)*TS(ITPCRS(ICRS+15))
+        260     1                    &            +TA(ICRS+16)*TS(ITPCRS(ICRS+16))
+        261     1                    &            +TA(ICRS+17)*TS(ITPCRS(ICRS+17))
+        262     1                    &            +TA(ICRS+18)*TS(ITPCRS(ICRS+18))
+        263     1                    &            +TA(ICRS+19)*TS(ITPCRS(ICRS+19))
+        264     1                    &            +TA(ICRS+20)*TS(ITPCRS(ICRS+20))
+        265     1                    &            +TA(ICRS+21)*TS(ITPCRS(ICRS+21))
+        266     1                    &            +TA(ICRS+22)*TS(ITPCRS(ICRS+22))
+        267     1                    &            +TA(ICRS+23)*TS(ITPCRS(ICRS+23))
+        268     1                    &            +TA(ICRS+24)*TS(ITPCRS(ICRS+24))
+        269     1                    &            +TA(ICRS+25)*TS(ITPCRS(ICRS+25))
+        270     1                    &            +TA(ICRS+26)*TS(ITPCRS(ICRS+26))
+        271     1                    &            +TA(ICRS+27)*TS(ITPCRS(ICRS+27))
+        272     1                    &            +TA(ICRS+28)*TS(ITPCRS(ICRS+28))
+        273     1                    &            +TA(ICRS+29)*TS(ITPCRS(ICRS+29))
+        274     1                    &            +TA(ICRS+30)*TS(ITPCRS(ICRS+30))
+        275     1                    &            +TA(ICRS+31)*TS(ITPCRS(ICRS+31))
+        276     1                    &            +TA(ICRS+32)*TS(ITPCRS(ICRS+32))
+        277     1                    &            +TA(ICRS+33)*TS(ITPCRS(ICRS+33))
+        278     1                    &            +TA(ICRS+34)*TS(ITPCRS(ICRS+34))
+        279     1                    &            +TA(ICRS+35)*TS(ITPCRS(ICRS+35))
+        280     1                    &            +TA(ICRS+36)*TS(ITPCRS(ICRS+36))
+        281     1                    &            +TA(ICRS+37)*TS(ITPCRS(ICRS+37))
+        282     1                    &            +TA(ICRS+38)*TS(ITPCRS(ICRS+38))
+        283     1                    &            +TA(ICRS+39)*TS(ITPCRS(ICRS+39))
+        284     1                    &            +TA(ICRS+40)*TS(ITPCRS(ICRS+40))
+        285     1                    &            +TA(ICRS+41)*TS(ITPCRS(ICRS+41))
+        286     1                    &            +TA(ICRS+42)*TS(ITPCRS(ICRS+42))
+        287     1                    &            +TA(ICRS+43)*TS(ITPCRS(ICRS+43))
+        288     1                    &            +TA(ICRS+44)*TS(ITPCRS(ICRS+44))
+        289     1                    &            +TA(ICRS+45)*TS(ITPCRS(ICRS+45))
+        290     1                    &            +TA(ICRS+46)*TS(ITPCRS(ICRS+46))
+        291     1                    &            +TA(ICRS+47)*TS(ITPCRS(ICRS+47))
+        292     1                    &            +TA(ICRS+48)*TS(ITPCRS(ICRS+48))
+        293     1                    &            +TA(ICRS+49)*TS(ITPCRS(ICRS+49))
+        294     1                    &            +TA(ICRS+50)*TS(ITPCRS(ICRS+50))
+        295     1   p    v               AS(IP)=AS(IP)+BUF
+        296     1   p    v       410  CONTINUE
+        297                     #ifndef __AIX__
+        298                     !ocl END_CACHE_SUBSECTOR
+        299                     !ocl END_CACHE_SECTOR_SIZE
+        300                     #endif
+        301                     C
+        302                           GOTO 900
+        303                     C
+        304                     CC
+        305                     CC    ORIGINAL
+        306                     CC
+        307                      500  CONTINUE
+        308                           ICRS=0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IPCRS, A
+                              <<< Loop-information  End >>>
+        309     1   s                 DO 510 IP=1,NP
+        310     1   p                    BUF=0.0E0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.34, ITR: 384, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IPCRS, A
+                              <<< Loop-information  End >>>
+        311     2   s   8v               DO 520 K=1,NPP(IP)
+        312     2   p   8v                  ICRS=ICRS+1
+        313     2   p   8v                  IP2=IPCRS(ICRS)
+        314     2   p   8v                  BUF=BUF+A(ICRS)*S(IP2)
+        315     2   p   8v       520     CONTINUE
+        316     1   p                    AS(IP)=AS(IP)+BUF
+        317     1   p            510  CONTINUE
+        318                     C
+        319                      900  CONTINUE
+        320                     #ifdef cputime
+        321                     C     CALL CPU_TIME( TBUF2 )
+        322                           TBUF2 = MPI_WTIME()
+        323                           DTCPU=TBUF2-TBUF1
+        324                           DTCRSA=DTCRSA+DTCPU
+        325                           DTCRSR=DTCRSR+DTCPU*DTCPU
+        326                     #endif
+        327                     C
+        328                           IDUM = 1
+        329                           CALL DDCOMX(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        330                          *            AS,AS,AS,NP,IUT0,IERR,RX,RY,MAXBUF)
+        331     1                     IF(IERR.NE.0) THEN
+        332     1                         WRITE(IUT0,*)
+        333     1                         WRITE(IUT0,*) ERMSGC
+        334     1                         RETURN
+        335     1                     ENDIF
+        336                     #ifdef cputime
+        337                     C     CALL CPU_TIME( TBUF3 )
+        338                           TBUF3 = MPI_WTIME()
+        339                           DTCPU=TBUF3-TBUF1
+        340                           DTCRS2=DTCRS2+DTCPU
+        341                     #endif
+        342                     C
+        343                           RETURN
+        344                           END
+
+ Diagnostic messages: program name(CALAX0)
+   jwd8220o-i  "calax0.f", line 2: 副作用の可能性のある最適化を行いました。
+   jwd2006i-i  "calax0.f", line 24: この名前'ITCRS'は、宣言だけされていて引用されていません。
+   jwd5001p-i  "calax0.f", line 103: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "calax0.f", line 103: このDOループをSIMD化しました。(名前:IP)
+   jwd8663o-i  "calax0.f", line 103: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "calax0.f", line 103: ループを展開数4回でアンローリングしました。
+   jwd5001p-i  "calax0.f", line 113: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "calax0.f", line 113: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "calax0.f", line 113: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "calax0.f", line 113: ループの繰返し数が320回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "calax0.f", line 130: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "calax0.f", line 130: このDOループをSIMD化しました。(名前:IP)
+   jwd8222o-i  "calax0.f", line 130: このループで必要なプリフェッチの数が、ハードウェアプリフェッチの許容数を超えたため、prefetch命令を出力しました。
+   jwd8662o-i  "calax0.f", line 130: スケジューリング結果を得られなかったため、ソフトウェアパイプライニングを抑止しました。
+   jwd5001p-i  "calax0.f", line 181: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "calax0.f", line 181: このDOループをSIMD化しました。(名前:IP)
+   jwd8222o-i  "calax0.f", line 181: このループで必要なプリフェッチの数が、ハードウェアプリフェッチの許容数を超えたため、prefetch命令を出力しました。
+   jwd8662o-i  "calax0.f", line 181: スケジューリング結果を得られなかったため、ソフトウェアパイプライニングを抑止しました。
+   jwd5001p-i  "calax0.f", line 242: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "calax0.f", line 242: このDOループをSIMD化しました。(名前:IP)
+   jwd8222o-i  "calax0.f", line 242: このループで必要なプリフェッチの数が、ハードウェアプリフェッチの許容数を超えたため、prefetch命令を出力しました。
+   jwd8662o-i  "calax0.f", line 242: スケジューリング結果を得られなかったため、ソフトウェアパイプライニングを抑止しました。
+   jwd5133p-i  "calax0.f", line 309: このDOループは構造が複雑なため、並列化できません。
+   jwd6004s-i  "calax0.f", line 311: リダクション演算を含むDOループをSIMD化しました。(名前:K)
+   jwd8204o-i  "calax0.f", line 311: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "calax0.f", line 311: ループの繰返し数が384回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8208o-i  "calax0.f", line 314: ループ内の総和または乗積演算の計算方法を変更しました。
+
+ Procedure information
+   Lines      : 4373
+   Statements : 3345
+   Stack(byte): 2912
+   Prefetch num: 24
+
+ Total information
+   Procedures       : 1
+   Total lines      : 4373
+   Total statements : 3345
+   Total stack(byte): 2912
+   Total prefetch num: 24
+

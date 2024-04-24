@@ -1,0 +1,214 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:53:48 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : cyclic.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "CYCLIC"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    CYCLIC                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE CYCLIC(NPCL,LPCL1,LPCL2,IENP,JENP,NEP,MAXEP,NP,
+         14                          *                  IUT0,IERR)
+         15                           DIMENSION LPCL1(NPCL),LPCL2(NPCL),
+         16                          1          IENP(MAXEP,NP),JENP(MAXEP,NP),NEP(NP)
+         17                     C
+         18                           CHARACTER*60 ERMSGB
+         19                          & / ' ## SUBROUTINE CYCLIC: FATAL      ERROR OCCURENCE; RETURNED' /
+         20                           CHARACTER*60 EREXP1
+         21                          & / ' NUMBER OF ELEMENTS ADJACENT TO ONE NODE EXCEEDED LIMIT OF ' /
+         22                     C
+         23                     C
+         24                     C      MODIFY NEIBERING ELEMENT LISTS FOR CYCLIC BOUNDARY CONDITIONS
+         25                     C         ( 2-D , 3-D CALCULATION & GRAPHICS )
+         26                     C
+         27                     C
+         28                     C     NOTE 1 ; IF YOU ARE DEALING WITH A MATRIX EQUATION, CALLING THIS
+         29                     C             SUBROUTINE WILL NOT SUFFICE BY ITSELF. YOU MUST ALSO
+         30                     C             MODIFY THE GLOBAL COEFFICIENT MATRIX AND ITS CORRESPONDING
+         31                     C             LIST VECTOR.
+         32                     C
+         33                     C     NOTE 2 ; TO MAKE CYCLIC BOUNDARY CONDITION EFFECTIVE, YOU
+         34                     C             SHOULD USE LIST IENP, JENP AND NEP WHENEVER YOU SUPERPOSE
+         35                     C             ELEMENT RESIDUAL TO A GLOBAL FORCE VECTOR, INCLUDING MASS
+         36                     C             LUMPING PROCESS.
+         37                     C
+         38                     C
+         39                     C     ARGUMENT LISTINGS
+         40                     C       (1) INPUT
+         41                     C          NPCL        ; NUMBER OF CYCLIC BOUNDARY NODES
+         42                     C          LPCL1  (IBP); CYCLIC BOUNDARY NODES-1
+         43                     C          LPCL2  (IBP); CYCLIC BOUNDARY NODES-2
+         44                     C          MAXEP       ; THE FIRST DIMENSION OF ARRAY IENP,JENP
+         45                     C          NP          ; NUMBER OF TOTAL     NODES
+         46                     C          IUT0        ; FILE NUMBER TO REPORT ERROR OCCURENCE
+         47                     C
+         48                     C       (2) OUTPUT
+         49                     C          IERR        ; RETURN CODE TO REPORT ERROR OCCURENCE
+         50                     C                   0 --- NORMAL TERMINATION
+         51                     C                   1 --- A FATAL ERROR HAS OCCURED
+         52                     C
+         53                     C       (3) INPUT-OUTPUT
+         54                     C          IENP(IEP,IP); ADJACENT ELEMENT NUMBER TO NODE IP
+         55                     C          JENP(IEP,IP); LOCAL NODE NUMBER OF IP IN ELEMENT IENP(IEP,IP)
+         56                     C          NEP     (IP); NUMBER OF ADJACENT ELEMENTS TO NODE IP
+         57                     C
+         58                     C
+         59                           IERR = 0
+         60                     C
+         61                     C
+         62                     C      (1) RECOGNIZE ADJACENT ELEMENTS TO LPCL1(IBP)
+         63                     C         AS THE OUTER ELEMENTS OF LPCL2(IBP)
+         64                     C
+         65                     C
+         66     1                     DO 20 IPCL = 1 , NPCL
+         67     1                         IPA = LPCL1(IPCL)
+         68     1                         IPB = LPCL2(IPCL)
+         69     2                         DO 10 IEP = 1 , NEP(IPA)
+         70     2               CCYY.MOD---
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IENP
+                              <<< Loop-information  End >>>
+         71     3                             DO 11 IEPB = 1 , NEP(IPB)
+         72     3                                 IF(IENP(IEPB,IPB).EQ.IENP(IEP,IPA)) GO TO 10
+         73     3                  11         CONTINUE
+         74     2               CCYY.MOD---
+         75     2                             NEP(IPB) = NEP(IPB)+1
+         76     3                             IF(NEP(IPB).GT.MAXEP) THEN
+         77     3                                 WRITE(IUT0,*) ERMSGB
+         78     3                                 WRITE(IUT0,*) EREXP1, MAXEP
+         79     3                                 IERR = 1
+         80     3                                 RETURN
+         81     3                             ENDIF
+         82     2                             IENP(NEP(IPB),IPB) = IENP(IEP,IPA)
+         83     2                             JENP(NEP(IPB),IPB) = JENP(IEP,IPA)
+         84     2                  10     CONTINUE
+         85     1                  20 CONTINUE
+         86                     C
+         87                     C
+         88                     C      (2) RECOGNIZE THE ORIGINAL ADJACENT ELEMENTS TO LPCL2(IBP))
+         89                     C         AS THE OUTER ELEMENTS OF LPCL1(IBP)
+         90                     C
+         91                     C
+         92                     CCYY.MOD---
+         93                     CCYY.MOD      DO 50 IPCL = 1 , NPCL
+         94     1                     DO 50 IPCL = NPCL , 1 , -1
+         95     1               CCYY.MOD---
+         96     1                         IPA = LPCL2(IPCL)
+         97     1                         IPB = LPCL1(IPCL)
+         98     2                         DO 40 IEP = 1 , NEP(IPA)
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IENP
+                              <<< Loop-information  End >>>
+         99     3                             DO 30 IEPB = 1 , NEP(IPB)
+        100     3                                 IF(IENP(IEPB,IPB).EQ.IENP(IEP,IPA)) GO TO 40
+        101     3                  30         CONTINUE
+        102     2                             NEP(IPB) = NEP(IPB)+1
+        103     3                             IF(NEP(IPB).GT.MAXEP) THEN
+        104     3                                 WRITE(IUT0,*) ERMSGB
+        105     3                                 WRITE(IUT0,*) EREXP1, MAXEP
+        106     3                                 IERR = 1
+        107     3                                 RETURN
+        108     3                             ENDIF
+        109     2                             IENP(NEP(IPB),IPB) = IENP(IEP,IPA)
+        110     2                             JENP(NEP(IPB),IPB) = JENP(IEP,IPA)
+        111     2                  40     CONTINUE
+        112     1                  50 CONTINUE
+        113                     C
+        114                     C
+        115                           RETURN
+        116                           END
+
+ Diagnostic messages: program name(CYCLIC)
+   jwd5131p-i  "cyclic.f", line 66: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "cyclic.f", line 69: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "cyclic.f", line 71: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "cyclic.f", line 71: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "cyclic.f", line 71: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+   jwd5131p-i  "cyclic.f", line 94: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "cyclic.f", line 98: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "cyclic.f", line 99: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "cyclic.f", line 99: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "cyclic.f", line 99: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+
+ Procedure information
+   Lines      : 116
+   Statements : 43
+   Stack(byte): 800
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 116
+   Total statements : 43
+   Total stack(byte): 800
+   Total prefetch num: 0
+

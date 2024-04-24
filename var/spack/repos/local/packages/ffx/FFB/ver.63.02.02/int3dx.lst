@@ -1,0 +1,714 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:53:05 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : int3dx.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "INT3DX"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE INT3DX(IE0,NE,N1,N2,N,NSKIP,NGAUSS,
+          2                          *                  SNWRK0,PSI0,SNWRK,PSI,
+          3                          *                  W,X,Y,Z,NODE,
+          4                          *                  SNI,DNXI,DNYI,DNZI,SN,DNX,DNY,DNZ,DELTA,
+          5                          *                  EAP1,EAP2,EAP3,EBP,MEP,MP,NP,IENP,JENP,NEP,
+          6                          *                  IUT0,IERR)
+          7                           IMPLICIT NONE
+          8                     C
+          9                     ***** DEFINE ARGUMENTS *****
+         10                           INTEGER*4 IE0,NE,N1,N2,N,NSKIP,NGAUSS
+         11                           INTEGER*4 NODE
+         12                           REAL*8    X,Y,Z,SNWRK0,PSI0,SNWRK,PSI,W
+         13                           REAL*4    SNI,DNXI,DNYI,DNZI,SN,DNX,DNY,DNZ,DELTA
+         14                           REAL*4    EAP1,EAP2,EAP3,EBP
+         15                           INTEGER*4 IENP,JENP,NEP,MEP,MP,NP
+         16                           INTEGER IUT0,IERR
+         17                     C
+         18                           DIMENSION X(*),Y(*),Z(*)
+         19                           DIMENSION SNWRK0(N1),PSI0(3,N1),SNWRK(N1,NGAUSS),PSI(3,N1,NGAUSS)
+         20                           DIMENSION W(NGAUSS)
+         21                           DIMENSION NODE(N2,NE),
+         22                          *          SNI(N1,NE),DNXI(N1,NE),DNYI(N1,NE),DNZI(N1,NE),
+         23                          *          SN (N1,NE),DNX (N1,NE),DNY (N1,NE),DNZ (N1,NE),
+         24                          *          DELTA(NE)
+         25                           DIMENSION EAP1(N2,MEP,NP),EAP2(3,N2,MEP,NP),EAP3(6,N2,MEP,NP)
+         26                           DIMENSION EBP(3,N2,MEP,NP)
+         27                           DIMENSION IENP(MEP,MP),JENP(MEP,MP),NEP(MP)
+         28                     C
+         29                     C
+         30                     C       (1) INPUT
+         31                     C
+         32                     C
+         33                     C       (2) OUTPUT
+         34                     C          SNI   (I,IE); ELEMENT CENTER VALUE OF N
+         35                     C          DNXI  (I,IE); ELEMENT CENTER VALUE OF NX
+         36                     C          DNYI  (I,IE); ELEMENT CENTER VALUE OF NY
+         37                     C          DNZI  (I,IE); ELEMENT CENTER VALUE OF NZ
+         38                     C
+         39                     C          SN    (I,IE); INTEGRATED ELEMENT VECTOR OF N
+         40                     C          DNX   (I,IE); INTEGRATED ELEMENT VECTOR OF NX
+         41                     C          DNY   (I,IE); INTEGRATED ELEMENT VECTOR OF NY
+         42                     C          DNZ   (I,IE); INTEGRATED ELEMENT VECTOR OF NZ
+         43                     C
+         44                     C          IERR        ; RETURN CODE TO REPORT ERROR OCCURENCE
+         45                     C                   0 --- NORMAL TERMINATION
+         46                     C                   1 --- A FATAL ERROR HAS OCCURED
+         47                     C
+         48                     ***** OBJECTS *****
+         49                           REAL*8 J11,J12,J13,J21,J22,J23,J31,J32,J33  ! DX/DXI
+         50                           REAL*8 DETJ                                 ! DET(J)
+         51                           REAL*8 VOL                                  ! VOLUME
+         52                           REAL*8 INVJ11,INVJ12,INVJ13,                ! J^-1
+         53                          *       INVJ21,INVJ22,INVJ23,                ! J^-1
+         54                          *       INVJ31,INVJ32,INVJ33                 ! J^-1
+         55                           REAL*8  PHIA1,PHIA2,PHIA3                   ! DN/DX
+         56                           REAL*8  PHIB1,PHIB2,PHIB3                   ! DX/DX
+         57                           INTEGER*8 IN, JN, IE, IP
+         58                           REAL*4, ALLOCATABLE:: E(:,:),EX(:,:),EY(:,:),EZ(:,:),
+         59                          *                      EXX(:,:),EYY(:,:),EZZ(:,:),
+         60                          *                      EXY(:,:),EYZ(:,:),EXZ(:,:)
+         61                           INTEGER*4 I,IPE,IPE0
+         62                     ***** DATA *****
+         63                     
+         64                     C     $     N,             ! NUMBER OF NODE PER ELEMENT
+         65                     C     $     NGAUSS,        ! NUMBER OF POINT PER ELEMENT
+         66                     C     $     SNWRK0,        ! SHAPE FUNCTION AT CENTER
+         67                     C     $     PSI0,          ! DN/DXI, DN/DETA, DN/DZETA AT CENTER
+         68                     C     $     SWRK,          ! SHAPE FUNCTION
+         69                     C     $     PSI,           ! DN/DXI, DN/DETA, DN/DZETA
+         70                     C     $     W,             ! WEIGHT AT POINT
+         71                     C
+         72                     ********************************
+         73                     **********ELEMENT LOOP**********
+         74                     ********************************
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE, PSI0, SNWRK0, DNZI, DNYI, DNXI
+                              <<<      SNI, (unknown)
+                              <<< Loop-information  End >>>
+         75     1  pp                 DO 1000 IE=1,NE
+         76     1               **************************
+         77     1               ***** ELEMENT CENTER *****
+         78     1               **************************
+         79     1   p                     J11=0.0D0
+         80     1   p                     J12=0.0D0
+         81     1   p                     J13=0.0D0
+         82     1   p                     J21=0.0D0
+         83     1   p                     J22=0.0D0
+         84     1   p                     J23=0.0D0
+         85     1   p                     J31=0.0D0
+         86     1   p                     J32=0.0D0
+         87     1   p                     J33=0.0D0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.61, ITR: 32, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      PSI0, NODE, (unknown)
+                              <<< Loop-information  End >>>
+         88     2   p    v                DO 1010 IN=1,N
+         89     2   p    v                    J11=J11+PSI0(1,IN)*X(NODE(IN,IE))
+         90     2   p    v                    J21=J21+PSI0(2,IN)*X(NODE(IN,IE))
+         91     2   p    v                    J31=J31+PSI0(3,IN)*X(NODE(IN,IE))
+         92     2   p    v                    J12=J12+PSI0(1,IN)*Y(NODE(IN,IE))
+         93     2   p    v                    J22=J22+PSI0(2,IN)*Y(NODE(IN,IE))
+         94     2   p    v                    J32=J32+PSI0(3,IN)*Y(NODE(IN,IE))
+         95     2   p    v                    J13=J13+PSI0(1,IN)*Z(NODE(IN,IE))
+         96     2   p    v                    J23=J23+PSI0(2,IN)*Z(NODE(IN,IE))
+         97     2   p    v                    J33=J33+PSI0(3,IN)*Z(NODE(IN,IE))
+         98     2   p    v       1010     CONTINUE
+         99     1               C
+        100     1   p                     DETJ =J11*J22*J33-J11*J23*J32
+        101     1                    *         +J12*J23*J31-J12*J21*J33
+        102     1                    *         +J13*J21*J32-J13*J22*J31
+        103     1   p                     INVJ11=(J22*J33-J23*J32)/DETJ
+        104     1   p                     INVJ12=(J13*J32-J12*J33)/DETJ
+        105     1   p                     INVJ13=(J12*J23-J13*J22)/DETJ
+        106     1   p                     INVJ21=(J23*J31-J21*J33)/DETJ
+        107     1   p                     INVJ22=(J11*J33-J13*J31)/DETJ
+        108     1   p                     INVJ23=(J13*J21-J11*J23)/DETJ
+        109     1   p                     INVJ31=(J21*J32-J22*J31)/DETJ
+        110     1   p                     INVJ32=(J12*J31-J11*J32)/DETJ
+        111     1   p                     INVJ33=(J11*J22-J12*J21)/DETJ
+        112     1               C
+        113     1               ***** ADDTO *****
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.50, ITR: 56, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      PSI0, SNWRK0, DNZI, DNYI, DNXI, SNI
+                              <<<      (unknown)
+                              <<< Loop-information  End >>>
+        114     2   p    v                DO 1020 IN=1,N
+        115     2   p    v                    SNI( IN,IE) = REAL(SNWRK0(IN))
+        116     2   p    v                    DNXI(IN,IE) = REAL( INVJ11*PSI0(1,IN)
+        117     2                    *                           +INVJ12*PSI0(2,IN)
+        118     2                    *                           +INVJ13*PSI0(3,IN))
+        119     2   p    v                    DNYI(IN,IE) = REAL( INVJ21*PSI0(1,IN)
+        120     2                    *                           +INVJ22*PSI0(2,IN)
+        121     2                    *                           +INVJ23*PSI0(3,IN))
+        122     2   p    v                    DNZI(IN,IE) = REAL( INVJ31*PSI0(1,IN)
+        123     2                    *                           +INVJ32*PSI0(2,IN)
+        124     2                    *                           +INVJ33*PSI0(3,IN))
+        125     2   p    v       1020     CONTINUE
+        126     1               C
+        127     1   p            1000 CONTINUE
+        128                     C
+        129                           ALLOCATE(E(N,N))
+        130                           ALLOCATE(EX(N,N))
+        131                           ALLOCATE(EY(N,N))
+        132                           ALLOCATE(EZ(N,N))
+        133                     C
+        134                     !$omp parallel
+        135                     !$omp+default(none)
+        136                     !$omp+private(J11,J12,J13)           ! subroutine local variables
+        137                     !$omp+private(J21,J22,J23)
+        138                     !$omp+private(J31,J32,J33)
+        139                     !$omp+private(DETJ)
+        140                     !$omp+private(VOL)
+        141                     !$omp+private(INVJ11,INVJ12,INVJ13)
+        142                     !$omp+private(INVJ21,INVJ22,INVJ23)
+        143                     !$omp+private(INVJ31,INVJ32,INVJ33)
+        144                     !$omp+private(PHIA1,PHIA2,PHIA3)
+        145                     !$omp+private(PHIB1,PHIB2,PHIB3)
+        146                     !$omp+private(IPE0)
+        147                     !$omp+private(E,EX,EY,EZ)            ! element local arrays
+        148                     !$omp+shared(N,NGAUSS,NE)            ! argument values just only referred
+        149                     !$omp+shared(JENP,IENP,NEP,NODE)     ! argument arrays just only referred
+        150                     !$omp+shared(SNWRK,PSI, W)
+        151                     !$omp+shared(EAP1,EAP2,SN)           ! result arrays
+        152                     !$omp+shared(DNX,DNY,DNZ)
+        153                     !$omp+shared(DELTA)
+        154                     !$omp+shared(IE0)
+        155                     !$omp do
+        156     1   p                 DO 2000 IE=1,NE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        157     1   p   4v                E=0.0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.62, ITR: 192, MVE: 2)
+                              <<< Loop-information  End >>>
+        158     1   p   4v                EX=0.0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.62, ITR: 192, MVE: 2)
+                              <<< Loop-information  End >>>
+        159     1   p   4v                EY=0.0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.62, ITR: 192, MVE: 2)
+                              <<< Loop-information  End >>>
+        160     1   p   4v                EZ=0.0
+        161     1               C
+        162     1               ************************
+        163     1               ***** POINT LOOP *******
+        164     1               ************************
+        165     1               !ocl nosimd
+        166     1               !ocl noswp
+        167     2   p                     DO 2100 IP=1,NGAUSS
+        168     2               C
+        169     2   p                         J11=0.0D0
+        170     2   p                         J12=0.0D0
+        171     2   p                         J13=0.0D0
+        172     2   p                         J21=0.0D0
+        173     2   p                         J22=0.0D0
+        174     2   p                         J23=0.0D0
+        175     2   p                         J31=0.0D0
+        176     2   p                         J32=0.0D0
+        177     2   p                         J33=0.0D0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE, PSI, (unknown)
+                              <<< Loop-information  End >>>
+        178     3   p                         DO 2110 IN=1,N
+        179     3   p                             J11=J11+PSI(1,IN,IP)*X(NODE(IN,IE))
+        180     3   p                             J21=J21+PSI(2,IN,IP)*X(NODE(IN,IE))
+        181     3   p                             J31=J31+PSI(3,IN,IP)*X(NODE(IN,IE))
+        182     3   p                             J12=J12+PSI(1,IN,IP)*Y(NODE(IN,IE))
+        183     3   p                             J22=J22+PSI(2,IN,IP)*Y(NODE(IN,IE))
+        184     3   p                             J32=J32+PSI(3,IN,IP)*Y(NODE(IN,IE))
+        185     3   p                             J13=J13+PSI(1,IN,IP)*Z(NODE(IN,IE))
+        186     3   p                             J23=J23+PSI(2,IN,IP)*Z(NODE(IN,IE))
+        187     3   p                             J33=J33+PSI(3,IN,IP)*Z(NODE(IN,IE))
+        188     3   p            2110         CONTINUE
+        189     2               C
+        190     2   p                         DETJ= J11*J22*J33-J11*J23*J32
+        191     2                    *             +J12*J23*J31-J12*J21*J33
+        192     2                    *             +J13*J21*J32-J13*J22*J31
+        193     2   p                         INVJ11=(J22*J33-J23*J32)/DETJ
+        194     2   p                         INVJ12=(J13*J32-J12*J33)/DETJ
+        195     2   p                         INVJ13=(J12*J23-J13*J22)/DETJ
+        196     2   p                         INVJ21=(J23*J31-J21*J33)/DETJ
+        197     2   p                         INVJ22=(J11*J33-J13*J31)/DETJ
+        198     2   p                         INVJ23=(J13*J21-J11*J23)/DETJ
+        199     2   p                         INVJ31=(J21*J32-J22*J31)/DETJ
+        200     2   p                         INVJ32=(J12*J31-J11*J32)/DETJ
+        201     2   p                         INVJ33=(J11*J22-J12*J21)/DETJ
+        202     2   p                         VOL =W(IP)*DETJ
+        203     2               C
+        204     2   p                         DELTA(IE) = DELTA(IE) +REAL(VOL)
+        205     3   p                         DO 2120 IN=1,N
+        206     3   p                             PHIA1= INVJ11*PSI(1,IN,IP)
+        207     3                    *                  +INVJ12*PSI(2,IN,IP)
+        208     3                    *                  +INVJ13*PSI(3,IN,IP)
+        209     3   p                             PHIA2= INVJ21*PSI(1,IN,IP)
+        210     3                    *                  +INVJ22*PSI(2,IN,IP)
+        211     3                    *                  +INVJ23*PSI(3,IN,IP)
+        212     3   p                             PHIA3= INVJ31*PSI(1,IN,IP)
+        213     3                    *                  +INVJ32*PSI(2,IN,IP)
+        214     3                    *                  +INVJ33*PSI(3,IN,IP)
+        215     3   p                             SN( IN,IE) = SN( IN,IE)+REAL(VOL*SNWRK(IN,IP))
+        216     3   p                             DNX(IN,IE) = DNX(IN,IE)+REAL(VOL*PHIA1)
+        217     3   p                             DNY(IN,IE) = DNY(IN,IE)+REAL(VOL*PHIA2)
+        218     3   p                             DNZ(IN,IE) = DNZ(IN,IE)+REAL(VOL*PHIA3)
+        219     3               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      PSI, SNWRK, (unknown)
+                              <<< Loop-information  End >>>
+        220     4   p                             DO 2121 JN=1,N
+        221     4   p                                 PHIB1= INVJ11*PSI(1,JN,IP)
+        222     4                    *                      +INVJ12*PSI(2,JN,IP)
+        223     4                    *                      +INVJ13*PSI(3,JN,IP)
+        224     4   p                                 PHIB2= INVJ21*PSI(1,JN,IP)
+        225     4                    *                      +INVJ22*PSI(2,JN,IP)
+        226     4                    *                      +INVJ23*PSI(3,JN,IP)
+        227     4   p                                 PHIB3= INVJ31*PSI(1,JN,IP)
+        228     4                    *                      +INVJ32*PSI(2,JN,IP)
+        229     4                    *                      +INVJ33*PSI(3,JN,IP)
+        230     4   p                                 E  (IN,JN)=E  (IN,JN)
+        231     4                    *                          +REAL(VOL*SNWRK(IN,IP)*SNWRK(JN,IP))
+        232     4   p                                 EX (IN,JN)=EX (IN,JN)
+        233     4                    *                          +REAL(VOL*SNWRK(IN,IP)*PHIB1)
+        234     4   p                                 EY (IN,JN)=EY (IN,JN)
+        235     4                    *                          +REAL(VOL*SNWRK(IN,IP)*PHIB2)
+        236     4   p                                 EZ (IN,JN)=EZ (IN,JN)
+        237     4                    *                          +REAL(VOL*SNWRK(IN,IP)*PHIB3)
+        238     4   p            2121             CONTINUE
+        239     3   p            2120         CONTINUE
+        240     2   p            2100     CONTINUE
+        241     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      EAP2, EAP1, (unknown)
+                              <<< Loop-information  End >>>
+        242     2   p                     DO I=1,8
+        243     2   p                       IP = NODE(I,IE)
+        244     2   p                       IF(IP.LE.0) CYCLE
+        245     2   p                       IPE0 = 0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IENP, (unknown)
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 1
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        246     3   p                       DO IPE=1,NEP(IP)
+        247     4   p                         IF(IENP(IPE,IP).EQ.IE+IE0-1) THEN
+        248     4   p                           IPE0=IPE
+        249     4   p                           EXIT
+        250     4   p                         END IF
+        251     3   p                       END DO
+        252     2   p                       IN=JENP(IPE0,IP)
+        253     2               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.13, ITR: 48, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      EAP2, EAP1, (unknown)
+                              <<< Loop-information  End >>>
+        254     3   p    v                  DO JN=1,N
+        255     3   p    v                    EAP1(JN,IPE0,IP)   = E (IN,JN)
+        256     3   p    v                    EAP2(1,JN,IPE0,IP) = EX(IN,JN)
+        257     3   p    v                    EAP2(2,JN,IPE0,IP) = EY(IN,JN)
+        258     3   p    v                    EAP2(3,JN,IPE0,IP) = EZ(IN,JN)
+        259     3   p    v                  END DO
+        260     2   p                     END DO
+        261     1               C
+        262     1   p            2000 CONTINUE
+        263                     !$OMP END DO
+        264                     !$OMP END PARALLEL
+        265                     C
+        266                           DEALLOCATE(E)
+        267                           DEALLOCATE(EX)
+        268                           DEALLOCATE(EY)
+        269                           DEALLOCATE(EZ)
+        270                     C
+        271                           ALLOCATE(EXX(N,N))
+        272                           ALLOCATE(EYY(N,N))
+        273                           ALLOCATE(EZZ(N,N))
+        274                           ALLOCATE(EXY(N,N))
+        275                           ALLOCATE(EYZ(N,N))
+        276                           ALLOCATE(EXZ(N,N))
+        277                     C
+        278                     !$omp parallel
+        279                     !$omp+default(none)
+        280                     !$omp+private(J11,J12,J13)              ! subroutine local variables
+        281                     !$omp+private(J21,J22,J23)
+        282                     !$omp+private(J31,J32,J33)
+        283                     !$omp+private(DETJ)
+        284                     !$omp+private(VOL)
+        285                     !$omp+private(INVJ11,INVJ12,INVJ13)
+        286                     !$omp+private(INVJ21,INVJ22,INVJ23)
+        287                     !$omp+private(INVJ31,INVJ32,INVJ33)
+        288                     !$omp+private(PHIA1,PHIA2,PHIA3)
+        289                     !$omp+private(PHIB1,PHIB2,PHIB3)
+        290                     !$omp+private(IPE0)
+        291                     !$omp+private(EXX,EYY,EZZ,EXY,EYZ,EXZ)  ! element local arrays
+        292                     !$omp+shared(N,NGAUSS,NE)               ! argument values just only referred
+        293                     !$omp+shared(JENP,IENP,NEP,NODE)        ! argument arrays just only referred
+        294                     !$omp+shared(PSI, W)
+        295                     !$omp+shared(EAP3,EBP)                  ! result arrays
+        296                     !$omp+shared(IE0)
+        297                     !$omp do
+        298     1   p                 DO 3000 IE=1,NE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        299     1   p   4v                EXX=0.0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.62, ITR: 192, MVE: 2)
+                              <<< Loop-information  End >>>
+        300     1   p   4v                EYY=0.0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.62, ITR: 192, MVE: 2)
+                              <<< Loop-information  End >>>
+        301     1   p   4v                EZZ=0.0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.62, ITR: 192, MVE: 2)
+                              <<< Loop-information  End >>>
+        302     1   p   4v                EXY=0.0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.62, ITR: 192, MVE: 2)
+                              <<< Loop-information  End >>>
+        303     1   p   4v                EYZ=0.0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.62, ITR: 192, MVE: 2)
+                              <<< Loop-information  End >>>
+        304     1   p   4v                EXZ=0.0
+        305     1               C
+        306     1               ************************
+        307     1               ***** POINT LOOP *******
+        308     1               ************************
+        309     1               !ocl nosimd
+        310     1               !ocl noswp
+        311     2   p                     DO 3100 IP=1,NGAUSS
+        312     2               C
+        313     2   p                         J11=0.0D0
+        314     2   p                         J12=0.0D0
+        315     2   p                         J13=0.0D0
+        316     2   p                         J21=0.0D0
+        317     2   p                         J22=0.0D0
+        318     2   p                         J23=0.0D0
+        319     2   p                         J31=0.0D0
+        320     2   p                         J32=0.0D0
+        321     2   p                         J33=0.0D0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE, PSI, (unknown)
+                              <<< Loop-information  End >>>
+        322     3   p                         DO 3110 IN=1,N
+        323     3   p                             J11=J11+PSI(1,IN,IP)*X(NODE(IN,IE))
+        324     3   p                             J21=J21+PSI(2,IN,IP)*X(NODE(IN,IE))
+        325     3   p                             J31=J31+PSI(3,IN,IP)*X(NODE(IN,IE))
+        326     3   p                             J12=J12+PSI(1,IN,IP)*Y(NODE(IN,IE))
+        327     3   p                             J22=J22+PSI(2,IN,IP)*Y(NODE(IN,IE))
+        328     3   p                             J32=J32+PSI(3,IN,IP)*Y(NODE(IN,IE))
+        329     3   p                             J13=J13+PSI(1,IN,IP)*Z(NODE(IN,IE))
+        330     3   p                             J23=J23+PSI(2,IN,IP)*Z(NODE(IN,IE))
+        331     3   p                             J33=J33+PSI(3,IN,IP)*Z(NODE(IN,IE))
+        332     3   p            3110         CONTINUE
+        333     2               C
+        334     2   p                         DETJ= J11*J22*J33-J11*J23*J32
+        335     2                    *             +J12*J23*J31-J12*J21*J33
+        336     2                    *             +J13*J21*J32-J13*J22*J31
+        337     2   p                         INVJ11=(J22*J33-J23*J32)/DETJ
+        338     2   p                         INVJ12=(J13*J32-J12*J33)/DETJ
+        339     2   p                         INVJ13=(J12*J23-J13*J22)/DETJ
+        340     2   p                         INVJ21=(J23*J31-J21*J33)/DETJ
+        341     2   p                         INVJ22=(J11*J33-J13*J31)/DETJ
+        342     2   p                         INVJ23=(J13*J21-J11*J23)/DETJ
+        343     2   p                         INVJ31=(J21*J32-J22*J31)/DETJ
+        344     2   p                         INVJ32=(J12*J31-J11*J32)/DETJ
+        345     2   p                         INVJ33=(J11*J22-J12*J21)/DETJ
+        346     2   p                         VOL =W(IP)*DETJ
+        347     2               C
+        348     3   p                         DO 3120 IN=1,N
+        349     3   p                             PHIA1= REAL( INVJ11*PSI(1,IN,IP)
+        350     3                    *                        +INVJ12*PSI(2,IN,IP)
+        351     3                    *                        +INVJ13*PSI(3,IN,IP))
+        352     3   p                             PHIA2= REAL( INVJ21*PSI(1,IN,IP)
+        353     3                    *                        +INVJ22*PSI(2,IN,IP)
+        354     3                    *                        +INVJ23*PSI(3,IN,IP))
+        355     3   p                             PHIA3= REAL( INVJ31*PSI(1,IN,IP)
+        356     3                    *                        +INVJ32*PSI(2,IN,IP)
+        357     3                    *                        +INVJ33*PSI(3,IN,IP))
+        358     3               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      PSI, (unknown)
+                              <<< Loop-information  End >>>
+        359     4   p                             DO 3121 JN=1,N
+        360     4   p                                 PHIB1=REAL( INVJ11*PSI(1,JN,IP)
+        361     4                    *                           +INVJ12*PSI(2,JN,IP)
+        362     4                    *                           +INVJ13*PSI(3,JN,IP))
+        363     4   p                                 PHIB2=REAL( INVJ21*PSI(1,JN,IP)
+        364     4                    *                           +INVJ22*PSI(2,JN,IP)
+        365     4                    *                           +INVJ23*PSI(3,JN,IP))
+        366     4   p                                 PHIB3=REAL( INVJ31*PSI(1,JN,IP)
+        367     4                    *                           +INVJ32*PSI(2,JN,IP)
+        368     4                    *                           +INVJ33*PSI(3,JN,IP))
+        369     4   p                                 EXX(IN,JN)=EXX(IN,JN)+REAL(VOL*PHIA1*PHIB1)
+        370     4   p                                 EYY(IN,JN)=EYY(IN,JN)+REAL(VOL*PHIA2*PHIB2)
+        371     4   p                                 EZZ(IN,JN)=EZZ(IN,JN)+REAL(VOL*PHIA3*PHIB3)
+        372     4   p                                 EXY(IN,JN)=EXY(IN,JN)+REAL(VOL*PHIA1*PHIB2)
+        373     4   p                                 EYZ(IN,JN)=EYZ(IN,JN)+REAL(VOL*PHIA2*PHIB3)
+        374     4   p                                 EXZ(IN,JN)=EXZ(IN,JN)+REAL(VOL*PHIA1*PHIB3)
+        375     4   p            3121             CONTINUE
+        376     3   p            3120         CONTINUE
+        377     2   p            3100     CONTINUE
+        378     1               C
+        379     2   p                     DO I=1,8
+        380     2   p                       IP = NODE(I,IE)
+        381     2   p                       IF(IP.LE.0) CYCLE
+        382     2   p                       IPE0 = 0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IENP, (unknown)
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 1
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        383     3   p                       DO IPE=1,NEP(IP)
+        384     4   p                         IF(IENP(IPE,IP).EQ.IE+IE0-1) THEN
+        385     4   p                           IPE0=IPE
+        386     4   p                           EXIT
+        387     4   p                         END IF
+        388     3   p                       END DO
+        389     2   p                       IN=JENP(IPE0,IP)
+        390     2               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      EBP, EAP3, (unknown)
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 2
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        391     3   p    v                  DO JN=1,N
+        392     3   p    v                    EAP3(1,JN,IPE0,IP) = EXX(IN,JN)
+        393     3   p    v                    EAP3(2,JN,IPE0,IP) = EYY(IN,JN)
+        394     3   p    v                    EAP3(3,JN,IPE0,IP) = EZZ(IN,JN)
+        395     3   p    v                    EAP3(4,JN,IPE0,IP) = EXY(IN,JN)
+        396     3   p    v                    EAP3(5,JN,IPE0,IP) = EYZ(IN,JN)
+        397     3   p    v                    EAP3(6,JN,IPE0,IP) = EXZ(IN,JN)
+        398     3   p    v                    EBP (1,JN,IPE0,IP) = EXY(JN,IN)
+        399     3   p    v                    EBP (2,JN,IPE0,IP) = EYZ(JN,IN)
+        400     3   p    v                    EBP (3,JN,IPE0,IP) = EXZ(JN,IN)
+        401     3   p    v                  END DO
+        402     2   p                     END DO
+        403     1               C
+        404     1   p            3000 CONTINUE
+        405                     !$OMP END DO
+        406                     !$OMP END PARALLEL
+        407                     C
+        408                           DEALLOCATE(EXX)
+        409                           DEALLOCATE(EYY)
+        410                           DEALLOCATE(EZZ)
+        411                           DEALLOCATE(EXY)
+        412                           DEALLOCATE(EYZ)
+        413                           DEALLOCATE(EXZ)
+        414                     C
+        415                           RETURN
+        416                           END
+
+ Diagnostic messages: program name(INT3DX)
+   jwd2008i-i  "int3dx.f", line 1: この仮引数'IERR'は、副プログラム中で使用されていません。
+   jwd2008i-i  "int3dx.f", line 1: この仮引数'IUT0'は、副プログラム中で使用されていません。
+   jwd2008i-i  "int3dx.f", line 1: この仮引数'NSKIP'は、副プログラム中で使用されていません。
+   jwd8220o-i  "int3dx.f", line 1: 副作用の可能性のある最適化を行いました。
+   jwd5001p-i  "int3dx.f", line 75: このDOループを並列化しました。(名前:IE)
+   jwd6004s-i  "int3dx.f", line 88: リダクション演算を含むDOループをSIMD化しました。(名前:IN)
+   jwd8204o-i  "int3dx.f", line 88: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "int3dx.f", line 88: ループの繰返し数が32回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "int3dx.f", line 100: 多項式の演算順序を変更しました。
+   jwd8206o-i  "int3dx.f", line 103: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "int3dx.f", line 104: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "int3dx.f", line 105: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "int3dx.f", line 106: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "int3dx.f", line 107: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "int3dx.f", line 108: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "int3dx.f", line 109: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "int3dx.f", line 110: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "int3dx.f", line 111: 除算を逆数の乗算に変更しました。
+   jwd6001s-i  "int3dx.f", line 114: このDOループをSIMD化しました。(名前:IN)
+   jwd8204o-i  "int3dx.f", line 114: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "int3dx.f", line 114: ループの繰返し数が56回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "int3dx.f", line 116: 多項式の演算順序を変更しました。
+   jwd8209o-i  "int3dx.f", line 119: 多項式の演算順序を変更しました。
+   jwd8209o-i  "int3dx.f", line 122: 多項式の演算順序を変更しました。
+   jwd6003s-i  "int3dx.f", line 157: この配列記述をSIMD化しました。
+   jwd8663o-i  "int3dx.f", line 157: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "int3dx.f", line 157: ループを展開数4回でアンローリングしました。
+   jwd6003s-i  "int3dx.f", line 158: この配列記述をSIMD化しました。
+   jwd8204o-i  "int3dx.f", line 158: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "int3dx.f", line 158: ループの繰返し数が192回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd6003s-i  "int3dx.f", line 159: この配列記述をSIMD化しました。
+   jwd8204o-i  "int3dx.f", line 159: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "int3dx.f", line 159: ループの繰返し数が192回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd6003s-i  "int3dx.f", line 160: この配列記述をSIMD化しました。
+   jwd8204o-i  "int3dx.f", line 160: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "int3dx.f", line 160: ループの繰返し数が192回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "int3dx.f", line 190: 多項式の演算順序を変更しました。
+   jwd8206o-i  "int3dx.f", line 193: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "int3dx.f", line 194: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "int3dx.f", line 195: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "int3dx.f", line 196: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "int3dx.f", line 197: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "int3dx.f", line 198: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "int3dx.f", line 199: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "int3dx.f", line 200: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "int3dx.f", line 201: 除算を逆数の乗算に変更しました。
+   jwd6131s-i  "int3dx.f", line 246: ループ出口が2つ以上あるため、このDOループはSIMD化できません。
+   jwd8671o-i  "int3dx.f", line 246: ループの形状が最適化の対象外であるため、ソフトウェアパイプライニングを適用できません。
+   jwd6002s-i  "int3dx.f", line 254: このDOループをSIMD化しました。
+   jwd8204o-i  "int3dx.f", line 254: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "int3dx.f", line 254: ループの繰返し数が48回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "int3dx.f", line 255: 多項式の演算順序を変更しました。
+   jwd8209o-i  "int3dx.f", line 256: 多項式の演算順序を変更しました。
+   jwd6003s-i  "int3dx.f", line 299: この配列記述をSIMD化しました。
+   jwd8663o-i  "int3dx.f", line 299: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "int3dx.f", line 299: ループを展開数4回でアンローリングしました。
+   jwd6003s-i  "int3dx.f", line 300: この配列記述をSIMD化しました。
+   jwd8204o-i  "int3dx.f", line 300: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "int3dx.f", line 300: ループの繰返し数が192回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd6003s-i  "int3dx.f", line 301: この配列記述をSIMD化しました。
+   jwd8204o-i  "int3dx.f", line 301: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "int3dx.f", line 301: ループの繰返し数が192回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd6003s-i  "int3dx.f", line 302: この配列記述をSIMD化しました。
+   jwd8204o-i  "int3dx.f", line 302: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "int3dx.f", line 302: ループの繰返し数が192回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd6003s-i  "int3dx.f", line 303: この配列記述をSIMD化しました。
+   jwd8204o-i  "int3dx.f", line 303: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "int3dx.f", line 303: ループの繰返し数が192回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd6003s-i  "int3dx.f", line 304: この配列記述をSIMD化しました。
+   jwd8204o-i  "int3dx.f", line 304: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "int3dx.f", line 304: ループの繰返し数が192回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "int3dx.f", line 334: 多項式の演算順序を変更しました。
+   jwd8206o-i  "int3dx.f", line 337: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "int3dx.f", line 338: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "int3dx.f", line 339: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "int3dx.f", line 340: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "int3dx.f", line 341: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "int3dx.f", line 342: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "int3dx.f", line 343: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "int3dx.f", line 344: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "int3dx.f", line 345: 除算を逆数の乗算に変更しました。
+   jwd6131s-i  "int3dx.f", line 383: ループ出口が2つ以上あるため、このDOループはSIMD化できません。
+   jwd8671o-i  "int3dx.f", line 383: ループの形状が最適化の対象外であるため、ソフトウェアパイプライニングを適用できません。
+   jwd6002s-i  "int3dx.f", line 391: このDOループをSIMD化しました。
+   jwd8665o-i  "int3dx.f", line 391: 整数レジスタが不足しているため、ソフトウェアパイプライニングを適用できません。
+   jwd8209o-i  "int3dx.f", line 392: 多項式の演算順序を変更しました。
+   jwd8209o-i  "int3dx.f", line 398: 多項式の演算順序を変更しました。
+
+ Procedure information
+   Lines      : 416
+   Statements : 249
+   Stack(byte): 7312
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 416
+   Total statements : 249
+   Total stack(byte): 7312
+   Total prefetch num: 0
+

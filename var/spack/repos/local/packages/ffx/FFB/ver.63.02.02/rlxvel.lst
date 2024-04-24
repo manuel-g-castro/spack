@@ -1,0 +1,440 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:53:32 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : rlxvel.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "RLXVEL"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.8.2                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE : RLXVEL                                                C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C CONTACT ADDRESS : IIS, THE UNIVERSITY OF TOKYO, CISS                 C
+         11                     C                                                                      C
+         12                     C THERMO-FLUID ANALYSIS SOLVERS FOR LARGE-SCALE-ASSEMBLY               C
+         13                     C                                                                      C
+         14                     C  PERFORMANCE OPTIMIZATION                                            C
+         15                     C                                       MODIFIED BY RIST               C
+         16                     C======================================================================C
+         17                           SUBROUTINE RLXVEL(MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,NITR,
+         18                          *                  GAMDYN,FILTER,U,V,W,
+         19                          *                  DNXI,DNYI,DNZI,SN,CM,
+         20                          *                  NODE,ME,MELM,NE,NP,N1,N2,NEX,
+         21                          *                  IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+         22                          *                  UR,VR,WR,FX,FY,FZ,RX,RY,
+         23                          *                  WRK00,WRK01,WRK02,WRK03,
+         24                          *                  IVOF,NEFLD2,LEFLD2,LEFIX,
+         25                          *                  EAP3,IENP,NEP,MEP,MP,
+         26                          *                  IUT0,IERR)
+         27                     C
+         28                           IMPLICIT NONE
+         29                     C
+         30                     C[INPUT]
+         31                           INTEGER*4 MCOLOR,MCPART
+         32                           INTEGER*4 NCOLOR(4),NCPART(MCOLOR,4),LLOOP(MCPART,MCOLOR,4)
+         33                           INTEGER*4 NITR
+         34                     C
+         35                           REAL*4    GAMDYN
+         36                           INTEGER*4 ME,MELM,NE,NP,N1,N2,NEX(8),IUT0,IERR
+         37                           INTEGER*4 NODE(N2,NE)
+         38                     C
+         39                           REAL*4    FILTER(NE),U(NP),V(NP),W(NP),
+         40                          *          DNXI(N1,NE),DNYI(N1,NE),DNZI(N1,NE),
+         41                          *          SN(N1,NE),CM(NP)
+         42                     C
+         43                           INTEGER*4 IPART,NDOM,MBPDOM,
+         44                          *          LDOM(NDOM),NBPDOM(NDOM),
+         45                          *          IPSLF(MBPDOM,NDOM),IPSND(MBPDOM,NDOM)
+         46                     C
+         47                           INTEGER*4 MEP,MP,IPE,K,NN
+         48                           INTEGER*4 IENP(MEP,MP),NEP(MP)
+         49                           REAL*4    EAP3(6,N2,MEP,NP)
+         50                     C
+         51                     C[OUTPUT]
+         52                           REAL*4    UR(NP),VR(NP),WR(NP)
+         53                     C
+         54                     C[WORK]
+         55                           REAL*4    RX(N1,NE),RY(N1,NE),FX(NP),FY(NP),FZ(NP)
+         56                     C
+         57                     C
+         58                     C
+         59                     C     [IN:MID NODE ]
+         60                           INTEGER*4 ITIMEI,ISTEP,JPRESS
+         61                           REAL*4    WRK00(NP),WRK01(NP),WRK02(NP),WRK03(NP)
+         62                     C
+         63                           INTEGER*4 IP,IE,IB,I,J,IELM,ICOLOR,ICPART,IES,IEE,IDUM,IAVDYN,
+         64                          *          IELM1,IELM2,IELM3,IELM4,IELM5,IELM6,IELM7,IELM8,
+         65                          *          MAXBUF,IITR
+         66                           REAL*4    GAM2,DUEIE,DVEIE,DWEIE,FXIE,FYIE,FZIE,UKK,
+         67                          *          AMLE,AMME,SE,SGS,
+         68                          *          D1,RX1,RY1,RZ1
+         69                     C
+         70                     C     [INPUT:VOF]
+         71                           INTEGER*4 IVOF,NEFLD2,LEFLD2(NEFLD2),LEFIX(NE)
+         72                     C
+         73                           CHARACTER*60 ERMSGC
+         74                          & /' ## SUBROUTINE DYNA3D: FATAL      ERROR REPORT   ; RETURNED' /
+         75                     C
+         76                           REAL*4 CLEAR,EPS
+         77                           DATA CLEAR  / 0.15   /
+         78                           DATA EPS    / 1.0E-2 /
+         79                     
+         80                     C      RELAX VELOCITY FIELD BY TEST FILTERING
+         81                     C         ( 3-D CALCULATION : SINGLE WORD VERSION )
+         82                     C
+         83                     C
+         84                     C     ARGUMENT LISTINGS
+         85                     C       (1) INPUT
+         86                     C          GAMDYN      ; RATIO OF WIDTH OF TEST FILTER TO THAT OF GRID
+         87                     C                       FILTER.
+         88                     C          FILTER  (IE); ELEMENT GRID FILTER WIDTH
+         89                     C
+         90                     C          U       (IP); X-DIR. VELOCITY COMPONENT
+         91                     C          V       (IP); Y-DIR. VELOCITY COMPONENT
+         92                     C          W       (IP); Z-DIR. VELOCITY COMPONENT
+         93                     C
+         94                     C          DNXI  (I,IE); ELEMENT CENTER VALUE OF NX
+         95                     C          DNYI  (I,IE); ELEMENT CENTER VALUE OF NY
+         96                     C          DNZI  (I,IE); ELEMENT CENTER VALUE OF NZ
+         97                     C          SN    (I,IE); INTEGRATED ELEMENT VECTOR OF N
+         98                     C          CM      (IP); LUMPED MASS MATRIX
+         99                     C
+        100                     C          NODE  (I,IE); NODE NO. TABLE BASED ON ELEMENT
+        101                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+        102                     C          NP          ; NUMBER OF TOTAL    NODES
+        103                     C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT ( = 8 )
+        104                     C
+        105                     C          IPART       ; SUB-DOMAIN NUMBER THAT THIS TASK SHOULD TAKE/IS
+        106                     C                       TAKING CARE OF. IPART BEING SET ZERO MEANS THAT
+        107                     C                       THE PROGRAM SHOULD RUN/IS RUNNING IN SERIAL
+        108                     C                       MODE.
+        109                     C
+        110                     C          LDOM  (IDOM); NEIBERING SUB-DOMAIN NUMBER
+        111                     C          NBPDOM(IDOM); NUMBER OF INTER-CONNECT BOUNDARY NODES
+        112                     C                       SHARING WITH THE IDOM'TH NEIBERING SUB-DOMAIN,
+        113                     C                       LDOM(IDOM)
+        114                     C          NDOM        ; NUMBER OF THE NERIBERING SUB-DOMAINS
+        115                     C          IPSLF (IBP,IDOM); INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+        116                     C                           CALLING TASK'S SUB-DOMAIN, FOR THE IDOM'TH
+        117                     C                           NEIBERING SUB-DOMAIN, LDOM(IDOM)
+        118                     C          IPSND (IBP,IDOM); INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+        119                     C                           SUB-DOMAIN THAT IS RECEIVING THE CALLING
+        120                     C                           TASK'S RESIDUALS.
+        121                     C          MBPDOM      ; THE MAXIMUM NUMBER OF THE INTER-CONNECT
+        122                     C                       BOUNDARY NODES FOR ONE NEIBERING SUB-DOMAIN
+        123                     C
+        124                     C          IUT0        ; FILE NUMBER TO REPORT ERROR OCCURENCE
+        125                     C
+        126                     C       (2) OUTPUT
+        127                     C          UR      (IP); FILTERED X-DIR. VELOCITY COMPONENT
+        128                     C          VR      (IP); FILTERED Y-DIR. VELOCITY COMPONENT
+        129                     C          WR      (IP); FILTERED Z-DIR. VELOCITY COMPONENT
+        130                     C          IERR        ; RETURN CODE TO REPORT ERROR OCCURENCE
+        131                     C                   0 --- NORMAL TERMINATION
+        132                     C                   1 --- A FATAL ERROR HAS OCCURED
+        133                     C
+        134                     C       (3) WORK
+        135                     C          RX    (I,IE); HOLDS X-DIR. ELEMENT RESIDUAL
+        136                     C          RY    (I,IE); HOLDS Y-DIR. ELEMENT RESIDUAL
+        137                     C          RZ    (I,IE); HOLDS Z-DIR. ELEMENT RESIDUAL
+        138                     C          FX      (IP); HOLDS X-DIR. NODE    RESIDUAL
+        139                     C          FY      (IP); HOLDS Y-DIR. NODE    RESIDUAL
+        140                     C          FZ      (IP); HOLDS Z-DIR. NODE    RESIDUAL
+        141                     C
+        142                     C
+        143                     C >>>> ADDED VARIABLES BY RIST FOR PERFORMANCE OPTIMIZATION <<<<
+        144                     C       INPUT
+        145                     C
+        146                     C
+        147                           GAM2   = GAMDYN*GAMDYN
+        148                     C
+        149                           MAXBUF = NE*N2
+        150                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LEFIX
+                              <<< Loop-information  End >>>
+        151     1  pp   4v            DO 1000 IE=1,NE
+        152     1   p   4v               LEFIX(IE)=0
+        153     1   p   4v       1000 CONTINUE
+        154                     C
+        155     1                     IF (IVOF.EQ.1) THEN
+        156     1               !ocl norecurrence(LEFIX)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1143
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.83, ITR: 320, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LEFLD2
+                              <<< Loop-information  End >>>
+        157     2  pp   4v               DO 1100 IB=1,NEFLD2
+        158     2   p   4v                  LEFIX(LEFLD2(IB))=1
+        159     2   p   4v       1100    CONTINUE
+        160     1                     ENDIF
+        161                     C
+        162                     C
+        163                     C TEST-FILTER VELOCITY VECTOR
+        164                     C
+        165                     C
+        166                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 696
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.22, ITR: 128, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      VR, W, U, V, UR, WR
+                              <<< Loop-information  End >>>
+        167     1  pp   2v            DO 1200 IP = 1 , NP
+        168     1   p   2v                UR(IP) = U(IP)
+        169     1   p   2v                VR(IP) = V(IP)
+        170     1   p   2v                WR(IP) = W(IP)
+        171     1   p   2v       1200 CONTINUE
+        172                     C
+        173                           IF(NITR.EQ.0) RETURN
+        174                     C
+        175                           IITR=0
+        176                      2000 CONTINUE
+        177                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1143
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FZ, FY, FX
+                              <<< Loop-information  End >>>
+        178     1  pp   2v            DO 2010 IP = 1 , NP
+        179     1   p   2v                FX(IP) = 0.E0
+        180     1   p   2v                FY(IP) = 0.E0
+        181     1   p   2v                FZ(IP) = 0.E0
+        182     1   p   2v       2010 CONTINUE
+        183                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<< Loop-information  End >>>
+        184     1  pp                 DO 2330 IP=1,NP
+        185     1   p                     FXIE = UR(IP)
+        186     1   p                     FYIE = VR(IP)
+        187     1   p                     FZIE = WR(IP)
+        188     1   p                     RX1 = 0.E0
+        189     1   p                     RY1 = 0.E0
+        190     1   p                     RZ1 = 0.E0
+        191     1               
+        192     2   p                     DO 2320 IPE=1,NEP(IP)
+        193     2   p                         IE =IENP(IPE,IP)
+        194     2   p                         IF (LEFIX(IE).EQ.1) GOTO 2320
+        195     2   p                         NN = NEX(8)
+        196     2               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      EAP3
+                              <<< Loop-information  End >>>
+        197     3   p   5v                    DO 2310 K=1,NN
+        198     3   p   5v                        D1=FILTER(IE)**2*(EAP3(1,K,IPE,IP)
+        199     3                    *                             +EAP3(2,K,IPE,IP)
+        200     3                    *                             +EAP3(3,K,IPE,IP))
+        201     3   p   5v                        RX1=RX1-D1*FXIE
+        202     3   p   5v                        RY1=RY1-D1*FYIE
+        203     3   p   5v                        RZ1=RZ1-D1*FZIE
+        204     3   p   5v       2310         CONTINUE
+        205     2               C
+        206     2   p            2320     CONTINUE
+        207     1               C
+        208     1   p                     FX(IP) = RX1
+        209     1   p                     FY(IP) = RY1
+        210     1   p                     FZ(IP) = RZ1
+        211     1   p            2330 CONTINUE
+        212                     C
+        213                     C
+        214                           IDUM = 3
+        215                           CALL DDCOMX(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        216                          *           FX,FY,FZ,NP,IUT0,IERR,RX,RY,MAXBUF)
+        217     1                     IF(IERR.NE.0) THEN
+        218     1                         WRITE(IUT0,*)
+        219     1                         WRITE(IUT0,*) ERMSGC
+        220     1                         RETURN
+        221     1                     ENDIF
+        222                     C
+        223                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 364
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.42, ITR: 160, MVE: 5)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      CM, FX, WR, UR, VR, FY, FZ
+                              <<< Loop-information  End >>>
+        224     1  pp    v            DO 2600 IP = 1 , NP
+        225     1   p    v                UR(IP) = UR(IP)+GAM2/24.E0*CM(IP)*FX(IP)
+        226     1   p    v                VR(IP) = VR(IP)+GAM2/24.E0*CM(IP)*FY(IP)
+        227     1   p    v                WR(IP) = WR(IP)+GAM2/24.E0*CM(IP)*FZ(IP)
+        228     1   p    v       2600 CONTINUE
+        229                     C
+        230                           IITR=IITR+1
+        231                           IF(IITR.LT.NITR) GOTO 2000
+        232                     C
+        233                           RETURN
+        234                           END
+
+ Diagnostic messages: program name(RLXVEL)
+   jwd2008i-i  "rlxvel.f", line 17: この仮引数'MELM'は、副プログラム中で使用されていません。
+   jwd2008i-i  "rlxvel.f", line 17: この仮引数'ME'は、副プログラム中で使用されていません。
+   jwd8220o-i  "rlxvel.f", line 17: 副作用の可能性のある最適化を行いました。
+   jwd2008i-i  "rlxvel.f", line 32: この仮引数'LLOOP'は、副プログラム中で使用されていません。
+   jwd2008i-i  "rlxvel.f", line 32: この仮引数'NCPART'は、副プログラム中で使用されていません。
+   jwd2008i-i  "rlxvel.f", line 32: この仮引数'NCOLOR'は、副プログラム中で使用されていません。
+   jwd2008i-i  "rlxvel.f", line 37: この仮引数'NODE'は、副プログラム中で使用されていません。
+   jwd2008i-i  "rlxvel.f", line 39: この仮引数'SN'は、副プログラム中で使用されていません。
+   jwd2008i-i  "rlxvel.f", line 39: この仮引数'DNZI'は、副プログラム中で使用されていません。
+   jwd2008i-i  "rlxvel.f", line 39: この仮引数'DNYI'は、副プログラム中で使用されていません。
+   jwd2008i-i  "rlxvel.f", line 39: この仮引数'DNXI'は、副プログラム中で使用されていません。
+   jwd2006i-i  "rlxvel.f", line 60: この名前'JPRESS'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "rlxvel.f", line 60: この名前'ISTEP'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "rlxvel.f", line 60: この名前'ITIMEI'は、宣言だけされていて引用されていません。
+   jwd2008i-i  "rlxvel.f", line 61: この仮引数'WRK03'は、副プログラム中で使用されていません。
+   jwd2008i-i  "rlxvel.f", line 61: この仮引数'WRK02'は、副プログラム中で使用されていません。
+   jwd2008i-i  "rlxvel.f", line 61: この仮引数'WRK01'は、副プログラム中で使用されていません。
+   jwd2008i-i  "rlxvel.f", line 61: この仮引数'WRK00'は、副プログラム中で使用されていません。
+   jwd2006i-i  "rlxvel.f", line 63: この名前'IELM8'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "rlxvel.f", line 63: この名前'IELM7'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "rlxvel.f", line 63: この名前'IELM6'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "rlxvel.f", line 63: この名前'IELM5'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "rlxvel.f", line 63: この名前'IELM4'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "rlxvel.f", line 63: この名前'IELM3'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "rlxvel.f", line 63: この名前'IELM2'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "rlxvel.f", line 63: この名前'IELM1'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "rlxvel.f", line 63: この名前'IAVDYN'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "rlxvel.f", line 63: この名前'IEE'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "rlxvel.f", line 63: この名前'IES'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "rlxvel.f", line 63: この名前'ICPART'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "rlxvel.f", line 63: この名前'ICOLOR'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "rlxvel.f", line 63: この名前'IELM'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "rlxvel.f", line 63: この名前'J'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "rlxvel.f", line 63: この名前'I'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "rlxvel.f", line 66: この名前'SGS'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "rlxvel.f", line 66: この名前'SE'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "rlxvel.f", line 66: この名前'AMME'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "rlxvel.f", line 66: この名前'AMLE'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "rlxvel.f", line 66: この名前'UKK'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "rlxvel.f", line 66: この名前'DWEIE'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "rlxvel.f", line 66: この名前'DVEIE'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "rlxvel.f", line 66: この名前'DUEIE'は、宣言だけされていて引用されていません。
+   jwd5001p-i  "rlxvel.f", line 151: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "rlxvel.f", line 151: このDOループをSIMD化しました。(名前:IE)
+   jwd8663o-i  "rlxvel.f", line 151: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "rlxvel.f", line 151: ループを展開数4回でアンローリングしました。
+   jwd5001p-i  "rlxvel.f", line 157: このDOループを並列化しました。(名前:IB)
+   jwd6001s-i  "rlxvel.f", line 157: このDOループをSIMD化しました。(名前:IB)
+   jwd8204o-i  "rlxvel.f", line 157: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "rlxvel.f", line 157: ループの繰返し数が320回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "rlxvel.f", line 167: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "rlxvel.f", line 167: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "rlxvel.f", line 167: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "rlxvel.f", line 167: ループの繰返し数が128回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5132p-i  "rlxvel.f", line 176: DO WHILE文、DO UNTIL文、およびIF/GO TO文によるループは並列化できません。
+   jwd5001p-i  "rlxvel.f", line 178: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "rlxvel.f", line 178: このDOループをSIMD化しました。(名前:IP)
+   jwd8663o-i  "rlxvel.f", line 178: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "rlxvel.f", line 178: ループを展開数2回でアンローリングしました。
+   jwd5001p-i  "rlxvel.f", line 184: このDOループを並列化しました。(名前:IP)
+   jwd6004s-i  "rlxvel.f", line 197: リダクション演算を含むDOループをSIMD化しました。(名前:K)
+   jwd8666o-i  "rlxvel.f", line 197: 浮動小数点レジスタが不足しているため、ソフトウェアパイプライニングを適用できません。
+   jwd8202o-i  "rlxvel.f", line 197: ループを展開数5回でアンローリングしました。
+   jwd8209o-i  "rlxvel.f", line 198: 多項式の演算順序を変更しました。
+   jwd8208o-i  "rlxvel.f", line 201: ループ内の総和または乗積演算の計算方法を変更しました。
+   jwd8208o-i  "rlxvel.f", line 202: ループ内の総和または乗積演算の計算方法を変更しました。
+   jwd5001p-i  "rlxvel.f", line 224: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "rlxvel.f", line 224: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "rlxvel.f", line 224: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "rlxvel.f", line 224: ループの繰返し数が160回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8206o-i  "rlxvel.f", line 225: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "rlxvel.f", line 225: 多項式の演算順序を変更しました。
+   jwd8206o-i  "rlxvel.f", line 226: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "rlxvel.f", line 226: 多項式の演算順序を変更しました。
+   jwd8206o-i  "rlxvel.f", line 227: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "rlxvel.f", line 227: 多項式の演算順序を変更しました。
+
+ Procedure information
+   Lines      : 234
+   Statements : 85
+   Stack(byte): 2608
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 234
+   Total statements : 85
+   Total stack(byte): 2608
+   Total prefetch num: 0
+

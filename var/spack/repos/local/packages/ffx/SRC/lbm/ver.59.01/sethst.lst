@@ -1,0 +1,249 @@
+
+ Fujitsu Fortran Version 4.8.1  Thu Nov 24 16:45:54 2022
+
+ Compilation information
+   Current directory : /vol0005/mdt2/home/u10588/SRC/lbm/ver.59.01
+   Source file       : sethst.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -Nlst=t -Cpp -Cfpp -c -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Knointentopt
+   Cpp options          : -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Dcputime -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=8 -D__FRT_patchlevel__=1 -D__FRT_version__="4.8.1" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Knoarray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nlibomp -Nline -Nlst -Nlst=p -Nlst=t
+                          -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "SETHST"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE SETHST(MSAMPL,MRESV,NSAMPL,LSAMPL,CSAMPL,NG,NC,NP,
+          2                          *                  CVEL,F,TIME,RHOMAX,VELMAX,VSCALE,DSCALE,HIST,
+          3                          *                  FX,FY,FZ)
+          4                           IMPLICIT NONE
+          5                           INTEGER*4 MSAMPL,MRESV,NSAMPL,LSAMPL(5,NSAMPL),NG,NC,NP
+          6                           REAL*8    CSAMPL(3,NSAMPL)
+          7                           REAL*8    CVEL(3,NP),F(0:NG+2,0:NG+2,0:NG+2,NP,NC)
+          8                           REAL*8    TIME,RHOMAX,VELMAX,VSCALE,DSCALE
+          9                           REAL*4    HIST(MSAMPL)
+         10                           REAL*4    FX,FY,FZ,COEFF
+         11                     C
+         12                           INTEGER*4 ISAMPL,IVAR,IC,I,J,K,IP,II,JJ,KK,IG
+         13                           REAL*8    RHO0(8),U0(8),V0(8),W0(8),RHO1,U1,V1,W1,FBUF,BUF
+         14                           REAL*8    COEF(8),DX,DY,DZ,C1X,C2X,C1Y,C2Y,C1Z,C2Z
+         15                     C
+         16                           COEFF = REAL(DSCALE)/(REAL(VSCALE)*REAL(NG))
+         17                           COEFF = COEFF*COEFF
+         18                     C
+         19                           HIST(1)=REAL(TIME)
+         20                           HIST(2)=REAL(RHOMAX)
+         21                           HIST(3)=REAL(VELMAX/VSCALE)
+         22                           HIST(4)=FX*COEFF
+         23                           HIST(5)=FY*COEFF
+         24                           HIST(6)=FZ*COEFF
+         25                           IF(NSAMPL.EQ.0) RETURN
+         26                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      CSAMPL, LSAMPL
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 2
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+         27     1                     DO 1000 ISAMPL=1,NSAMPL
+         28     1                         IVAR=LSAMPL(1,ISAMPL)
+         29     1                         IC  =LSAMPL(2,ISAMPL)
+         30     1                         I   =LSAMPL(3,ISAMPL)
+         31     1                         J   =LSAMPL(4,ISAMPL)
+         32     1                         K   =LSAMPL(5,ISAMPL)
+         33     1               C
+         34     1                         DX=CSAMPL(1,ISAMPL)
+         35     1                         DY=CSAMPL(2,ISAMPL)
+         36     1                         DZ=CSAMPL(3,ISAMPL)
+         37     1                         C1X=(1.0E0-DX)
+         38     1                         C2X=       DX
+         39     1                         C1Y=(1.0E0-DY)
+         40     1                         C2Y=       DY
+         41     1                         C1Z=(1.0E0-DZ)
+         42     1                         C2Z=       DZ
+         43     1                         COEF(1) = C1X*C1Y*C1Z
+         44     1                         COEF(2) = C2X*C1Y*C1Z
+         45     1                         COEF(3) = C1X*C2Y*C1Z
+         46     1                         COEF(4) = C2X*C2Y*C1Z
+         47     1                         COEF(5) = C1X*C1Y*C2Z
+         48     1                         COEF(6) = C2X*C1Y*C2Z
+         49     1                         COEF(7) = C1X*C2Y*C2Z
+         50     1                         COEF(8) = C2X*C2Y*C2Z
+         51     1               C
+         52     1                         IG=0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FULL UNROLLING
+                              <<< Loop-information  End >>>
+         53     2       f                 DO 1100 KK=0,1
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FULL UNROLLING
+                              <<< Loop-information  End >>>
+         54     3       f                 DO 1200 JJ=0,1
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      CVEL
+                              <<< Loop-information  End >>>
+         55     4  pp   f                 DO 1300 II=0,1
+         56     4   p   f                     IG=IG+1
+         57     4   p   f                     RHO0(IG)=0.0D0
+         58     4   p   f                     U0  (IG)=0.0D0
+         59     4   p   f                     V0  (IG)=0.0D0
+         60     4   p   f                     W0  (IG)=0.0D0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.72, ITR: 80, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      CVEL
+                              <<< Loop-information  End >>>
+         61     5   p   fv                    DO 1400 IP=1,NP
+         62     5   p   fv                        FBUF=F(I+II,J+JJ,K+KK,IP,IC)
+         63     5   p   fv                        RHO0(IG)=RHO0(IG)+FBUF
+         64     5   p   fv                        U0  (IG)=U0  (IG)+FBUF*CVEL(1,IP)
+         65     5   p   fv                        V0  (IG)=V0  (IG)+FBUF*CVEL(2,IP)
+         66     5   p   fv                        W0  (IG)=W0  (IG)+FBUF*CVEL(3,IP)
+         67     5   p   fv       1400         CONTINUE
+         68     4   p   f                     U0(IG)=U0(IG)/RHO0(IG)
+         69     4   p   f                     V0(IG)=V0(IG)/RHO0(IG)
+         70     4   p   f                     W0(IG)=W0(IG)/RHO0(IG)
+         71     4   p   f        1300     CONTINUE
+         72     3       f        1200     CONTINUE
+         73     2       f        1100     CONTINUE
+         74     1               C
+         75     1                         RHO1 = COEF(1)*RHO0(1)+COEF(2)*RHO0(2)
+         76     1                    *          +COEF(3)*RHO0(3)+COEF(4)*RHO0(4)
+         77     1                    *          +COEF(5)*RHO0(5)+COEF(6)*RHO0(6)
+         78     1                    *          +COEF(7)*RHO0(7)+COEF(8)*RHO0(8)
+         79     1                         U1   = COEF(1)*U0(1)+COEF(2)*U0(2)
+         80     1                    *          +COEF(3)*U0(3)+COEF(4)*U0(4)
+         81     1                    *          +COEF(5)*U0(5)+COEF(6)*U0(6)
+         82     1                    *          +COEF(7)*U0(7)+COEF(8)*U0(8)
+         83     1                         V1   = COEF(1)*V0(1)+COEF(2)*V0(2)
+         84     1                    *          +COEF(3)*V0(3)+COEF(4)*V0(4)
+         85     1                    *          +COEF(5)*V0(5)+COEF(6)*V0(6)
+         86     1                    *          +COEF(7)*V0(7)+COEF(8)*V0(8)
+         87     1                         W1   = COEF(1)*W0(1)+COEF(2)*W0(2)
+         88     1                    *          +COEF(3)*W0(3)+COEF(4)*W0(4)
+         89     1                    *          +COEF(5)*W0(5)+COEF(6)*W0(6)
+         90     1                    *          +COEF(7)*W0(7)+COEF(8)*W0(8)
+         91     1               C
+         92     1                         IF(IVAR.EQ.1) BUF=RHO1
+         93     1                         IF(IVAR.EQ.2) BUF=U1/VSCALE
+         94     1                         IF(IVAR.EQ.3) BUF=V1/VSCALE
+         95     1                         IF(IVAR.EQ.4) BUF=W1/VSCALE
+         96     1               C
+         97     1                         HIST(MRESV+ISAMPL)=REAL(BUF)
+         98     1                1000 CONTINUE
+         99                     C
+        100                           RETURN
+        101                           END
+
+ Diagnostic messages: program name(SETHST)
+   jwd8220o-i  "sethst.f", line 1: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd5202p-i  "sethst.f", line 27: DO loop is not parallelized: data dependency of variable 'BUF' may cause different results from serial execution for loop.
+   jwd5208p-i  "sethst.f", line 27: DO loop is not parallelized: the assign-refer order of 'W0' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "sethst.f", line 27: DO loop is not parallelized: the assign-refer order of 'V0' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "sethst.f", line 27: DO loop is not parallelized: the assign-refer order of 'U0' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "sethst.f", line 27: DO loop is not parallelized: the assign-refer order of 'RHO0' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "sethst.f", line 27: DO loop is not parallelized: the assign-refer order of 'COEF' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd8664o-i  "sethst.f", line 27: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd8209o-i  "sethst.f", line 48: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "sethst.f", line 49: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5202p-i  "sethst.f", line 53: DO loop is not parallelized: data dependency of variable 'IG' may cause different results from serial execution for loop.
+   jwd5208p-i  "sethst.f", line 53: DO loop is not parallelized: the assign-refer order of 'W0' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "sethst.f", line 53: DO loop is not parallelized: the assign-refer order of 'V0' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "sethst.f", line 53: DO loop is not parallelized: the assign-refer order of 'U0' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "sethst.f", line 53: DO loop is not parallelized: the assign-refer order of 'RHO0' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd8203o-i  "sethst.f", line 53: Loop unrolled fully.
+   jwd5202p-i  "sethst.f", line 54: DO loop is not parallelized: data dependency of variable 'IG' may cause different results from serial execution for loop.
+   jwd5208p-i  "sethst.f", line 54: DO loop is not parallelized: the assign-refer order of 'W0' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "sethst.f", line 54: DO loop is not parallelized: the assign-refer order of 'V0' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "sethst.f", line 54: DO loop is not parallelized: the assign-refer order of 'U0' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "sethst.f", line 54: DO loop is not parallelized: the assign-refer order of 'RHO0' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd8203o-i  "sethst.f", line 54: Loop unrolled fully.
+   jwd5006p-i  "sethst.f", line 55: Because the iteration count of parallelized loop is 2, parallel speedup ratio of 3 or more is not achieved.
+   jwd5001p-i  "sethst.f", line 55: DO loop with DO variable 'II' is parallelized.
+   jwd6004s-i  "sethst.f", line 61: SIMD conversion is applied to DO loop with DO variable 'IP'. The DO loop contains a reduction operation.
+   jwd8204o-i  "sethst.f", line 61: This loop is software pipelined.
+   jwd8205o-i  "sethst.f", line 61: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 80.
+   jwd8209o-i  "sethst.f", line 62: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8208o-i  "sethst.f", line 63: Method of calculating sum or product is changed.
+   jwd8208o-i  "sethst.f", line 64: Method of calculating sum or product is changed.
+   jwd8208o-i  "sethst.f", line 65: Method of calculating sum or product is changed.
+   jwd8206o-i  "sethst.f", line 68: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "sethst.f", line 69: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "sethst.f", line 70: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "sethst.f", line 75: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "sethst.f", line 79: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "sethst.f", line 83: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "sethst.f", line 87: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+
+ Procedure information
+   Lines      : 101
+   Statements : 77
+   Stack(byte): 1136
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 101
+   Total statements : 77
+   Total stack(byte): 1136
+   Total prefetch num: 0
+

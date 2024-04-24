@@ -1,0 +1,154 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:54:05 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : includ.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "INCLUD"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    INCLUD                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE INCLUD(IE,X,Y,NODE,NE,NP,N,XP,YP,IRN)
+         14                           IMPLICIT REAL*4 (A-H,O-Z)
+         15                           DIMENSION X(NP),Y(NP),NODE(N,NE)
+         16                           DATA DELT / 1.E-20 /
+         17                     C
+         18                     C
+         19                     C      JUDGE IF SPECIFIED POINT IS INCLUDED IN THE SPECIFIED ELEMENT
+         20                     C         ( 2-D GRAPHICS )
+         21                     C
+         22                     C
+         23                     C     ARGUMENT LISTINGS
+         24                     C       (1) INPUT
+         25                     C          IE          ; SPECIFIED ELEMENT NO.
+         26                     C          X     (IP)  ; X-DIR. COORDINATE         OF NODE
+         27                     C          Y     (IP)  ; Y-DIR. COORDINATE         OF NODE
+         28                     C          NODE(I,IE)  ; NODE NUMBER TABLE
+         29                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+         30                     C          NP          ; NUMBER OF TOTAL NODES
+         31                     C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT
+         32                     C          XP          ; X-DIR. COORDINATE OF SPECIFIED POINT
+         33                     C          YP          ; Y-DIR. COORDINATE OF SPECIFIED POINT
+         34                     C
+         35                     C       (2) OUTPUT
+         36                     C          IRN         ; RETURN CODE TO REPORT RESULT
+         37                     C                   0 --- NOT INCLUDED
+         38                     C                   1 ---     INCLUDED
+         39                     C
+         40                     C
+         41                           IRN = 0
+         42                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FULL UNROLLING
+                              <<< Loop-information  End >>>
+         43     1       f             DO 100 IF = 1 , 2
+         44     1       f                 X1  = X(NODE(IF+1,IE))-X(NODE(1,IE))
+         45     1       f                 Y1  = Y(NODE(IF+1,IE))-Y(NODE(1,IE))
+         46     1       f                 X2  = X(NODE(IF+2,IE))-X(NODE(1,IE))
+         47     1       f                 Y2  = Y(NODE(IF+2,IE))-Y(NODE(1,IE))
+         48     1       f                 DET = X1*Y2-X2*Y1
+         49     1               C
+         50     1       f                 XF  = XP              -X(NODE(1,IE))
+         51     1       f                 YF  = YP              -Y(NODE(1,IE))
+         52     1               C
+         53     1       f                 A   = ( Y2*XF-X2*YF)/DET
+         54     1       f                 B   = (-Y1*XF+X1*YF)/DET
+         55     1               C
+         56     1       f                 IF(A       .LT.    -DELT) GO TO 100
+         57     1       f                 IF(B       .LT.    -DELT) GO TO 100
+         58     1       f                 IF(A+B     .GT. 1.0+DELT) GO TO 100
+         59     1       f                 IRN = 1
+         60     1       f                 RETURN
+         61     1       f         100 CONTINUE
+         62                     C
+         63                     C
+         64                           RETURN
+         65                           END
+
+ Diagnostic messages: program name(INCLUD)
+   jwd8220o-i  "includ.f", line 13: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd5131p-i  "includ.f", line 43: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "includ.f", line 43: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8203o-i  "includ.f", line 43: Loop unrolled fully.
+   jwd8206o-i  "includ.f", line 53: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "includ.f", line 54: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "includ.f", line 54: Division is changed to multiplication by reciprocal.
+
+ Procedure information
+   Lines      : 65
+   Statements : 23
+   Stack(byte): 352
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 65
+   Total statements : 23
+   Total stack(byte): 352
+   Total prefetch num: 0
+

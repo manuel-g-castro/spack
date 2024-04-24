@@ -1,0 +1,40 @@
+      SUBROUTINE CTLFRX(ALPHA,PINLT,QCOEF,NPINLT,
+     *                  UINLT0,VINLT0,WINLT0,UINLT,VINLT,WINLT,
+     *                  NP,U,V,W)
+      IMPLICIT NONE
+C
+      INTEGER*4 NPINLT
+      REAL*4    ALPHA,PINLT,QCOEF(3)
+      REAL*4    UINLT0(NPINLT),VINLT0(NPINLT),WINLT0(NPINLT)
+      REAL*4    UINLT (NPINLT),VINLT (NPINLT),WINLT (NPINLT)
+      INTEGER*4 NP 
+      REAL*4    U(NP),V(NP),W(NP)
+C
+      INTEGER*4 IPB,IP    
+      REAL*4    CBUF
+C
+      IF(PINLT.GT.0.0E0) THEN
+          QCOEF(3)=QCOEF(2)
+      ELSE
+          QCOEF(1)=QCOEF(2)
+      ENDIF
+          CBUF=QCOEF(2)
+          QCOEF(2)=ALPHA*QCOEF(2)
+     *             +(1.0E0-ALPHA)*0.5E0*(QCOEF(1)+QCOEF(3))
+          CBUF=QCOEF(2)/CBUF
+C
+C
+      DO 1000 IPB=1,NPINLT
+          UINLT(IPB)=UINLT0(IPB)*QCOEF(2)
+          VINLT(IPB)=VINLT0(IPB)*QCOEF(2)
+          WINLT(IPB)=WINLT0(IPB)*QCOEF(2)
+ 1000 CONTINUE
+C
+CC      DO 2000 IP=1,NP
+CC          U(IP)=U(IP)*CBUF
+CC          V(IP)=V(IP)*CBUF
+CC          W(IP)=W(IP)*CBUF
+CC 2000 CONTINUE
+C
+      RETURN
+      END

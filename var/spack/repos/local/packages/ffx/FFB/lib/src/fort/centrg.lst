@@ -1,0 +1,151 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:53:46 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : centrg.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "CENTRG"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    CENTRG                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE CENTRG(X,Y,NODE,NE,NP,N,IEM,NM,XM,YM)
+         14                           IMPLICIT REAL*4 (A-H,O-Z)
+         15                           DIMENSION X(NP),Y(NP),NODE(N,NE),IEM(NM),XM(NM),YM(NM)
+         16                     C
+         17                     C
+         18                     C      CALCULATE ELEMENT CENTER COORDINATE
+         19                     C         ( 2-D GRAPHICS )
+         20                     C
+         21                     C
+         22                     C     ARGUMENT LISTINGS
+         23                     C       (1) INPUT
+         24                     C          X       (IP); X-DIR. COORDINATE OF NODE
+         25                     C          Y       (IP); Y-DIR. COORDINATE OF NODE
+         26                     C          NODE  (I,IE); NODE TABLE BASED ON ELEMENT
+         27                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+         28                     C          NP          ; NUMBER OF TOTAL NODES
+         29                     C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT
+         30                     C          IEM     (IM); ELEMENT NO. SPECIFIED
+         31                     C          NM          ; NUMBER OF ELEMENTS SPECIFIED
+         32                     C
+         33                     C       (2) OUTPUT
+         34                     C          XM      (IM); ELEMENT CENTER COORDINATE ( X-DIR. )
+         35                     C          YM      (IM); ELEMENT CENTER COORDINATE ( Y-DIR. )
+         36                     C
+         37                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 217
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED(lines: 38,45)
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.40, ITR: 112, MVE: 2, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IEM, XM, YM
+                              <<< Loop-information  End >>>
+         38     1  pp    v            DO 100 IM = 1 , NM
+         39     1   p    v                 XM(IM) = X(NODE(1,IEM(IM)))+X(NODE(2,IEM(IM)))
+         40     1                    &             +X(NODE(3,IEM(IM)))+X(NODE(4,IEM(IM)))
+         41     1   p    v                 YM(IM) = Y(NODE(1,IEM(IM)))+Y(NODE(2,IEM(IM)))
+         42     1                    &             +Y(NODE(3,IEM(IM)))+Y(NODE(4,IEM(IM)))
+         43     1   p    v        100 CONTINUE
+         44                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED
+                              <<< Loop-information  End >>>
+         45     1                     DO 200 IM = 1 , NM
+         46     1                          XM(IM) = 0.25D0*XM(IM)
+         47     1                          YM(IM) = 0.25D0*YM(IM)
+         48     1                 200 CONTINUE
+         49                     C
+         50                     C
+         51                           RETURN
+         52                           END
+
+ Diagnostic messages: program name(CENTRG)
+   jwd8220o-i  "centrg.f", line 13: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd8210o-i  "centrg.f", line 38: Loops fused at line 45.
+   jwd5001p-i  "centrg.f", line 38: DO loop with DO variable 'IM' is parallelized.
+   jwd6001s-i  "centrg.f", line 38: SIMD conversion is applied to DO loop with DO variable 'IM'.
+   jwd8204o-i  "centrg.f", line 38: This loop is software pipelined.
+   jwd8205o-i  "centrg.f", line 38: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 112.
+   jwd8209o-i  "centrg.f", line 41: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+
+ Procedure information
+   Lines      : 52
+   Statements : 13
+   Stack(byte): 816
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 52
+   Total statements : 13
+   Total stack(byte): 816
+   Total prefetch num: 0
+

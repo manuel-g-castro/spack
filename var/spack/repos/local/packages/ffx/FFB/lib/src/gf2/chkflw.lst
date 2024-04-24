@@ -1,0 +1,132 @@
+
+ Fujitsu Fortran Version 4.4.0a  Thu Feb 18 12:40:08 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/gf2
+   Source file       : chkflw.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI023/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI023/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI023/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI023/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=4 -D__FRT_patchlevel__=0 -D__FRT_version__="4.4.0a" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "CHKFLW"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE CHKFLW(FILE,IUTFF,IUT0,IUT6,
+          2                          *                  MP,ME,IERR)
+          3                           IMPLICIT NONE
+          4                           INCLUDE 'gf2.h'
+          5                     C
+          6                     C[INPUT]
+          7                           INTEGER*4 IUTFF
+          8                           INTEGER*4 IUT0,IUT6
+          9                           CHARACTER*60 FILE
+         10                     C
+         11                     C[OUTPUT]
+         12                           INTEGER*4 MP,ME,IERR
+         13                     C
+         14                     C[LOCAL]
+         15                           INTEGER*4 N,NP,NEPRS,NEFRC
+         16                           REAL*4    DUM
+         17                     C
+         18                           IACT=1
+         19                           N   =8
+         20                           CALL GFALL(IUT0,IUT6,IUTFF,FILE,
+         21                          *           MCOM,NCOMFL,COMFLE,
+         22                          *           MCOM,NCOMST,COMSET,
+         23                          *           IACT,IWRITE,INAME,IRESV,
+         24                          *           ICAST,IDATA0,IALL,ISKIP1,IERR,
+         25                          *           '*VELO_3D *PRES_3E  *VFRC_3E !',
+         26                          *            NAME,MP,NP,DUM,DUM,DUM,
+         27                          *            NAME,ME,NEPRS,DUM,
+         28                          *            NAME,ME,NEFRC,DUM,
+         29                          *           ICHECK)
+         30                           IF (IERR.NE.0) RETURN
+         31                     C
+         32                           MP=NP
+         33     1                     IF (NEPRS.NE.0) THEN
+         34     1                        ME=NEPRS
+         35     1                     ELSE IF (NEFRC.NE.0) THEN
+         36     1                        ME=NEFRC
+         37     1                     ELSE
+         38     1                        ME=0
+         39     1                     ENDIF
+         40                     C
+         41                           WRITE(IUT6,*)
+         42                           WRITE(IUT6,*) 'CHKFLW: MP',MP
+         43                           WRITE(IUT6,*) 'CHKFLW: ME',ME
+         44                     C
+         45                           RETURN
+         46                           END
+         47                     
+
+ Diagnostic messages: program name(CHKFLW)
+   jwd2003i-i  "/vol0004/hp120295/u00324/FFB/include/gf2.h", line 16: 'CFLEFF' is declared in INCLUDE but never referenced.
+   jwd2003i-i  "/vol0004/hp120295/u00324/FFB/include/gf2.h", line 16: 'CFLEBC' is declared in INCLUDE but never referenced.
+   jwd2003i-i  "/vol0004/hp120295/u00324/FFB/include/gf2.h", line 16: 'CFLEMS' is declared in INCLUDE but never referenced.
+   jwd2003i-i  "/vol0004/hp120295/u00324/FFB/include/gf2.h", line 17: 'CSETFF' is declared in INCLUDE but never referenced.
+   jwd2003i-i  "/vol0004/hp120295/u00324/FFB/include/gf2.h", line 17: 'CSETBC' is declared in INCLUDE but never referenced.
+   jwd2003i-i  "/vol0004/hp120295/u00324/FFB/include/gf2.h", line 17: 'CSETMS' is declared in INCLUDE but never referenced.
+   jwd2003i-i  "/vol0004/hp120295/u00324/FFB/include/gf2.h", line 25: 'LERR' is declared in INCLUDE but never referenced.
+
+ Procedure information
+   Lines      : 73
+   Statements : 45
+   Stack(byte): 1200752
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 73
+   Total statements : 45
+   Total stack(byte): 1200752
+   Total prefetch num: 0
+

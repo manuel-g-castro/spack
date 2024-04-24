@@ -1,0 +1,392 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:53:25 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : setprd.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "SETPRD"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE SETPRD(N1,NGAUSS,NC,PSIC,NN,PSI,W,IUT0,IERR)
+          2                           IMPLICIT NONE
+          3                     
+          4                     ***** PARAMETERS *****
+          5                           INTEGER N1
+          6                     
+          7                     ***** DEFINE ARGUMENTS *****
+          8                           INTEGER NGAUSS
+          9                           REAL*8 NC(N1)
+         10                           REAL*8 PSIC(3,N1)
+         11                           REAL*8 NN(N1,NGAUSS)
+         12                           REAL*8 PSI(3,N1,NGAUSS)
+         13                           REAL*8 W(NGAUSS)
+         14                     
+         15                     ***** OBJECTS *****
+         16                           REAL*8 XI(3,NGAUSS)
+         17                           REAL*8 P(99),Q(99),R(99)
+         18                           REAL*8 S(99),T(99),U(99)
+         19                           INTEGER IUT0,IERR
+         20                           INTEGER MX, MY, MZ, I, J, K !
+         21                           INTEGER IP                !
+         22                     
+         23                     ****************************
+         24                     ***** N, PSI AT CENTER *****
+         25                     ****************************
+         26                           XI(1,1)=0.; XI(2,1)=0.; XI(3,1)=0.25
+         27                           NC(1) =0.25*( (1.-XI(1,1))*(1.-XI(2,1))
+         28                          $     -XI(3,1) +XI(1,1)*XI(2,1)*XI(3,1)/(1.-XI(3,1)) )
+         29                           NC(2) =0.25*( (1.+XI(1,1))*(1.-XI(2,1))
+         30                          $     -XI(3,1) -XI(1,1)*XI(2,1)*XI(3,1)/(1.-XI(3,1)) )
+         31                           NC(3) =0.25*( (1.+XI(1,1))*(1.+XI(2,1))
+         32                          $     -XI(3,1) +XI(1,1)*XI(2,1)*XI(3,1)/(1.-XI(3,1)) )
+         33                           NC(4) =0.25*( (1.-XI(1,1))*(1.+XI(2,1))
+         34                          $     -XI(3,1) -XI(1,1)*XI(2,1)*XI(3,1)/(1.-XI(3,1)) )
+         35                           NC(5) = XI(3,1)
+         36                     
+         37                           PSIC(1,1)=0.25*( -1. +XI(2,1)/(1.-XI(3,1)) )
+         38                           PSIC(1,2)=0.25*( +1. -XI(2,1)/(1.-XI(3,1)) )
+         39                           PSIC(1,3)=0.25*( +1. +XI(2,1)/(1.-XI(3,1)) )
+         40                           PSIC(1,4)=0.25*( -1. -XI(2,1)/(1.-XI(3,1)) )
+         41                           PSIC(1,5)=0.
+         42                     
+         43                           PSIC(2,1)=0.25*( -1. +XI(1,1)/(1.-XI(3,1)) )
+         44                           PSIC(2,2)=0.25*( -1. -XI(1,1)/(1.-XI(3,1)) )
+         45                           PSIC(2,3)=0.25*( +1. +XI(1,1)/(1.-XI(3,1)) )
+         46                           PSIC(2,4)=0.25*( +1. -XI(1,1)/(1.-XI(3,1)) )
+         47                           PSIC(2,5)=0.
+         48                     
+         49                           PSIC(3,1)=0.25*( -1. +XI(1,1)*XI(2,1)/(1.-XI(3,1))**2 )
+         50                           PSIC(3,2)=0.25*( -1. -XI(1,1)*XI(2,1)/(1.-XI(3,1))**2 )
+         51                           PSIC(3,3)=0.25*( -1. +XI(1,1)*XI(2,1)/(1.-XI(3,1))**2 )
+         52                           PSIC(3,4)=0.25*( -1. -XI(1,1)*XI(2,1)/(1.-XI(3,1))**2 )
+         53                           PSIC(3,5)=1.
+         54                     
+         55                     
+         56     1                     IF(NGAUSS.EQ.4) THEN        !4X1
+         57     1                        MX=2
+         58     1                        P(1)=-SQRT(1./3.); S(1)=1.
+         59     1                        P(2)=+SQRT(1./3.); S(2)=1.
+         60     1                        MY=2
+         61     1                        Q(1)=-SQRT(1./3.); T(1)=1.
+         62     1                        Q(2)=+SQRT(1./3.); T(2)=1.
+         63     1                        MZ=1
+         64     1                        R(1)=0.25;         U(1)=1./3.
+         65     1               
+         66     1                     ELSEIF(NGAUSS.EQ.18) THEN   !9X2
+         67     1                     MX=3
+         68     1                     P(1)=-SQRT(3./5.);      S(1)=5./9.
+         69     1                     P(2)=0.;                S(2)=8./9.
+         70     1                     P(3)=+SQRT(3./5.);      S(3)=5./9.
+         71     1                     MY=3
+         72     1                     Q(1)=-SQRT(3./5.);      T(1)=5./9.
+         73     1                     Q(2)=0.;                T(2)=8./9.
+         74     1                     Q(3)=+SQRT(3./5.);      T(3)=5./9.
+         75     1                     MZ=2
+         76     1                     R(1)=0.122514822655441; U(1)=0.232547451253508
+         77     1                     R(2)=0.544151844011225; U(2)=0.100785882079825
+         78     1               
+         79     1                     ELSEIF(NGAUSS.EQ.27) THEN   ! 9X3
+         80     1                        MX=3
+         81     1                        P(1)=-SQRT(3./5.);      S(1)=5./9.
+         82     1                        P(2)=0.;                S(2)=8./9.
+         83     1                        P(3)=+SQRT(3./5.);      S(3)=5./9.
+         84     1                        MY=3
+         85     1                        Q(1)=-SQRT(3./5.);      T(1)=5./9.
+         86     1                        Q(2)=0.;                T(2)=8./9.
+         87     1                        Q(3)=+SQRT(3./5.);      T(3)=5./9.
+         88     1                        MZ=3
+         89     1                        R(1)= 0.072994024073150; U(1)=0.157136361064887
+         90     1                        R(2)= 0.347003766038352; U(2)=0.146246269259866
+         91     1                        R(3)= 0.705002209888498; U(3)=0.029950703008581
+         92     1               
+         93     1                     ELSEIF(NGAUSS.EQ.48) THEN   ! 16X3
+         94     1                        MX=4
+         95     1                        P(1)=-0.861136311594053; S(1)=0.347854845137454
+         96     1                        P(2)=-0.339981043584856; S(2)=0.652145154862546
+         97     1                        P(3)=+0.339981043584856; S(3)=0.652145154862546
+         98     1                        P(4)=+0.861136311594053; S(4)=0.347854845137454
+         99     1                        MY=4
+        100     1                        Q(1)=-0.861136311594053; T(1)=0.347854845137454
+        101     1                        Q(2)=-0.339981043584856; T(2)=0.652145154862546
+        102     1                        Q(3)=+0.339981043584856; T(3)=0.652145154862546
+        103     1                        Q(4)=+0.861136311594053; T(4)=0.347854845137454
+        104     1                        MZ=3
+        105     1                        R(1)= 0.072994024073150; U(1)=0.157136361064887
+        106     1                        R(2)= 0.347003766038352; U(2)=0.146246269259866
+        107     1                        R(3)= 0.705002209888498; U(3)=0.029950703008581
+        108     1               
+        109     1                     ELSEIF(NGAUSS.EQ.64) THEN   ! 16X4
+        110     1                        MX=4
+        111     1                        P(1)=-0.861136311594053; S(1)=0.347854845137454
+        112     1                        P(2)=-0.339981043584856; S(2)=0.652145154862546
+        113     1                        P(3)=+0.339981043584856; S(3)=0.652145154862546
+        114     1                        P(4)=+0.861136311594053; S(4)=0.347854845137454
+        115     1                        MY=4
+        116     1                        Q(1)=-0.861136311594053; T(1)=0.347854845137454
+        117     1                        Q(2)=-0.339981043584856; T(2)=0.652145154862546
+        118     1                        Q(3)=+0.339981043584856; T(3)=0.652145154862546
+        119     1                        Q(4)=+0.861136311594053; T(4)=0.347854845137454
+        120     1                        MZ=4
+        121     1                        R(1)= 0.048500549446997; U(1)=0.110888415611278
+        122     1                        R(2)= 0.238600737551862; U(2)=0.143458789799214
+        123     1                        R(3)= 0.517047295104368; U(3)=0.068633887172923
+        124     1                        R(4)= 0.795851417896773; U(4)=0.010352240749918
+        125     1               
+        126     1                     ELSEIF(NGAUSS.EQ.75) THEN   ! 25X3
+        127     1                        MX=5
+        128     1                        P(1)=-0.906179845938664; S(1)=0.236926885056189
+        129     1                        P(2)=-0.538469310105683; S(2)=0.478628670499366
+        130     1                        P(3)=0.;                 S(3)=0.568888888888889
+        131     1                        P(4)=+0.538469310105683; S(4)=0.478628670499366
+        132     1                        P(5)=+0.906179845938664; S(5)=0.236926885056189
+        133     1                        MY=5
+        134     1                        Q(1)=-0.906179845938664; T(1)=0.236926885056189
+        135     1                        Q(2)=-0.538469310105683; T(2)=0.478628670499366
+        136     1                        Q(3)=0.;                 T(3)=0.568888888888889
+        137     1                        Q(4)=+0.538469310105683; T(4)=0.478628670499366
+        138     1                        Q(5)=+0.906179845938664; T(5)=0.236926885056189
+        139     1                        MZ=3
+        140     1                        R(1)= 0.072994024073150; U(1)=0.157136361064887
+        141     1                        R(2)= 0.347003766038352; U(2)=0.146246269259866
+        142     1                        R(3)= 0.705002209888498; U(3)=0.029950703008581
+        143     1               
+        144     1                     ELSEIF(NGAUSS.EQ.100) THEN  ! 25X4
+        145     1                        MX=5
+        146     1                        P(1)=-0.906179845938664; S(1)=0.236926885056189
+        147     1                        P(2)=-0.538469310105683; S(2)=0.478628670499366
+        148     1                        P(3)=0.;                 S(3)=0.568888888888889
+        149     1                        P(4)=+0.538469310105683; S(4)=0.478628670499366
+        150     1                        P(5)=+0.906179845938664; S(5)=0.236926885056189
+        151     1                        MY=5
+        152     1                        Q(1)=-0.906179845938664; T(1)=0.236926885056189
+        153     1                        Q(2)=-0.538469310105683; T(2)=0.478628670499366
+        154     1                        Q(3)=0.;                 T(3)=0.568888888888889
+        155     1                        Q(4)=+0.538469310105683; T(4)=0.478628670499366
+        156     1                        Q(5)=+0.906179845938664; T(5)=0.236926885056189
+        157     1                        MZ=4
+        158     1                        R(1)= 0.048500549446997; U(1)=0.110888415611278
+        159     1                        R(2)= 0.238600737551862; U(2)=0.143458789799214
+        160     1                        R(3)= 0.517047295104368; U(3)=0.068633887172923
+        161     1                        R(4)= 0.795851417896773; U(4)=0.010352240749918
+        162     1               
+        163     1                     ELSEIF(NGAUSS.EQ.125) THEN  ! 25X5
+        164     1                        MX=5
+        165     1                        P(1)=-0.906179845938664; S(1)=0.236926885056189
+        166     1                        P(2)=-0.538469310105683; S(2)=0.478628670499366
+        167     1                        P(3)=0.;                 S(3)=0.568888888888889
+        168     1                        P(4)=+0.538469310105683; S(4)=0.478628670499366
+        169     1                        P(5)=+0.906179845938664; S(5)=0.236926885056189
+        170     1                        MY=5
+        171     1                        Q(1)=-0.906179845938664; T(1)=0.236926885056189
+        172     1                        Q(2)=-0.538469310105683; T(2)=0.478628670499366
+        173     1                        Q(3)=0.;                 T(3)=0.568888888888889
+        174     1                        Q(4)=+0.538469310105683; T(4)=0.478628670499366
+        175     1                        Q(5)=+0.906179845938664; T(5)=0.236926885056189
+        176     1                        MZ=5
+        177     1                        R(1)= 0.034578939918215; U(1)=0.081764784285771
+        178     1                        R(2)= 0.173480320771695; U(2)=0.126198961899911
+        179     1                        R(3)= 0.389886387065519; U(3)=0.089200161221590
+        180     1                        R(4)= 0.634333472630887; U(4)=0.032055600722962
+        181     1                        R(5)= 0.851054212947016; U(5)=0.004113825203099
+        182     1               
+        183     1                     ELSE
+        184     1                        WRITE(IUT0,*) "[ERROR]@SETUP_PYR:"
+        185     1                        WRITE(IUT0,*) "NGAUSS=", NGAUSS, "IS NOT SUPPORTED."
+        186     1                        IERR=1
+        187     1                        RETURN
+        188     1                     ENDIF
+        189                     
+        190                     ***********************
+        191                     ***** SETUP XI, W *****
+        192                     ***********************
+        193                           IP=1
+        194     1                     DO K=1,MZ
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      XI, W, (unknown)
+                              <<< Loop-information  End >>>
+        195     2                        DO J=1,MY
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 552
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.00, ITR: 80, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      P, S, XI, W, (unknown)
+                              <<< Loop-information  End >>>
+        196     3  pp    v                  DO I=1,MX
+        197     3   p    v                     XI(1,IP)=P(I)*(1.-R(K))
+        198     3   p    v                     XI(2,IP)=Q(J)*(1.-R(K))
+        199     3   p    v                     XI(3,IP)=R(K)
+        200     3   p    v                     W(IP)=S(I)*T(J)*U(K)
+        201     3   p    v                     IP=IP+1
+        202     3   p    v                  ENDDO
+        203     2                        ENDDO
+        204     1                     ENDDO
+        205                     
+        206                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+        207                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+        208                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+        209                     
+        210                     ******************
+        211                     ***** N, PSI *****
+        212                     ******************
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 96
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 0.87, ITR: 24, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      XI, (unknown)
+                              <<< Loop-information  End >>>
+        213     1  pp    v            DO IP=1,NGAUSS
+        214     1               
+        215     1   p    v            NN(1,IP) =0.25*( (1.-XI(1,IP))*(1.-XI(2,IP))
+        216     1                    $     -XI(3,IP) +XI(1,IP)*XI(2,IP)*XI(3,IP)/(1.-XI(3,IP)) )
+        217     1   p    v            NN(2,IP) =0.25*( (1.+XI(1,IP))*(1.-XI(2,IP))
+        218     1                    $     -XI(3,IP) -XI(1,IP)*XI(2,IP)*XI(3,IP)/(1.-XI(3,IP)) )
+        219     1   p    v            NN(3,IP) =0.25*( (1.+XI(1,IP))*(1.+XI(2,IP))
+        220     1                    $     -XI(3,IP) +XI(1,IP)*XI(2,IP)*XI(3,IP)/(1.-XI(3,IP)) )
+        221     1   p    v            NN(4,IP) =0.25*( (1.-XI(1,IP))*(1.+XI(2,IP))
+        222     1                    $     -XI(3,IP) -XI(1,IP)*XI(2,IP)*XI(3,IP)/(1.-XI(3,IP)) )
+        223     1   p    v            NN(5,IP) = XI(3,IP)
+        224     1               
+        225     1   p    v            PSI(1,1,IP)=0.25*( -1. +XI(2,IP)/(1.-XI(3,IP)) )
+        226     1   p    v            PSI(1,2,IP)=0.25*( +1. -XI(2,IP)/(1.-XI(3,IP)) )
+        227     1   p    v            PSI(1,3,IP)=0.25*( +1. +XI(2,IP)/(1.-XI(3,IP)) )
+        228     1   p    v            PSI(1,4,IP)=0.25*( -1. -XI(2,IP)/(1.-XI(3,IP)) )
+        229     1   p    v            PSI(1,5,IP)=0.
+        230     1               
+        231     1   p    v            PSI(2,1,IP)=0.25*( -1. +XI(1,IP)/(1.-XI(3,IP)) )
+        232     1   p    v            PSI(2,2,IP)=0.25*( -1. -XI(1,IP)/(1.-XI(3,IP)) )
+        233     1   p    v            PSI(2,3,IP)=0.25*( +1. +XI(1,IP)/(1.-XI(3,IP)) )
+        234     1   p    v            PSI(2,4,IP)=0.25*( +1. -XI(1,IP)/(1.-XI(3,IP)) )
+        235     1   p    v            PSI(2,5,IP)=0.
+        236     1               
+        237     1   p    v            PSI(3,1,IP)=0.25*( -1. +XI(1,IP)*XI(2,IP)/(1.-XI(3,IP))**2 )
+        238     1   p    v            PSI(3,2,IP)=0.25*( -1. -XI(1,IP)*XI(2,IP)/(1.-XI(3,IP))**2 )
+        239     1   p    v            PSI(3,3,IP)=0.25*( -1. +XI(1,IP)*XI(2,IP)/(1.-XI(3,IP))**2 )
+        240     1   p    v            PSI(3,4,IP)=0.25*( -1. -XI(1,IP)*XI(2,IP)/(1.-XI(3,IP))**2 )
+        241     1   p    v            PSI(3,5,IP)=1.
+        242     1   p    v            ENDDO
+        243                     
+        244                           RETURN
+        245                           END
+
+ Diagnostic messages: program name(SETPRD)
+   jwd8220o-i  "setprd.f", line 1: 副作用の可能性のある最適化を行いました。
+   jwd8209o-i  "setprd.f", line 27: 多項式の演算順序を変更しました。
+   jwd8209o-i  "setprd.f", line 29: 多項式の演算順序を変更しました。
+   jwd8209o-i  "setprd.f", line 31: 多項式の演算順序を変更しました。
+   jwd8209o-i  "setprd.f", line 33: 多項式の演算順序を変更しました。
+   jwd8206o-i  "setprd.f", line 37: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "setprd.f", line 38: 多項式の演算順序を変更しました。
+   jwd8206o-i  "setprd.f", line 38: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "setprd.f", line 39: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "setprd.f", line 40: 多項式の演算順序を変更しました。
+   jwd8206o-i  "setprd.f", line 40: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "setprd.f", line 43: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "setprd.f", line 44: 多項式の演算順序を変更しました。
+   jwd8206o-i  "setprd.f", line 44: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "setprd.f", line 45: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "setprd.f", line 46: 多項式の演算順序を変更しました。
+   jwd8206o-i  "setprd.f", line 46: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "setprd.f", line 49: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "setprd.f", line 50: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "setprd.f", line 51: 除算を逆数の乗算に変更しました。
+   jwd8206o-i  "setprd.f", line 52: 除算を逆数の乗算に変更しました。
+   jwd5202p-i  "setprd.f", line 194: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:IP)
+   jwd5208p-i  "setprd.f", line 194: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:W)
+   jwd5208p-i  "setprd.f", line 194: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:XI)
+   jwd5202p-i  "setprd.f", line 195: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:IP)
+   jwd5208p-i  "setprd.f", line 195: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:W)
+   jwd5208p-i  "setprd.f", line 195: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:XI)
+   jwd5001p-i  "setprd.f", line 196: このDOループを並列化しました。(名前:I)
+   jwd6001s-i  "setprd.f", line 196: このDOループをSIMD化しました。(名前:I)
+   jwd8204o-i  "setprd.f", line 196: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "setprd.f", line 196: ループの繰返し数が80回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "setprd.f", line 213: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "setprd.f", line 213: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "setprd.f", line 213: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "setprd.f", line 213: ループの繰返し数が24回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "setprd.f", line 215: 多項式の演算順序を変更しました。
+   jwd8209o-i  "setprd.f", line 217: 多項式の演算順序を変更しました。
+   jwd8209o-i  "setprd.f", line 219: 多項式の演算順序を変更しました。
+   jwd8209o-i  "setprd.f", line 221: 多項式の演算順序を変更しました。
+   jwd8206o-i  "setprd.f", line 225: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "setprd.f", line 226: 多項式の演算順序を変更しました。
+   jwd8206o-i  "setprd.f", line 226: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "setprd.f", line 228: 多項式の演算順序を変更しました。
+   jwd8206o-i  "setprd.f", line 231: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "setprd.f", line 232: 多項式の演算順序を変更しました。
+   jwd8206o-i  "setprd.f", line 232: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "setprd.f", line 234: 多項式の演算順序を変更しました。
+
+ Procedure information
+   Lines      : 245
+   Statements : 286
+   Stack(byte): 6272
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 245
+   Total statements : 286
+   Total stack(byte): 6272
+   Total prefetch num: 0
+

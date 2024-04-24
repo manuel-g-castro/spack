@@ -1,0 +1,217 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:54:37 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : volume.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "VOLUME"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    VOLUME                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE VOLUME(IDIM,JELM,S,DELTA,NODE,NE,N,AVR,F)
+         14                           IMPLICIT REAL*8(A-H,O-Z)
+         15                           DIMENSION S(*),DELTA(NE),NODE(N,NE),F(NE)
+         16                     C
+         17                     C
+         18                     C      CALCULATE VOLUMETIRC AVERAGE OF ELEMENT OR NODE DEFINED FIELD
+         19                     C         ( 2-D , 3-D CALCULATION )
+         20                     C
+         21                     C
+         22                     C     ARGUMENT LISTINGS
+         23                     C       (1) INPUT
+         24                     C          IDIM        ; SPECIFIES THE SPACE DIMENSION AS FOLLOWS
+         25                     C                   2 --- TWO   DIMENSIONAL PROBLEM
+         26                     C                   3 --- THREE DIMENSIONAL PROBLEM
+         27                     C          JELM        ; SPECIFIES THE VARIABLE DEFINITION AS FOLLOWS
+         28                     C                   0 --- NORDALLY DEFINED
+         29                     C                   1 --- ELEMENT  DEFINED
+         30                     C          S (IE OR IP); ELEMENT OR NODE ASSIGNED VARIABLE
+         31                     C          NODE  (I,IE); NODE TABLE
+         32                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+         33                     C          NP          ; NUMBER OF TOTAL    NODES
+         34                     C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT
+         35                     C          DELTA   (IE); CHARACTERISTIC ELEMENT DIMENION
+         36                     C
+         37                     C       (2) OUTPUT
+         38                     C          AVR         ; VOLUMETRIC AVERAGE OF THE FIELD
+         39                     C
+         40                     C       (3) WORK
+         41                     C          F       (IE); ELEMENT VALUE OF S(IP)
+         42                     C
+         43                     C
+         44     1                     IF(JELM.EQ.1) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1455
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.00, ITR: 160, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      S, F
+                              <<< Loop-information  End >>>
+         45     2  pp   4v                DO 100 IE = 1 , NE
+         46     2   p   4v                    F(IE) = S(IE)
+         47     2   p   4v        100     CONTINUE
+         48     1                     ELSE
+         49     2                         IF(IDIM.EQ.2) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 327
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.72, ITR: 80, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      F
+                              <<< Loop-information  End >>>
+         50     3  pp    v                    DO 200 IE = 1 , NE
+         51     3   p    v                        F(IE) = 0.250D0*(S(NODE(1,IE))+S(NODE(3,IE))
+         52     3                    &                            +S(NODE(2,IE))+S(NODE(4,IE)))
+         53     3   p    v        200         CONTINUE
+         54     2                         ELSE
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 180
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.94, ITR: 96, MVE: 5, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      F
+                              <<< Loop-information  End >>>
+         55     3  pp    v                    DO 300 IE = 1 , NE
+         56     3   p    v                        F(IE) = 0.125D0*(S(NODE(1,IE))+S(NODE(5,IE))
+         57     3                    &                            +S(NODE(2,IE))+S(NODE(6,IE))
+         58     3                    &                            +S(NODE(3,IE))+S(NODE(7,IE))
+         59     3                    &                            +S(NODE(4,IE))+S(NODE(8,IE)))
+         60     3   p    v        300         CONTINUE
+         61     2                         ENDIF
+         62     1                     ENDIF
+         63                     C
+         64                           SIG1 = 0.D0
+         65                           SIG2 = 0.E0
+         66     1                     IF(IDIM.EQ.2) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1067
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<< Loop-information  End >>>
+         67     2  pp    v                DO 400 IE = 1 , NE
+         68     2   p    v                     SIG1 = SIG1+DELTA(IE)**2*F(IE)
+         69     2   p    v                     SIG2 = SIG2+DELTA(IE)**2
+         70     2   p    v        400     CONTINUE
+         71     1                     ELSE
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 942
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<< Loop-information  End >>>
+         72     2  pp    v                DO 500 IE = 1 , NE
+         73     2   p    v                     SIG1 = SIG1+DELTA(IE)**3*F(IE)
+         74     2   p    v                     SIG2 = SIG2+DELTA(IE)**3
+         75     2   p    v        500     CONTINUE
+         76     1                     ENDIF
+         77                     C
+         78                           AVR = SIG1/SIG2
+         79                     C
+         80                     C
+         81                           RETURN
+         82                           END
+
+ Diagnostic messages: program name(VOLUME)
+   jwd8220o-i  "volume.f", line 13: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd5001p-i  "volume.f", line 45: DO loop with DO variable 'IE' is parallelized.
+   jwd6001s-i  "volume.f", line 45: SIMD conversion is applied to DO loop with DO variable 'IE'.
+   jwd8204o-i  "volume.f", line 45: This loop is software pipelined.
+   jwd8205o-i  "volume.f", line 45: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 160.
+   jwd5001p-i  "volume.f", line 50: DO loop with DO variable 'IE' is parallelized.
+   jwd6001s-i  "volume.f", line 50: SIMD conversion is applied to DO loop with DO variable 'IE'.
+   jwd8204o-i  "volume.f", line 50: This loop is software pipelined.
+   jwd8205o-i  "volume.f", line 50: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 80.
+   jwd5001p-i  "volume.f", line 55: DO loop with DO variable 'IE' is parallelized.
+   jwd6001s-i  "volume.f", line 55: SIMD conversion is applied to DO loop with DO variable 'IE'.
+   jwd8204o-i  "volume.f", line 55: This loop is software pipelined.
+   jwd8205o-i  "volume.f", line 55: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 96.
+   jwd5004p-i  "volume.f", line 67: DO loop with DO variable 'IE' is parallelized. The DO loop contains the reduction operation.
+   jwd6004s-i  "volume.f", line 67: SIMD conversion is applied to DO loop with DO variable 'IE'. The DO loop contains a reduction operation.
+   jwd5004p-i  "volume.f", line 72: DO loop with DO variable 'IE' is parallelized. The DO loop contains the reduction operation.
+   jwd6004s-i  "volume.f", line 72: SIMD conversion is applied to DO loop with DO variable 'IE'. The DO loop contains a reduction operation.
+   jwd8209o-i  "volume.f", line 73: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+
+ Procedure information
+   Lines      : 82
+   Statements : 34
+   Stack(byte): 55552
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 82
+   Total statements : 34
+   Total stack(byte): 55552
+   Total prefetch num: 0
+

@@ -1,0 +1,498 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:54:11 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : neiber.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "NEIBER"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    NEIBER                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE NEIBER(IMODE,NODE,NE,NP,N,MAXE,MAXP,MAXEP,MAXPP,MAXEE,
+         14                          *                  IENP,JENP,NEP,IPNP,NPP,IENE,NEE,LIST,IUT0,IERR)
+         15                           DIMENSION NODE(N,NE),IENP(MAXEP,NP),IPNP(MAXPP,NP),IENE(MAXEE,NE),
+         16                          1          NEP(NP),NPP(NP),NEE(NE),JENP(MAXEP,NP),LIST(N,N,NE)
+         17                     C
+         18                           CHARACTER*60 ERMSGB
+         19                          & / ' ## SUBROUTINE NEIBER: FATAL      ERROR OCCURENCE; RETURNED' /
+         20                           CHARACTER*60 EREXP1
+         21                          & / ' NUMBER OF ELEMENTS ADJACENT TO 1 NODE    EXCEEDED LIMIT OF' /
+         22                           CHARACTER*60 EREXP2
+         23                          & / ' NUMBER OF NODES    ADJACENT TO 1 NODE    EXCEEDED LIMIT OF' /
+         24                           CHARACTER*60 EREXP3
+         25                          & / ' NUMBER OF ELEMENTS ADJACENT TO 1 ELEMENT EXCEEDED LIMIT OF' /
+         26                           CHARACTER*60 EREXP4
+         27                          & / ' LIST(J,I,IE) CANNOT BE MADE BECAUSE IPNP HAS NOT BEEN MADE '/
+         28                     C
+         29                     C
+         30                     C      MAKE NEIBERING RELATION SPECIFYING LIST VECTOR
+         31                     C         ( 2-D , 3-D CALCULATION & GRAPHICS )
+         32                     C
+         33                     C
+         34                     C     NOTE 1; THIS SUBROUTINE IS APPLICABLE TO MIXED-ELEMENT MESH
+         35                     C
+         36                     C     ARGUMENT LISTINGS
+         37                     C       (1) INPUT
+         38                     C          IMODE       ; SPECIFIES THE LISTS TO BE MADE AS FOLLOWS
+         39                     C                       IMODE MUST BE ONE OF
+         40                     C                       ( 0  1  2  10  11  12  101  102  111  112 )
+         41                     C                  AS TO THE FIRST  FIGURE,
+         42                     C                   0 --- IPNP , NPP WILL NOT BE MADE
+         43                     C                   1 --- IPNP , NPP WILL     BE MADE
+         44                     C                   2 --- IPNP , NPP WILL     BE MADE ( ORDER OF IP )
+         45                     C                  AS TO THE SECOND FIGURE,
+         46                     C                   0 --- IENE , NEE WILL NOT BE MADE
+         47                     C                   1 --- IENE , NEE WILL     BE MADE
+         48                     C                  AS TO THE THIRD  FIGURE,
+         49                     C                   0 --- LIST       WILL NOT BE MADE
+         50                     C                   1 --- LIST       WILL     BE MADE
+         51                     C                 NOTE 1 ; IENP , JENP , AND NEP WILL ALWAYS BE MADE
+         52                     C                 NOTE 2 ; IPNP MUST BE MADE IN ORDER TO MAKE LIST
+         53                     C                 NOTE 3 ; AS AN UNAUTHORIZED OPTION, -IMODE IS
+         54                     C                         SUPPORTED. IF A NEGATIVE VALUE OF IMODE IS
+         55                     C                         SPECIFIED, THE PROCESS OF MAKING IENP,JENP AND
+         56                     C                         NEP WILL BE SKIPPED AND THE LISTS CORRESPON-
+         57                     C                         DING TO /IMODE/ WILL BE MADE.
+         58                     C          NODE  (I,IE); NODE NO. TABLE BASED ON ELEMENT
+         59                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+         60                     C          NP          ; NUMBER OF TOTAL    NODES
+         61                     C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT
+         62                     C          MAXE        ; THE MAXIMUM NUMBER OF ELEMENTS
+         63                     C          MAXP        ; THE MAXIMUM NUMBER OF    NODES
+         64                     C          MAXEP       ; THE FIRST DIMENSION OF ARRAY IENP,JENP
+         65                     C          MAXPP       ; THE FIRST DIMENSION OF ARRAY IPNP
+         66                     C          MAXEE       ; THE FIRST DIMENSION OF ARRAY IENE
+         67                     C          IUT0        ; FILE NUMBER TO REPORT ERROR OCCURENCE
+         68                     C
+         69                     C       (2) OUTPUT
+         70                     C          IENP(IEP,IP); ADJACENT ELEMENT NUMBER TO NODE IP
+         71                     C                      ( IF NEP(IP).LT.MAXEP , THEN IENP(NEP(IP)+1,IP),
+         72                     C                       IENP(MAXEP,IP) WILL BE SET TO AN IMAGINARY
+         73                     C                       ELEMENT NO. BETWEEN NE+1,MAXE.)
+         74                     C          JENP(IEP,IP); LOCAL NODE NUMBER OF IP IN ELEMENT IENP(IEP,IP)
+         75                     C          NEP     (IP); NUMBER OF ADJACENT ELEMENTS TO NODE IP
+         76                     C          IPNP(IPP,IP); ADJACENT NODE    NUMBER TO NODE    IP
+         77                     C                      ( IF NPP(IP).LT.MAXPP , THEN IPNP(NPP(IP)+1,IP),
+         78                     C                       IPNP(MAXPP,IP) WILL BE SET TO AN IMAGINARY
+         79                     C                       NODE    NO. BETWEEN NP+1,MAXP.)
+         80                     C          NPP     (IP); NUMBER OF ADJACENT NODES    TO NODE    IP
+         81                     C          IENE(IEE,IE); ADJACENT ELEMENT NUMBER TO ELEMENT IE
+         82                     C          NEE     (IE); NUMBER OF ADJACENT ELEMENTS TO ELEMENT IE
+         83                     C          LIST(J,I,IE); THE POSITION IN IPNP(IPP,NODE(I,IE))
+         84                     C                       OF NODE(J,IE) I.E. IPNP(LIST(J,I,IE),NODE(I,IE))
+         85                     C                       IS EQUAL TO NODE(J,IE)
+         86                     C          IERR        ; RETURN CODE TO REPORT ERROR OCCURENCE
+         87                     C                   0 --- NORMAL TERMINATION
+         88                     C                   1 --- A FATAL ERROR HAS OCCURED
+         89                     C
+         90                     C
+         91                           IERR = 0
+         92                     C
+         93                     C
+         94                     C      (1) MAKE IENP(IEP,IP) , NEP(IP)
+         95                     C
+         96                     C
+         97     1                     IF(IMODE.LT.0) THEN
+         98     1                         IMODE = -IMODE
+         99     1                         GO TO 140
+        100     1                     ENDIF
+        101                     C
+        102                     C INITIAL
+        103                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      JENP, IENP
+                              <<< Loop-information  End >>>
+        104     1  pp                 DO 110 IP = 1 , NP
+        105     1   p                     NEP(IP) = 0
+        106     2   p                     IF(MAXE.GT.NE) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 0.38, ITR: 96, MVE: 2, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      JENP, IENP
+                              <<< Loop-information  End >>>
+        107     3   p   2v                DO 100 IEP = 1 , MAXEP
+        108     3   p   2v                    IENP(IEP,IP) = MOD(IEP-1+MAXEP*(IP-1),MAXE-NE)+1+NE
+        109     3   p   2v                    JENP(IEP,IP) = MOD(IEP-1             ,N      )+1
+        110     3   p   2v        100     CONTINUE
+        111     2   p                     ENDIF
+        112     1   p             110 CONTINUE
+        113                     C
+        114                     C ELEMENT LOOP
+        115                     C
+        116     1                     DO 130 IE = 1 , NE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE
+                              <<< Loop-information  End >>>
+        117     2                         DO 120 I = 1 , N
+        118     2                             IP = NODE(I,IE)
+        119     2                             IF(IP.EQ.0) GO TO 120
+        120     2                             NEP(IP) = NEP(IP)+1
+        121     3                             IF(NEP(IP).GT.MAXEP) THEN
+        122     3                                 WRITE(IUT0,*) ERMSGB
+        123     3                                 WRITE(IUT0,*) EREXP1, MAXEP
+        124     3                                 IERR = 1
+        125     3                                 RETURN
+        126     3                             ENDIF
+        127     2                             IENP(NEP(IP),IP) = IE
+        128     2                             JENP(NEP(IP),IP) = I
+        129     2                 120     CONTINUE
+        130     1                 130 CONTINUE
+        131                     C
+        132                       140 CONTINUE
+        133                     C
+        134                     C
+        135                     C      (2) MAKE IPNP(IPP,IP) , NPP(IP)
+        136                     C
+        137                     C
+        138     1                     IF(I4FLAG(IMODE,1).GE.1) THEN
+        139     1               C
+        140     1               C INITIAL
+        141     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 3
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IPNP
+                              <<< Loop-information  End >>>
+        142     2  pp                 DO 210 IP = 1 , NP
+        143     2   p                     NPP(IP) = 0
+        144     3   p                     IF(MAXP.GT.NP) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 0.40, ITR: 96, MVE: 2, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IPNP
+                              <<< Loop-information  End >>>
+        145     4   p   2v                DO 200 IPP = 1 , MAXPP
+        146     4   p   2v                    IPNP(IPP,IP) = MOD(IPP-1+MAXPP*(IP-1),MAXP-NP)+1+NP
+        147     4   p   2v        200     CONTINUE
+        148     3   p                     ENDIF
+        149     2   p             210 CONTINUE
+        150     1               C
+        151     1               C
+        152     1               C      IN MODE 1
+        153     1               C
+        154     1               C
+        155     2                     IF(I4FLAG(IMODE,1).EQ.1) THEN
+        156     2               C
+        157     2               C DIAGONAL
+        158     2               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1334
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.83, ITR: 192, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NPP
+                              <<< Loop-information  End >>>
+        159     3  pp   2v            DO 220 IP = 1 , NP
+        160     3   p   2v                NPP   (IP) = 1
+        161     3   p   2v                IPNP(1,IP) = IP
+        162     3   p   2v        220 CONTINUE
+        163     2               C
+        164     2               C NODE LOOP
+        165     2               C
+        166     3                     DO 260 IP = 1 , NP
+        167     4                         DO 250 IEP = 1 , NEP(IP)
+        168     4                             IE = IENP(IEP,IP)
+        169     5                             DO 240 I = 1 , N
+        170     5                                 IPR = NODE(I,IE)
+        171     5                                 IF(IPR.EQ.0) GO TO 240
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IPNP
+                              <<< Loop-information  End >>>
+        172     6                                 DO 230 IPP = 1 , NPP(IP)
+        173     6                                     IF(IPNP(IPP,IP).EQ.IPR) GO TO 240
+        174     6                 230             CONTINUE
+        175     5                                 NPP(IP) = NPP(IP)+1
+        176     6                                 IF(NPP(IP).GT.MAXPP) THEN
+        177     6                                     WRITE(IUT0,*) ERMSGB
+        178     6                                     WRITE(IUT0,*) EREXP2, MAXPP
+        179     6                                     IERR = 1
+        180     6                                     RETURN
+        181     6                                 ENDIF
+        182     5                                 IPNP(NPP(IP),IP) = IPR
+        183     5                 240         CONTINUE
+        184     4                 250     CONTINUE
+        185     3                 260 CONTINUE
+        186     2                     ENDIF
+        187     1               C
+        188     1               C
+        189     1               C      IN MODE 2
+        190     1               C
+        191     1               C
+        192     2                     IF(I4FLAG(IMODE,1).EQ.2) THEN
+        193     3                     DO 360 IP = 1 , NP
+        194     4                         DO 350 IEP = 1 , NEP(IP)
+        195     4                             IE = IENP(IEP,IP)
+        196     5                             DO 340 I = 1 , N
+        197     5                                 IPR    = NODE(I,IE)
+        198     5                                 IF(IPR.EQ.0) GO TO 340
+        199     5                                 INCERT = NPP(IP)+1
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IPNP
+                              <<< Loop-information  End >>>
+        200     6                                 DO 310 IPP = 1 , NPP(IP)
+        201     6                                     IF(IPNP(IPP,IP).EQ.IPR) GO TO 340
+        202     7                                     IF(IPNP(IPP,IP).GT.IPR) THEN
+        203     7                                         INCERT = IPP
+        204     7                                         GO TO 320
+        205     7                                     ENDIF
+        206     6                 310             CONTINUE
+        207     5                 320             CONTINUE
+        208     5                                 NPP(IP) = NPP(IP)+1
+        209     6                                 IF(NPP(IP).GT.MAXPP) THEN
+        210     6                                     WRITE(IUT0,*) ERMSGB
+        211     6                                     WRITE(IUT0,*) EREXP2, MAXPP
+        212     6                                     IERR = 1
+        213     6                                     RETURN
+        214     6                                 ENDIF
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1455
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IPNP
+                              <<< Loop-information  End >>>
+        215     6  pp   2v                        DO 330 IPP = NPP(IP) , INCERT+1 , -1
+        216     6   p   2v                            IPNP(IPP,IP) = IPNP(IPP-1,IP)
+        217     6   p   2v        330             CONTINUE
+        218     5                                 IPNP(INCERT,IP) = IPR
+        219     5                 340         CONTINUE
+        220     4                 350     CONTINUE
+        221     3                 360 CONTINUE
+        222     2                     ENDIF
+        223     1                     ENDIF
+        224                     C
+        225                     C
+        226                     C      (3) MAKE IENE(IEE,IE) , NEE(IE)
+        227                     C
+        228                     C
+        229     1                     IF(I4FLAG(IMODE,2).EQ.1) THEN
+        230     1               C
+        231     1               C INITIAL
+        232     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NEE
+                              <<< Loop-information  End >>>
+        233     2  pp   4v            DO 400 IE = 1 , NE
+        234     2   p   4v                NEE(IE) = 0
+        235     2   p   4v        400 CONTINUE
+        236     1               C
+        237     1               C ELEMENT LOOP
+        238     1               C
+        239     2                     DO 440 IE = 1 , NE
+        240     3                         DO 430 I = 1 , N
+        241     3                             IP = NODE(I,IE)
+        242     3                             IF(IP.EQ.0) GO TO 430
+        243     4                             DO 420 IEP = 1 , NEP(IP)
+        244     4                                 IER = IENP(IEP,IP)
+        245     4                                 IF(IER.EQ.IE) GO TO 420
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IENE
+                              <<< Loop-information  End >>>
+        246     5                                 DO 410 IEE = 1 , NEE(IE)
+        247     5                                     IF(IENE(IEE,IE).EQ.IER) GO TO 420
+        248     5                 410             CONTINUE
+        249     4                                 NEE(IE) = NEE(IE)+1
+        250     5                                 IF(NEE(IE).GT.MAXEE) THEN
+        251     5                                     WRITE(IUT0,*) ERMSGB
+        252     5                                     WRITE(IUT0,*) EREXP3, MAXEE
+        253     5                                     IERR = 1
+        254     5                                     RETURN
+        255     5                                 ENDIF
+        256     4                                 IENE(NEE(IE),IE) = IER
+        257     4                 420         CONTINUE
+        258     3                 430     CONTINUE
+        259     2                 440 CONTINUE
+        260     1                     ENDIF
+        261                     C
+        262                     C
+        263                     C      (4) MAKE LIST(J,I,IE)
+        264                     C
+        265                     C
+        266     1                     IF(I4FLAG(IMODE,3).EQ.1) THEN
+        267     2                     IF(I4FLAG(IMODE,1).EQ.0) THEN
+        268     2                         WRITE(IUT0,*) ERMSGB
+        269     2                         WRITE(IUT0,*) EREXP4
+        270     2                         IERR = 1
+        271     2                         RETURN
+        272     2                     ENDIF
+        273     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<< Loop-information  End >>>
+        274     2  pp                 DO 540 IE = 1 , NE
+        275     3   p                     DO 530 I = 1 , N
+        276     3   p                         IP = NODE(I,IE)
+        277     3   p                         IF(IP.EQ.0) GO TO 530
+        278     4   p                         DO 520 J = 1 , N
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IPNP
+                              <<< Loop-information  End >>>
+        279     5   p                             DO 510 IPP = 1 , NPP(IP)
+        280     6   p                                 IF(IPNP(IPP,IP).EQ.NODE(J,IE)) THEN
+        281     6   p                                     LIST(J,I,IE) = IPP
+        282     6   p                                     GO TO 520
+        283     6   p                                 ENDIF
+        284     5   p             510             CONTINUE
+        285     4   p             520         CONTINUE
+        286     3   p             530     CONTINUE
+        287     2   p             540 CONTINUE
+        288     1                     ENDIF
+        289                     C
+        290                     C
+        291                           RETURN
+        292                           END
+
+ Diagnostic messages: program name(NEIBER)
+   jwd5001p-i  "neiber.f", line 104: DO loop with DO variable 'IP' is parallelized.
+   jwd6001s-i  "neiber.f", line 107: SIMD conversion is applied to DO loop with DO variable 'IEP'.
+   jwd8204o-i  "neiber.f", line 107: This loop is software pipelined.
+   jwd8205o-i  "neiber.f", line 107: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 96.
+   jwd5131p-i  "neiber.f", line 116: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "neiber.f", line 117: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "neiber.f", line 117: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "neiber.f", line 117: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+   jwd5001p-i  "neiber.f", line 142: DO loop with DO variable 'IP' is parallelized.
+   jwd6001s-i  "neiber.f", line 145: SIMD conversion is applied to DO loop with DO variable 'IPP'.
+   jwd8204o-i  "neiber.f", line 145: This loop is software pipelined.
+   jwd8205o-i  "neiber.f", line 145: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 96.
+   jwd5001p-i  "neiber.f", line 159: DO loop with DO variable 'IP' is parallelized.
+   jwd6001s-i  "neiber.f", line 159: SIMD conversion is applied to DO loop with DO variable 'IP'.
+   jwd8204o-i  "neiber.f", line 159: This loop is software pipelined.
+   jwd8205o-i  "neiber.f", line 159: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 192.
+   jwd5131p-i  "neiber.f", line 166: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "neiber.f", line 167: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "neiber.f", line 169: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "neiber.f", line 172: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "neiber.f", line 172: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "neiber.f", line 172: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+   jwd5131p-i  "neiber.f", line 193: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "neiber.f", line 194: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "neiber.f", line 196: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "neiber.f", line 200: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "neiber.f", line 200: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "neiber.f", line 200: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+   jwd5001p-i  "neiber.f", line 215: DO loop with DO variable 'IPP' is parallelized.
+   jwd6001s-i  "neiber.f", line 215: SIMD conversion is applied to DO loop with DO variable 'IPP'.
+   jwd8663o-i  "neiber.f", line 215: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "neiber.f", line 215: Loop unrolled 2 times.
+   jwd5001p-i  "neiber.f", line 233: DO loop with DO variable 'IE' is parallelized.
+   jwd6001s-i  "neiber.f", line 233: SIMD conversion is applied to DO loop with DO variable 'IE'.
+   jwd8663o-i  "neiber.f", line 233: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "neiber.f", line 233: Loop unrolled 4 times.
+   jwd5131p-i  "neiber.f", line 239: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "neiber.f", line 240: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "neiber.f", line 243: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "neiber.f", line 246: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "neiber.f", line 246: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "neiber.f", line 246: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+   jwd5001p-i  "neiber.f", line 274: DO loop with DO variable 'IE' is parallelized.
+   jwd5131p-i  "neiber.f", line 279: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "neiber.f", line 279: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "neiber.f", line 279: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+
+ Procedure information
+   Lines      : 292
+   Statements : 154
+   Stack(byte): 3888
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 292
+   Total statements : 154
+   Total stack(byte): 3888
+   Total prefetch num: 0
+

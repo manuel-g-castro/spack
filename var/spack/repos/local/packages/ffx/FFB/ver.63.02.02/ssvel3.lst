@@ -1,0 +1,243 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:53:32 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : ssvel3.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "SSVEL3"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE SSVEL3(N2,NEX,NP,NE,NODE,U,V,W,
+          2                          *                  NPASRC,LEASRC,COEAS1,COEAS2,COEAS3,
+          3                          *                  UASRC,VASRC,WASRC,
+          4                          *                  IUT0,IERR)
+          5                           IMPLICIT NONE
+          6                     C
+          7                     C[INPUT]
+          8                           INTEGER*4 N2,NEX(8),NP,NE,NODE(N2,NE),
+          9                          *          NPASRC,LEASRC(NPASRC),IUT0
+         10                           REAL*4    U(NP),V(NP),W(NP),
+         11                          *          COEAS1(NPASRC),COEAS2(NPASRC),COEAS3(NPASRC)
+         12                     C
+         13                     C[LOCAL]
+         14                           INTEGER*4 IERR
+         15                           REAL*4    UASRC(NPASRC),VASRC(NPASRC),WASRC(NPASRC)
+         16                     C
+         17                     C[LOCAL]
+         18                           INTEGER*4 IPASRC,NHEX,NWED,NPRD,NTET,IE,
+         19                          *          IP1,IP2,IP3,IP4,IP5,IP6,IP7,IP8
+         20                           REAL*4    GP,EP,TP,T1,T2,T3,T4,T5,T6,T7,T8
+         21                     C
+         22                           IERR=0
+         23                           NTET=NEX(5)
+         24                           NPRD=NEX(6)
+         25                           NWED=NEX(7)
+         26                           NHEX=NEX(8)
+         27                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      COEAS1, LEASRC, COEAS2, COEAS3
+                              <<< Loop-information  End >>>
+         28     1   s    s            DO 1000 IPASRC=1,NPASRC
+         29     1   p    v                IE = LEASRC(IPASRC)
+         30     1   p    v                GP = COEAS1(IPASRC)
+         31     1   p    v                EP = COEAS2(IPASRC)
+         32     1   p    v                TP = COEAS3(IPASRC)
+         33     1               C
+         34     2   p    m                IF(NODE(NHEX,IE).NE.0) THEN
+         35     2   m    s                    T1=0.125E0*(1.0E0-GP)*(1.0E0-EP)*(1.0E0-TP)
+         36     2   m    s                    T2=0.125E0*(1.0E0+GP)*(1.0E0-EP)*(1.0E0-TP)
+         37     2   m    s                    T3=0.125E0*(1.0E0+GP)*(1.0E0+EP)*(1.0E0-TP)
+         38     2   s    s                    T4=0.125E0*(1.0E0-GP)*(1.0E0+EP)*(1.0E0-TP)
+         39     2   m    s                    T5=0.125E0*(1.0E0-GP)*(1.0E0-EP)*(1.0E0+TP)
+         40     2   s    s                    T6=0.125E0*(1.0E0+GP)*(1.0E0-EP)*(1.0E0+TP)
+         41     2   m    s                    T7=0.125E0*(1.0E0+GP)*(1.0E0+EP)*(1.0E0+TP)
+         42     2   m    s                    T8=0.125E0*(1.0E0-GP)*(1.0E0+EP)*(1.0E0+TP)
+         43     2   p    s                ELSE IF(NODE(NWED,IE).NE.0) THEN
+         44     2   m    s                    T1=0.5E0*GP           *(1.0E0-TP)
+         45     2   m    s                    T2=0.5E0*EP           *(1.0E0-TP)
+         46     2   m    s                    T3=0.5E0*(1.0E0-GP-EP)*(1.0E0-TP)
+         47     2   m    s                    T4=0.5E0*GP           *(1.0E0+TP)
+         48     2   s    s                    T5=0.5E0*EP           *(1.0E0+TP)
+         49     2   m    m                    T6=0.5E0*(1.0E0-GP-EP)*(1.0E0+TP)
+         50     2   p    s                ELSE IF(NODE(NPRD,IE).NE.0) THEN
+         51     2   m    s                    T1=0.25E0*((1.0E0-GP)*(1.0E0-EP)-TP+GP*EP*TP/(1.0E0-TP))
+         52     2   m    s                    T2=0.25E0*((1.0E0+GP)*(1.0E0-EP)-TP-GP*EP*TP/(1.0E0-TP))
+         53     2   m    s                    T3=0.25E0*((1.0E0+GP)*(1.0E0+EP)-TP+GP*EP*TP/(1.0E0-TP))
+         54     2   m    s                    T4=0.25E0*((1.0E0-GP)*(1.0E0+EP)-TP-GP*EP*TP/(1.0E0-TP))
+         55     2   m    s                    T5= TP
+         56     2   p    s                ELSE IF(NODE(NTET,IE).NE.0) THEN
+         57     2   s    s                    T1=GP
+         58     2   s    s                    T2=EP
+         59     2   s    s                    T3=TP
+         60     2   m    s                    T4=1.0E0-(GP+EP+TP)
+         61     2   p    v                ENDIF
+         62     1               C
+         63     1   p    v                IP1=NODE(1,IE)
+         64     1   p    v                IP2=NODE(2,IE)
+         65     1   p    v                IP3=NODE(3,IE)
+         66     1   p    v                IP4=NODE(4,IE)
+         67     1   p    v                IP5=NODE(5,IE)
+         68     1   p    v                IP6=NODE(6,IE)
+         69     1   p    v                IP7=NODE(7,IE)
+         70     1   p    v                IP8=NODE(8,IE)
+         71     1               C
+         72     2   p    s                IF(NODE(NHEX,IE).NE.0) THEN
+         73     2   m    s                    UASRC(IPASRC)=
+         74     2                    *         T1*U(IP1)+T2*U(IP2)+T3*U(IP3)+T4*U(IP4)
+         75     2                    *        +T5*U(IP5)+T6*U(IP6)+T7*U(IP7)+T8*U(IP8)
+         76     2   m    s                    VASRC(IPASRC)=
+         77     2                    *         T1*V(IP1)+T2*V(IP2)+T3*V(IP3)+T4*V(IP4)
+         78     2                    *        +T5*V(IP5)+T6*V(IP6)+T7*V(IP7)+T8*V(IP8)
+         79     2   m    s                    WASRC(IPASRC)=
+         80     2                    *         T1*W(IP1)+T2*W(IP2)+T3*W(IP3)+T4*W(IP4)
+         81     2                    *        +T5*W(IP5)+T6*W(IP6)+T7*W(IP7)+T8*W(IP8)
+         82     2   p    s                ELSE IF(NODE(NWED,IE).NE.0) THEN
+         83     2   m    s                    UASRC(IPASRC)=
+         84     2                    *         T1*U(IP1)+T2*U(IP2)+T3*U(IP3)+T4*U(IP4)
+         85     2                    *        +T5*U(IP5)+T6*U(IP6)
+         86     2   m    s                    VASRC(IPASRC)=
+         87     2                    *         T1*V(IP1)+T2*V(IP2)+T3*V(IP3)+T4*V(IP4)
+         88     2                    *        +T5*V(IP5)+T6*V(IP6)
+         89     2   m    m                    WASRC(IPASRC)=
+         90     2                    *         T1*W(IP1)+T2*W(IP2)+T3*W(IP3)+T4*W(IP4)
+         91     2                    *        +T5*W(IP5)+T6*W(IP6)
+         92     2   p    s                ELSE IF(NODE(NPRD,IE).NE.0) THEN
+         93     2   m    s                    UASRC(IPASRC)=
+         94     2                    *         T1*U(IP1)+T2*U(IP2)+T3*U(IP3)+T4*U(IP4)
+         95     2                    *        +T5*U(IP5)
+         96     2   m    s                    VASRC(IPASRC)=
+         97     2                    *         T1*V(IP1)+T2*V(IP2)+T3*V(IP3)+T4*V(IP4)
+         98     2                    *        +T5*V(IP5)
+         99     2   m    s                    WASRC(IPASRC)=
+        100     2                    *         T1*W(IP1)+T2*W(IP2)+T3*W(IP3)+T4*W(IP4)
+        101     2                    *        +T5*W(IP5)
+        102     2   p    s                ELSE IF(NODE(NTET,IE).NE.0) THEN
+        103     2   m    s                    UASRC(IPASRC)=
+        104     2                    *         T1*U(IP1)+T2*U(IP2)+T3*U(IP3)+T4*U(IP4)
+        105     2   m    s                    VASRC(IPASRC)=
+        106     2                    *         T1*V(IP1)+T2*V(IP2)+T3*V(IP3)+T4*V(IP4)
+        107     2   m    s                    WASRC(IPASRC)=
+        108     2                    *         T1*W(IP1)+T2*W(IP2)+T3*W(IP3)+T4*W(IP4)
+        109     2   p    v                ENDIF
+        110     1               C
+        111     1   p    v       1000 CONTINUE
+        112                     C
+        113                           RETURN
+        114                           END
+
+ Diagnostic messages: program name(SSVEL3)
+   jwd2008i-i  "ssvel3.f", line 1: この仮引数'IUT0'は、副プログラム中で使用されていません。
+   jwd8220o-i  "ssvel3.f", line 1: 副作用の可能性のある最適化を行いました。
+   jwd6229s-i  "ssvel3.f", line 28: IF文が存在するため、このDOループのSIMD化を抑止しました。
+   jwd8670o-i  "ssvel3.f", line 28: ループ内に分岐命令があるため、ソフトウェアパイプライニングを適用できません。
+   jwd8209o-i  "ssvel3.f", line 35: 多項式の演算順序を変更しました。
+   jwd5202p-i  "ssvel3.f", line 35: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:T1)
+   jwd6202s-i  "ssvel3.f", line 35: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:T1)
+   jwd8209o-i  "ssvel3.f", line 36: 多項式の演算順序を変更しました。
+   jwd5202p-i  "ssvel3.f", line 36: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:T2)
+   jwd6202s-i  "ssvel3.f", line 36: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:T2)
+   jwd8209o-i  "ssvel3.f", line 37: 多項式の演算順序を変更しました。
+   jwd5202p-i  "ssvel3.f", line 37: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:T3)
+   jwd6202s-i  "ssvel3.f", line 37: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:T3)
+   jwd8209o-i  "ssvel3.f", line 38: 多項式の演算順序を変更しました。
+   jwd5202p-i  "ssvel3.f", line 38: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:T4)
+   jwd6202s-i  "ssvel3.f", line 38: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:T4)
+   jwd8209o-i  "ssvel3.f", line 39: 多項式の演算順序を変更しました。
+   jwd5202p-i  "ssvel3.f", line 39: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:T5)
+   jwd6202s-i  "ssvel3.f", line 39: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:T5)
+   jwd8209o-i  "ssvel3.f", line 40: 多項式の演算順序を変更しました。
+   jwd5202p-i  "ssvel3.f", line 40: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:T6)
+   jwd6202s-i  "ssvel3.f", line 40: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:T6)
+   jwd8209o-i  "ssvel3.f", line 41: 多項式の演算順序を変更しました。
+   jwd5202p-i  "ssvel3.f", line 41: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:T7)
+   jwd6202s-i  "ssvel3.f", line 41: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:T7)
+   jwd8209o-i  "ssvel3.f", line 42: 多項式の演算順序を変更しました。
+   jwd5202p-i  "ssvel3.f", line 42: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:T8)
+   jwd6202s-i  "ssvel3.f", line 42: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:T8)
+   jwd8209o-i  "ssvel3.f", line 46: 多項式の演算順序を変更しました。
+   jwd8209o-i  "ssvel3.f", line 49: 多項式の演算順序を変更しました。
+   jwd8209o-i  "ssvel3.f", line 51: 多項式の演算順序を変更しました。
+   jwd8209o-i  "ssvel3.f", line 52: 多項式の演算順序を変更しました。
+   jwd8209o-i  "ssvel3.f", line 53: 多項式の演算順序を変更しました。
+   jwd8209o-i  "ssvel3.f", line 54: 多項式の演算順序を変更しました。
+   jwd8209o-i  "ssvel3.f", line 60: 多項式の演算順序を変更しました。
+   jwd8209o-i  "ssvel3.f", line 73: 多項式の演算順序を変更しました。
+   jwd8209o-i  "ssvel3.f", line 76: 多項式の演算順序を変更しました。
+   jwd8209o-i  "ssvel3.f", line 79: 多項式の演算順序を変更しました。
+   jwd8209o-i  "ssvel3.f", line 83: 多項式の演算順序を変更しました。
+   jwd8209o-i  "ssvel3.f", line 86: 多項式の演算順序を変更しました。
+   jwd8209o-i  "ssvel3.f", line 89: 多項式の演算順序を変更しました。
+   jwd8209o-i  "ssvel3.f", line 93: 多項式の演算順序を変更しました。
+   jwd8209o-i  "ssvel3.f", line 96: 多項式の演算順序を変更しました。
+   jwd8209o-i  "ssvel3.f", line 99: 多項式の演算順序を変更しました。
+   jwd8209o-i  "ssvel3.f", line 103: 多項式の演算順序を変更しました。
+   jwd8209o-i  "ssvel3.f", line 105: 多項式の演算順序を変更しました。
+   jwd8209o-i  "ssvel3.f", line 107: 多項式の演算順序を変更しました。
+
+ Procedure information
+   Lines      : 114
+   Statements : 74
+   Stack(byte): 352
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 114
+   Total statements : 74
+   Total stack(byte): 352
+   Total prefetch num: 0
+

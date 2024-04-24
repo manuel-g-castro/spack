@@ -1,0 +1,602 @@
+
+ Fujitsu Fortran Version 4.7.0  Tue Dec 21 10:39:31 2021
+
+ Compilation information
+   Current directory : /vol0005/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/dd_mpi
+   Source file       : ddface.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0005/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -Nlst=t -Cpp -Cfpp -c -I/opt/FJSVxtclanga/.common/MELI026/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI026/lib64 -Knointentopt
+   Cpp options          : -I/vol0005/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -I/opt/FJSVxtclanga/.common/MELI026/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI026/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=7 -D__FRT_patchlevel__=0 -D__FRT_version__="4.7.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Knoarray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nlibomp -Nline -Nlst -Nlst=p -Nlst=t
+                          -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "DDFAC0"
+  (line-no.)(nest)(optimize)
+          1                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+          2                     C
+          3                     C     SET UP NEIGHBORING DOMAIN LISTS OF FACE DATA FOR DOMAIN-DECOMPOSITION
+          4                     C     PROGRAMMING MODEL
+          5                     C
+          6                     C     WRITTEN BY H.YOSHIMURA 2013.03.06
+          7                     C
+          8                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+          9                           SUBROUTINE DDFAC0(IPART,NFACE,LFACE,MDOM,MBFDOM,
+         10                          *                  NDOM,LDOM,NBFDOM,IFSLF,IFSND,IUT0,IERR)
+         11                     C
+         12                           IMPLICIT NONE
+         13                     C
+         14                     C     [INPUT]
+         15                           INTEGER*4 IPART,NFACE,LFACE(5,NFACE),MDOM,MBFDOM
+         16                     C
+         17                     C     [IN-OUTPUT]
+         18                           INTEGER*4 NDOM,LDOM(MDOM),NBFDOM(MDOM)
+         19                           INTEGER*4 IFSLF(MBFDOM,MDOM),IFSND(MBFDOM,MDOM),IUT0,IERR
+         20                     C
+         21                     C     [LOCAL]
+         22                           INTEGER*4 IDOM,IFACE,IFNEW,ICHK
+         23                     C
+         24                           CHARACTER*60 ERMSGB
+         25                          & / ' ## SUBROUTINE DDFAC0: FATAL     ERROR OCCURRENCE; RETURNED' /
+         26                           CHARACTER*60 EREXP1
+         27                          & / ' DIMENSION SIZE OF PASSED LIST ARRAYS IS NOT SUFFICIENT    ' /
+         28                     C
+         29                           IERR = 0
+         30                     C
+         31                     C
+         32                     C
+         33                     C SET INITIAL VALUES
+         34                     C
+         35                     C
+         36                     C
+         37                           NDOM = 0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NBFDOM
+                              <<< Loop-information  End >>>
+         38     1  pp   4v            DO 1000 IDOM = 1 , MDOM
+         39     1   p   4v                NBFDOM(IDOM) = 0
+         40     1   p   4v       1000 CONTINUE
+         41                     C
+         42                     C
+         43                     C
+         44                     C SET NEIGHBORING DOMAIN LISTS FOR FACE
+         45                     C
+         46                     C
+         47                     C
+         48     1                     DO 2000 IFACE = 1 , NFACE
+         49     1                         IF (LFACE(5,IFACE).EQ.0) GOTO 2000
+         50     1               C
+         51     1                         IFNEW = LFACE(5,IFACE)
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LDOM
+                              <<< Loop-information  End >>>
+         52     2                         DO 2100 ICHK = 1 , NDOM
+         53     3                             IF(LDOM(ICHK).EQ.IFNEW) THEN
+         54     3                                 IDOM = ICHK
+         55     3                                 GO TO 2200
+         56     3                             ENDIF
+         57     2                2100     CONTINUE
+         58     1                         NDOM = NDOM+1
+         59     1                         IDOM = NDOM
+         60     1               C
+         61     2                         IF(NDOM.GT.MDOM) THEN
+         62     2                             WRITE(IUT0,*) ERMSGB
+         63     2                             WRITE(IUT0,*) EREXP1
+         64     2                             IERR = 1
+         65     2                             RETURN
+         66     2                         ENDIF
+         67     1               C
+         68     1                         LDOM(NDOM) = IFNEW
+         69     1               C
+         70     1                2200     CONTINUE
+         71     1                         NBFDOM(IDOM) = NBFDOM(IDOM)+1
+         72     1               C
+         73     2                         IF(NBFDOM(IDOM).GT.MBFDOM) THEN
+         74     2                             WRITE(IUT0,*) ERMSGB
+         75     2                             WRITE(IUT0,*) EREXP1
+         76     2                             IERR = 1
+         77     2                             RETURN
+         78     2                         ENDIF
+         79     1               C
+         80     1                         IFSLF(NBFDOM(IDOM),IDOM) =  IFACE
+         81     1                         IFSND(NBFDOM(IDOM),IDOM) = -LFACE(2,IFACE)
+         82     1                2000 CONTINUE
+         83                     C
+         84                           RETURN
+         85                           END
+
+ Diagnostic messages: program name(DDFAC0)
+   jwd2008i-i  "ddface.f", line 9: Dummy argument 'IPART' not used in this subprogram.
+   jwd5001p-i  "ddface.f", line 38: DO loop with DO variable 'IDOM' is parallelized.
+   jwd6001s-i  "ddface.f", line 38: SIMD conversion is applied to DO loop with DO variable 'IDOM'.
+   jwd8663o-i  "ddface.f", line 38: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "ddface.f", line 38: Loop unrolled 4 times.
+   jwd5131p-i  "ddface.f", line 48: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "ddface.f", line 52: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "ddface.f", line 52: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "ddface.f", line 52: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+
+ Procedure information
+   Lines      : 85
+   Statements : 44
+   Stack(byte): 1152
+   Prefetch num: 0
+
+ External subroutine subprogram "DDFAC1"
+  (line-no.)(nest)(optimize)
+         86                     C
+         87                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+         88                     C
+         89                     C     COMMUNICATE FACE DATA (MPI VERSION)
+         90                     C
+         91                     C     WRITTEN BY H.YOSHIMURA 2013.03.06
+         92                     C
+         93                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+         94                           SUBROUTINE DDFAC1(IDIM,MBFDOM,NDOM,LDOM,NBFDOM,IFSLF,IFSND,NFACE,
+         95                          *                  FX,FY,FZ,BUFSND,BUFRCV,MAXBUF,IUT0,IERR)
+         96                     C
+         97                           IMPLICIT NONE
+         98                     C
+         99                     C     [INPUT]
+        100                           INTEGER*4 IDIM
+        101                           INTEGER*4 MBFDOM,NDOM,LDOM(NDOM),NBFDOM(NDOM),
+        102                          *          IFSLF(MBFDOM,NDOM),IFSND(MBFDOM,NDOM)
+        103                           INTEGER*4 NFACE
+        104                     C
+        105                     C     [IN-OUTPUT]
+        106                           INTEGER*4 IUT0,IERR
+        107                           REAL*4    FX(NFACE),FY(NFACE),FZ(NFACE)
+        108                     C
+        109                     C     [WORK]
+        110                           INTEGER*4 MAXBUF
+        111                           REAL*4    BUFSND(MAXBUF),BUFRCV(MAXBUF)
+        112                     C
+        113                     C     [LOCAL]
+        114                           INTEGER*4 NSTART,NSTART2,NSKIP,MSGTYP,MSGLEN
+        115                           INTEGER*4 IFACE,IFACES,IBF,ITMP,IDOM,IRECV,ISEND,ISTART
+        116                     C
+        117                           INCLUDE 'mpif.h'
+        118                     C
+        119                           INTEGER*4 MAXDOM
+        120                           PARAMETER ( MAXDOM = 10000 )
+        121                           INTEGER*4 MSGIDS(MAXDOM),MSGSTS(MPI_STATUS_SIZE,MAXDOM)
+        122                     C
+        123                           CHARACTER*60 ERMSGB
+        124                          & / ' ## SUBROUTINE DDFAC1: FATAL     ERROR OCCURRENCE; RETURNED' /
+        125                           CHARACTER*60 EREXP1
+        126                          & / ' DIMENSION SIZE OF INTERNAL      ARRAYS IS NOT SUFFICIENT  ' /
+        127                           CHARACTER*60 EREXP2
+        128                          & / ' DIMENSION SIZE OF PASSED BUFFER ARRAYS IS NOT SUFFICIENT  ' /
+        129                           CHARACTER*60 EREXP3
+        130                          & / ' RECEIVED NODE NUMBER IS OUT OF THE GLOBAL NODE NUMBER     ' /
+        131                     C
+        132                           IERR = 0
+        133                     C
+        134     1                     IF(IDIM.EQ.0) THEN
+        135     1                         NSKIP=1
+        136     1                     ELSE IF(IDIM.EQ.1) THEN
+        137     1                         NSKIP=1
+        138     1                     ELSE IF(IDIM.EQ.2) THEN
+        139     1                         NSKIP=2
+        140     1                     ELSE IF(IDIM.EQ.3) THEN
+        141     1                         NSKIP=3
+        142     1                     ELSE
+        143     1                         WRITE(IUT0,*) EREXP1
+        144     1                         IERR = 1
+        145     1                         RETURN
+        146     1                     ENDIF
+        147                     C
+        148                     C
+        149                     C
+        150                     C CHECK THE INTERNAL ARRAY SIZE
+        151                     C
+        152                     C
+        153                     C
+        154     1                     IF(2*NDOM.GT.MAXDOM) THEN
+        155     1                         WRITE(IUT0,*) ERMSGB
+        156     1                         WRITE(IUT0,*) EREXP1
+        157     1                         IERR = 1
+        158     1                         RETURN
+        159     1                     ENDIF
+        160                     C
+        161                     C
+        162                     C
+        163                     C POST ALL THE EXPECTED RECEIVES
+        164                     C
+        165                     C
+        166                     C
+        167                           NSTART = 1
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LDOM, NBFDOM
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 1  FILL 5
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        168     1                     DO 1000 IDOM = 1 , NDOM
+        169     1                         MSGTYP = 1
+        170     1                         IRECV  = LDOM(IDOM)-1
+        171     1                         MSGLEN = NSKIP*NBFDOM(IDOM)
+        172     1               C
+        173     2                         IF(NSTART+MSGLEN-1.GT.MAXBUF) THEN
+        174     2                             WRITE(IUT0,*) ERMSGB
+        175     2                             WRITE(IUT0,*) EREXP2
+        176     2                             IERR = 1
+        177     2                             RETURN
+        178     2                         ENDIF
+        179     1               C
+        180     1               #ifdef PRECEXP
+        181     1                         CALL MPI_IRECV(BUFRCV(NSTART),MSGLEN,MPI_REAL8,IRECV,MSGTYP,
+        182     1                    &                   MPI_COMM_WORLD,MSGIDS(IDOM),IERR)
+        183     1               #else
+        184     1                         CALL MPI_IRECV(BUFRCV(NSTART),MSGLEN,MPI_REAL ,IRECV,MSGTYP,
+        185     1                    &                   MPI_COMM_WORLD,MSGIDS(IDOM),IERR)
+        186     1               #endif
+        187     1               C
+        188     1                         NSTART = NSTART+MSGLEN
+        189     1                1000 CONTINUE
+        190                     C
+        191                     C
+        192                     C
+        193                     C SET UP THE SEND BUFFER
+        194                     C
+        195                     C
+        196                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IFSND, IFSLF
+                              <<< Loop-information  End >>>
+        197     1                     DO 2000 IDOM = 1 , NDOM
+        198     1                        NSTART  = 0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1600
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        199     2  pp    v               DO 2100 ITMP = 2 , IDOM
+        200     2   p    v                  NSTART = NSTART + NBFDOM(ITMP-1)*NSKIP
+        201     2   p    v       2100    CONTINUE
+        202     1               C
+        203     2                        IF(IDIM.EQ.0) THEN
+        204     2               !ocl norecurrence(BUFSND)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 640
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.25, ITR: 320, MVE: 4, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IFSND
+                              <<< Loop-information  End >>>
+        205     3  pp   2v                  DO 2200 IBF=1,NBFDOM(IDOM)
+        206     3   p   2v                     NSTART2 = NSTART + NSKIP * (IBF-1)
+        207     3   p   2v                     IFACES  = IFSND(IBF,IDOM)
+        208     3   p   2v                     BUFSND(NSTART2+1) = IFACES
+        209     3   p   2v       2200       CONTINUE
+        210     2                        ELSE IF(IDIM.EQ.1) THEN
+        211     2               !ocl norecurrence(BUFSND)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 696
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.60, ITR: 320, MVE: 4, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IFSLF
+                              <<< Loop-information  End >>>
+        212     3  pp   2v                  DO 2300 IBF=1,NBFDOM(IDOM)
+        213     3   p   2v                     NSTART2 = NSTART + NSKIP * (IBF-1)
+        214     3   p   2v                     IFACE   = IFSLF(IBF,IDOM)
+        215     3   p   2v                     BUFSND(NSTART2+1) = FX(IFACE)
+        216     3   p   2v       2300       CONTINUE
+        217     2                        ELSE IF(IDIM.EQ.2) THEN
+        218     2               !ocl norecurrence(BUFSND)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 552
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.62, ITR: 288, MVE: 4, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IFSLF
+                              <<< Loop-information  End >>>
+        219     3  pp   2v                  DO 2400 IBF=1,NBFDOM(IDOM)
+        220     3   p   2v                     NSTART2 = NSTART + NSKIP * (IBF-1)
+        221     3   p   2v                     IFACE   = IFSLF(IBF,IDOM)
+        222     3   p   2v                     BUFSND(NSTART2+1) = FX(IFACE)
+        223     3   p   2v                     BUFSND(NSTART2+2) = FY(IFACE)
+        224     3   p   2v       2400       CONTINUE
+        225     2                        ELSE IF(IDIM.EQ.3) THEN
+        226     2               !ocl norecurrence(BUFSND)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 458
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.41, ITR: 192, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IFSLF
+                              <<< Loop-information  End >>>
+        227     3  pp   2v                  DO 2500 IBF=1,NBFDOM(IDOM)
+        228     3   p   2v                     NSTART2 = NSTART + NSKIP * (IBF-1)
+        229     3   p   2v                     IFACE   = IFSLF(IBF,IDOM)
+        230     3   p   2v                     BUFSND(NSTART2+1) = FX(IFACE)
+        231     3   p   2v                     BUFSND(NSTART2+2) = FY(IFACE)
+        232     3   p   2v                     BUFSND(NSTART2+3) = FZ(IFACE)
+        233     3   p   2v       2500       CONTINUE
+        234     2                        ENDIF
+        235     1                2000 CONTINUE
+        236                     C
+        237                     C
+        238                     C
+        239                     C SEND THE RESIDUALS
+        240                     C
+        241                     C
+        242                     C
+        243                           NSTART = 1
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LDOM, NBFDOM
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 1  FILL 3
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        244     1   s    s            DO 2600 IDOM = 1 , NDOM
+        245     1   s    s                MSGTYP = 1
+        246     1   s    s                ISEND  = LDOM(IDOM)-1
+        247     1   s    s                MSGLEN = NSKIP*NBFDOM(IDOM)
+        248     1               
+        249     1               #ifdef PRECEXP
+        250     1                         CALL MPI_ISEND(BUFSND(NSTART),MSGLEN,MPI_REAL8,ISEND,MSGTYP,
+        251     1                    &                   MPI_COMM_WORLD,MSGIDS(NDOM+IDOM),IERR)
+        252     1               #else
+        253     1   s    s                CALL MPI_ISEND(BUFSND(NSTART),MSGLEN,MPI_REAL ,ISEND,MSGTYP,
+        254     1                    &                   MPI_COMM_WORLD,MSGIDS(NDOM+IDOM),IERR)
+        255     1               #endif
+        256     1               C
+        257     1   s    s                NSTART = NSTART+MSGLEN
+        258     1   s    s       2600 CONTINUE
+        259                     C
+        260                     C
+        261                     C
+        262                     C WAIT FOR THE COMPLETION OF ALL THE REQUESTED COMMUNICATIONS
+        263                     C
+        264                     C
+        265                     C
+        266                           CALL MPI_WAITALL(2*NDOM,MSGIDS,MSGSTS,IERR)
+        267                     C
+        268                     C
+        269                     C IMPORTANT NOTES!
+        270                     C        AFTER A NON-BLOCKING SEND/RECEIVE ROUTINE, SUCH AS 'MPI_ISEND'
+        271                     C    OR 'MPI_IRECV', IS CALLED, THE COMMUNICATION REQUEST CREATED BY
+        272                     C    THESE ROUTINES MUST BE FREED EITHER BY EXPLICITLY OR IMPLICITLY.
+        273                     C   'MPI_REQUEST_FREE' FREES SUCH REQUEST EXPLICITLY, WHILE A ROUTINE
+        274                     C    WHICH IDENTIFIES COMPLETION OF THE REQUEST, SUCH AS 'MPI_WAIT',
+        275                     C    'MPI_WAITANY', OR 'MPI_WAITALL' IMPLICITLY FREES THE REQUEST.
+        276                     C        THIS INTERFACE PROGRAM USES 'MPI_WAITALL' ROUTINES TO FREE SUCH
+        277                     C    REQUESTS. PAY PARTICULAR ATTENTION IF YOU WISH TO, INSTEAD, USE
+        278                     C   'MPI_REQUEST_FREE', BECAUSE 'MPI_REQUEST_FREE' FREES THE REQUESTS
+        279                     C    REGARDLESS OF THE STATE OF THE PREVIOUSLY CALLED COMMUNICATION
+        280                     C    ROUTINES, THUS SOMETIMES FREES REQUESTS WHICH HAVE NOT BEEN
+        281                     C    COMPLETED.
+        282                     C
+        283                     C
+        284                     C SUPERIMPOSE THE RECEIVED RESIDUALS
+        285                     C
+        286                     C
+        287                           NSTART = 0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IFSND
+                              <<< Loop-information  End >>>
+        288     1                     DO 3000 IDOM = 1 , NDOM
+        289     2                        IF(IDIM .EQ. 0) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 616
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.75, ITR: 576, MVE: 6, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IFSND
+                              <<< Loop-information  End >>>
+        290     3  pp   2v                  DO 3100 IBF = 1, NBFDOM(IDOM)
+        291     3   p   2v                     NSTART2 = NSTART + NSKIP * (IBF-1)
+        292     3   p   2v                     IFSND(IBF,IDOM)=BUFRCV(NSTART2+1)+0.1
+        293     3   p   2v       3100       CONTINUE
+        294     2                           NSTART = NSTART + NSKIP * NBFDOM(IDOM)
+        295     2                        ELSE IF(IDIM .EQ. 1) THEN
+        296     2               !ocl norecurrence(FX)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 411
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        297     3  pp    v                  DO 3200 IBF = 1, NBFDOM(IDOM)
+        298     3   p    v                     IFACE = IFSND(IBF,IDOM)
+        299     3   p                          IF(IFACE.LT.1 .OR. IFACE.GT.NFACE) IERR=1
+        300     3   p    v                     NSTART2   = NSTART + NSKIP * (IBF-1)
+        301     3   p    v                     FX(IFACE) = BUFRCV(NSTART2+1)
+        302     3   p    v       3200       CONTINUE
+        303     2                           NSTART = NSTART + NSKIP * NBFDOM(IDOM)
+        304     2                        ELSE IF(IDIM .EQ. 2) THEN
+        305     2               !ocl norecurrence(FX,FY)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 356
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        306     3  pp    v                  DO 3300 IBF = 1, NBFDOM(IDOM)
+        307     3   p    v                     IFACE = IFSND(IBF,IDOM)
+        308     3   p                          IF(IFACE.LT.1 .OR. IFACE.GT.NFACE) IERR=1
+        309     3   p    v                     NSTART2 = NSTART + NSKIP * (IBF-1)
+        310     3   p    v                     FX(IFACE) = BUFRCV(NSTART2+1)
+        311     3   p    v                     FY(IFACE) = BUFRCV(NSTART2+2)
+        312     3   p    v       3300       CONTINUE
+        313     2                           NSTART = NSTART + NSKIP * NBFDOM(IDOM)
+        314     2                        ELSE IF(IDIM .EQ. 3) THEN
+        315     2               !ocl norecurrence(FX,FY,FZ)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 314
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        316     3  pp    v                  DO 3400 IBF = 1, NBFDOM(IDOM)
+        317     3   p    v                     IFACE = IFSND(IBF,IDOM)
+        318     3   p                          IF(IFACE.LT.1 .OR. IFACE.GT.NFACE) IERR=1
+        319     3   p    v                     NSTART2 = NSTART + NSKIP * (IBF-1)
+        320     3   p    v                     FX(IFACE) = BUFRCV(NSTART2+1)
+        321     3   p    v                     FY(IFACE) = BUFRCV(NSTART2+2)
+        322     3   p    v                     FZ(IFACE) = BUFRCV(NSTART2+3)
+        323     3   p    v       3400       CONTINUE
+        324     2                           NSTART = NSTART + NSKIP * NBFDOM(IDOM)
+        325     2                        ENDIF
+        326     1                3000 CONTINUE
+        327                     C
+        328     1                     IF(IERR .EQ. 1) THEN
+        329     1                       WRITE(IUT0,*) ERMSGB
+        330     1                       WRITE(IUT0,*) EREXP3
+        331     1                       RETURN
+        332     1                     ENDIF
+        333                     C
+        334                           RETURN
+        335                           END
+
+ Diagnostic messages: program name(DDFAC1)
+   jwd2006i-i  "ddface.f", line 115: 'ISTART' is declared but never referenced.
+   jwd5131p-i  "ddface.f", line 168: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "ddface.f", line 168: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8664o-i  "ddface.f", line 168: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5208p-i  "ddface.f", line 197: DO loop is not parallelized: the assign-refer order of 'BUFSND' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5004p-i  "ddface.f", line 199: DO loop with DO variable 'ITMP' is parallelized. The DO loop contains the reduction operation.
+   jwd6004s-i  "ddface.f", line 199: SIMD conversion is applied to DO loop with DO variable 'ITMP'. The DO loop contains a reduction operation.
+   jwd5001p-i  "ddface.f", line 205: DO loop with DO variable 'IBF' is parallelized.
+   jwd6001s-i  "ddface.f", line 205: SIMD conversion is applied to DO loop with DO variable 'IBF'.
+   jwd8204o-i  "ddface.f", line 205: This loop is software pipelined.
+   jwd8205o-i  "ddface.f", line 205: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 320.
+   jwd5001p-i  "ddface.f", line 212: DO loop with DO variable 'IBF' is parallelized.
+   jwd6001s-i  "ddface.f", line 212: SIMD conversion is applied to DO loop with DO variable 'IBF'.
+   jwd8204o-i  "ddface.f", line 212: This loop is software pipelined.
+   jwd8205o-i  "ddface.f", line 212: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 320.
+   jwd5001p-i  "ddface.f", line 219: DO loop with DO variable 'IBF' is parallelized.
+   jwd6001s-i  "ddface.f", line 219: SIMD conversion is applied to DO loop with DO variable 'IBF'.
+   jwd8204o-i  "ddface.f", line 219: This loop is software pipelined.
+   jwd8205o-i  "ddface.f", line 219: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 288.
+   jwd5001p-i  "ddface.f", line 227: DO loop with DO variable 'IBF' is parallelized.
+   jwd6001s-i  "ddface.f", line 227: SIMD conversion is applied to DO loop with DO variable 'IBF'.
+   jwd8204o-i  "ddface.f", line 227: This loop is software pipelined.
+   jwd8205o-i  "ddface.f", line 227: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 192.
+   jwd8664o-i  "ddface.f", line 244: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5208p-i  "ddface.f", line 245: DO loop is not parallelized: the assign-refer order of 'MSGTYP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "ddface.f", line 245: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'MSGTYP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "ddface.f", line 246: DO loop is not parallelized: the assign-refer order of 'LDOM' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "ddface.f", line 246: DO loop is not parallelized: the assign-refer order of 'ISEND' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "ddface.f", line 246: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'LDOM' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "ddface.f", line 246: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'ISEND' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "ddface.f", line 247: DO loop is not parallelized: the assign-refer order of 'NBFDOM' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "ddface.f", line 247: DO loop is not parallelized: the assign-refer order of 'MSGLEN' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "ddface.f", line 247: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NBFDOM' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "ddface.f", line 247: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'MSGLEN' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5202p-i  "ddface.f", line 253: DO loop is not parallelized: data dependency of variable 'NSTART' may cause different results from serial execution for loop.
+   jwd5208p-i  "ddface.f", line 253: DO loop is not parallelized: the assign-refer order of 'MSGIDS' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "ddface.f", line 253: DO loop is not parallelized: the assign-refer order of 'IERR' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "ddface.f", line 253: DO loop is not parallelized: the assign-refer order of 'BUFSND' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "ddface.f", line 253: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6202s-i  "ddface.f", line 253: SIMD conversion cannot be applied to DO loop: data dependency of variable 'NSTART' may cause different results from serial execution for loop.
+   jwd6122s-i  "ddface.f", line 253: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5202p-i  "ddface.f", line 288: DO loop is not parallelized: data dependency of variable 'IERR' may cause different results from serial execution for loop.
+   jwd5202p-i  "ddface.f", line 288: DO loop is not parallelized: data dependency of variable 'NSTART' may cause different results from serial execution for loop.
+   jwd5208p-i  "ddface.f", line 288: DO loop is not parallelized: the assign-refer order of 'IFSND' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "ddface.f", line 288: DO loop is not parallelized: the assign-refer order of 'FZ' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "ddface.f", line 288: DO loop is not parallelized: the assign-refer order of 'FY' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "ddface.f", line 288: DO loop is not parallelized: the assign-refer order of 'FX' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5001p-i  "ddface.f", line 290: DO loop with DO variable 'IBF' is parallelized.
+   jwd6001s-i  "ddface.f", line 290: SIMD conversion is applied to DO loop with DO variable 'IBF'.
+   jwd8204o-i  "ddface.f", line 290: This loop is software pipelined.
+   jwd8205o-i  "ddface.f", line 290: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 576.
+   jwd5001p-i  "ddface.f", line 297: DO loop with DO variable 'IBF' is parallelized.
+   jwd6001s-i  "ddface.f", line 297: SIMD conversion is applied to DO loop with DO variable 'IBF'.
+   jwd5001p-i  "ddface.f", line 306: DO loop with DO variable 'IBF' is parallelized.
+   jwd6001s-i  "ddface.f", line 306: SIMD conversion is applied to DO loop with DO variable 'IBF'.
+   jwd5001p-i  "ddface.f", line 316: DO loop with DO variable 'IBF' is parallelized.
+   jwd6001s-i  "ddface.f", line 316: SIMD conversion is applied to DO loop with DO variable 'IBF'.
+
+ Procedure information
+   Lines      : 4279
+   Statements : 3396
+   Stack(byte): 377872
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 2
+   Total lines      : 4364
+   Total statements : 3440
+   Total stack(byte): 379024
+   Total prefetch num: 0
+

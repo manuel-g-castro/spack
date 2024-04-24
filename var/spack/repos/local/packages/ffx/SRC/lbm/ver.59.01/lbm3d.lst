@@ -1,0 +1,2163 @@
+
+ Fujitsu Fortran Version 4.8.1  Thu Nov 24 16:45:43 2022
+
+ Compilation information
+   Current directory : /vol0005/mdt2/home/u10588/SRC/lbm/ver.59.01
+   Source file       : lbm3d.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -Nlst=t -Cpp -Cfpp -c -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Knointentopt
+   Cpp options          : -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Dcputime -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=8 -D__FRT_patchlevel__=1 -D__FRT_version__="4.8.1" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Knoarray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nlibomp -Nline -Nlst -Nlst=p -Nlst=t
+                          -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ Main program "LBM3D"
+  (line-no.)(nest)(optimize)
+          1                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+          2                     C                                                                        C
+          3                     C     FLOW SOLVER BASED ON LATTICE BOLTZMAN METHOD                       C
+          4                     C                                                                        C
+          5                     C            2016.11.29 WRITTEN BY Y.YAMADE                              C
+          6                     C                                                                        C
+          7                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+          8                           PROGRAM LBM3D
+          9                           IMPLICIT NONE
+         10                     C
+         11                           CHARACTER*30 DATE
+         12                           DATA DATE     / 'LBM3D:VER.59.01:2022.11.24' /
+         13                     C
+         14                           CHARACTER* 8 MODE(0:1)
+         15                           DATA MODE     / 'SERIAL  ', 'PARALLEL' /
+         16                     C
+         17                     C
+         18                     C [01] CONTROALL PARAMETER
+         19                           INTEGER*4 NC,NG,ISTART,NTIME,NTIME0,NSTEP
+         20                           INTEGER*4 MC,MRESV
+         21                           DATA MC /300000/
+         22                           DATA MRESV /6/
+         23                     C
+         24                           INTEGER*4 IPART,NPART
+         25                           INTEGER*4 IINLTV
+         26                           REAL*4    TIME4
+         27                           REAL*8    DSCALE,VSCALE,TIME
+         28                           REAL*8    VISCM,RHO0
+         29                           REAL*8    UINLT,VINLT,WINLT,UWALL,VWALL,WWALL,DBLAS
+         30                           REAL*8    TAU0,TAUMIN
+         31                           REAL*8    EPSTRG
+         32                           DATA IINLTV /0/
+         33                           DATA TAU0   /0.5D0/
+         34                           DATA TAUMIN /0.5D0/
+         35                           DATA UWALL /0.0D0/
+         36                           DATA VWALL /0.0D0/
+         37                           DATA WWALL /0.0D0/
+         38                           DATA UINLT /0.0D0/
+         39                           DATA VINLT /0.0D0/
+         40                           DATA WINLT /0.0D0/
+         41                           DATA DBLAS /1.0D0/
+         42                           DATA EPSTRG /0.2D0/
+         43                           INTEGER*4  IOUT,IWMODE,IWFUNC,INTFSV,JCHGEO,IRFNF,IMODQ
+         44                           DATA JCHGEO /0/
+         45                           DATA IWMODE /1/
+         46                           DATA IWFUNC /1/
+         47                           DATA IRFNF  /0/
+         48                           DATA IMODQ  /0/
+         49                     C
+         50                     C
+         51                     C IINLTV      :CONTROL PARAMETER FOR INLET VELOCITY PROFILE
+         52                     C IINLTV=0    :CONSTANT
+         53                     C IINLTV=1    :BLASIUS IN X-DIRECTION
+         54                     C IINLTV=2    :BLASIUS IN Y-DIRECTION
+         55                     C IINLTV=3    :BLASIUS IN Z-DIRECTION
+         56                     C DBLAS       :DISTANCE BETWEEN LEADING EDGHE OF BOUNDARY LAYER AND INLET BOUNDARY
+         57                     C
+         58                     C    IRFNF : FLAG FOR REFINE OF INITIAL DISTRIBUTION FUNCTION (0:OFF, 1:ON)
+         59                     C
+         60                     C
+         61                     C [02] PARTICLE MODEL
+         62                           INTEGER*4 NP
+         63                           DATA NP /15/
+         64                           INTEGER*4, ALLOCATABLE:: LVEL(:,:),LREV(:,:)
+         65                           REAL*8,    ALLOCATABLE:: CVEL(:,:),WF(:)
+         66                     C      INTEGER*4 LVEL(3,NP),LREV(NP)
+         67                     C      REAL*8    CVEL(3,NP),WF(NP)
+         68                     C
+         69                     C [03] VARIABLE DEFINED AT CUBES
+         70                           INTEGER*4, ALLOCATABLE:: LLEVEL(:),LPOSI(:,:),LCBOUN(:,:)
+         71                     C
+         72                     C [04] VARIABLE REGARDING GEOMETRY
+         73                           INTEGER*4, ALLOCATABLE:: NPBOUN(:),LPBOUN(:,:,:)
+         74                           REAL*4   , ALLOCATABLE:: QBOUN(:,:)
+         75                     C
+         76                     C [05] VARIABLE DEFINED AT GRIDS
+         77                           INTEGER*4, ALLOCATABLE:: MASK(:,:,:,:)
+         78                           REAL*8,    ALLOCATABLE:: F   (:,:,:,:,:),TAU(:,:,:,:)
+         79                           REAL*8,    ALLOCATABLE:: FWRK(:,:,:,:),FWRK2(:,:,:,:),V3D(:,:,:,:)
+         80                           REAL*8,    ALLOCATABLE:: V1(:,:,:),V2(:,:,:),
+         81                          *                         V3(:,:,:),V4(:,:,:)
+         82                           REAL*4,    ALLOCATABLE:: WRK1(:),WRK2(:),WRK3(:),WRK4(:)
+         83                     C
+         84                     C [06] VARIABLES FOR INTER CUBE COMMUNICATION
+         85                           INTEGER*4 MBC,MBC1,MBC2,MBC3
+         86                           PARAMETER (MBC=152,MBC1=24,MBC2=72,MBC3=56)
+         87                           INTEGER*4, ALLOCATABLE:: NBC(:),LBC(:,:,:)
+         88                           REAL*8,    ALLOCATABLE:: FBC1(:,:,:,:,:),FBC1W(:,:,:,:,:),
+         89                          *                         FBC2(:,:,:,:  ),FBC2W(:,:,:,:  ),
+         90                          *                         FBC3(:,:,:    ),FBC3W(:,:,:    )
+         91                     C
+         92                     C [07] VARIABLES FOR BOUNDARY CONDITIONS
+         93                           INTEGER*4  JBOUN,JGEOM,LBTYPE(6)
+         94                           INTEGER*4  MPBOUN,MPG,NPG,MPBOUN0,MPBR
+         95                           INTEGER*4  NPTRG
+         96                           DATA JBOUN   /1/
+         97                           DATA JGEOM   /0/
+         98                           DATA LBTYPE  /2,4,1,1,1,1/
+         99                           DATA MPBOUN0 / 1000000/
+        100                           DATA MPBR    / -1 /
+        101                           DATA MPG     / 1000000/
+        102                           DATA NPG     /0/
+        103                           REAL*8     HBOUN, DGEOM
+        104                           DATA HBOUN /1.0D0/
+        105                           DATA DGEOM /1.0D-2/
+        106                           INTEGER*4, ALLOCATABLE:: LWORK1(:,:,:),LWORK2(:,:,:),
+        107                          *                         LWORK(:,:,:,:)
+        108                           INTEGER*4 M1CELL
+        109                           DATA M1CELL /7/
+        110                     C
+        111                     C   MPBOUN : MAX. NUMBER OF BOUNDARY GRID IN A CUBE
+        112                     C   MPG    : MAX. NUMBER OF GEOMETRY POINTS
+        113                     C   NPG    : NUMBER OF GEOMETRY DATA (CAN BE CHENGED BY OPTION)
+        114                     C   MPBOUN0: DEFULAT VALUE OF MPBOUN (CAN BE CHENGED BY OPTION)
+        115                     C   JBOUN  : FLAG TO SPECITY BOUNDARY CONDITION MODE
+        116                     C            1 READ GF-BOUN
+        117                     C            2 MAKE BOUN DATA BY LBM3D
+        118                     C   JGEOM  : FLAG TO USE GEOMETRY (GEOM) OR TRIANGLE (TRIG) DATA MODE
+        119                     C            0 NOT READ DATA
+        120                     C            1     READ GF-GEOM DATA
+        121                     C            2     READ GF-TRIG DATA
+        122                     C   LBTYPE : BOUNDARY TYPE AT -X,+X,-Y,+Y,-Z,+Z BOUNDARY FACE
+        123                     C            FOLLOWING BOUNDARY TYPES ARE SET AS DEFAULT
+        124                     C            INLET FOR -X (TYPE=2)
+        125                     C            FREE  FOR +X (TYPE=4)
+        126                     C            WALL  FOR THE OTHERS (-Y, +Y, -Z, +Z, TYPE=1)
+        127                     C   HBOUN  : CRITERIA TO JUDGE INTERSECTING
+        128                     C            NOTE THAT IT IS NORMALIZED BY THE CUBE SIZE
+        129                     C   XP(IPG): X-COORD. OF GEOMETRY POINTS
+        130                     C   YP(IPG): Y-COORD. OF GEOMETRY POINTS
+        131                     C   ZP(IPG): Z-COORD. OF GEOMETRY POINTS
+        132                     C   XTRG(IPG): X-COORD. OF TRIG. DATA
+        133                     C   YTRG(IPG): Y-COORD. OF TRIG. DATA
+        134                     C   ZTRG(IPG): Z-COORD. OF TRIG. DATA
+        135                     C
+        136                     C   M1CELL   :NUMBER OF EDGHES IN A CELL
+        137                     C             M1CELL= 7 (FOR NP=15)
+        138                     C             M1CELL=13 (FOR NP=27)
+        139                     C
+        140                     C
+        141                     C [08] VARIABLES FOR INTER DOMAIN COMMUNICATION
+        142                           INTEGER*4 MDOM,MPB,NDOM
+        143                           INTEGER*4, ALLOCATABLE:: LDOM(:),NBPRCV(:),NBPSND(:)
+        144                           REAL*8,    ALLOCATABLE:: BUFRCV(:,:),BUFSND(:,:)
+        145                           DATA MDOM /200/
+        146                           DATA MPB  /0/
+        147                     C
+        148                     C [09] VARIABLES FOR HISTORY
+        149                           INTEGER*4 MSAMPL
+        150                           PARAMETER(MSAMPL=1000)
+        151                           INTEGER*4 NSAMPL,NHIST
+        152                           DATA NSAMPL /0/
+        153                           INTEGER*4  LSAMPL(5,MSAMPL),LHIST(MSAMPL)
+        154                           REAL*8     XSAMPL(MSAMPL),YSAMPL(MSAMPL),ZSAMPL(MSAMPL)
+        155                           REAL*8     CSAMPL(3,MSAMPL)
+        156                           REAL*4,    ALLOCATABLE:: HIST(:,:)
+        157                           CHARACTER*60 COMHST(MSAMPL)
+        158                           DATA COMHST( 1) / ' TIME                                 '/
+        159                           DATA COMHST( 2) / ' MAX. RHO                             '/
+        160                           DATA COMHST( 3) / ' MAX. VELOCITY                        '/
+        161                           DATA COMHST( 4) / ' FLUID FORCE IN X-DIRECTION           '/
+        162                           DATA COMHST( 5) / ' FLUID FORCE IN Y-DIRECTION           '/
+        163                           DATA COMHST( 6) / ' FLUID FORCE IN Z-DIRECTION           '/
+        164                     C
+        165                     C [10] VARIABLES FOR BLOCK
+        166                           INTEGER*4 MBLK,NBLK,MPBLK
+        167                           PARAMETER(MBLK=200)
+        168                           INTEGER*4    NUMBLK(3,MBLK),INTBLK(MBLK),NPBLK(MBLK),NPBLK3
+        169                           REAL*8       CORBLK(6,MBLK)
+        170                           CHARACTER*60 FILBLK(MBLK)
+        171                           INTEGER*4,ALLOCATABLE:: LCBLK(:,:),LPBLK1(:,:,:),LPBLK2(:,:,:)
+        172                           REAL*8,ALLOCATABLE::COEBLK(:,:,:)
+        173                           REAL*4,ALLOCATABLE::RHOBLK(:),UBLK(:),VBLK(:),WBLK(:)
+        174                     C
+        175                     C MBLK        : MAX. NUM. NUM OF BLOCK DATA (=200)
+        176                     C NBLK        : NUM OF BLOCK DATA
+        177                     C NUMBLK(:,:) : NUM OF POINTS IN EACH DIR. OF BLOCKS
+        178                     C IANGLE(:)   : FLAG FOR ROTAING BLOCKS (NOT SUPPORTED IN THIS VERSION)
+        179                     C               0: NOT RORATE (DEFUALT)
+        180                     C               1: ROTATE BLOCKS ALONG Y=YROT, Z=ZROT
+        181                     C               2: ROTATE BLOCKS ALONG Z=ZROT, X=XROT
+        182                     C               3: ROTATE BLOCKS ALONG X=XROT, T=YROT
+        183                     C ISTRAIN(:)  : FLAG FOR WTIRINT STRAIN TENSOR  (NOT SUPPORTED IN THIS VERSION)
+        184                     C               0: NOT-WRITE (DEFUALT)
+        185                     C               1: WRITE
+        186                     C INTBLK(:)   : TIME INTERVAL FOR WRITING BLOCK DATA
+        187                     C               0: OUTPUT ONLY FINALE FLOW FIELD
+        188                     C               LARGER THAN 1:OUTPUT FLOW FIELD AT EVERY INTBLK STEP
+        189                     C
+        190                     C CORBLK(:,:) : BOUNDING BOX OF BLOCKS
+        191                     C               CORBLK([1,2,3],:) --> Xmin, Ymin, Zmin
+        192                     C               CORBLK([4,5,6],:) --> Xmax, Ymax, Zmax
+        193                     C ANGLE(:)    : ANGLE FOR ROTAING BLOCKS  (NOT SUPPORTED IN THIS VERSION)
+        194                     C ROTCNT(:,:) : COORD. OF RORATION AXIS   (NOT SUPPORTED IN THIS VERSION)
+        195                     C FILBLK(:)   : FILE NAME OF BLOCK DATA
+        196                     C
+        197                     C
+        198                     C [11] VARIABLES FOR SURFACE
+        199                           INTEGER*4 IWRTSF,INTSRF,IMVTRG,NPSURF(2),JSURF
+        200                           INTEGER*4,ALLOCATABLE:: LSURF(:,:,:),LPSURF(:,:)
+        201                           REAL*4,   ALLOCATABLE:: XP(:),YP(:),ZP(:),QCELL(:,:,:,:),
+        202                          *                        XTRG(:,:),YTRG(:,:),ZTRG(:,:),RHOSRF(:)
+        203                           REAL*8    DTRG
+        204                           REAL*8,   ALLOCATABLE:: CSURF(:,:,:)
+        205                     C
+        206                           DATA IWRTSF /0/
+        207                           DATA INTSRF /0/
+        208                           DATA IMVTRG /0/
+        209                           DATA NPSURF /0,0/
+        210                     C
+        211                           DATA DTRG /0.1D0/
+        212                     C
+        213                     C     IWRTSRF    : FLAG FOR WRITING GF-SURF FILE
+        214                     C               0: NOT WRITE GF-SURF FILE (DEFAULT)
+        215                     C               1:     WRITE GF-SURF FILE
+        216                     C     INTSRF     : INTERVAL FOR WRITING GF-SURF FILE
+        217                     C               0: WRITE GF-SURF FILE AT ONLY FINAL   STEP
+        218                     C     INTSRF.GT.0: WRITE GF-SURF FILE AT EVERY INTSRF STEP
+        219                     C     IMVTRG     : FLAG FOR MOVING TRIG-DATA
+        220                     C               0: NOT MOVE TRID-DATA (DEFAULT)
+        221                     C               1:     MOVE TRID-DATA
+        222                     C
+        223                     C     NPSURF : NUMBER OF SURFPOINT FOUND IN THE SUB-DOMAIN
+        224                     C     DTRG   : MOVING LENGTH NORMALIZED BY MINIMUM GRID LENGTH
+        225                     C
+        226                     C
+        227                     C [12] VARIABLES FOR DUMPING REGION
+        228                     C
+        229                           INTEGER*4 JDUMP
+        230                           REAL*8    PARDMP(12)
+        231                           REAL*8,ALLOCATABLE:: CDUMP(:,:,:),FDUMP(:)
+        232                     C
+        233                           DATA JDUMP /0/
+        234                     C
+        235                     C JDUMP       : TYPE OF DUMPING REGION
+        236                     C             : 0: NO DUMPING REGION
+        237                     C             : 1: SPHERE
+        238                     C             : 2: CYLINDER ALONG X-DIRECTION
+        239                     C             : 3: CYLINDER ALONG Y-DIRECTION
+        240                     C             : 4: CYLINDER ALONG Z-DIRECTION
+        241                     C             :11: ELLIPSOID
+        242                     C
+        243                     C
+        244                     C IF JDUMP = 1,2,3 OR 4
+        245                     C PARDMP( 1)  : X CORDINATE OF CENTER OF DUMPING REGION
+        246                     C PARDMP( 2)  : Y CORDINATE OF CENTER OF DUMPING REGION
+        247                     C PARDMP( 3)  : Z CORDINATE OF CENTER OF DUMPING REGION
+        248                     C PARDMP( 4)  : R1 OF DOUMPING REGION
+        249                     C PARDMP( 5)  : R2 OF DOUMPING REGION
+        250                     C PARDMP( 6)  : COEFICIENT OF DUMPING TERM (=ALPHA)
+        251                     C PARDMP( 7)  : TARGET DENSITY
+        252                     C PARDMP( 8)  : TARGET VELOCITY-U
+        253                     C PARDMP( 9)  : TARGET VELOCITY-V
+        254                     C PARDMP(10)  : TARGET VELOCITY-W
+        255                     C
+        256                     C IF JDUMP = 11
+        257                     C PARDMP( 1)  : X CORDINATE OF CENTER OF DUMPING REGION
+        258                     C PARDMP( 2)  : Y CORDINATE OF CENTER OF DUMPING REGION
+        259                     C PARDMP( 3)  : Z CORDINATE OF CENTER OF DUMPING REGION
+        260                     C PARDMP( 4)  : RX    OF DOUMPING REGION
+        261                     C PARDMP( 5)  : RY    OF DOUMPING REGION
+        262                     C PARDMP( 6)  : RZ    OF DOUMPING REGION
+        263                     C PARDMP( 7)  : RATIO OF DOUMPING REGION
+        264                     C PARDMP( 8)  : COEFICIENT OF DUMPING TERM (=ALPHA)
+        265                     C PARDMP( 9)  : TARGET DENSITY
+        266                     C PARDMP(10)  : TARGET VELOCITY-U
+        267                     C PARDMP(11)  : TARGET VELOCITY-V
+        268                     C PARDMP(12)  : TARGET VELOCITY-W
+        269                     C
+        270                     C CDUMP(:,:,:): WORK REFION FOR COEF. OF DUMPING TERM
+        271                     C FDUMP (NP)  : EQUIBRIUM DISTRIBUTION FUNCTION  CALCULATED BY TARGET
+        272                     C
+        273                     C
+        274                     C
+        275                     CC [13] RELAXATION CONTROLL
+        276                     CC
+        277                           INTEGER*4 MTFIX,NTFIX
+        278                           PARAMETER (MTFIX=100)
+        279                           INTEGER*4 LTFIX (2,MTFIX)
+        280                           REAL*8    TAUFIX(MTFIX) ,TAINLT,TAFREE
+        281                     C
+        282                           INTEGER*4 JVISC
+        283                           REAL*8               PARVIS(8),TAUTGT
+        284                           REAL*8,ALLOCATABLE:: CVISC(:,:,:)
+        285                     C
+        286                           DATA NTFIX /0/
+        287                           DATA TAINLT /-1.0/
+        288                           DATA TAFREE /-1.0/
+        289                           DATA JVISC /0/
+        290                     C
+        291                     C
+        292                     C  MTFIX       :MAX. NUMBER OF TAU-FIX INPUT
+        293                     C  NTFIX       :     NUMBER OF TAU-FIX INPUT
+        294                     C  LTFIX(1,I)  :SPECIFY DIRECTION OF TAU-FIX (1:X, 2:Y, 3:Z)
+        295                     C  LTFIX(2,I)  :POSITION OF TAU-FIX CELL (1--> NC[X,Y,Z])
+        296                     C  TAUFIX(I)   :RELAXATION COEF. TAU OF TAU-FIX CELL
+        297                     C
+        298                     C JVISC       : TYPE OF DUMPING REGION
+        299                     C             : 0: NO DUMPING REGION
+        300                     C             : 1: SPHERE
+        301                     C             : 2: CYLINDER ALONG X-DIRECTION
+        302                     C             : 3: CYLINDER ALONG Y-DIRECTION
+        303                     C             : 4: CYLINDER ALONG Z-DIRECTION
+        304                     C             :11: ELLIPSOID
+        305                     C
+        306                     C TAUTGT      : RELAXTION TIME AT VISCOUS REGION
+        307                     C
+        308                     C IF JVISC = 1,2,3 OR 4
+        309                     C PARVIS( 1)  : X CORDINATE OF CENTER OF VISCOUS REGION
+        310                     C PARVIS( 2)  : Y CORDINATE OF CENTER OF VISCOUS REGION
+        311                     C PARVIS( 3)  : Z CORDINATE OF CENTER OF VISCOUS REGION
+        312                     C PARVIS( 4)  : R1 OF DOUMPING REGION
+        313                     C PARVIS( 5)  : R2 OF DOUMPING REGION
+        314                     C PARVIS( 6)  : ALPHA (=1.0)
+        315                     C
+        316                     C IF JVISC = 11
+        317                     C PARVIS( 1)  : X CORDINATE OF CENTER OF VISCOUS REGION
+        318                     C PARVIS( 2)  : Y CORDINATE OF CENTER OF VISCOUS REGION
+        319                     C PARVIS( 3)  : Z CORDINATE OF CENTER OF VISCOUS REGION
+        320                     C PARVIS( 4)  : RX    OF DOUMPING REGION
+        321                     C PARVIS( 5)  : RY    OF DOUMPING REGION
+        322                     C PARVIS( 6)  : RZ    OF DOUMPING REGION
+        323                     C PARVIS( 7)  : RATIO OF DOUMPING REGION
+        324                     C PARVIS( 8)  : ALPHA (=1.0)
+        325                     C
+        326                     C CVISC(:,:,:): WORK REFION FOR COEF. OF VISCOUS TERM
+        327                     C
+        328                     C [14] VARIABLES FOR TURBULENCR MODEL
+        329                           INTEGER*4 IMODEL,ICALSS,ICNSTD
+        330                           REAL*8    CS
+        331                           DATA IMODEL /0/
+        332                           DATA ICALSS /2/
+        333                           DATA CS     /0.1/
+        334                           DATA ICNSTD /0/
+        335                     C
+        336                     C IMODEL=0: NON-SGS MODEL
+        337                     C IMODEL=1: STANDARD SMAGORINSKY MODEL
+        338                     C ICALSS=0: CAL. STRAIN BY MACRO VARIAVLES
+        339                     C ICALSS=1: CAL. STRAIN BY DISRIBUTION FUNCTAION (EXPLICIT)
+        340                     C ICALSS=2: CAL. STRAIN BY DISRIBUTION FUNCTAION (IMPLICIT)
+        341                     C
+        342                     C ICNSTD=0: USE LOCAL   GRID SCALE FOR COMPUTING TURBULENT VISCOCITY
+        343                     C ICNSTD=1: USE MINIMUM GRID SCALE FOR COMPUTING TURBULENT VISCOCITY
+        344                     C
+        345                     C [15] VARIABLES FOR COLLISION MODEL
+        346                           INTEGER*4 ICOLLI
+        347                           DATA ICOLLI /1/
+        348                     C
+        349                     C ICOLLI=1 :SRT
+        350                     C ICOLLI=2 :MRT
+        351                     C
+        352                     C
+        353                     C [16] VARIABLES FOR FLUID FORCES
+        354                           REAL*8,     ALLOCATABLE:: FXC(:),FYC(:),FZC(:)
+        355                           REAL*8,     ALLOCATABLE:: FXWRK(:),FYWRK(:),FZWRK(:)
+        356                           REAL*4 FX,FY,FZ,COEFF
+        357                     C
+        358                     C
+        359                     C [17] VARIABLES FOR FILE ACCESS
+        360                           CHARACTER*60 FILEIN,FILECB,FILEBC,FILEIF,
+        361                          *             FILEFF,FILEVF,FILEAV,FILERM,
+        362                          *             FILEFS,FILEHS,FILELG,FILEGM,
+        363                          *             FILETR,FILESF,FILE
+        364                           DATA FILELG / 'lbm3d.log' /
+        365                           DATA FILEIN / 'PARMLBM3D' /
+        366                           DATA FILEGM / 'GEOM'      /
+        367                           DATA FILETR / 'TRIG'      /
+        368                           INTEGER*4    IUT0,IUT6,IUTIN,IUTLG,
+        369                          *             IUTCB,IUTBC,IUTIF,IUTFF,
+        370                          *             IUTVF,IUTAV,IUTRM,IUTFS,IUTHS,
+        371                          *             IUTGM,IUTST,IUTSF,IUTBL0,IUTBLK
+        372                           DATA IUT0  / 0/
+        373                           DATA IUT6  / 6/
+        374                           DATA IUTIN /11/
+        375                           DATA IUTCB /12/
+        376                           DATA IUTBC /13/
+        377                           DATA IUTIF /14/
+        378                           DATA IUTFF /15/
+        379                           DATA IUTVF /16/
+        380                           DATA IUTAV /17/
+        381                           DATA IUTRM /18/
+        382                           DATA IUTFS /19/
+        383                           DATA IUTHS /19/
+        384                           DATA IUTGM /20/
+        385                           DATA IUTST /21/
+        386                           DATA IUTSF /22/
+        387                           DATA IUTBL0 /300/
+        388                           DATA IUTLG /60/
+        389                           INTEGER*4 MCOM,NCOMFL,NCOMST
+        390                           PARAMETER (MCOM=100)
+        391                           CHARACTER*60 COMFLE(MCOM),COMSET(MCOM)
+        392                     CC
+        393                     CC [18] CONSTANTS REGARDING PARAMETER FOR CALLING GFALL
+        394                     CC
+        395                           INTEGER*4 IACT,IRESV,IWRITE,INAME,
+        396                          *          ICAST,ICAST1,IDATA0,IALL,IALLM,ISKIP,ISKIP1,ICHECK,
+        397                          *          JGRID
+        398                           CHARACTER*30 NAME
+        399                           DATA IWRITE / 2 /
+        400                           DATA INAME  / 1 /
+        401                           DATA ICAST  /0/
+        402                           DATA ICAST1 /1/
+        403                           DATA IDATA0 /0/
+        404                           DATA IALL   /0/
+        405                           DATA IALLM  /-1/
+        406                           DATA ISKIP  /0/
+        407                           DATA ISKIP1 /1/
+        408                           DATA ICHECK /999999/
+        409                           DATA JGRID  /1/
+        410                     C
+        411                     C [19] MESSAGE
+        412                           INTEGER*4 INTPRN,MAXPRN
+        413                           DATA MAXPRN / 200 /
+        414                           CHARACTER*10 BLANK / ' ' /
+        415                     C
+        416                     C          MAXPRN      ; MAXIMUM TIME STEPS TO BE PRINTED OUT
+        417                     C
+        418                     C [20] CPU TIME
+        419                     C
+        420                           INTEGER*4 IWRTIM
+        421                           DATA IWRTIM /0/
+        422                     #ifdef cputime
+        423                           include 'mpif.h'
+        424                     #endif
+        425                     C
+        426                     C
+        427                     CC [21] CHECK FLOW
+        428                     CC
+        429                           INTEGER*4  NCHKFL,JSTOP
+        430                           REAL*8     RHOSTP
+        431                           DATA JSTOP  /  0/
+        432                           DATA NCHKFL /  1/
+        433                           DATA RHOSTP /1.0D1/
+        434                           REAL*8     RHOMAX,VELMAX,BUF1,BUF2
+        435                     C
+        436                     C   NCHKFL   :INTERVAL TO CHECK FLOW
+        437                     C             NOTE THAT THE COMPUTATIONAL TIME TO CHECK FLOW IS ABOUT 100
+        438                     C             LONGER THAN FLOW COMPUTAITON. THERFORE, RECOMMENDED VALUE
+        439                     C             FOR NCHKFL IS LARGER THAN 100
+        440                     C   RHOSTP   :COMPUTATION WILL BE STOPPED WHEN RHO IS LARGER THAN RHOSTP
+        441                     C
+        442                     CC [22] FLOW OUTPUT CONTROLL
+        443                     CC
+        444                           INTEGER*4 NFLINT
+        445                           DATA NFLINT /1/
+        446                     C     NFLINT :GRID INTERVAL TO WRITE FLOW
+        447                     C
+        448                     C
+        449                     C
+        450                           INTEGER*4 ID,IP,I,J,K,NG3,IBLK,IPB,LDUM
+        451                           REAL*8    BUF,DUM
+        452                     C
+        453                     C
+        454                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+        455                     C CONSTANT PARAMETER
+        456                     C     NP     :NUMBER OF PARTICLES (=15)
+        457                     C     ISTART :RESTART FLAG (0:OFF, 1or2:ON)
+        458                     C       1: SET ZERO VELOCITY
+        459                     C       2: READ GF-FUNC FILE
+        460                     C       3: READ GF-FLOW FILE AND CAL DISRIBUTION FUNCTAION
+        461                     C     NTIME  :NUMBER OF TIME STEPS
+        462                     C   LVEL(NP) :NORMALIZED VELOCITY OF PARTCLES (INTEGER)
+        463                     C   CVEL(NP) :NORMALIZED VELOCITY OF PARTCLES (FLOAT)
+        464                     C   LREV(NP) :INVERSE LIST OF PARTICLES
+        465                     C   WF  (NP) :COEEFICIENTS TO CALCULATE PARTICLE DISTRIBUTION FUNCTION
+        466                     C   IPART    :DOMAIN NUMBER THAT THIS TASK SHOULD COMPUTE/IS COMPUTING.
+        467                     C             IPART BEING SET ZERO MEANS THAT THE PROGRAM SHOULD RUN/IS
+        468                     C             RUNNING IN SERIAL MODE.
+        469                     C
+        470                     C CONTROL   VARIABLES
+        471                     C    IPART       ; DOMAIN NUMBER THAT THIS TASK SHOULD COMPUTE/IS
+        472                     C                  COMPUTING. IPART BEING SET ZERO MEANS THAT
+        473                     C                  THE PROGRAM SHOULD RUN/IS RUNNING IN SERIAL
+        474                     C                  MODE.
+        475                     C     MC    MAX NUMBER OF CUBES IN SUB-DOMAIN
+        476                     C     MRESV DEFAULT NUMBER OF HISTORY SAVING DATA (=6)
+        477                     C     NC    NUMBER OF CUBES IN SUB-DOMAIN
+        478                     C     NG    CUBE SIZE
+        479                     C     DSCALE LENGTH OF MINIMUMU CUBE
+        480                     C     VSCALE VELOCITY RATIO BETWEEN CHARACTEERICTIC AND PARTICLE VELOCITY
+        481                     C     VISCM  NORMALIZED VISCOCITY BY DSCALE AND VSCALE
+        482                     C     RHO0   INITIAL DENSITY
+        483                     C     UINLT  U-VELOCITY AT INLET B.C.       (NORMALIZED BY VSCALE)
+        484                     C     VINLT  V-VELOCITY AT INLET B.C.       (NORMALIZED BY VSCALE)
+        485                     C     WINLT  W-VELOCITY AT INLET B.C.       (NORMALIZED BY VSCALE)
+        486                     C     UWALL  U-VELOCITY AT MOVING WALL B.C. (NORMALIZED BY VSCALE)
+        487                     C     VWALL  V-VELOCITY AT MOVING WALL B.C. (NORMALIZED BY VSCALE)
+        488                     C     WWALL  W-VELOCITY AT MOVING WALL B.C. (NORMALIZED BY VSCALE)
+        489                     C
+        490                     C     IOUT  CONTROLS OPTIONAL OUTPUT FILES
+        491                     C            0 --- OUTPUT NO OPTIONAL FILES
+        492                     C            1 --- OUTPUT AVERAGE         FLOW FIELD FILE
+        493                     C            2 --- OUTPUT AVERAGE AND RMS FLOW FIELD FILES
+        494                     C
+        495                     C     INTFSV      ; FIELD DATA SAMPLING INTERVAL
+        496                     C           NOTES ; INSTANTANEOUS VELOCITY COMPONENTS AT ALL THE MODES
+        497                     C                  AND STATIC PRESSURE AT ALL THE ELEMENTS WILL BE
+        498                     C                  OUTPUT TO THE SPECIFIED FILE AT EVERY 'INTFSV' TIME
+        499                     C                  STEPS. NO DATA WILL BE OUTPUT WHEN 'INTFSV' IS SET
+        500                     C                  TO 0.
+        501                     C
+        502                     C     EPSTRG :TOLERANCE OF ERROR FOR MAKING INTERSECTDATA
+        503                     C     IMODQ  : FLAG FOR SETTING Q (DISTANCE BETWEEN THE GRID AND INTERSETC)
+        504                     C             0:USE CALCULATED VALUE
+        505                     C             1:ALL THE DISTANCE ARE SET TO ONE.
+        506                     C
+        507                     C
+        508                     C A. VARIABLE DEFINED AT CUBES
+        509                     C    LLEVEL(IC)    LEVEL OF CUBES, WHICH INDICATE THE GRID RESOLUTION.
+        510                     C                  LEVEL=1 CORRESPONTDS THE FINEST GRID SIZE. A GRID SIZE
+        511                     C                  WILL BE TWICE WITH ONE INCREMENT OF THE LEVEL.
+        512                     C    LPOSI(3,IC)   INDICATES THE POSITIONS OF CUBES, WHICH ARE NORMALIZED
+        513                     C                  BY THE MINIMUM CUBE SIZE.
+        514                     C    NPBOUN(IC)    NUMBER OF BOUNDARY GRID
+        515                     C    LPBOUN(I,IPB,IC) BOUNDARY GRID LIST
+        516                     C                     1: POSITION OF BOUNDRY GRID IN I-DIRECTION
+        517                     C                     2: POSITION OF BOUNDRY GRID IN J-DIRECTION
+        518                     C                     3: POSITION OF BOUNDRY GRID IN K-DIRECTION
+        519                     C                     4: DIRECTION TO INNER GRID (2-15)
+        520                     C                     5: BOUNDARY TYPE (ITYPE)
+        521                     C                        ITYPE=1: WALL
+        522                     C                        ITYPE=2: INLET
+        523                     C                        ITYPE=3: MOVING-WALL
+        524                     C                        ITYPE=4: FREE
+        525                     C                        ITYPE=5: SYMMETRIC
+        526                     C    QBOUN(IPB,IC) NON-DIMENSIONAL DISTANCE TO INNER GRIDS
+        527                     C    LCBOUN(4,IC)  SET TO 1 IF OUTER-BOUNDARY (WALL, INLET, MOVING-WALL
+        528                     C                  OR FREE) IS INCLUDED IN THE CUBE
+        529                     C                  LCBOUN(1,IC): WALL
+        530                     C                  LCBOUN(2,IC): INLET
+        531                     C                  LCBOUN(3,IC): MOVING-WALL
+        532                     C                  LCBOUN(4,IC): FREE
+        533                     C
+        534                     C B. VARIABLE DEFINED AT GRIDS
+        535                     C    F     (I,J,K,IP,IC) DISTRIBUTION FUNCTION
+        536                     C    TAU   (I,J,K,   IC) RELAXATION TIME
+        537                     C
+        538                     C C. VARIABLES FOR INTER CUBE COMMUNICATION
+        539                     C    MBC              MAX. NUMBER OF B.C GROUPS IN CUBES (=152)
+        540                     C    NBC(IC)          NUMBER OF B.C. GROUPS IN CUBES
+        541                     C    LBC(II,IBC,IC)   ATTRIBUTE DATA OF B.C. GROUPS
+        542                     C                     II=1 B.C. GROUP ID (1-26) IN AN ADJACENT CUBE
+        543                     C                     II=2 SUB-DOMAIN NUMBER OF AN ADJACENT CUBE
+        544                     C                     II=3 CUBE NUMBER OF AN ADJACENT CUBE IN A DOMAIN
+        545                     C                     II=4 RELATIVE LEVEL OF AN ADJACENT CUBE
+        546                     C                      (-1: FINE, 0:SAME, 1:COARSE)
+        547                     C                     II=5 POSITION IN COARSER CUBE
+        548                     C    MBC1             MAX. NUMBER OF FACE-TYPE  B.C. GROUPS (=24)
+        549                     C    MBC2             MAX. NUMBER OF EDGE-TYPE  B.C. GROUPS (=24)
+        550                     C    MBC3             MAX. NUMBER OF POINT-TYPE B.C. GROUPS (= 8)
+        551                     C    FBC1 (II,I,J,IB,IC) WORK REGION FOR FACE-TYPE  B.C. GROUPS
+        552                     C    FBC2 (II,I,  IB,IC) WORK REGION FOR EDGE-TYPE  B.C. GROUPS
+        553                     C    FBC3 (II,    IB,IC) WORK REGION FOR POINT-TYPE B.C. GROUPS
+        554                     C    FBC1W(II,I,J,IB,IC) WORK REGION FOR FACE-TYPE  B.C. GROUPS
+        555                     C    FBC2W(II,I,J IB,IC) WORK REGION FOR EDGE-TYPE  B.C. GROUPS
+        556                     C    FBC3W(II,    IB,IC) WORK REGION FOR POINT-TYPE B.C. GROUPS
+        557                     C
+        558                     C D. VARIABLES FOR INTER DOMAIN COMMUNICATION
+        559                     C    MDOM             MAX. NUMBER OF THE NEIGHBORING SUB-DOMAINS
+        560                     C    MPB              NUMBER OF DATA TO BE RECEIVED FROM THE NEIGHBORING
+        561                     C                     SUB-DOMAINS
+        562                     C    NDOM             NUMBER OF THE NEIGHBORING SUB-DOMAINS
+        563                     C    LDOM(IDOM)       NEIGHBORING SUB-DOMAIN NUMBER
+        564                     C    NBPRCV(IDOM)     NUMBER OF DATA TO BE RECEIVED FROM THE NEIGHBORING
+        565                     C                     SUB-DOMAINS
+        566                     C    NBPSND(IDOM)     NUMBER OF DATA TO BE RECEIVED FROM THE NEIGHBORING
+        567                     C                     SUB-DOMAINS
+        568                     C    BUFRCV(MPB,MDOM) WORK REGION FOR RECEIVING THE PARTICLE DISTRIBUTION FUNCTION
+        569                     C    BUFSND(MPB,MDOM) WORK REGION FOR RECEIVING THE PARTICLE DISTRIBUTION FUNCTION
+        570                     C
+        571                     C E. VARIABLES FOR HISTORY
+        572                     C     NSAMPL         NUMBER OF SANPLING DATA
+        573                     C     LSAMPL(II,ISMPL) PARAMETERS TO CONTROL HISTORY DATA THE 1ST VALUE SPECIFY
+        574                     C                      KIND OF VARIABLES(1->DENSITY,2,3,4->VELOCITY), 2ND VALUSE
+        575                     C                      SPECIFY CUBE NUMBER , AND 3RD, 4TH, 5TH VALUES SPECIFY
+        576                     C                      POSITION (I,J,K) IN CUBE
+        577                     C     HST(II,ITIME)  HISTORY DATA
+        578                     C
+        579                     C F. VARIABLES FOR FILE ACCESS
+        580                     C     FILEIN   :FILE NAME OF PARAMETER   FILE ( INPUT) (=PARAMLBM3D)
+        581                     C     FILECB   :FILE NAME OF GF-CUBE     FILE ( INPUT)
+        582                     C     FILEBC   :FILE NAME OF GF-BOUNDARY FILE ( INPUT)
+        583                     C     FILEIF   :FILE NAME OF GF-FUNC     FILE ( INPUT)
+        584                     C     FILEFF   :FILE NAME OF GF-FLOW     FILE (OUTPUT)
+        585                     C     FILEVF   :FILE NAME OF GF-FUNC     FILE (OUTPUT)
+        586                     C     FILESF   :FILE NAME OF GF-SURF     FILE (OUTPUT)
+        587                     C
+        588                     C G. VARABLES FOR ERROR TRAPS
+        589                           INTEGER*4 IERR,IERRA,JESC,LERR(200)
+        590                     C
+        591                           CHARACTER*60 ERRMSG
+        592                          * / ' ## PROGRAM    LBM3D: FATAL      ERROR OCCURENCE; STOPPED ' /
+        593                           CHARACTER*60 EREXP1
+        594                          * / ' ALLOCATING FAILED                                        ' /
+        595                           CHARACTER*60 EREXP2
+        596                          * / ' MAX DENSITY EXCEEDS LIMIT                                ' /
+        597                           CHARACTER*60 EREXP3
+        598                          * / ' INSUFFICINT MEMORY, SET LARGER MDOM                      ' /
+        599                           CHARACTER*60 EREXP4
+        600                          * / ' MAKING B.C. FAILED                                       ' /
+        601                     C
+        602                     C
+        603                     C
+        604                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+        605                     C
+        606                           INTEGER*4 IMODE,ITIME,IC,IBC,II,IDOM,NINT
+        607                           REAL*8    SIZEAL,SIZE,WORD
+        608                           DATA WORD   / 8.0D-6  /
+        609                     C
+        610                           IERR=0
+        611                           NDOM = 0
+        612                           CALL DDINIT(NPART,IPART)
+        613                           IF(IPART.GE.1) NDOM = 1
+        614                     C
+        615                           IERR =0
+        616                           IERRA=0
+        617                           SIZEAL = 0.D0
+        618                     C
+        619                     C     SPECIFY OPERATION TYPE IN HSMRGX
+        620                     C     LHIST( 1): TIME      :-1:USE VALUSE IN *.P0001
+        621                     C     LHIST( 2): MAX. RHO  :-4:CAL. MAX.
+        622                     C     LHIST( 3): MAX. VEL. :-4:CAL. MAX.
+        623                     C     LHIST( 4): FX        :-2:CAL. SUM.
+        624                     C     LHIST( 5): FY        :-2:CAL. SUM.
+        625                     C     LHIST( 6): FZ        :-2:CAL. SUM.
+        626                           LHIST( 1)=-1
+        627                           LHIST( 2)=-4
+        628                           LHIST( 3)=-4
+        629                           LHIST( 4)=-2
+        630                           LHIST( 5)=-2
+        631                           LHIST( 6)=-2
+        632                     C
+        633                     #ifdef cputime
+        634                     C      CALL SYSTEM_CLOCK(TCNT0)
+        635                     C      TSYS0 = MPI_WTIME()
+        636                     #endif
+        637                           CALL USTINI()
+        638                           CALL USTPUT(01,"USRT:TIME-LOOP                ")
+        639                           CALL USTPUT(02,"USRT:SRTQxx:                  ")
+        640                           CALL USTPUT(03,"USRT:SRTQxx: MACRO VARIABLE   ")
+        641                           CALL USTPUT(04,"USRT:SRTQxx: E.-FUNCTION      ")
+        642                           CALL USTPUT(05,"USRT:SRTQxx: B.C. -1          ")
+        643                           CALL USTPUT(06,"USRT:SRTQxx: COLLISION        ")
+        644                           CALL USTPUT(07,"USRT:SRTQxx: TRANSLATION      ")
+        645                           CALL USTPUT(08,"USRT:SRTQxx: B.C. -2          ")
+        646                           CALL USTPUT(11,"USRT:SETBND                   ")
+        647                           CALL USTPUT(12,"USRT:SETBND-01                ")
+        648                           CALL USTPUT(13,"USRT:SETBND-02                ")
+        649                           CALL USTPUT(14,"USRT:SETBND-03                ")
+        650                           CALL USTPUT(15,"USRT:SETBND-04                ")
+        651                           CALL USTPUT(21,"USRT:CHKFLW                   ")
+        652                           CALL USTPUT(22,"USRT:SETDIF                   ")
+        653                           CALL USTPUT(23,"USRT:MAKEBC                   ")
+        654                           CALL USTPUT(24,"USRT:MKINTR                   ")
+        655                           CALL USTPUT(25,"USRT:MKINTR:01                ")
+        656                           CALL USTPUT(26,"USRT:MKINTR:02                ")
+        657                           CALL USTPUT(27,"USRT:MKINTR:03                ")
+        658                           CALL USTPUT(28,"USRT:MKINTR:04                ")
+        659                           CALL USTPUT(29,"USRT:MKINTR:05                ")
+        660                           CALL USTPUT(32,"USRT:MRTLBM:                  ")
+        661                           CALL USTPUT(33,"USRT:MRTLBM: MACRO VARIABLE   ")
+        662                           CALL USTPUT(34,"USRT:MRTLBM: E.-FUNCTION      ")
+        663                           CALL USTPUT(35,"USRT:MRTLBM: B.C. -1          ")
+        664                           CALL USTPUT(36,"USRT:MRTLBM: COLLISION        ")
+        665                           CALL USTPUT(37,"USRT:MRTLBM: TRANSLATION      ")
+        666                           CALL USTPUT(38,"USRT:MRTLBM: B.C. -2          ")
+        667                     C
+        668     1                     IF(IPART.GE.1) THEN
+        669     1                         IUT6 = IUTLG
+        670     1                         CALL MFNAME(FILELG,FILE,IPART,IUT0,IERR)
+        671     1                         OPEN(IUT6,FILE=FILE,FORM='FORMATTED')
+        672     1                     ENDIF
+        673                     C
+        674                           WRITE(IUT6,*) BLANK
+        675                           WRITE(IUT6,*) DATE
+        676                           WRITE(IUT6,*) '          ** RUNNING IN ', MODE(NDOM), ' MODE'
+        677                     C
+        678                           WRITE(IUT6,*) 'IPART',IPART
+        679                           WRITE(IUT6,*) 'NPART',NPART
+        680                     C
+        681                           WRITE(IUT6,*) BLANK
+        682                           WRITE(IUT6,*) ' ** LBM3D: READING PARAMETER FILE ** '
+        683                           OPEN(IUTIN,FILE=FILEIN,FORM='FORMATTED')
+        684                           CALL LBMPRM(IUTIN,IUT6,IPART,ISTART,NTIME,
+        685                          *            DSCALE,VSCALE,VISCM,RHO0,IOUT,INTFSV,
+        686                          *            MSAMPL,NSAMPL,LSAMPL,
+        687                          *            XSAMPL,YSAMPL,ZSAMPL,
+        688                          *            FILECB,FILEBC,FILEIF,FILEFF,FILEVF,
+        689                          *            FILEAV,FILERM,FILEFS,FILEHS,IUT0,IERR)
+        690                           IF(IERR.NE.0) GOTO 9999
+        691                           IF(INTFSV.LE.0) INTFSV = NTIME+1
+        692                           INTPRN = MAX(1,NTIME/MAXPRN)
+        693                           WRITE(IUT6,*) ' DONE!'
+        694                     C
+        695                           WRITE(IUT6,*) BLANK
+        696                           WRITE(IUT6,*) ' ** LBM3D: READING OPTION PARAMETER ** '
+        697                           CALL LBMROP(IUT0,IUTIN,IUT6,IERR,VSCALE,
+        698                          *            UINLT,VINLT,WINLT,UWALL,VWALL,WWALL,
+        699                          *            JCHGEO,MTFIX,NTFIX,LTFIX,TAUFIX,
+        700                          *            NCHKFL,RHOSTP,NFLINT,JBOUN,LBTYPE,
+        701                          *            JGEOM,FILEGM,MPG,HBOUN,IMODEL,CS,TAUMIN,
+        702                          *            IWMODE,TAINLT,TAFREE,ICOLLI,FILETR,
+        703                          *            DGEOM,IRFNF,MPBR,IWFUNC,IMODQ,EPSTRG,NP,ICALSS,
+        704                          *            IINLTV,DBLAS,ICNSTD,
+        705                          *            IWRTSF,INTSRF,IMVTRG,DTRG,FILESF,
+        706                          *            MBLK,NBLK,NUMBLK,INTBLK,CORBLK,FILBLK,
+        707                          *            JDUMP,PARDMP,JVISC,PARVIS,TAUTGT)
+        708                           CALL ERRCHK(IUT6,IPART,1,IERR,IERRA)
+        709     1                     IF(IERRA.NE.0) THEN
+        710     1                         WRITE(IUT6,*) BLANK
+        711     1                         WRITE(IUT6,*) ERRMSG
+        712     1                         GO TO 9999
+        713     1                     ENDIF
+        714                           CLOSE(IUTIN)
+        715                     C
+        716     1                     IF(ICOLLI.EQ.2 .AND. NP.EQ.27) THEN
+        717     1                         WRITE(IUT6,*) 'MRT DO NOT SUPPORT NP=27 MODE: STOP'
+        718     1                         GOTO 9999
+        719     1                     ENDIF
+        720                     C
+        721     1                     IF(IINLTV.NE.0 .AND. NP.NE.27) THEN
+        722     1                         WRITE(IUT6,*) 'BLASIUS IS AVALABLE ONLY FOR SRT-D3Q27: STOP'
+        723     1                         GOTO 9999
+        724     1                     ENDIF
+        725                     C
+        726                           ALLOCATE(LVEL(3,NP),STAT=LERR(01))
+        727                           ALLOCATE(LREV(3,NP),STAT=LERR(02))
+        728                           ALLOCATE(CVEL(3,NP),STAT=LERR(03))
+        729                           ALLOCATE(WF  (  NP),STAT=LERR(04))
+        730                           WRITE(IUT6,*) BLANK
+        731                           WRITE(IUT6,*) ' ** LBM3D: SET VELOCITY PARTICLES ** '
+        732                           CALL PARTCL(NP,LVEL,CVEL,LREV,WF)
+        733                           WRITE(IUT6,*) ' DONE!'
+        734                     C
+        735                     C
+        736                     C
+        737                     C
+        738                           ALLOCATE(LLEVEL(      MC),STAT=LERR(01))
+        739                           ALLOCATE(LPOSI (    3,MC),STAT=LERR(02))
+        740                           ALLOCATE(NBC   (      MC),STAT=LERR(03))
+        741                           ALLOCATE(LBC   (5,MBC,MC),STAT=LERR(04))
+        742                           ALLOCATE(LCBOUN(    4,MC),STAT=LERR(05))
+        743                           WRITE(IUT6,*) BLANK
+        744                           WRITE(IUT6,*) ' ** LBM3D: CHECKING CUBE SIZE ** '
+        745                           IMODE=0
+        746                           CALL GFCUBE(IMODE,MC,MBC,FILECB,
+        747                          *            NG,NC,LLEVEL,LPOSI,NBC,LBC,
+        748                          *            MCOM,NCOMFL,NCOMST,COMFLE,COMSET,
+        749                          *            IUT6,IUT0,IUTCB,IERR)
+        750                           CALL ERRCHK(IUT6,IPART,1,IERR,IERRA)
+        751     1                     IF(IERRA.NE.0) THEN
+        752     1                         WRITE(IUT6,*) BLANK
+        753     1                         WRITE(IUT6,*) ERRMSG
+        754     1                         GO TO 9999
+        755     1                     ENDIF
+        756                           DEALLOCATE(LLEVEL)
+        757                           DEALLOCATE(LPOSI )
+        758                           DEALLOCATE(NBC   )
+        759                           DEALLOCATE(LBC   )
+        760                           WRITE(IUT6,*) 'NUMBER OF CUBES SIZE :NC', NC
+        761                           WRITE(IUT6,*) 'CUBE SIZE            :NG', NG
+        762                           TAU0= 0.5D0+3.0D0*VISCM*(VSCALE/DSCALE)*DBLE(NG)
+        763                           MPBOUN0=6*NP*(NG+1)*(NG+1)
+        764                           WRITE(IUT6,*) 'TAU0                 :  ',TAU0
+        765                           IF(IERR.NE.0) GOTO 9999
+        766                           WRITE(IUT6,*) ' DONE!'
+        767                     C
+        768     1                     IF(JBOUN.EQ.1) THEN
+        769     1                         MPBOUN=1
+        770     1                         ALLOCATE(NPBOUN(         NC),STAT=IERR)
+        771     1                         ALLOCATE(LPBOUN(5,MPBOUN,NC),STAT=IERR)
+        772     1                         ALLOCATE( QBOUN(  MPBOUN,NC),STAT=IERR)
+        773     1                         IMODE=0
+        774     1                         CALL GFBOUN(IMODE,MC,MPBOUN,FILEBC,
+        775     1                    *                NG,NC,NPBOUN,LPBOUN,QBOUN,
+        776     1                    *                MCOM,NCOMFL,NCOMST,COMFLE,COMSET,
+        777     1                    *                IUT6,IUT0,IUTBC,IERR)
+        778     1                         WRITE(IUT6,*) 'NUMBER OF MAX. B.P. : MPBOUN', MPBOUN
+        779     1                         IF(MPBOUN.EQ.0) MPBOUN=1
+        780     1                         DEALLOCATE(NPBOUN)
+        781     1                         DEALLOCATE(LPBOUN)
+        782     1                         DEALLOCATE( QBOUN)
+        783     1                     ELSE IF(JBOUN.EQ.2) THEN
+        784     1                         MPBOUN=MPBOUN0
+        785     1                         IF(MPBR.GT.0) MPBOUN=MPBR
+        786     1                     ENDIF
+        787                     C
+        788                           WRITE(IUT6,*) BLANK
+        789                           WRITE(IUT6,*) ' ** LBM3D: ALLOCATING VARIABLES ** '
+        790                           SIZEAL = 0.E0
+        791                     C
+        792                     C A. VARIABLE DEFINED AT CUBES
+        793                           ALLOCATE(LLEVEL(   NC),STAT=LERR(01))
+        794                           ALLOCATE(LPOSI ( 3,NC),STAT=LERR(02))
+        795                           SIZE   = 4*NC*0.5*WORD
+        796                           SIZEAL = SIZEAL+SIZE
+        797                           WRITE(IUT6,'(A12,F8.2," MB ALLOCATED")') " CUBE      :",SIZE
+        798                     C
+        799                     C B. VARIABLE REGARDING GEOMETRY
+        800                           ALLOCATE(NPBOUN(         NC),STAT=LERR(03))
+        801                           ALLOCATE(LPBOUN(5,MPBOUN,NC),STAT=LERR(04))
+        802                           ALLOCATE( QBOUN(  MPBOUN,NC),STAT=LERR(05))
+        803                           SIZE   = (1+5*MPBOUN)*NC*0.5*WORD+MPBOUN*NC*WORD
+        804                           SIZEAL = SIZEAL+SIZE
+        805                           SIZEAL = SIZEAL+SIZE
+        806                           WRITE(IUT6,'(A12,F8.2," MB ALLOCATED")') " INTERSETC :",SIZE
+        807                     C
+        808                     C C. VARIABLE DEFINED AT GRIDS
+        809                           ALLOCATE(MASK(   0:NG+2,0:NG+2,0:NG+2   ,2 ),STAT=LERR(06))
+        810                           ALLOCATE(F   (   0:NG+2,0:NG+2,0:NG+2,NP,NC),STAT=LERR(07))
+        811                           ALLOCATE(CDUMP(  0:NG+2,0:NG+2,0:NG+2      ),STAT=LERR(07))
+        812                           ALLOCATE(FDUMP(                       NP   ),STAT=LERR(07))
+        813                           ALLOCATE(CVISC(  0:NG+2,0:NG+2,0:NG+2      ),STAT=LERR(07))
+        814                           ALLOCATE(TAU (   0:NG+2,0:NG+2,0:NG+2   ,NC),STAT=LERR(08))
+        815                           ALLOCATE(FWRK(   0:NG+2,0:NG+2,0:NG+2,NP   ),STAT=LERR(09))
+        816                           ALLOCATE(FWRK2(  0:NG+2,0:NG+2,0:NG+2,NP   ),STAT=LERR(10))
+        817                           ALLOCATE(V3D ( 4,0:NG+2,0:NG+2,0:NG+2      ),STAT=LERR(11))
+        818                           ALLOCATE(V1  (   0:NG+2,0:NG+2,0:NG+2      ),STAT=LERR(12))
+        819                           ALLOCATE(V2  (   0:NG+2,0:NG+2,0:NG+2      ),STAT=LERR(13))
+        820                           ALLOCATE(V3  (   0:NG+2,0:NG+2,0:NG+2      ),STAT=LERR(14))
+        821                           ALLOCATE(V4  (   0:NG+2,0:NG+2,0:NG+2      ),STAT=LERR(15))
+        822                           NG3=(NG+3)*(NG+3)*(NG+3)
+        823                           ALLOCATE(WRK1(NG3),STAT=LERR(16))
+        824                           ALLOCATE(WRK2(NG3),STAT=LERR(17))
+        825                           ALLOCATE(WRK3(NG3),STAT=LERR(18))
+        826                           ALLOCATE(WRK4(NG3),STAT=LERR(19))
+        827                           SIZE =        (NP+2)*NG3*NC*WORD
+        828                           SIZE = SIZE + (NP+8)*NG3   *WORD
+        829                           SIZEAL = SIZEAL+SIZE
+        830                           WRITE(IUT6,'(A12,F8.2," MB ALLOCATED")') " GRIDS     :",SIZE
+        831                     C
+        832                     C D. VARIABLE FOR BOUNDARY
+        833                           ALLOCATE(LWORK1(0:NG+2,0:NG+2,0:NG+2)   ,STAT=LERR(20))
+        834                           ALLOCATE(LWORK2(  NG+1,  NG+1,  NG+1)   ,STAT=LERR(21))
+        835                           ALLOCATE(LWORK(NP,NG+1,NG+1,NG+1)       ,STAT=LERR(22))
+        836     1                     IF(NP.EQ.15) THEN
+        837     1                         M1CELL=7
+        838     1                     ELSE IF(NP.EQ.27) THEN
+        839     1                         M1CELL=13
+        840     1                     ENDIF
+        841     1                     IF(JGEOM.EQ.0) THEN
+        842     1                         ALLOCATE(XP(1)                     ,STAT=LERR(23))
+        843     1                         ALLOCATE(YP(1)                     ,STAT=LERR(24))
+        844     1                         ALLOCATE(ZP(1)                     ,STAT=LERR(25))
+        845     1                         ALLOCATE(XTRG(1,1)                 ,STAT=LERR(26))
+        846     1                         ALLOCATE(YTRG(1,1)                 ,STAT=LERR(27))
+        847     1                         ALLOCATE(ZTRG(1,1)                 ,STAT=LERR(28))
+        848     1                         ALLOCATE(QCELL(M1CELL,0:1,0:1,0:1) ,STAT=LERR(29))
+        849     1                         ALLOCATE(LSURF(1,1,1)              ,STAT=LERR(31))
+        850     1                         ALLOCATE(LPSURF(1,1)               ,STAT=LERR(32))
+        851     1                         ALLOCATE(CSURF(1,1,1)              ,STAT=LERR(33))
+        852     1                         ALLOCATE(RHOSRF(1)                 ,STAT=LERR(34))
+        853     1                     ELSE IF(JGEOM.EQ.1) THEN
+        854     1                         ALLOCATE(XP(MPG)                            ,STAT=LERR(23))
+        855     1                         ALLOCATE(YP(MPG)                            ,STAT=LERR(24))
+        856     1                         ALLOCATE(ZP(MPG)                            ,STAT=LERR(25))
+        857     1                         ALLOCATE(XTRG(1,1)                          ,STAT=LERR(26))
+        858     1                         ALLOCATE(YTRG(1,1)                          ,STAT=LERR(27))
+        859     1                         ALLOCATE(ZTRG(1,1)                          ,STAT=LERR(28))
+        860     1                         ALLOCATE(QCELL (M1CELL,0:NG+1,0:NG+1,0:NG+1),STAT=LERR(29))
+        861     1                         ALLOCATE(LSURF(1,1,1)                       ,STAT=LERR(31))
+        862     1                         ALLOCATE(LPSURF(1,1)                        ,STAT=LERR(32))
+        863     1                         ALLOCATE(CSURF(1,1,1)                       ,STAT=LERR(33))
+        864     1                         ALLOCATE(RHOSRF(1)                          ,STAT=LERR(34))
+        865     1                     ELSE IF(JGEOM.EQ.2) THEN
+        866     1                         ALLOCATE(XP(1)                              ,STAT=LERR(23))
+        867     1                         ALLOCATE(YP(1)                              ,STAT=LERR(24))
+        868     1                         ALLOCATE(ZP(1)                              ,STAT=LERR(25))
+        869     1                         ALLOCATE(XTRG(MPG,3)                        ,STAT=LERR(26))
+        870     1                         ALLOCATE(YTRG(MPG,3)                        ,STAT=LERR(27))
+        871     1                         ALLOCATE(ZTRG(MPG,3)                        ,STAT=LERR(28))
+        872     1                         ALLOCATE(QCELL (M1CELL,0:NG+1,0:NG+1,0:NG+1),STAT=LERR(29))
+        873     1                         ALLOCATE(LSURF(4,MPG,2)                     ,STAT=LERR(31))
+        874     1                         ALLOCATE(LPSURF(MPG,2)                      ,STAT=LERR(32))
+        875     1                         ALLOCATE(CSURF(3,MPG,2)                     ,STAT=LERR(33))
+        876     1                         ALLOCATE(RHOSRF(MPG)                        ,STAT=LERR(34))
+        877     1                     ENDIF
+        878                           SIZE =        (2+NP)*NG3*WORD
+        879                           SIZE = SIZE +     12*MPG*WORD
+        880                           SIZE = SIZE +     14*NG3*WORD
+        881                           SIZEAL = SIZEAL+SIZE
+        882                           WRITE(IUT6,'(A12,F8.2," MB ALLOCATED")') " BOUN.     :",SIZE
+        883                     C
+        884                     C D. VARIABLES FOR INTER CUBE COMMUNICATION
+        885                           ALLOCATE(NBC  (                  NC),STAT=LERR(35))
+        886                           ALLOCATE(LBC  (5,MBC            ,NC),STAT=LERR(36))
+        887                           ALLOCATE(FBC1 (NP,NG+1,NG+1,MBC1,NC),STAT=LERR(37))
+        888                           ALLOCATE(FBC2 (NP,NG+1,     MBC2,NC),STAT=LERR(38))
+        889                           ALLOCATE(FBC3 (NP,          MBC3,NC),STAT=LERR(39))
+        890                           ALLOCATE(FBC1W(NP,NG+1,NG+1,MBC1,NC),STAT=LERR(40))
+        891                           ALLOCATE(FBC2W(NP,NG+1,     MBC2,NC),STAT=LERR(41))
+        892                           ALLOCATE(FBC3W(NP,          MBC3,NC),STAT=LERR(42))
+        893                           SIZE = (1+5*MBC)*NC*0.5*WORD
+        894                           SIZE = SIZE + 2*NP*(NG+1)*(NG+1)*MBC1*NC*0.2*WORD
+        895                           SIZE = SIZE + 2*NP*(NG+1)       *MBC2*NC*0.2*WORD
+        896                           SIZE = SIZE + 2*NP              *MBC3*NC*0.2*WORD
+        897                           SIZEAL = SIZEAL+SIZE
+        898                           WRITE(IUT6,'(A12,F8.2," MB ALLOCATED")') " CUBE COMM.:",SIZE
+        899                     C
+        900                     C E. VARIABLES FOR FLUID FORCES
+        901                     C
+        902                           ALLOCATE(FXC  (    NC),STAT=LERR(43))
+        903                           ALLOCATE(FYC  (    NC),STAT=LERR(44))
+        904                           ALLOCATE(FZC  (    NC),STAT=LERR(45))
+        905                           ALLOCATE(FXWRK(MPBOUN),STAT=LERR(46))
+        906                           ALLOCATE(FYWRK(MPBOUN),STAT=LERR(47))
+        907                           ALLOCATE(FZWRK(MPBOUN),STAT=LERR(48))
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 942
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FZC, FYC, FXC
+                              <<< Loop-information  End >>>
+        908     1  pp   2v            DO IC=1,NC
+        909     1   p   2v                FXC(IC)=0.0D0
+        910     1   p   2v                FYC(IC)=0.0D0
+        911     1   p   2v                FZC(IC)=0.0D0
+        912     1   p   2v            ENDDO
+        913                     C
+        914                           CALL ERRCHK(IUT6,IPART,48,LERR,IERR)
+        915     1                     IF(IERR.NE.0) THEN
+        916     1                         WRITE(IUT6,*) BLANK
+        917     1                         WRITE(IUT6,*) ERRMSG
+        918     1                         WRITE(IUT6,*) EREXP1
+        919     1                         GO TO 9999
+        920     1                     ENDIF
+        921                           WRITE(IUT6,*) ' DONE!'
+        922                     C
+        923                     C
+        924                           WRITE(IUT6,*) BLANK
+        925                           WRITE(IUT6,*) ' ** LBM3D: READING CUBE FILE ** '
+        926                           IMODE=1
+        927                           CALL GFCUBE(IMODE,MC,MBC,FILECB,
+        928                          *            NG,NC,LLEVEL,LPOSI,NBC,LBC,
+        929                          *            MCOM,NCOMFL,NCOMST,COMFLE,COMSET,
+        930                          *            IUT6,IUT0,IUTCB,IERR)
+        931                           CALL ERRCHK(IUT6,IPART,1,IERR,IERRA)
+        932     1                     IF(IERRA.NE.0) THEN
+        933     1                         WRITE(IUT6,*) BLANK
+        934     1                         WRITE(IUT6,*) ERRMSG
+        935     1                         GO TO 9999
+        936     1                     ENDIF
+        937                           WRITE(IUT6,*) ' DONE!'
+        938                     C
+        939     1                     DO 100 IC=1, NC
+        940     1                         WRITE(IUT6,*)
+        941     1                         WRITE(IUT6,'(A24,12I6)')
+        942     1                    *     'CUBE-ID              :',IC
+        943     1                         WRITE(IUT6,'(A24,12I6)')
+        944     1                    *     'LLEVEL               :',LLEVEL(IC)
+        945     1                         WRITE(IUT6,'(A24,12I6)')
+        946     1                    *     'LPOSI                :',LPOSI(1,IC),LPOSI(2,IC),LPOSI(3,IC)
+        947     1                         WRITE(IUT6,'(A24,12I6)')
+        948     1                    *     'NBC                 :',NBC(IC)
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 2  FILL 1
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        949     2   s    s                DO 110 IBC=1, NBC(IC)
+        950     2   m    m                    WRITE(IUT6,'(A24,12I6)')
+        951     2                    *         'LBC                 :',IBC,(LBC(II,IBC,IC),II=1,5)
+        952     2   p    v        110     CONTINUE
+        953     1                 100 CONTINUE
+        954                     C
+        955                           WRITE(IUT6,*) BLANK
+        956                           WRITE(IUT6,*) ' ** LBM3D: FINDING SAMPLING POINT ** '
+        957                           CALL FNDCUB(NG,NC,LLEVEL,LPOSI,DSCALE,
+        958                          *            MSAMPL,NSAMPL,XSAMPL,YSAMPL,ZSAMPL,LSAMPL,CSAMPL,
+        959                          *            MRESV,LHIST,COMHST,IUT6)
+        960                           WRITE(IUT6,*) '  NUM OF FOUND SAMPLING POINTS :: ', NSAMPL
+        961                           WRITE(IUT6,*) ' DONE!'
+        962                     C
+        963                           NHIST=MRESV+NSAMPL
+        964                           ALLOCATE( HIST(MSAMPL,NTIME),STAT=LERR(1))
+        965                           SIZE = MSAMPL*NTIME*0.5*WORD
+        966                           SIZEAL = SIZEAL+SIZE
+        967                           WRITE(IUT6,'(A12,F8.2," MB ALLOCATED")') " HISTORY    :",SIZE
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<< Loop-information  End >>>
+        968     1  pp                 DO J=1,NTIME
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      HIST
+                              <<< Loop-information  End >>>
+        969     2   p   2v            DO I=1,MSAMPL
+        970     2   p   2v                HIST(I,J)=0.0E0
+        971     2   p   2v            ENDDO
+        972     1   p                 ENDDO
+        973                     C
+        974                           WRITE(IUT6,*) BLANK
+        975                           WRITE(IUT6,*) ' ** LBM3D: SET INITIAL CONDITION ** '
+        976                           CALL LBMINI(ISTART,ICOLLI,IRFNF,
+        977                          *            NC,NG,NG3,RHO0,VSCALE,FILEIF,
+        978                          *            NP,CVEL,WF,NTIME0,TIME,F,FWRK,V3D,
+        979                          *            MPBOUN,NPBOUN,LPBOUN,
+        980                          *            MCOM,NCOMFL,NCOMST,COMFLE,COMSET,
+        981                          *            WRK1,WRK2,WRK3,WRK4,
+        982                          *            IUT6,IUT0,IUTFF,IERR)
+        983                           WRITE(IUT6,*) ' DONE!'
+        984                     C
+        985     1                     IF(JBOUN.EQ.1) THEN
+        986     1                         WRITE(IUT6,*) BLANK
+        987     1                         WRITE(IUT6,*) ' ** LBM3D: READING B.C. FILE ** '
+        988     1                         IMODE=1
+        989     1                         CALL GFBOUN(IMODE,MC,MPBOUN,FILEBC,
+        990     1                    *                NG,NC,NPBOUN,LPBOUN,QBOUN,
+        991     1                    *                MCOM,NCOMFL,NCOMST,COMFLE,COMSET,
+        992     1                    *                IUT6,IUT0,IUTBC,IERR)
+        993     1                         CALL ERRCHK(IUT6,IPART,1,IERR,IERRA)
+        994     2                         IF(IERRA.NE.0) THEN
+        995     2                             WRITE(IUT6,*) BLANK
+        996     2                             WRITE(IUT6,*) ERRMSG
+        997     2                             GO TO 9999
+        998     2                         ENDIF
+        999     1                         WRITE(IUT6,*) ' DONE!'
+       1000     1                     ELSE IF(JBOUN.EQ.2) THEN
+       1001     1                         IACT=1
+       1002     2                         IF(JGEOM.EQ.1) THEN
+       1003     2                             WRITE(IUT6,*) BLANK
+       1004     2                             WRITE(IUT6,*) ' ** LBM3D: READING GEOM FILE ** '
+       1005     2                             CALL GFALL(IUT0,IUT6,IUTGM,FILEGM,
+       1006     2                    *                   MCOM,NCOMFL,COMFLE,
+       1007     2                    *                   MCOM,NCOMST,COMSET,
+       1008     2                    *                   IACT,IWRITE,INAME,IRESV,
+       1009     2                    *                   ICAST,IDATA0,IALL,ISKIP,IERR,
+       1010     2                    *                   '*GRID_3D  !',
+       1011     2                    *                   NAME,MPG,NPG,XP,YP,ZP,ICHECK)
+       1012     2                             IF(IERR.NE.0) GOTO 9999
+       1013     2                             WRITE(IUT6,*) ' DONE!'
+       1014     2                         ELSE IF(JGEOM.EQ.2) THEN
+       1015     3                             IF(IPART.GE.1) THEN
+       1016     3                                 CALL MFNAME(FILETR,FILE,IPART,IUT0,IERR)
+       1017     3                                 FILETR=FILE
+       1018     3                             ENDIF
+       1019     2                             WRITE(IUT6,*) BLANK
+       1020     2                             WRITE(IUT6,*) ' ** LBM3D: READING TRG FILE ** '
+       1021     2                             CALL GFALL(IUT0,IUT6,IUTST,FILETR,
+       1022     2                    *                   MCOM,NCOMFL,COMFLE,
+       1023     2                    *                   MCOM,NCOMST,COMSET,
+       1024     2                    *                   IACT,IWRITE,INAME,IRESV,
+       1025     2                    *                   ICAST,IDATA0,IALL,ISKIP,IERR,
+       1026     2                    *                   '*GRID_3D  !',
+       1027     2                    *                   NAME,MPG,NPTRG,XTRG,YTRG,ZTRG,ICHECK)
+       1028     2                             IF(IERR.NE.0) GOTO 9999
+       1029     2                             WRITE(IUT6,*) ' DONE!'
+       1030     2                         ENDIF
+       1031     1               C
+       1032     1                         WRITE(IUT6,*) BLANK
+       1033     1                         WRITE(IUT6,*) ' ** LBM3D: MAKING B.C. DATA ** '
+       1034     1                         CALL USTSTA(23)
+       1035     1                         CALL MAKEBC(JGEOM,NP,NG,NC,M1CELL,LBTYPE,LVEL,LREV,
+       1036     1                    *                MBC,LLEVEL,LPOSI,NBC,LBC,
+       1037     1                    *                MPBOUN,NPBOUN,LPBOUN,QBOUN,
+       1038     1                    *                LWORK1,LWORK2,LWORK,
+       1039     1                    *                NPG,DSCALE,XP,YP,ZP,QCELL,
+       1040     1                    *                NPTRG,XTRG,YTRG,ZTRG,IMODQ,EPSTRG,
+       1041     1                    *                IUT6,IUT0,IERR)
+       1042     1                         CALL USTEND(23)
+       1043     1                         CALL ERRCHK(IUT6,IPART,1,IERR,IERRA)
+       1044     2                         IF(IERRA.NE.0) THEN
+       1045     2                             WRITE(IUT6,*) BLANK
+       1046     2                             WRITE(IUT6,*) ERRMSG
+       1047     2                             WRITE(IUT6,*) EREXP4
+       1048     2                             GO TO 9999
+       1049     2                         ENDIF
+       1050     1                         WRITE(IUT6,*) ' DONE!'
+       1051     1               C
+       1052     2                         IF(IWRTSF.EQ.1) THEN
+       1053     2                             WRITE(IUT6,*) BLANK
+       1054     2                             WRITE(IUT6,*) ' ** LBM3D: FINDING SURFACE POINT ** '
+       1055     2               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 458
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.37, ITR: 80, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      ZTRG, YTRG, XTRG
+                              <<< Loop-information  End >>>
+       1056     3  pp    v                    DO IP=1,NPTRG
+       1057     3   p    v                        XTRG(IP,2)=XTRG(IP,1)
+       1058     3   p    v                        YTRG(IP,2)=YTRG(IP,1)
+       1059     3   p    v                        ZTRG(IP,2)=ZTRG(IP,1)
+       1060     3   p    v                        XTRG(IP,3)=XTRG(IP,1)
+       1061     3   p    v                        YTRG(IP,3)=YTRG(IP,1)
+       1062     3   p    v                        ZTRG(IP,3)=ZTRG(IP,1)
+       1063     3   p    v                    ENDDO
+       1064     2               C
+       1065     2                             BUF=DTRG
+       1066     2                             CALL MVTRIG(NG,NPTRG,DSCALE,BUF,
+       1067     2                    *                    XTRG(1,2),YTRG(1,2),ZTRG(1,2))
+       1068     2                             CALL FNDSRF(NG,NC,LLEVEL,LPOSI,DSCALE,
+       1069     2                    *                    NPTRG,XTRG(1,2),YTRG(1,2),ZTRG(1,2),
+       1070     2                    *                    MPG,NPSURF(1),LSURF(1,1,1),LPSURF(1,1),
+       1071     2                    *                    CSURF(1,1,1),IUT6)
+       1072     2               C
+       1073     2                             BUF=-DTRG
+       1074     2                             CALL MVTRIG(NG,NPTRG,DSCALE,BUF,
+       1075     2                    *                    XTRG(1,3),YTRG(1,3),ZTRG(1,3))
+       1076     2                             CALL FNDSRF(NG,NC,LLEVEL,LPOSI,DSCALE,
+       1077     2                    *                    NPTRG,XTRG(1,3),YTRG(1,3),ZTRG(1,3),
+       1078     2                    *                    MPG,NPSURF(2),LSURF(1,1,2),LPSURF(1,2),
+       1079     2                    *                    CSURF(1,1,2),IUT6)
+       1080     2               C
+       1081     2                             CALL CHKSRF(MPG,NPSURF,LSURF,LPSURF,CSURF,JSURF)
+       1082     2               C
+       1083     2                         WRITE(IUT6,*) ' JSURF                        :: ', JSURF
+       1084     2                         WRITE(IUT6,*) ' NUM OF FOUND SURFACE POINTS-1:: ', NPSURF(1)
+       1085     2                         WRITE(IUT6,*) ' NUM OF FOUND SURFACE POINTS-2:: ', NPSURF(2)
+       1086     2                         WRITE(IUT6,*) ' DONE!'
+       1087     2                         ENDIF
+       1088     1               C
+       1089     1                     ENDIF
+       1090                     C
+       1091     1                     IF(NBLK.GT.0) THEN
+       1092     1                         WRITE(IUT6,*) BLANK
+       1093     1                         WRITE(IUT6,*) ' ** LBM3D: FINDING BLOCK POINT ** '
+       1094     1                         IMODE=0
+       1095     1                         MPBLK=1
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NPBLK
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 3  FILL 8
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+       1096     2   s    s                DO IBLK=1,NBLK
+       1097     2   s    s                    CALL FNDBLK(IMODE,NG,NC,LLEVEL,LPOSI,DSCALE,
+       1098     2                    *                    NPBLK(IBLK),NUMBLK(1,IBLK),CORBLK(1,IBLK),
+       1099     2                    *                    MPBLK,LDUM,LDUM,LDUM,DUM,IUT6)
+       1100     2   s    s                    MPBLK=MAX(MPBLK,NPBLK(IBLK))
+       1101     2   m    m                    WRITE(IUT6,'(A35,2I8)')
+       1102     2                    *        ' NUM OF FOUND BLOCK POINTS  :: ',IBLK,NPBLK(IBLK)
+       1103     2   p    v                ENDDO
+       1104     1               C
+       1105     1                         ALLOCATE(LCBLK (  MPBLK,MBLK))
+       1106     1                         ALLOCATE(LPBLK1(3,MPBLK,MBLK))
+       1107     1                         ALLOCATE(LPBLK2(3,MPBLK,MBLK))
+       1108     1                         ALLOCATE(COEBLK(3,MPBLK,MBLK))
+       1109     1                         ALLOCATE(RHOBLK(  MPBLK))
+       1110     1                         ALLOCATE(  UBLK(  MPBLK))
+       1111     1                         ALLOCATE(  VBLK(  MPBLK))
+       1112     1                         ALLOCATE(  WBLK(  MPBLK))
+       1113     1               C
+       1114     1                         IMODE=1
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 4  FILL 14
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+       1115     2   s    s                DO IBLK=1,NBLK
+       1116     2   s    s                    CALL FNDBLK(IMODE,NG,NC,LLEVEL,LPOSI,DSCALE,
+       1117     2                    *                    NPBLK(IBLK),NUMBLK(1,IBLK),CORBLK(1,IBLK),
+       1118     2                    *                    MPBLK,LCBLK(1,IBLK),LPBLK1(1,1,IBLK),
+       1119     2                    *                    LPBLK2(1,1,IBLK),COEBLK(1,1,IBLK),DUM,IUT6)
+       1120     2   s    s                ENDDO
+       1121     1               C
+       1122     1                         WRITE(IUT6,*) ' DONE!'
+       1123     1                     ENDIF
+       1124                     C
+       1125                           CALL CHKCBC(NC,MPBOUN,NPBOUN,LPBOUN,LCBOUN)
+       1126                     C
+       1127     1                     IF(JCHGEO.EQ.1) THEN
+       1128     1                         WRITE(IUT6,*) BLANK
+       1129     1                         WRITE(IUT6,*) ' ** LBM3D: GEOM. CHECK MODE ** '
+       1130     1                         IMODE=2
+       1131     1                         CALL GFFLW3(IMODE,FILEFF,
+       1132     1                    *                NG,NC,NP,NTIME,CVEL,VSCALE,TIME,V3D,
+       1133     1                    *                MPBOUN,NPBOUN,LPBOUN,
+       1134     1                    *                MCOM,NCOMFL,NCOMST,COMFLE,COMSET,
+       1135     1                    *                IUT6,IUT0,IUTFF,IERR,
+       1136     1                    *                NG3,WRK1,WRK2,WRK3,WRK4)
+       1137     1                         GOTO 8888
+       1138     1                     ENDIF
+       1139                     C
+       1140                     C
+       1141                     C
+       1142                           WRITE(IUT6,*) BLANK
+       1143                           WRITE(IUT6,*) ' ** LBM3D: MAKE ADJACENT DOMAIN LIST  ** '
+       1144                     C
+       1145                           ALLOCATE(LDOM  (MDOM),STAT=LERR(1))
+       1146                           ALLOCATE(NBPRCV(MDOM),STAT=LERR(2))
+       1147                           ALLOCATE(NBPSND(MDOM),STAT=LERR(3))
+       1148                           CALL ERRCHK(IUT6,IPART,3,LERR,IERR)
+       1149     1                     IF(IERR.NE.0) THEN
+       1150     1                         WRITE(IUT6,*) BLANK
+       1151     1                         WRITE(IUT6,*) ERRMSG
+       1152     1                         WRITE(IUT6,*) EREXP1
+       1153     1                         GO TO 9999
+       1154     1                     ENDIF
+       1155                     C
+       1156                           LERR(1)=0
+       1157                           CALL DDCOM0(IPART,MBC,MDOM,NC,NBC,LBC,NDOM,LDOM,LERR)
+       1158                           WRITE(IUT6,*) 'NDOM',NDOM
+       1159                           CALL ERRCHK(IUT6,IPART,1,LERR,IERR)
+       1160     1                     IF(IERR.NE.0) THEN
+       1161     1                         WRITE(IUT6,*) BLANK
+       1162     1                         WRITE(IUT6,*) ERRMSG
+       1163     1                         WRITE(IUT6,*) EREXP3
+       1164     1                         GO TO 9999
+       1165     1                     ENDIF
+       1166     1                     IF(NDOM.GT.0) THEN
+       1167     1                         WRITE(IUT6,*) 'LDOM'
+       1168     1                         WRITE(IUT6,'(5I8)') (LDOM(IDOM),IDOM=1,NDOM)
+       1169     1                     ENDIF
+       1170                     C
+       1171                           CALL CNTCOM(IPART,NG,NP,NC,MBC,NBC,LBC,
+       1172                          *            MPB,NDOM,LDOM,NBPSND,NBPRCV,IUT6)
+       1173                           WRITE(IUT6,*) 'MPB',MPB
+       1174                           WRITE(IUT6,*) 'MDOM',MDOM
+       1175                     C
+       1176     1                     IF(IPART.EQ.0) THEN
+       1177     1                         ALLOCATE(BUFRCV(MPB,1),STAT=LERR(1))
+       1178     1                         ALLOCATE(BUFSND(MPB,1),STAT=LERR(2))
+       1179     1                         SIZE = 2*MPB*WORD
+       1180     1                     ELSE
+       1181     1                         ALLOCATE(BUFRCV(MPB,NDOM),STAT=LERR(1))
+       1182     1                         ALLOCATE(BUFSND(MPB,NDOM),STAT=LERR(2))
+       1183     1                         SIZE = 2*MPB*NDOM*WORD
+       1184     1                     ENDIF
+       1185                           SIZEAL = SIZEAL+SIZE
+       1186                           WRITE(IUT6,'(A12,F8.2," MB ALLOCATED")') " COM. BUF.  :",SIZE
+       1187                           WRITE(IUT6,'(A12,F8.2," MB ALLOCATED")') " TOTAL      :",SIZEAL
+       1188                           CALL ERRCHK(IUT6,IPART,2,LERR,IERR)
+       1189     1                     IF(IERR.NE.0) THEN
+       1190     1                         WRITE(IUT6,*) BLANK
+       1191     1                         WRITE(IUT6,*) ERRMSG
+       1192     1                         WRITE(IUT6,*) EREXP1
+       1193     1                         GO TO 9999
+       1194     1                     ENDIF
+       1195                     C
+       1196                           WRITE(IUT6,*) BLANK
+       1197                           WRITE(IUT6,*) ' ** LBM3D: SET B.C.  ** '
+       1198                           ITIME=0
+       1199                           CALL SETBND(ITIME,IPART,NP,LVEL,NG,NC,MBC,MBC1,MBC2,MBC3,
+       1200                          *            NBC,LLEVEL,LBC,MPBOUN,NPBOUN,LPBOUN,F,FWRK,
+       1201                          *            VISCM,DSCALE,VSCALE,CVEL,WF,
+       1202                          *            MDOM,MPB,NDOM,LDOM,NBPSND,NBPRCV,
+       1203                          *            BUFSND,BUFRCV,
+       1204                          *            FBC1,FBC1W,FBC2,FBC2W,FBC3,FBC3W,
+       1205                          *            IUT6,IUT0,IERR)
+       1206                           IF(IERR.NE.0) GOTO 9999
+       1207                     C
+       1208     1                     IF(INTFSV.LE.NTIME) THEN
+       1209     1                         IMODE=4
+       1210     1                         CALL GFFLW2(IMODE,FILEFS,
+       1211     1                    *                NG,NC,NP,NSTEP,CVEL,VSCALE,TIME,V3D,F,
+       1212     1                    *                MCOM,NCOMFL,NCOMST,COMFLE,COMSET,
+       1213     1                    *                IUT6,IUT0,IUTFS,IERR,
+       1214     1                    *                NG3,WRK1,WRK2,WRK3,WRK4)
+       1215     1                     ENDIF
+       1216                     C
+       1217     1                     IF(IWRTSF.EQ.1 .AND. NPSURF(1).GT.0) THEN
+       1218     1                         WRITE(IUT6,*) BLANK
+       1219     1                         WRITE(IUT6,*) ' ** LBM3D: WRITING GF-SURF FILE  ** '
+       1220     2                         IF(IPART.GE.1) THEN
+       1221     2                             CALL MFNAME(FILESF,FILE,IPART,IUT0,IERR)
+       1222     2                             FILESF=FILE
+       1223     2                         ENDIF
+       1224     1               C
+       1225     1                         IACT=4
+       1226     1                         CALL GFALL(IUT0,IUT6,IUTSF,FILESF,
+       1227     1                    *               MCOM,NCOMFL,COMFLE,
+       1228     1                    *               MCOM,NCOMST,COMSET,
+       1229     1                    *               IACT,IWRITE,INAME,IRESV,
+       1230     1                    *               ICAST,IDATA0,IALL,ISKIP,IERR,
+       1231     1                    *               '  !',
+       1232     1                    *               ICHECK)
+       1233     1               C
+       1234     1                         IACT=6
+       1235     1                         CALL GFALL(IUT0,IUT6,IUTSF,FILESF,
+       1236     1                    *               MCOM,NCOMFL,COMFLE,
+       1237     1                    *               MCOM,NCOMST,COMSET,
+       1238     1                    *               IACT,IWRITE,INAME,IRESV,
+       1239     1                    *               ICAST,IDATA0,IALL,ISKIP,IERR,
+       1240     1                    *               '*PT_NODE !',
+       1241     1                    *               NAME,MPG,NPSURF(1),LPSURF(1,1),
+       1242     1                    *               ICHECK)
+       1243     1                         CALL GFALL(IUT0,IUT6,IUTSF,FILESF,
+       1244     1                    *               MCOM,NCOMFL,COMFLE,
+       1245     1                    *               MCOM,NCOMST,COMSET,
+       1246     1                    *               IACT,IWRITE,INAME,IRESV,
+       1247     1                    *               ICAST,IDATA0,IALL,ISKIP,IERR,
+       1248     1                    *               '*PT_NODE !',
+       1249     1                    *               NAME,MPG,NPSURF(2),LPSURF(1,2),
+       1250     1                    *               ICHECK)
+       1251     1                         WRITE(IUT6,*) ' DONE!'
+       1252     1               C
+       1253     1                     ENDIF
+       1254                     C
+       1255     1                     IF(NBLK.GT.0) THEN
+       1256     1                         WRITE(IUT6,*) BLANK
+       1257     1                         WRITE(IUT6,*) ' ** LBM3D: WRITING GF-BLOCK FILE  ** '
+       1258     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NPBLK
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 5  FILL 12
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+       1259     2                         DO IBLK=1,NBLK
+       1260     3                             IF(NPBLK(IBLK).GT.0) THEN
+       1261     4                                 IF(IPART.GE.1) THEN
+       1262     4                                     CALL MFNAME(FILBLK(IBLK),FILE,IPART,IUT0,IERR)
+       1263     4                                     FILBLK(IBLK)=FILE
+       1264     4                                 ENDIF
+       1265     3               C
+       1266     3                                 IACT=4
+       1267     3                                 IUTBLK=IUTBL0+IBLK
+       1268     3                                 CALL GFALL(IUT0,IUT6,IUTBLK,FILBLK(IBLK),
+       1269     3                    *                       MCOM,NCOMFL,COMFLE,
+       1270     3                    *                       MCOM,NCOMST,COMSET,
+       1271     3                    *                       IACT,IWRITE,INAME,IRESV,
+       1272     3                    *                       ICAST,IDATA0,IALL,ISKIP,IERR,
+       1273     3                    *                       '  !', ICHECK)
+       1274     3               C
+       1275     3                                 IACT=6
+       1276     3                                 NPBLK3=NPBLK(IBLK)*3
+       1277     4                                 IF(IPART.GT.0) THEN
+       1278     4                                 CALL GFALL(IUT0,IUT6,IUTBLK,FILBLK(IBLK),
+       1279     4                    *                       MCOM,NCOMFL,COMFLE,
+       1280     4                    *                       MCOM,NCOMST,COMSET,
+       1281     4                    *                       IACT,IWRITE,INAME,IRESV,
+       1282     4                    *                       ICAST,IDATA0,IALL,ISKIP,IERR,
+       1283     4                    *                       '*PT_NODE !',
+       1284     4                    *                       NAME,NPBLK3,NPBLK3,LPBLK2(1,1,IBLK),
+       1285     4                    *                       ICHECK)
+       1286     4                                 ENDIF
+       1287     3                             ENDIF
+       1288     2                         ENDDO
+       1289     1                         WRITE(IUT6,*) ' DONE!'
+       1290     1                     ENDIF
+       1291                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      CDUMP
+                              <<< Loop-information  End >>>
+       1292        pp   4v            IF(JDUMP.EQ.0) CDUMP=0.0D0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      CVISC
+                              <<< Loop-information  End >>>
+       1293        pp   4v            IF(JVISC.EQ.0) CVISC=0.0D0
+       1294                           IF(JDUMP.NE.0) CALL TGTTAU(JDUMP,NP,WF,CVEL,PARDMP,FDUMP)
+       1295                     C
+       1296                           WRITE(IUT6,*) BLANK
+       1297                           WRITE(IUT6,*) ' ** LBM3D: TIME-LOOP START ** '
+       1298                           CALL USTSTA(01)
+       1299     1                     DO 1000 ITIME=1,NTIME
+       1300     1                         TIME=TIME+(VSCALE*DSCALE)/DBLE(NG)
+       1301     2                         IF(MOD(ITIME,NCHKFL).EQ.0) THEN
+       1302     2                             RHOMAX=0.0D0
+       1303     2                             VELMAX=0.0D0
+       1304     2                         ENDIF
+       1305     1                         IERR=0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    UNSWITCHING
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LLEVEL
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 14  FILL 93
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+       1306     2   s    s                DO 1100 IC=1,NC
+       1307     2   m    m                    NINT=2**(LLEVEL(IC)-1)
+       1308     2   s    s                    IF(MOD(ITIME-1,NINT).NE.0) GOTO 1110
+       1309     2               C
+       1310     2   s    s                    CALL SETMSK(NG,MASK,MBC,NBC(IC),LBC(1,1,IC))
+       1311     2               C
+       1312     2               C
+       1313     3   s    s                    IF(JVISC.GE.1) THEN
+       1314     3   s    s                        CALL SETRGN(JVISC,NG,NP,LPOSI(1,IC),LLEVEL(IC),
+       1315     3                    *                        DSCALE,PARVIS,CVISC)
+       1316     3   s    s                    ENDIF
+       1317     2               C
+       1318     2   s    s                    CALL SETDIF(IMODEL,ICALSS,NG,NP,LLEVEL(IC),VISCM,
+       1319     2                    *                    CS,TAUMIN,WF,CVEL,
+       1320     2                    *                    DSCALE,VSCALE,F(0,0,0,1,IC),TAU(0,0,0,IC),
+       1321     2                    *                    LPOSI(1,IC),NTFIX,LTFIX,TAUFIX,
+       1322     2                    *                    LCBOUN(1,IC),TAINLT,TAFREE,V3D,FWRK,
+       1323     2                    *                    CVISC,TAUTGT)
+       1324     2               C
+       1325     3   s    s                    IF(JDUMP.GE.1) THEN
+       1326     3   s    s                        CALL SETRGN(JDUMP,NG,NP,LPOSI(1,IC),LLEVEL(IC),
+       1327     3                    *                        DSCALE,PARDMP,CDUMP)
+       1328     3   s    s                    ENDIF
+       1329     2               C
+       1330     3   s    s                    IF(ICOLLI.EQ.1 .AND. NP.EQ.15) THEN
+       1331     3   m    m                        CALL SRTQ15(NG,NG3,NP,LVEL,WF,CVEL,LREV,LLEVEL(IC),
+       1332     3                    *                        F(0,0,0,1,IC),TAU(0,0,0,IC),FWRK,
+       1333     3                    *                        MPBOUN,NPBOUN(IC),
+       1334     3                    *                        LPBOUN(1,1,IC),QBOUN(1,IC),
+       1335     3                    *                        UINLT,VINLT,WINLT,UWALL,VWALL,WWALL,
+       1336     3                    *                        V1,V2,V3,V4,MASK,
+       1337     3                    *                        FXC(IC),FYC(IC),FZC(IC),FXWRK,FYWRK,FZWRK,
+       1338     3                    *                        JDUMP,FDUMP,CDUMP)
+       1339     3   s    s                    ELSE IF(ICOLLI.EQ.1 .AND. NP.EQ.27) THEN
+       1340     3   m    s                        CALL SRTQ27(NG,NG3,NP,LVEL,WF,CVEL,LREV,LLEVEL(IC),
+       1341     3                    *                        LPOSI(1,IC),IINLTV,DSCALE,DBLAS,VISCM,
+       1342     3                    *                        F(0,0,0,1,IC),TAU(0,0,0,IC),FWRK,
+       1343     3                    *                        MPBOUN,NPBOUN(IC),
+       1344     3                    *                        LPBOUN(1,1,IC),QBOUN(1,IC),
+       1345     3                    *                        UINLT,VINLT,WINLT,UWALL,VWALL,WWALL,
+       1346     3                    *                        V1,V2,V3,V4,MASK,
+       1347     3                    *                        FXC(IC),FYC(IC),FZC(IC),FXWRK,FYWRK,FZWRK,
+       1348     3                    *                        JDUMP,FDUMP,CDUMP)
+       1349     3                             ELSE IF(ICOLLI.EQ.2) THEN
+       1350     3                                 CALL MRTLBM(NG,NG3,NP,LVEL,WF,CVEL,LREV,LLEVEL(IC),
+       1351     3                    *                        F(0,0,0,1,IC),TAU(0,0,0,IC),FWRK,FWRK2,
+       1352     3                    *                        MPBOUN,NPBOUN(IC),
+       1353     3                    *                        LPBOUN(1,1,IC),QBOUN(1,IC),
+       1354     3                    *                        UINLT,VINLT,WINLT,UWALL,VWALL,WWALL,
+       1355     3                    *                        V1,V2,V3,V4,MASK,
+       1356     3                    *                        FXC(IC),FYC(IC),FZC(IC),FXWRK,FYWRK,FZWRK)
+       1357     3   p    s                    ENDIF
+       1358     2   p    v       1110         CONTINUE
+       1359     3   p    s                    IF(MOD(ITIME,NCHKFL).EQ.0) THEN
+       1360     3   s    s                        CALL CHKFLW(NG,NG3,NP,CVEL,F(0,0,0,1,IC),BUF1,BUF2)
+       1361     3   s    s                        RHOMAX=MAX(RHOMAX,BUF1)
+       1362     3   s    s                        VELMAX=MAX(VELMAX,BUF2)
+       1363     4   s    s                        IF(RHOMAX.GT.RHOSTP) THEN
+       1364     4   s    s                            WRITE(IUT6,*) EREXP2
+       1365     4   p    s                            IERR=1
+       1366     4   p    s                        ENDIF
+       1367     3   p    v                    ENDIF
+       1368     2               C
+       1369     2   p    v       1100     CONTINUE
+       1370     1               C
+       1371     2                         IF(MOD(ITIME,NCHKFL).EQ.0) THEN
+       1372     2                             CALL ERCHK2(IUT6,IPART,1,IERR,IERRA)
+       1373     3                             IF(IERRA.NE.0) THEN
+       1374     3                                 WRITE(IUT6,*) BLANK
+       1375     3                                 WRITE(IUT6,*) ERRMSG
+       1376     3                                 JSTOP=1
+       1377     3                                 GO TO 1010
+       1378     3                             ENDIF
+       1379     2                         ENDIF
+       1380     1               C
+       1381     1                         CALL SETBND(ITIME,IPART,NP,LVEL,NG,NC,MBC,MBC1,MBC2,MBC3,
+       1382     1                    *                NBC,LLEVEL,LBC,MPBOUN,NPBOUN,LPBOUN,F,FWRK,
+       1383     1                    *                VISCM,DSCALE,VSCALE,CVEL,WF,
+       1384     1                    *                MDOM,MPB,NDOM,LDOM,NBPSND,NBPRCV,
+       1385     1                    *                BUFSND,BUFRCV,
+       1386     1                    *                FBC1,FBC1W,FBC2,FBC2W,FBC3,FBC3W,
+       1387     1                    *                IUT6,IUT0,IERR)
+       1388     1               C
+       1389     1                         CALL FORCE3(NC,LLEVEL,FXC,FYC,FZC,FX,FY,FZ)
+       1390     1               C
+       1391     1                         CALL SETHST(MSAMPL,MRESV,NSAMPL,LSAMPL,CSAMPL,NG,NC,NP,CVEL,F,
+       1392     1                    *                TIME,RHOMAX,VELMAX,VSCALE,DSCALE,HIST(1,ITIME),
+       1393     1                    *                FX,FY,FZ)
+       1394     1               C
+       1395     2                         IF(ITIME.GE.1 .AND. MOD(ITIME,INTPRN).EQ.0) THEN
+       1396     2                         WRITE(IUT6,*) BLANK
+       1397     2                         WRITE(IUT6,9000) NTIME0+ITIME,TIME
+       1398     2                         IF(MOD(ITIME,NCHKFL).EQ.0)
+       1399     2                    *    WRITE(IUT6,9050) RHOMAX,VELMAX/VSCALE
+       1400     2               C
+       1401     3                         IF(JGEOM.GE.1) THEN
+       1402     3                         COEFF = REAL(DSCALE)/(REAL(VSCALE)*REAL(NG))
+       1403     3                         COEFF = COEFF*COEFF
+       1404     3                         WRITE(IUT6,9060) FX*COEFF,FY*COEFF,FZ*COEFF
+       1405     3                         ENDIF
+       1406     2               C
+       1407     3                         IF(NSAMPL.GE.1 .AND. NSAMPL.LE.3) THEN
+       1408     3                         WRITE(IUT6,9100)
+       1409     3                    *    HIST(MRESV+1,ITIME),HIST(MRESV+2,ITIME),HIST(MRESV+3,ITIME)
+       1410     3                         ENDIF
+       1411     2               
+       1412     3                         IF(NSAMPL.GE.4 .AND. NSAMPL.LE.6) THEN
+       1413     3                         WRITE(IUT6,9100)
+       1414     3                    *    HIST(MRESV+1,ITIME),HIST(MRESV+2,ITIME),HIST(MRESV+3,ITIME)
+       1415     3                         WRITE(IUT6,9200)
+       1416     3                    *    HIST(MRESV+4,ITIME),HIST(MRESV+5,ITIME),HIST(MRESV+6,ITIME)
+       1417     3                         ENDIF
+       1418     2               C
+       1419     3                         IF(NSAMPL.GE.7 ) THEN
+       1420     3                         WRITE(IUT6,9100)
+       1421     3                    *    HIST(MRESV+1,ITIME),HIST(MRESV+2,ITIME),HIST(MRESV+3,ITIME)
+       1422     3                         WRITE(IUT6,9200)
+       1423     3                    *    HIST(MRESV+4,ITIME),HIST(MRESV+5,ITIME),HIST(MRESV+6,ITIME)
+       1424     3                         WRITE(IUT6,9300)
+       1425     3                    *    HIST(MRESV+7,ITIME),HIST(MRESV+8,ITIME),HIST(MRESV+9,ITIME)
+       1426     3                         ENDIF
+       1427     2               C
+       1428     2                         ENDIF
+       1429     1               C
+       1430     2                         IF(ITIME.GE.1 .AND. MOD(ITIME,INTFSV).EQ.0) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 3  FILL 10
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+       1431     3   s    s                    DO 1200 IC=1,NC
+       1432     3   s    s                    CALL EXTFNC(NG,NP,MBC,NBC(IC),LBC(1,1,IC),F(0,0,0,1,IC))
+       1433     3   s    s       1200         CONTINUE
+       1434     2                             IMODE=6
+       1435     2                             CALL GFFLW2(IMODE,FILEFS,
+       1436     2                    *                    NG,NC,NP,ITIME,CVEL,VSCALE,TIME,V3D,F,
+       1437     2                    *                    MCOM,NCOMFL,NCOMST,COMFLE,COMSET,
+       1438     2                    *                    IUT6,IUT0,IUTFS,IERR,
+       1439     2                    *                    NG3,WRK1,WRK2,WRK3,WRK4)
+       1440     2                         ENDIF
+       1441     1               C
+       1442     2                     IF(IWRTSF.EQ.1 .AND. NPSURF(1).GT.0 .AND. INTSRF.GT.0) THEN
+       1443     3                     IF(MOD(ITIME,INTSRF).EQ.0) THEN
+       1444     3               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 3  FILL 10
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+       1445     4   s    s                DO 1210 IC=1,NC
+       1446     4   s    s                CALL EXTFNC(NG,NP,MBC,NBC(IC),LBC(1,1,IC),F(0,0,0,1,IC))
+       1447     4   s    s       1210     CONTINUE
+       1448     3               C
+       1449     3                         IACT=6
+       1450     3                         TIME4=REAL(TIME)
+       1451     3               C
+       1452     3                         CALL SETSRF(NPSURF(1),LSURF(1,1,1),CSURF(1,1,1),
+       1453     3                    *                NG,NC,NP,RHO0,VSCALE,F,RHOSRF)
+       1454     3                         CALL GFALL(IUT0,IUT6,IUTSF,FILESF,
+       1455     3                    *               MCOM,NCOMFL,COMFLE,
+       1456     3                    *               MCOM,NCOMST,COMSET,
+       1457     3                    *               IACT,IWRITE,INAME,IRESV,
+       1458     3                    *               ICAST,IDATA0,IALL,ISKIP,IERR,
+       1459     3                    *               '*TIME_PS *STEP_PS *LBM_RHO !',
+       1460     3                    *               NAME,TIME4,
+       1461     3                    *               NAME,ITIME,
+       1462     3                    *               NAME,MPG,NPSURF(1),RHOSRF,
+       1463     3                    *               ICHECK)
+       1464     3               C
+       1465     3                         CALL SETSRF(NPSURF(2),LSURF(1,1,2),CSURF(1,1,2),
+       1466     3                    *                NG,NC,NP,RHO0,VSCALE,F,RHOSRF)
+       1467     3                         CALL GFALL(IUT0,IUT6,IUTSF,FILESF,
+       1468     3                    *               MCOM,NCOMFL,COMFLE,
+       1469     3                    *               MCOM,NCOMST,COMSET,
+       1470     3                    *               IACT,IWRITE,INAME,IRESV,
+       1471     3                    *               ICAST,IDATA0,IALL,ISKIP,IERR,
+       1472     3                    *               '*TIME_PS *STEP_PS *LBM_RHO !',
+       1473     3                    *               NAME,TIME4,
+       1474     3                    *               NAME,ITIME,
+       1475     3                    *               NAME,MPG,NPSURF(2),RHOSRF,
+       1476     3                    *               ICHECK)
+       1477     3               C
+       1478     3                     ENDIF
+       1479     2                     ENDIF
+       1480     1               C
+       1481     2                     IF(NBLK.GT.0) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 3  FILL 10
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+       1482     3   s    s                DO 1220 IC=1,NC
+       1483     3   s    s                CALL EXTFNC(NG,NP,MBC,NBC(IC),LBC(1,1,IC),F(0,0,0,1,IC))
+       1484     3   s    s       1220     CONTINUE
+       1485     2               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NPBLK
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 8  FILL 28
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+       1486     3                         DO IBLK=1,NBLK
+       1487     4                             IF(NPBLK(IBLK).GT.0) THEN
+       1488     5                             IF(INTBLK(IBLK).NE.0) THEN
+       1489     6                             IF(MOD(ITIME,INTBLK(IBLK)).EQ.0) THEN
+       1490     6               C
+       1491     6                                 CALL SETBLK(NP,NG,NC,CVEL,RHO0,VSCALE,F,NPBLK(IBLK),
+       1492     6                    *                        LCBLK(1,IBLK),LPBLK1(1,1,IBLK),
+       1493     6                    *                        COEBLK(1,1,IBLK),RHOBLK,UBLK,VBLK,WBLK)
+       1494     6               C
+       1495     6                                 IACT=6
+       1496     6                                 IUTBLK=IUTBL0+IBLK
+       1497     6                                 TIME4=REAL(TIME)
+       1498     6                                 CALL GFALL(IUT0,IUT6,IUTBLK,FILBLK(IBLK),
+       1499     6                    *                   MCOM,NCOMFL,COMFLE,
+       1500     6                    *                   MCOM,NCOMST,COMSET,
+       1501     6                    *                   IACT,IWRITE,INAME,IRESV,
+       1502     6                    *                   ICAST,IDATA0,IALL,ISKIP,IERR,
+       1503     6                    *                   ' *TIME_PS *STEP_PS *LBM_RHO *LBM_VEL !',
+       1504     6                    *                   NAME,TIME4,
+       1505     6                    *                   NAME,ITIME,
+       1506     6                    *                   NAME,NPBLK(IBLK),NPBLK(IBLK),RHOBLK,
+       1507     6                    *                   NAME,NPBLK(IBLK),NPBLK(IBLK),UBLK,VBLK,WBLK,
+       1508     6                    *                   ICHECK)
+       1509     6                             ENDIF
+       1510     5                             ENDIF
+       1511     4                             ENDIF
+       1512     3               C
+       1513     3                         ENDDO
+       1514     2                     ENDIF
+       1515     1               C
+       1516     1                1000 CONTINUE
+       1517                      1010 CONTINUE
+       1518                           CALL USTEND(01)
+       1519                     C
+       1520                           WRITE(IUT6,*) ' ** LBM3D: TIME-LOOP END   ** '
+       1521                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 4
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+       1522     1   s    s            DO 1300 IC=1,NC
+       1523     1   s    s                CALL EXTFNC(NG,NP,MBC,NBC(IC),LBC(1,1,IC),F(0,0,0,1,IC))
+       1524     1   s    s       1300 CONTINUE
+       1525                     C
+       1526                           IF(IWMODE.EQ.0) GOTO 2000
+       1527                     C
+       1528     1                     IF(INTFSV.LE.NTIME) THEN
+       1529     1                         IMODE=8
+       1530     1                         CALL GFFLW2(IMODE,FILEFS,
+       1531     1                    *                NG,NC,NP,NSTEP,CVEL,VSCALE,TIME,V3D,F,
+       1532     1                    *                MCOM,NCOMFL,NCOMST,COMFLE,COMSET,
+       1533     1                    *                IUT6,IUT0,IUTFS,IERR,
+       1534     1                    *                NG3,WRK1,WRK2,WRK3,WRK4)
+       1535     1                     ENDIF
+       1536                     C
+       1537     1                     IF(IWFUNC.EQ.1) THEN
+       1538     1                     WRITE(IUT6,*) BLANK
+       1539     1                     WRITE(IUT6,*) ' ** LBM3D: WRITING GF-FUNC FILE ** '
+       1540     1                     IMODE=2
+       1541     1                     NSTEP=NTIME0+NTIME
+       1542     1                     CALL GFFUNC(IMODE,IRFNF,NC,FILEVF,
+       1543     1                    *            NG,NC,NP,NSTEP,TIME,F,FWRK,
+       1544     1                    *            MCOM,NCOMFL,NCOMST,COMFLE,COMSET,
+       1545     1                    *            IUT6,IUT0,IUTFF,IERR)
+       1546     1                     WRITE(IUT6,*) ' DONE!'
+       1547     1                     ENDIF
+       1548                     C
+       1549                           WRITE(IUT6,*) ' ** LBM3D: WRITING GF-FLOW FILE ** '
+       1550                           IMODE=2
+       1551                           NSTEP=NTIME0+NTIME
+       1552                           CALL GFFLW4(IMODE,FILEFF,
+       1553                          *            NG,NC,NP,NSTEP,NFLINT,CVEL,VSCALE,TIME,V3D,F,
+       1554                          *            MCOM,NCOMFL,NCOMST,COMFLE,COMSET,
+       1555                          *            IUT6,IUT0,IUTFF,IERR,
+       1556                          *            NG3,WRK1,WRK2,WRK3,WRK4)
+       1557                           WRITE(IUT6,*) ' DONE!'
+       1558                     C
+       1559                           WRITE(IUT6,*) ' ** LBM3D: WRITING GF-HIST FILE ** '
+       1560                           IACT     = 2
+       1561                           CALL GFALL(IUT0,IUT6,IUTHS,FILEHS,
+       1562                          *           MCOM,0,COMFLE,
+       1563                          *           MCOM,NHIST,COMHST,
+       1564                          *           IACT,IWRITE,INAME,IRESV,
+       1565                          *           ICAST,IDATA0,IALL,ISKIP,IERR,
+       1566                          *           '*HSTLIST *HISTORY  !',
+       1567                          *           NAME,      MSAMPL,      NHIST,LHIST,
+       1568                          *           NAME,NTIME,MSAMPL,NTIME,NHIST, HIST,
+       1569                          *           ICHECK)
+       1570                           WRITE(IUT6,*) ' DONE!'
+       1571                     C
+       1572     1                     IF(IWRTSF.EQ.1 .AND. NPSURF(1).GT.0) THEN
+       1573     1                         WRITE(IUT6,*) BLANK
+       1574     1                         WRITE(IUT6,*) ' ** LBM3D: WRITING GF-SURF FILE  ** '
+       1575     1               C
+       1576     2                         IF(INTSRF.EQ.0) THEN
+       1577     2                             IACT=6
+       1578     2                             TIME4=REAL(TIME)
+       1579     2                             CALL SETSRF(NPSURF(1),LSURF(1,1,1),CSURF(1,1,1),
+       1580     2                    *                    NG,NC,NP,RHO0,VSCALE,F,RHOSRF)
+       1581     2                             CALL GFALL(IUT0,IUT6,IUTSF,FILESF,
+       1582     2                    *                   MCOM,NCOMFL,COMFLE,
+       1583     2                    *                   MCOM,NCOMST,COMSET,
+       1584     2                    *                   IACT,IWRITE,INAME,IRESV,
+       1585     2                    *                   ICAST,IDATA0,IALL,ISKIP,IERR,
+       1586     2                    *                   '*TIME_PS *STEP_PS *LBM_RHO !',
+       1587     2                    *                   NAME,TIME4,
+       1588     2                    *                   NAME,NSTEP,
+       1589     2                    *                   NAME,MPG,NPSURF(1),RHOSRF,
+       1590     2                    *                   ICHECK)
+       1591     2               C
+       1592     2                             CALL SETSRF(NPSURF(2),LSURF(1,1,2),CSURF(1,1,2),
+       1593     2                    *                    NG,NC,NP,RHO0,VSCALE,F,RHOSRF)
+       1594     2                             CALL GFALL(IUT0,IUT6,IUTSF,FILESF,
+       1595     2                    *                   MCOM,NCOMFL,COMFLE,
+       1596     2                    *                   MCOM,NCOMST,COMSET,
+       1597     2                    *                   IACT,IWRITE,INAME,IRESV,
+       1598     2                    *                   ICAST,IDATA0,IALL,ISKIP,IERR,
+       1599     2                    *                   '*TIME_PS *STEP_PS *LBM_RHO !',
+       1600     2                    *                   NAME,TIME4,
+       1601     2                    *                   NAME,NSTEP,
+       1602     2                    *                   NAME,MPG,NPSURF(2),RHOSRF,
+       1603     2                    *                   ICHECK)
+       1604     2                         ENDIF
+       1605     1               C
+       1606     1                         IACT=8
+       1607     1                         CALL GFALL(IUT0,IUT6,IUTSF,FILESF,
+       1608     1                    *               MCOM,NCOMFL,COMFLE,
+       1609     1                    *               MCOM,NCOMST,COMSET,
+       1610     1                    *               IACT,IWRITE,INAME,IRESV,
+       1611     1                    *               ICAST,IDATA0,IALL,ISKIP,IERR,
+       1612     1                    *               '  !',
+       1613     1                    *               ICHECK)
+       1614     1                     ENDIF
+       1615                     C
+       1616     1                     IF(NBLK.GT.0) THEN
+       1617     1                         WRITE(IUT6,*) BLANK
+       1618     1                         WRITE(IUT6,*) ' ** LBM3D: WRITING GF-BLOCK FILE  ** '
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NPBLK
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 3  FILL 24
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+       1619     2                         DO IBLK=1,NBLK
+       1620     3                             IF(NPBLK(IBLK).GT.0) THEN
+       1621     3               C
+       1622     4                                 IF(INTBLK(IBLK).EQ.0) THEN
+       1623     4                                 CALL SETBLK(NP,NG,NC,CVEL,RHO0,VSCALE,F,NPBLK(IBLK),
+       1624     4                    *                        LCBLK(1,IBLK),LPBLK1(1,1,IBLK),
+       1625     4                    *                        COEBLK(1,1,IBLK),RHOBLK,UBLK,VBLK,WBLK)
+       1626     4               C
+       1627     4                                 IACT=6
+       1628     4                                 IUTBLK=IUTBL0+IBLK
+       1629     4                                 TIME4=REAL(TIME)
+       1630     4                                 CALL GFALL(IUT0,IUT6,IUTBLK,FILBLK(IBLK),
+       1631     4                    *                   MCOM,NCOMFL,COMFLE,
+       1632     4                    *                   MCOM,NCOMST,COMSET,
+       1633     4                    *                   IACT,IWRITE,INAME,IRESV,
+       1634     4                    *                   ICAST,IDATA0,IALL,ISKIP,IERR,
+       1635     4                    *                   ' *TIME_PS *STEP_PS *LBM_RHO *LBM_VEL !',
+       1636     4                    *                   NAME,TIME4,
+       1637     4                    *                   NAME,NSTEP,
+       1638     4                    *                   NAME,NPBLK(IBLK),NPBLK(IBLK),RHOBLK,
+       1639     4                    *                   NAME,NPBLK(IBLK),NPBLK(IBLK),UBLK,VBLK,WBLK,
+       1640     4                    *                   ICHECK)
+       1641     4                                 ENDIF
+       1642     3               C
+       1643     3                                 IACT=8
+       1644     3                                 IUTBLK=IUTBL0+IBLK
+       1645     3                                 CALL GFALL(IUT0,IUT6,IUTBLK,FILBLK(IBLK),
+       1646     3                    *                       MCOM,NCOMFL,COMFLE,
+       1647     3                    *                       MCOM,NCOMST,COMSET,
+       1648     3                    *                       IACT,IWRITE,INAME,IRESV,
+       1649     3                    *                       ICAST,IDATA0,IALL,ISKIP,IERR,
+       1650     3                    *                       '  !', ICHECK)
+       1651     3                             ENDIF
+       1652     2                         ENDDO
+       1653     1                         WRITE(IUT6,*) ' DONE!'
+       1654     1                     ENDIF
+       1655                     C
+       1656                      2000 CONTINUE
+       1657                     C
+       1658                     #ifdef cputime
+       1659                           WRITE(IUT6,*) BLANK
+       1660                           WRITE(IUT6,*) BLANK
+       1661                           CALL USTWRT(IUT6)
+       1662                     #endif
+       1663                     C
+       1664                      8888 CONTINUE
+       1665                     C
+       1666                           WRITE(IUT6,*) BLANK
+       1667     1                     IF(JSTOP.EQ.0) THEN
+       1668     1                         WRITE(IUT6,*) ' ** LBM3D: SUCCESSFULLY TERMINATED **'
+       1669     1                     ELSE
+       1670     1                         WRITE(IUT6,*) ' ** LBM3D: TERMINATED **'
+       1671     1                     ENDIF
+       1672                     C
+       1673                           IF(IPART.GE.2) CLOSE(IUT6)
+       1674                           CALL DDEXIT
+       1675                           STOP
+       1676                     C
+       1677                      9999 CONTINUE
+       1678                     C
+       1679                           WRITE(IUT6,*) BLANK
+       1680                           WRITE(IUT6,*) ' ** LBM3D: TERMINATED **'
+       1681                     C
+       1682                           IF(IPART.GE.1) CLOSE(IUT6)
+       1683                           CALL DDEXIT
+       1684                           STOP
+       1685                     C
+       1686                      9000 FORMAT('  STEP=', I12     , ' TIME=', 1PE12.5)
+       1687                      9050 FORMAT('  RMAX=', 1PE12.5 , ' VMAX=', 1PE12.5)
+       1688                      9060 FORMAT('  FX  =', 1PE12.5 , ' FY  =', 1PE12.5 , ' FZ  =', 1PE12.5)
+       1689                      9100 FORMAT('  HST1=', 1PE12.5 , ' HST2=', 1PE12.5 , ' HST3=', 1PE12.5)
+       1690                      9200 FORMAT('  HST4=', 1PE12.5 , ' HST5=', 1PE12.5 , ' HST6=', 1PE12.5)
+       1691                      9300 FORMAT('  HST7=', 1PE12.5 , ' HST8=', 1PE12.5 , ' HST9=', 1PE12.5)
+       1692                     C
+       1693                           END
+
+ Diagnostic messages: program name(LBM3D)
+   jwd8220o-i  "lbm3d.f", line 8: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd2006i-i  "lbm3d.f", line 450: 'IPB' is declared but never referenced.
+   jwd2006i-i  "lbm3d.f", line 450: 'K' is declared but never referenced.
+   jwd2006i-i  "lbm3d.f", line 450: 'ID' is declared but never referenced.
+   jwd2006i-i  "lbm3d.f", line 589: 'JESC' is declared but never referenced.
+   jwd8209o-i  "lbm3d.f", line 762: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "lbm3d.f", line 803: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "lbm3d.f", line 828: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "lbm3d.f", line 880: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "lbm3d.f", line 896: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5001p-i  "lbm3d.f", line 908: DO loop with DO variable 'IC' is parallelized.
+   jwd6001s-i  "lbm3d.f", line 908: SIMD conversion is applied to DO loop with DO variable 'IC'.
+   jwd8663o-i  "lbm3d.f", line 908: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "lbm3d.f", line 908: Loop unrolled 2 times.
+   jwd5121p-i  "lbm3d.f", line 939: DO loop is not parallelized: an input/output statement was found in the loop.
+   jwd5302p-i  "lbm3d.f", line 949: This loop is not parallelized: the performance of a partial parallelization execution may not be improved.
+   jwd6302s-i  "lbm3d.f", line 949: SIMD conversion is not applied to DO loop: the performance of a partial SIMD execution may not be improved.
+   jwd8664o-i  "lbm3d.f", line 949: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5121p-i  "lbm3d.f", line 950: DO loop is not parallelized: an input/output statement was found in the loop.
+   jwd6121s-i  "lbm3d.f", line 950: SIMD conversion cannot be applied to DO loop: an input/output statement was found in the loop.
+   jwd5001p-i  "lbm3d.f", line 968: DO loop with DO variable 'J' is parallelized.
+   jwd6001s-i  "lbm3d.f", line 969: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8663o-i  "lbm3d.f", line 969: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "lbm3d.f", line 969: Loop unrolled 2 times.
+   jwd5001p-i  "lbm3d.f", line 1056: DO loop with DO variable 'IP' is parallelized.
+   jwd6001s-i  "lbm3d.f", line 1056: SIMD conversion is applied to DO loop with DO variable 'IP'.
+   jwd8204o-i  "lbm3d.f", line 1056: This loop is software pipelined.
+   jwd8205o-i  "lbm3d.f", line 1056: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 80.
+   jwd5302p-i  "lbm3d.f", line 1096: This loop is not parallelized: the performance of a partial parallelization execution may not be improved.
+   jwd6302s-i  "lbm3d.f", line 1096: SIMD conversion is not applied to DO loop: the performance of a partial SIMD execution may not be improved.
+   jwd8664o-i  "lbm3d.f", line 1096: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5208p-i  "lbm3d.f", line 1097: DO loop is not parallelized: the assign-refer order of 'DUM' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1097: DO loop is not parallelized: the assign-refer order of 'CORBLK' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1097: DO loop is not parallelized: the assign-refer order of 'NUMBLK' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1097: DO loop is not parallelized: the assign-refer order of 'LDUM' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1097: DO loop is not parallelized: the assign-refer order of 'MPBLK' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1097: DO loop is not parallelized: the assign-refer order of 'IMODE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1097: DO loop is not parallelized: the assign-refer order of 'LPOSI' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1097: DO loop is not parallelized: the assign-refer order of 'DSCALE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1097: DO loop is not parallelized: the assign-refer order of 'LLEVEL' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1097: DO loop is not parallelized: the assign-refer order of 'NPBLK' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1097: DO loop is not parallelized: the assign-refer order of 'NC' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1097: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1097: DO loop is not parallelized: the assign-refer order of 'IUT6' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "lbm3d.f", line 1097: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "lbm3d.f", line 1097: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'LDUM' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1097: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'MPBLK' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1097: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NPBLK' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1097: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'IUT6' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "lbm3d.f", line 1097: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5202p-i  "lbm3d.f", line 1100: DO loop is not parallelized: data dependency of variable 'MPBLK' may cause different results from serial execution for loop.
+   jwd6202s-i  "lbm3d.f", line 1100: SIMD conversion cannot be applied to DO loop: data dependency of variable 'MPBLK' may cause different results from serial execution for loop.
+   jwd5121p-i  "lbm3d.f", line 1101: DO loop is not parallelized: an input/output statement was found in the loop.
+   jwd6121s-i  "lbm3d.f", line 1101: SIMD conversion cannot be applied to DO loop: an input/output statement was found in the loop.
+   jwd8664o-i  "lbm3d.f", line 1115: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5208p-i  "lbm3d.f", line 1116: DO loop is not parallelized: the assign-refer order of 'DUM' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1116: DO loop is not parallelized: the assign-refer order of 'LPBLK2' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1116: DO loop is not parallelized: the assign-refer order of 'CORBLK' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1116: DO loop is not parallelized: the assign-refer order of 'NUMBLK' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1116: DO loop is not parallelized: the assign-refer order of 'COEBLK' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1116: DO loop is not parallelized: the assign-refer order of 'LPBLK1' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1116: DO loop is not parallelized: the assign-refer order of 'LCBLK' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1116: DO loop is not parallelized: the assign-refer order of 'MPBLK' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1116: DO loop is not parallelized: the assign-refer order of 'IMODE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1116: DO loop is not parallelized: the assign-refer order of 'LPOSI' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1116: DO loop is not parallelized: the assign-refer order of 'DSCALE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1116: DO loop is not parallelized: the assign-refer order of 'LLEVEL' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1116: DO loop is not parallelized: the assign-refer order of 'NPBLK' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1116: DO loop is not parallelized: the assign-refer order of 'NC' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1116: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1116: DO loop is not parallelized: the assign-refer order of 'IUT6' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "lbm3d.f", line 1116: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6122s-i  "lbm3d.f", line 1116: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5123p-i  "lbm3d.f", line 1259: DO loop is not parallelized: a character or structure type data was found in the loop.
+   jwd6165s-i  "lbm3d.f", line 1259: SIMD conversion cannot be applied to DO loop: one or more data with character type or derived type were found in the DO loop.
+   jwd8664o-i  "lbm3d.f", line 1259: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5003p-i  "lbm3d.f", line 1292: Array description is parallelized.
+   jwd6003s-i  "lbm3d.f", line 1292: SIMD conversion is applied to array description.
+   jwd8663o-i  "lbm3d.f", line 1292: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "lbm3d.f", line 1292: Loop unrolled 4 times.
+   jwd5003p-i  "lbm3d.f", line 1293: Array description is parallelized.
+   jwd6003s-i  "lbm3d.f", line 1293: SIMD conversion is applied to array description.
+   jwd8663o-i  "lbm3d.f", line 1293: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "lbm3d.f", line 1293: Loop unrolled 4 times.
+   jwd5131p-i  "lbm3d.f", line 1299: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd8321o-i  "lbm3d.f", line 1306: Loop unswitched.
+   jwd6229s-i  "lbm3d.f", line 1306: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8664o-i  "lbm3d.f", line 1306: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5208p-i  "lbm3d.f", line 1307: DO loop is not parallelized: the assign-refer order of 'LLEVEL' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1307: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'LLEVEL' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1310: DO loop is not parallelized: the assign-refer order of 'MASK' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1310: DO loop is not parallelized: the assign-refer order of 'LBC' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1310: DO loop is not parallelized: the assign-refer order of 'NBC' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1310: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "lbm3d.f", line 1310: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "lbm3d.f", line 1310: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'MASK' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1310: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NG' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "lbm3d.f", line 1310: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "lbm3d.f", line 1313: DO loop is not parallelized: the assign-refer order of 'JVISC' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1313: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'JVISC' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1314: DO loop is not parallelized: the assign-refer order of 'PARVIS' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1314: DO loop is not parallelized: the assign-refer order of 'CVISC' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1314: DO loop is not parallelized: the assign-refer order of 'LPOSI' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1314: DO loop is not parallelized: the assign-refer order of 'DSCALE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1314: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "lbm3d.f", line 1314: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "lbm3d.f", line 1314: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'CVISC' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1314: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'LPOSI' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1314: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'DSCALE' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1314: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "lbm3d.f", line 1314: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "lbm3d.f", line 1318: DO loop is not parallelized: the assign-refer order of 'CS' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1318: DO loop is not parallelized: the assign-refer order of 'TAUTGT' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1318: DO loop is not parallelized: the assign-refer order of 'TAFREE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1318: DO loop is not parallelized: the assign-refer order of 'TAINLT' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1318: DO loop is not parallelized: the assign-refer order of 'TAUFIX' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1318: DO loop is not parallelized: the assign-refer order of 'TAUMIN' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1318: DO loop is not parallelized: the assign-refer order of 'ICALSS' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1318: DO loop is not parallelized: the assign-refer order of 'IMODEL' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1318: DO loop is not parallelized: the assign-refer order of 'LTFIX' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1318: DO loop is not parallelized: the assign-refer order of 'NTFIX' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1318: DO loop is not parallelized: the assign-refer order of 'LCBOUN' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1318: DO loop is not parallelized: the assign-refer order of 'V3D' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1318: DO loop is not parallelized: the assign-refer order of 'VISCM' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1318: DO loop is not parallelized: the assign-refer order of 'TAU' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1318: DO loop is not parallelized: the assign-refer order of 'FWRK' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1318: DO loop is not parallelized: the assign-refer order of 'WF' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1318: DO loop is not parallelized: the assign-refer order of 'VSCALE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1318: DO loop is not parallelized: the assign-refer order of 'CVEL' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1318: DO loop is not parallelized: the assign-refer order of 'F' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "lbm3d.f", line 1318: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "lbm3d.f", line 1318: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'VISCM' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1318: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'TAU' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1318: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'FWRK' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1318: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'WF' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1318: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'CVEL' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1318: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'F' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "lbm3d.f", line 1318: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "lbm3d.f", line 1325: DO loop is not parallelized: the assign-refer order of 'JDUMP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1325: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'JDUMP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1326: DO loop is not parallelized: the assign-refer order of 'PARDMP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1326: DO loop is not parallelized: the assign-refer order of 'CDUMP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "lbm3d.f", line 1326: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "lbm3d.f", line 1326: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'CDUMP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "lbm3d.f", line 1326: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "lbm3d.f", line 1331: DO loop is not parallelized: the assign-refer order of 'FDUMP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1331: DO loop is not parallelized: the assign-refer order of 'FZWRK' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1331: DO loop is not parallelized: the assign-refer order of 'FYWRK' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1331: DO loop is not parallelized: the assign-refer order of 'FXWRK' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1331: DO loop is not parallelized: the assign-refer order of 'V4' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1331: DO loop is not parallelized: the assign-refer order of 'V3' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1331: DO loop is not parallelized: the assign-refer order of 'V2' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1331: DO loop is not parallelized: the assign-refer order of 'V1' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1331: DO loop is not parallelized: the assign-refer order of 'WWALL' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1331: DO loop is not parallelized: the assign-refer order of 'VWALL' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1331: DO loop is not parallelized: the assign-refer order of 'UWALL' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1331: DO loop is not parallelized: the assign-refer order of 'WINLT' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1331: DO loop is not parallelized: the assign-refer order of 'VINLT' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1331: DO loop is not parallelized: the assign-refer order of 'UINLT' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1331: DO loop is not parallelized: the assign-refer order of 'LREV' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1331: DO loop is not parallelized: the assign-refer order of 'QBOUN' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1331: DO loop is not parallelized: the assign-refer order of 'FZC' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1331: DO loop is not parallelized: the assign-refer order of 'FYC' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1331: DO loop is not parallelized: the assign-refer order of 'FXC' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1331: DO loop is not parallelized: the assign-refer order of 'LVEL' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1331: DO loop is not parallelized: the assign-refer order of 'LPBOUN' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1331: DO loop is not parallelized: the assign-refer order of 'NPBOUN' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1331: DO loop is not parallelized: the assign-refer order of 'NG3' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1331: DO loop is not parallelized: the assign-refer order of 'MPBOUN' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "lbm3d.f", line 1331: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "lbm3d.f", line 1331: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'FDUMP' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1331: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'FZWRK' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1331: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'FYWRK' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1331: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'FXWRK' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1331: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'V4' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1331: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'V3' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1331: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'V2' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1331: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'V1' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1331: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'WWALL' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1331: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'VWALL' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1331: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'UWALL' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1331: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'WINLT' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1331: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'VINLT' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1331: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'UINLT' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1331: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'LREV' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1331: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'QBOUN' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1331: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'LVEL' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1331: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'FZC' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1331: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'FYC' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1331: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'FXC' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1331: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'LPBOUN' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1331: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NPBOUN' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1331: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'MPBOUN' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1331: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'NG3' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "lbm3d.f", line 1331: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "lbm3d.f", line 1340: DO loop is not parallelized: the assign-refer order of 'DBLAS' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1340: DO loop is not parallelized: the assign-refer order of 'IINLTV' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "lbm3d.f", line 1340: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6122s-i  "lbm3d.f", line 1340: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5122p-i  "lbm3d.f", line 1350: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd5208p-i  "lbm3d.f", line 1360: DO loop is not parallelized: the assign-refer order of 'BUF2' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1360: DO loop is not parallelized: the assign-refer order of 'BUF1' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "lbm3d.f", line 1360: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "lbm3d.f", line 1360: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'BUF2' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "lbm3d.f", line 1360: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'BUF1' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "lbm3d.f", line 1360: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5202p-i  "lbm3d.f", line 1361: DO loop is not parallelized: data dependency of variable 'RHOMAX' may cause different results from serial execution for loop.
+   jwd6202s-i  "lbm3d.f", line 1361: SIMD conversion cannot be applied to DO loop: data dependency of variable 'RHOMAX' may cause different results from serial execution for loop.
+   jwd5202p-i  "lbm3d.f", line 1362: DO loop is not parallelized: data dependency of variable 'VELMAX' may cause different results from serial execution for loop.
+   jwd6202s-i  "lbm3d.f", line 1362: SIMD conversion cannot be applied to DO loop: data dependency of variable 'VELMAX' may cause different results from serial execution for loop.
+   jwd5121p-i  "lbm3d.f", line 1364: DO loop is not parallelized: an input/output statement was found in the loop.
+   jwd6121s-i  "lbm3d.f", line 1364: SIMD conversion cannot be applied to DO loop: an input/output statement was found in the loop.
+   jwd8664o-i  "lbm3d.f", line 1431: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5208p-i  "lbm3d.f", line 1432: DO loop is not parallelized: the assign-refer order of 'LBC' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1432: DO loop is not parallelized: the assign-refer order of 'NBC' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1432: DO loop is not parallelized: the assign-refer order of 'F' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1432: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1432: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "lbm3d.f", line 1432: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6122s-i  "lbm3d.f", line 1432: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd8664o-i  "lbm3d.f", line 1445: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5208p-i  "lbm3d.f", line 1446: DO loop is not parallelized: the assign-refer order of 'LBC' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1446: DO loop is not parallelized: the assign-refer order of 'NBC' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1446: DO loop is not parallelized: the assign-refer order of 'F' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1446: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1446: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "lbm3d.f", line 1446: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6122s-i  "lbm3d.f", line 1446: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd8664o-i  "lbm3d.f", line 1482: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5208p-i  "lbm3d.f", line 1483: DO loop is not parallelized: the assign-refer order of 'LBC' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1483: DO loop is not parallelized: the assign-refer order of 'NBC' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1483: DO loop is not parallelized: the assign-refer order of 'F' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1483: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1483: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "lbm3d.f", line 1483: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6122s-i  "lbm3d.f", line 1483: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5123p-i  "lbm3d.f", line 1486: DO loop is not parallelized: a character or structure type data was found in the loop.
+   jwd6165s-i  "lbm3d.f", line 1486: SIMD conversion cannot be applied to DO loop: one or more data with character type or derived type were found in the DO loop.
+   jwd8664o-i  "lbm3d.f", line 1486: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd8664o-i  "lbm3d.f", line 1522: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5208p-i  "lbm3d.f", line 1523: DO loop is not parallelized: the assign-refer order of 'LBC' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1523: DO loop is not parallelized: the assign-refer order of 'NBC' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1523: DO loop is not parallelized: the assign-refer order of 'F' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1523: DO loop is not parallelized: the assign-refer order of 'NP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "lbm3d.f", line 1523: DO loop is not parallelized: the assign-refer order of 'NG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "lbm3d.f", line 1523: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6122s-i  "lbm3d.f", line 1523: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5123p-i  "lbm3d.f", line 1619: DO loop is not parallelized: a character or structure type data was found in the loop.
+   jwd6165s-i  "lbm3d.f", line 1619: SIMD conversion cannot be applied to DO loop: one or more data with character type or derived type were found in the DO loop.
+   jwd8664o-i  "lbm3d.f", line 1619: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+
+ Procedure information
+   Lines      : 5722
+   Statements : 4135
+   Stack(byte): 14816
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 5722
+   Total statements : 4135
+   Total stack(byte): 14816
+   Total prefetch num: 0
+

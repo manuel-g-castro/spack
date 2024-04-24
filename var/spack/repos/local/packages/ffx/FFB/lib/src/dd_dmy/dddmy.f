@@ -1,0 +1,907 @@
+C======================================================================C
+C                                                                      C
+C SOFTWARE NAME : FRONTFLOW_BLUE.5.0                                   C
+C                                                                      C
+C  SUB ROUTINE    DDDMY                                                C
+C                                                                      C
+C                                       WRITTEN BY C.KATO              C
+C                                                                      C
+C                                                                      C
+C Contact address: The University of Tokyo, FSIS project               C  
+C                                                                      C
+C======================================================================C
+C
+C      DUMMY FORTRAN INTERFACE FOR DOMAIN-DECOMPOSITION PROGRAMMING
+C     MODEL PREPARED TO ENABLE FULL-LINKING FOR SYSTEMS WHERE PARALLEL
+C     ENVIRONMENT IS NOT SUPPORTED
+C
+C                        AUTHOR: C. KATO, MERL, HITACHI, LTD.
+C                        DATE WRITTEN : MARCH    2ND, 1996
+C                        DATE MODIFIED: JANUARY 12TH, 1998
+C                             (ENTRY 'DDEXIT' ADDED)
+C                        DATE MODIFIED: MARCH    7TH, 2003
+C                             (ENTRIES 'DDCOM1' AND 'DDCOM2' ADDED)
+C
+C
+      SUBROUTINE DDINIT(NPART,IPART)
+      IMPLICIT REAL*4(A-H,O-Z)
+C
+      NPART = 0
+      IPART = 0
+C
+      RETURN
+      END
+C
+C
+      SUBROUTINE DDEXIT
+C
+      RETURN
+      END
+C
+C
+      SUBROUTINE DDSYNC
+C
+      RETURN
+      END
+C
+C
+      SUBROUTINE DDSTOP(IPART,IUT0)
+      IMPLICIT REAL*4(A-H,O-Z)
+C
+      IPART = IPART
+      IUT0  = IUT0 
+C
+      RETURN
+      END
+C
+C
+      SUBROUTINE DDCOM0(LPINT1,LPINT2,LPINT3,NPINT,MDOM,MBPDOM,
+     *                  LDOM,NBPDOM,NDOM,IPSLF,IPSND,IUT0,IERR)
+      IMPLICIT REAL*4(A-H,O-Z)
+      DIMENSION LPINT1(NPINT),LPINT2(NPINT),LPINT3(NPINT),
+     1          LDOM(MDOM),NBPDOM(MDOM),
+     2          IPSLF(MBPDOM,MDOM),IPSND(MBPDOM,MDOM)
+C
+C
+      CHARACTER*60 ERMSGB
+     & / ' ## SUBROUTINE DDCOM0: FATAL      ERROR OCCURENCE; RETURNED' /
+      CHARACTER*60 EREXP1
+     & / ' DIMENSION SIZE OF PASSED LIST ARRAYS IS NOT SUFFICIENT    ' /
+C
+C
+C      SET UP NEIBERING DOMAIN LISTS FOR DOMAIN-DECOMPOSITION
+C     PROGRAMMING MODEL
+C
+C
+C     ARGUMENT LISTINGS
+C       (1) INPUT
+C INT *4   LPINT1 (IBP)     ; INTER-CONNECT BOUNDARY NODES
+C INT *4   LPINT2 (IBP)     ; NEIBERING SUB-DOMAIN NUMBERS
+C INT *4   LPINT3 (IBP)     ; NODE NUMBER IN THE NEIBERING SUB-DOMAINS
+C INT *4   NPINT            ; NUMBER OF INTER-CONNECT BOUNDARY NODES
+C
+C INT *4   MDOM             ; MAX. NUMBER OF THE NEIBERING SUB-DOMAINS
+C INT *4   MBPDOM           ; THE DIMENSION SIZE OF THE FIRST ELEMENTS
+C                            OF THE PASSED ARRAYS 'IPSLF' AND 'IPSND'
+C                            (I.E. THE MAXIMUM NUMBER OF THE
+C                             INTER-CONNECT BOUNDARY NODES FOR A
+C                             NEIBERING SUB-DOMAIN)
+C INT *4   IUT0             ; FILE NUMBER TO WRITE ERROR MESSAGE
+C
+C       (2) OUTPUT
+C INT *4   LDOM      (IDOM) ; NEIBERING SUB-DOMAIN NUMBER
+C INT *4   NBPDOM    (IDOM) ; NUMBER OF INTER-CONNECT BOUNDARY NODES
+C                            SHARING WITH THE IDOM'TH NEIBERING
+C                            SUB-DOMAIN, LDOM(IDOM)
+C INT *4   NDOM             ; NUMBER OF THE NERIBERING SUB-DOMAINS
+C INT *4   IPSLF (IBP,IDOM) ; INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+C                            CALLING TASK'S SUB-DOMAIN, FOR THE IDOM'TH
+C                            NEIBERING SUB-DOMAIN, LDOM(IDOM)
+C INT *4   IPSND (IBP,IDOM) ; INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+C                            SUB-DOMAIN THAT IS RECEIVING THE CALLING
+C                            TASK'S RESIDUALS.
+C INT *4   IERR             ; RETURN CODE WHOSE VALUE WILL BE EITHER
+C                   0 --- INDICATING SUCCESSFUL TERMINATION
+C                OR 1 --- INDICATING OCCURENCE OF SOME ERROR CONDITIONS
+C
+C
+      IERR = 0
+C
+C
+C
+C SET INITIAL VALUES
+C
+C
+C
+      NDOM = 0
+      DO 100 IDOM = 1 , MDOM
+          NBPDOM(IDOM) = 0
+  100 CONTINUE
+C
+C
+C
+C SET NEIBERING DOMAIN LISTS
+C
+C
+C
+      DO 230 IPINT = 1 , NPINT
+          IFNEW = LPINT2(IPINT)
+          DO 210 ICHK = 1 , NDOM
+              IF(LDOM(ICHK).EQ.IFNEW) THEN
+                  IDOM = ICHK
+                  GO TO 220
+              ENDIF
+  210     CONTINUE
+          NDOM = NDOM+1
+          IDOM = NDOM
+C
+          IF(NDOM.GT.MDOM) THEN
+              WRITE(IUT0,*) ERMSGB
+              WRITE(IUT0,*) EREXP1
+              IERR = 1
+              RETURN
+          ENDIF
+C
+          LDOM(NDOM) = IFNEW
+C
+  220     CONTINUE
+          NBPDOM(IDOM) = NBPDOM(IDOM)+1
+C
+          IF(NBPDOM(IDOM).GT.MBPDOM) THEN
+              WRITE(IUT0,*) ERMSGB
+              WRITE(IUT0,*) EREXP1
+              IERR = 1
+              RETURN
+          ENDIF
+C
+          IPSLF(NBPDOM(IDOM),IDOM) = LPINT1(IPINT)
+          IPSND(NBPDOM(IDOM),IDOM) = LPINT3(IPINT)
+  230 CONTINUE
+C
+C
+      RETURN
+      END
+C
+C
+      SUBROUTINE DDCOM1(LPINT1,NPINT,NUMIP,NP,IUT0,IERR)
+      IMPLICIT REAL*4(A-H,O-Z)
+      DIMENSION LPINT1(NPINT),NUMIP(NP)
+C
+      NPINT     = NPINT
+      NP        = NP
+      IUT0      = IUT0
+      IERR      = IERR
+CC    LPINT1(1) = LPINT1(1)
+CC    NUMIP (1) = NUMIP (1)
+C
+      RETURN
+      END
+C
+C
+      SUBROUTINE DDCOM2(SEND,RECV)
+      IMPLICIT REAL*4(A-H,O-Z)
+C
+      SEND = SEND
+      RECV = RECV
+      RECV = SEND
+C
+      RETURN
+      END
+C
+C
+      SUBROUTINE DDALLD(SEND,RECV,IFLAG,IUT0,IERR)
+      IMPLICIT REAL*4(A-H,O-Z)
+C     
+      CHARACTER*60 ERMSGB
+     & / ' ## SUBROUTINE DDALLD: FATAL   ERROR OCCURENCE; RETURNED ' /
+      CHARACTER*60 ERMSG1
+     & / ' ILLIGAL OPERATION NUMBER IS GIVEN ' /
+C
+      IF(IFLAG.EQ.1.OR.IFLAG.EQ.2.OR.IFLAG.EQ.3) THEN
+C
+          SEND = SEND
+          RECV = RECV
+      ELSE
+          WRITE(IUT0,*) ERMSGB
+          WRITE(IUT0,*) ERMSG1
+          IERR=1
+          RETURN
+      ENDIF
+C
+      RETURN
+      END
+C
+C
+      SUBROUTINE DDCOM3(IPART,IDIM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+     *                  FX,FY,FZ,NP,IUT0,IERR,BUFSND,BUFRCV,MAXBUF)
+      IMPLICIT REAL*4(A-H,O-Z)
+      DIMENSION LDOM(NDOM),NBPDOM(NDOM),IPSLF(MBPDOM,NDOM),
+     1          IPSND(MBPDOM,NDOM), FX(NP),FY(NP),FZ(NP),
+     2          BUFSND(MAXBUF),BUFRCV(MAXBUF)
+C
+C
+C
+      CHARACTER*60 ERMSGB
+     & / ' ## SUBROUTINE DDCOM3: FATAL     ERROR OCCURRENCE; RETURNED' /
+      CHARACTER*60 EREXP1
+     & / ' INVALID VALUE FOT NDOM                                    ' /
+      CHARACTER*60 EREXP2
+     & / ' DIMENSION SIZE OF PASSED BUFFER ARRAYS IS NOT SUFFICIENT  ' /
+      CHARACTER*60 EREXP3
+     & / ' RECEIVED NODE NUMBER IS OUT OF THE GLOBAL NODE NUMBER     ' /
+C
+C NOTE THAT;
+C THIS PROGRAM IS MODIFIED IN ORDER TO DEAL WITH CYCLIC BOUNDARY 
+C CONDITION AS IN SERIAL COMPUTATIONS (2007.04.25 Y. YAMADE)
+C       
+C
+C
+C     ARGUMENT LISTINGS
+C       (1) INPUT
+C INT *4   IPART       ; SUB-DOMAIN NUMBER THAT THE CALLING TASK IS
+C                       TAKING CARE OF
+C           NOTES ; ARGUMENT 'IPART' IS NOT CURRENTLY USED. IT IS
+C                  RETAINED FOR A POSSIBLE FUTURE USE.
+C INT *4   IDIM             ; SPACE DIMENSION ( 1, 2, OR 3 )
+C INT *4   LDOM      (IDOM) ; NEIGHBORING SUB-DOMAIN NUMBER
+C INT *4   NBPDOM    (IDOM) ; NUMBER OF INTER-CONNECT BOUNDARY NODES
+C                            SHARING WITH THE IDOM'TH NEIGHBORING
+C                            SUB-DOMAIN, LDOM(IDOM)
+C INT *4   NDOM             ; NUMBER OF THE NEIGHBORING SUB-DOMAINS
+C INT *4   IPSLF (IBP,IDOM) ; INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+C                            CALLING TASK'S SUB-DOMAIN, FOR THE IDOM'TH
+C                            NEIGHBORING SUB-DOMAIN, LDOM(IDOM)
+C INT *4   IPSND (IBP,IDOM) ; INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+C                            SUB-DOMAIN THAT IS RECEIVING THE CALLING
+C                            TASK'S RESIDUALS.
+C INT *4   MBPDOM           ; THE DIMENSION SIZE OF THE FIRST ELEMENTS
+C                            OF THE PASSED ARRAYS 'IPSLF' AND 'IPSND'
+C                            (I.E. THE MAXIMUM NUMBER OF THE
+C                             INTER-CONNECT BOUNDARY NODES FOR A
+C                             NEIGHBORING SUB-DOMAIN)
+C INT *4   NP               ; NUMBER OF THE TOTAL NODES IN THE CALLING
+C                            TASK'S SUB-DOMAIN
+C INT *4   IUT0             ; FILE NUMBER TO WRITE ERROR MESSAGE
+C INT *4   MAXBUF           ; LENGTH OF THE PASSED COMMUNICATION BUFFERS
+C                            'BUFSND' AND 'BUFRCV' IN WORDS. 'MAXBUF'
+C                             MUST BE NO SMALLER THAN 4 TIMES THE TOTAL
+C                             NUMBER OF INTER-CONNECT BOUNDARY NODES IN
+C                             THE CALLING TASK
+C
+C       (2) OUTPUT
+C INT *4   IERR             ; RETURN CODE WHOSE VALUE WILL BE EITHER
+C                   0 --- INDICATING SUCCESSFUL TERMINATION
+C                OR 1 --- INDICATING OCCURRENCE OF SOME ERROR CONDITIONS
+C
+C       (3) INPUT-OUTPUT
+C REAL*4   FX(IP)           ; X-DIRECTION RESIDUAL VECTOR
+C REAL*4   FY(IP)           ; Y-DIRECTION RESIDUAL VECTOR
+C REAL*4   FZ(IP)           ; Z-DIRECTION RESIDUAL VECTOR
+C
+C       (4) WORK
+C REAL*4   BUFSND(IBUF)     ; HOLDS THE VALUES OF THE INTER-CONNECT
+C                            BOUNDARY NODE NUMBER IN THE NEIGHBORING
+C                            SUB-DOMAINS AND THE RESIDUALS OF THE
+C                            CALLING TASK'S SUB-DOMAIN WHEN SENDING
+C                            THE RESIDUALS
+C                         
+C REAL*4   BUFRCV(IBUF)     ; HOLDS THE VALUES OF THE INTER-CONNECT
+C                            BOUNDARY NODE NUMBER IN THE CALLING TASK'S
+C                            SUB-DOMAIN AND THE RESIDUALS OF THE
+C                            NEIGHBORING SUB-DOMAINS AT THE RECEIPT OF
+C                            THE RESIDUALS FROM THE NEIGHBORING
+C                            SUB-DOMAINS
+C
+      IERR=0
+C
+C
+C
+C
+C CHECK THE NUMBER OF NEIBERING DOMAINS
+C
+C
+C
+      IF(NDOM.EQ.0) RETURN
+C
+      IF(NDOM.NE.1) THEN
+          IERR=1
+          WRITE(IUT0,*) ERMSGB
+          WRITE(IUT0,*) EREXP1
+          RETURN
+      ENDIF
+C
+C
+C
+C
+C SET UP THE SEND BUFFER
+C
+C
+C
+      IDOM   = 1
+      NSTART = 0
+      DO 100 IBP = 1 , NBPDOM(IDOM)
+          IP  = IPSLF(IBP,IDOM)
+          IPS = IPSND(IBP,IDOM)
+          BUFSND(NSTART+1) = IPS
+          BUFSND(NSTART+2) = FX(IP)
+          BUFSND(NSTART+3) = FY(IP)
+          BUFSND(NSTART+4) = FZ(IP)
+          NSTART = NSTART+4
+  100 CONTINUE
+C
+C
+C
+C POST ALL THE EXPECTED RECEIVES
+C
+C
+C
+      IDOM   = 1
+      NSTART = 0
+      DO 200 IBP = 1 , NBPDOM(IDOM)
+C
+          IF(NSTART+3.GT.MAXBUF) THEN
+              WRITE(IUT0,*) ERMSGB
+              WRITE(IUT0,*) EREXP2
+              IERR = 1
+              RETURN
+          ENDIF
+C
+          BUFRCV(NSTART+1)=BUFSND(NSTART+1)
+          BUFRCV(NSTART+2)=BUFSND(NSTART+2)
+          BUFRCV(NSTART+3)=BUFSND(NSTART+3)
+          BUFRCV(NSTART+4)=BUFSND(NSTART+4)
+C
+          NSTART = NSTART+4
+  200 CONTINUE
+C
+C
+C
+C SUPERIMPOSE THE RECEIVED RESIDUALS
+C
+C
+C
+      IDOM   = 1
+      NSTART = 0
+      DO 300 IBP = 1 , NBPDOM(IDOM)
+          IP = BUFRCV(NSTART+1)+0.1
+C
+          IF(IP.LT.1 .OR. IP.GT.NP) THEN
+              WRITE(IUT0,*) ERMSGB
+              WRITE(IUT0,*) EREXP3
+              IERR = 1
+              RETURN
+          ENDIF
+C
+                        FX(IP) = FX(IP)+BUFRCV(NSTART+2)
+          IF(IDIM.GE.2) FY(IP) = FY(IP)+BUFRCV(NSTART+3)
+          IF(IDIM.GE.3) FZ(IP) = FZ(IP)+BUFRCV(NSTART+4)
+          NSTART = NSTART+4
+  300 CONTINUE
+C
+      RETURN
+      END
+      SUBROUTINE DDCOMX(IPART,IDIM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+     *                  FX,FY,FZ,NP,IUT0,IERR,BUFSND,BUFRCV,MAXBUF)
+      IMPLICIT REAL*4(A-H,O-Z)
+      DIMENSION LDOM(NDOM),NBPDOM(NDOM),IPSLF(MBPDOM,NDOM),
+     1          IPSND(MBPDOM,NDOM), FX(NP),FY(NP),FZ(NP),
+     2          BUFSND(MAXBUF),BUFRCV(MAXBUF)
+C
+C
+C
+      CHARACTER*60 ERMSGB
+     & / ' ## SUBROUTINE DDCOMX: FATAL     ERROR OCCURRENCE; RETURNED' /
+      CHARACTER*60 EREXP1
+     & / ' INVALID VALUE FOT NDOM                                    ' /
+      CHARACTER*60 EREXP2
+     & / ' DIMENSION SIZE OF PASSED BUFFER ARRAYS IS NOT SUFFICIENT  ' /
+      CHARACTER*60 EREXP3
+     & / ' RECEIVED NODE NUMBER IS OUT OF THE GLOBAL NODE NUMBER     ' /
+C
+C NOTE THAT;
+C THIS PROGRAM IS MODIFIED IN ORDER TO DEAL WITH CYCLIC BOUNDARY 
+C CONDITION AS IN SERIAL COMPUTATIONS (2007.04.25 Y. YAMADE)
+C       
+C
+C
+C     ARGUMENT LISTINGS
+C       (1) INPUT
+C INT *4   IPART       ; SUB-DOMAIN NUMBER THAT THE CALLING TASK IS
+C                       TAKING CARE OF
+C           NOTES ; ARGUMENT 'IPART' IS NOT CURRENTLY USED. IT IS
+C                  RETAINED FOR A POSSIBLE FUTURE USE.
+C INT *4   IDIM             ; SPACE DIMENSION ( 1, 2, OR 3 )
+C INT *4   LDOM      (IDOM) ; NEIGHBORING SUB-DOMAIN NUMBER
+C INT *4   NBPDOM    (IDOM) ; NUMBER OF INTER-CONNECT BOUNDARY NODES
+C                            SHARING WITH THE IDOM'TH NEIGHBORING
+C                            SUB-DOMAIN, LDOM(IDOM)
+C INT *4   NDOM             ; NUMBER OF THE NEIGHBORING SUB-DOMAINS
+C INT *4   IPSLF (IBP,IDOM) ; INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+C                            CALLING TASK'S SUB-DOMAIN, FOR THE IDOM'TH
+C                            NEIGHBORING SUB-DOMAIN, LDOM(IDOM)
+C INT *4   IPSND (IBP,IDOM) ; INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+C                            SUB-DOMAIN THAT IS RECEIVING THE CALLING
+C                            TASK'S RESIDUALS.
+C INT *4   MBPDOM           ; THE DIMENSION SIZE OF THE FIRST ELEMENTS
+C                            OF THE PASSED ARRAYS 'IPSLF' AND 'IPSND'
+C                            (I.E. THE MAXIMUM NUMBER OF THE
+C                             INTER-CONNECT BOUNDARY NODES FOR A
+C                             NEIGHBORING SUB-DOMAIN)
+C INT *4   NP               ; NUMBER OF THE TOTAL NODES IN THE CALLING
+C                            TASK'S SUB-DOMAIN
+C INT *4   IUT0             ; FILE NUMBER TO WRITE ERROR MESSAGE
+C INT *4   MAXBUF           ; LENGTH OF THE PASSED COMMUNICATION BUFFERS
+C                            'BUFSND' AND 'BUFRCV' IN WORDS. 'MAXBUF'
+C                             MUST BE NO SMALLER THAN 4 TIMES THE TOTAL
+C                             NUMBER OF INTER-CONNECT BOUNDARY NODES IN
+C                             THE CALLING TASK
+C
+C       (2) OUTPUT
+C INT *4   IERR             ; RETURN CODE WHOSE VALUE WILL BE EITHER
+C                   0 --- INDICATING SUCCESSFUL TERMINATION
+C                OR 1 --- INDICATING OCCURRENCE OF SOME ERROR CONDITIONS
+C
+C       (3) INPUT-OUTPUT
+C REAL*4   FX(IP)           ; X-DIRECTION RESIDUAL VECTOR
+C REAL*4   FY(IP)           ; Y-DIRECTION RESIDUAL VECTOR
+C REAL*4   FZ(IP)           ; Z-DIRECTION RESIDUAL VECTOR
+C
+C       (4) WORK
+C REAL*4   BUFSND(IBUF)     ; HOLDS THE VALUES OF THE INTER-CONNECT
+C                            BOUNDARY NODE NUMBER IN THE NEIGHBORING
+C                            SUB-DOMAINS AND THE RESIDUALS OF THE
+C                            CALLING TASK'S SUB-DOMAIN WHEN SENDING
+C                            THE RESIDUALS
+C                         
+C REAL*4   BUFRCV(IBUF)     ; HOLDS THE VALUES OF THE INTER-CONNECT
+C                            BOUNDARY NODE NUMBER IN THE CALLING TASK'S
+C                            SUB-DOMAIN AND THE RESIDUALS OF THE
+C                            NEIGHBORING SUB-DOMAINS AT THE RECEIPT OF
+C                            THE RESIDUALS FROM THE NEIGHBORING
+C                            SUB-DOMAINS
+C
+      IERR=0
+C
+C
+C
+C
+C CHECK THE NUMBER OF NEIBERING DOMAINS
+C
+C
+C
+      IF(NDOM.EQ.0) RETURN
+C
+      IF(NDOM.NE.1) THEN
+          IERR=1
+          WRITE(IUT0,*) ERMSGB
+          WRITE(IUT0,*) EREXP1
+          RETURN
+      ENDIF
+C
+C
+C
+C
+C SET UP THE SEND BUFFER
+C
+C
+C
+      IDOM   = 1
+      NSTART = 0
+      DO 100 IBP = 1 , NBPDOM(IDOM)
+          IP  = IPSLF(IBP,IDOM)
+          IPS = IPSND(IBP,IDOM)
+          BUFSND(NSTART+1) = IPS
+          BUFSND(NSTART+2) = FX(IP)
+          BUFSND(NSTART+3) = FY(IP)
+          BUFSND(NSTART+4) = FZ(IP)
+          NSTART = NSTART+4
+  100 CONTINUE
+C
+C
+C
+C POST ALL THE EXPECTED RECEIVES
+C
+C
+C
+      IDOM   = 1
+      NSTART = 0
+      DO 200 IBP = 1 , NBPDOM(IDOM)
+C
+          IF(NSTART+3.GT.MAXBUF) THEN
+              WRITE(IUT0,*) ERMSGB
+              WRITE(IUT0,*) EREXP2
+              IERR = 1
+              RETURN
+          ENDIF
+C
+          BUFRCV(NSTART+1)=BUFSND(NSTART+1)
+          BUFRCV(NSTART+2)=BUFSND(NSTART+2)
+          BUFRCV(NSTART+3)=BUFSND(NSTART+3)
+          BUFRCV(NSTART+4)=BUFSND(NSTART+4)
+C
+          NSTART = NSTART+4
+  200 CONTINUE
+C
+C
+C
+C SUPERIMPOSE THE RECEIVED RESIDUALS
+C
+C
+C
+      IDOM   = 1
+      NSTART = 0
+      DO 300 IBP = 1 , NBPDOM(IDOM)
+          IP = BUFRCV(NSTART+1)+0.1
+C
+          IF(IP.LT.1 .OR. IP.GT.NP) THEN
+              WRITE(IUT0,*) ERMSGB
+              WRITE(IUT0,*) EREXP3
+              IERR = 1
+              RETURN
+          ENDIF
+C
+                        FX(IP) = FX(IP)+BUFRCV(NSTART+2)
+          IF(IDIM.GE.2) FY(IP) = FY(IP)+BUFRCV(NSTART+3)
+          IF(IDIM.GE.3) FZ(IP) = FZ(IP)+BUFRCV(NSTART+4)
+          NSTART = NSTART+4
+  300 CONTINUE
+C
+      RETURN
+      END
+C
+C
+      SUBROUTINE DDCMAX(IPART,IDIM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+     *                  FX,FY,FZ,NP,IUT0,IERR,BUFSND,BUFRCV,MAXBUF)
+      IMPLICIT REAL*4(A-H,O-Z)
+      DIMENSION LDOM(NDOM),NBPDOM(NDOM),IPSLF(MBPDOM,NDOM),
+     1          IPSND(MBPDOM,NDOM), FX(NP),FY(NP),FZ(NP),
+     2          BUFSND(MAXBUF),BUFRCV(MAXBUF)
+C
+C
+C
+      CHARACTER*60 ERMSGB
+     & / ' ## SUBROUTINE DDCOMX: FATAL     ERROR OCCURRENCE; RETURNED' /
+      CHARACTER*60 EREXP1
+     & / ' INVALID VALUE FOT NDOM                                    ' /
+      CHARACTER*60 EREXP2
+     & / ' DIMENSION SIZE OF PASSED BUFFER ARRAYS IS NOT SUFFICIENT  ' /
+      CHARACTER*60 EREXP3
+     & / ' RECEIVED NODE NUMBER IS OUT OF THE GLOBAL NODE NUMBER     ' /
+C
+C NOTE THAT;
+C THIS PROGRAM IS MODIFIED IN ORDER TO DEAL WITH CYCLIC BOUNDARY 
+C CONDITION AS IN SERIAL COMPUTATIONS (2007.04.25 Y. YAMADE)
+C       
+C
+C
+C     ARGUMENT LISTINGS
+C       (1) INPUT
+C INT *4   IPART       ; SUB-DOMAIN NUMBER THAT THE CALLING TASK IS
+C                       TAKING CARE OF
+C           NOTES ; ARGUMENT 'IPART' IS NOT CURRENTLY USED. IT IS
+C                  RETAINED FOR A POSSIBLE FUTURE USE.
+C INT *4   IDIM             ; SPACE DIMENSION ( 1, 2, OR 3 )
+C INT *4   LDOM      (IDOM) ; NEIGHBORING SUB-DOMAIN NUMBER
+C INT *4   NBPDOM    (IDOM) ; NUMBER OF INTER-CONNECT BOUNDARY NODES
+C                            SHARING WITH THE IDOM'TH NEIGHBORING
+C                            SUB-DOMAIN, LDOM(IDOM)
+C INT *4   NDOM             ; NUMBER OF THE NEIGHBORING SUB-DOMAINS
+C INT *4   IPSLF (IBP,IDOM) ; INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+C                            CALLING TASK'S SUB-DOMAIN, FOR THE IDOM'TH
+C                            NEIGHBORING SUB-DOMAIN, LDOM(IDOM)
+C INT *4   IPSND (IBP,IDOM) ; INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+C                            SUB-DOMAIN THAT IS RECEIVING THE CALLING
+C                            TASK'S RESIDUALS.
+C INT *4   MBPDOM           ; THE DIMENSION SIZE OF THE FIRST ELEMENTS
+C                            OF THE PASSED ARRAYS 'IPSLF' AND 'IPSND'
+C                            (I.E. THE MAXIMUM NUMBER OF THE
+C                             INTER-CONNECT BOUNDARY NODES FOR A
+C                             NEIGHBORING SUB-DOMAIN)
+C INT *4   NP               ; NUMBER OF THE TOTAL NODES IN THE CALLING
+C                            TASK'S SUB-DOMAIN
+C INT *4   IUT0             ; FILE NUMBER TO WRITE ERROR MESSAGE
+C INT *4   MAXBUF           ; LENGTH OF THE PASSED COMMUNICATION BUFFERS
+C                            'BUFSND' AND 'BUFRCV' IN WORDS. 'MAXBUF'
+C                             MUST BE NO SMALLER THAN 4 TIMES THE TOTAL
+C                             NUMBER OF INTER-CONNECT BOUNDARY NODES IN
+C                             THE CALLING TASK
+C
+C       (2) OUTPUT
+C INT *4   IERR             ; RETURN CODE WHOSE VALUE WILL BE EITHER
+C                   0 --- INDICATING SUCCESSFUL TERMINATION
+C                OR 1 --- INDICATING OCCURRENCE OF SOME ERROR CONDITIONS
+C
+C       (3) INPUT-OUTPUT
+C REAL*4   FX(IP)           ; X-DIRECTION RESIDUAL VECTOR
+C REAL*4   FY(IP)           ; Y-DIRECTION RESIDUAL VECTOR
+C REAL*4   FZ(IP)           ; Z-DIRECTION RESIDUAL VECTOR
+C
+C       (4) WORK
+C REAL*4   BUFSND(IBUF)     ; HOLDS THE VALUES OF THE INTER-CONNECT
+C                            BOUNDARY NODE NUMBER IN THE NEIGHBORING
+C                            SUB-DOMAINS AND THE RESIDUALS OF THE
+C                            CALLING TASK'S SUB-DOMAIN WHEN SENDING
+C                            THE RESIDUALS
+C                         
+C REAL*4   BUFRCV(IBUF)     ; HOLDS THE VALUES OF THE INTER-CONNECT
+C                            BOUNDARY NODE NUMBER IN THE CALLING TASK'S
+C                            SUB-DOMAIN AND THE RESIDUALS OF THE
+C                            NEIGHBORING SUB-DOMAINS AT THE RECEIPT OF
+C                            THE RESIDUALS FROM THE NEIGHBORING
+C                            SUB-DOMAINS
+C
+      IERR=0
+C
+C
+C
+C
+C CHECK THE NUMBER OF NEIBERING DOMAINS
+C
+C
+C
+      IF(NDOM.EQ.0) RETURN
+C
+      IF(NDOM.NE.1) THEN
+          IERR=1
+          WRITE(IUT0,*) ERMSGB
+          WRITE(IUT0,*) EREXP1
+          RETURN
+      ENDIF
+C
+C
+C
+C
+C SET UP THE SEND BUFFER
+C
+C
+C
+      IDOM   = 1
+      NSTART = 0
+      DO 100 IBP = 1 , NBPDOM(IDOM)
+          IP  = IPSLF(IBP,IDOM)
+          IPS = IPSND(IBP,IDOM)
+          BUFSND(NSTART+1) = IPS
+          BUFSND(NSTART+2) = FX(IP)
+          BUFSND(NSTART+3) = FY(IP)
+          BUFSND(NSTART+4) = FZ(IP)
+          NSTART = NSTART+4
+  100 CONTINUE
+C
+C
+C
+C POST ALL THE EXPECTED RECEIVES
+C
+C
+C
+      IDOM   = 1
+      NSTART = 0
+      DO 200 IBP = 1 , NBPDOM(IDOM)
+C
+          IF(NSTART+3.GT.MAXBUF) THEN
+              WRITE(IUT0,*) ERMSGB
+              WRITE(IUT0,*) EREXP2
+              IERR = 1
+              RETURN
+          ENDIF
+C
+          BUFRCV(NSTART+1)=BUFSND(NSTART+1)
+          BUFRCV(NSTART+2)=BUFSND(NSTART+2)
+          BUFRCV(NSTART+3)=BUFSND(NSTART+3)
+          BUFRCV(NSTART+4)=BUFSND(NSTART+4)
+C
+          NSTART = NSTART+4
+  200 CONTINUE
+C
+C
+C
+C SUPERIMPOSE THE RECEIVED RESIDUALS
+C
+C
+C
+      IDOM   = 1
+      NSTART = 0
+      DO 300 IBP = 1 , NBPDOM(IDOM)
+          IP = BUFRCV(NSTART+1)+0.1
+C
+          IF(IP.LT.1 .OR. IP.GT.NP) THEN
+              WRITE(IUT0,*) ERMSGB
+              WRITE(IUT0,*) EREXP3
+              IERR = 1
+              RETURN
+          ENDIF
+C
+                        FX(IP) = MAX(FX(IP),BUFRCV(NSTART+2))
+          IF(IDIM.GE.2) FY(IP) = MAX(FY(IP),BUFRCV(NSTART+3))
+          IF(IDIM.GE.3) FZ(IP) = MAX(FZ(IP),BUFRCV(NSTART+4))
+          NSTART = NSTART+4
+  300 CONTINUE
+C
+      RETURN
+      END
+C
+C
+      SUBROUTINE DDSET0(LPSET1,LPSET3,NPSET,MPT,MDOM,IUT0,
+     *                  NSND,LSND,NPTSND,IPSET,IPSRC,
+     *                  NRCV,LRCV,NPTRCV,IERR)
+      IMPLICIT REAL*4(A-H,O-Z)
+      DIMENSION LPSET1(NPSET),LPSET3(NPSET),
+     1          LSND(MDOM),NPTSND(MDOM),IPSET(MPT,MDOM),IPSRC(MPT,MDOM),
+     2          LRCV(MDOM),NPTRCV(MDOM)
+C
+C
+      CHARACTER*60 ERMSGB
+     & / ' ## SUBROUTINE DDSET0: FATAL      ERROR OCCURENCE; RETURNED' /
+      CHARACTER*60 EREXP1
+     & / ' DIMENSION SIZE OF PASSED LIST ARRAYS IS NOT SUFFICIENT    ' /
+C
+C
+C      SET UP OVERSET SUB-DOMAIN LISTS FOR DOMAIN-DECOMPOSITION
+C     PROGRAMMING MODEL
+C
+C
+C     ARGUMENT LISTINGS
+C       (1) INPUT
+C INT *4   LPSET1  (IB); OVERSET BOUNDARY NODES/ELEMENTS
+C INT *4   LPSET3  (IB); DOMAIN NUMBER TO SEND/RECEIVE OVERSET VALUES
+C                   0 --- CALCULATE AND SET OVERSET VALUE WITHIN THE
+C                         SELF-DOMAIN
+C          (POS. INT.)--- SEND    OVERSET VALUE TO   DOMAIN  LPSET3(IB)
+C                         AFTER CALCULATING IT WITHIN THE SELF-DOMAIN
+C          (NEG. INT.)--- RECEIVE OVERSET VALUE FROM DOMAIN -LPSET3(IB)
+C          NPSET       ; NUMBER OF OVERSET BOUNDARY NODES/ELEMENTS
+C
+C INT *4   MPT              ; THE DIMENSION SIZE OF THE FIRST ELEMENTS
+C                            OF THE PASSED ARRAYS 'IPSET'
+C                            (I.E. THE MAXIMUM NUMBER OF THE OVERSET
+C                             POINTS FOR A SINGLE SUB-DOMAIN)
+C INT *4   MDOM             ; MAX. NUMBER OF THE OVERSET SUB-DOMAINS
+C
+C INT *4   IUT0             ; FILE NUMBER TO WRITE ERROR MESSAGE
+C
+C       (2) OUTPUT
+C INT *4   NSND             ; NUMBER OF DOMAINS TO SEND OVERSET VALUE
+C INT *4   LSND      (IDOM) ; DOMAIN NUMBER     TO SEND OVERSET VALUE
+C INT *4   NPTSND    (IDOM) ; NUMBER OF OVERSET POINTS TO SEND TO
+C                            SUB-DOMAIN 'LSND(IDOM)'
+C INT *4   IPSET (IPT,IDOM) ; OVERSET NODE/ELEMENT NUMBER IN THE
+C                            SUB-DOMAIN RECEIVING THE OVERSET VALUES.
+C INT *4   IPSRC (IPT,IDOM) ; INDICATES POSITION IN THE OVERSET-VALUES
+C                            PASSING ARRAYS WHEN OVERSET CONDITIONS DATA
+C                            ARE COMPILED SEQUENTIALLY
+C
+C INT *4   NRCV             ; NUMBER OF DOMAINS TO RECEIVE OVERSET VALUE
+C INT *4   LRCV      (IDOM) ; DOMAIN NUMBER     TO RECEIVE OVERSET VALUE
+C INT *4   NPTRCV    (IDOM) ; NUMBER OF OVERSET POINTS TO RECEIVE FROM
+C                            SUB-DOMAIN 'LRCV(IDOM)'
+C
+C INT *4   IERR             ; RETURN CODE WHOSE VALUE WILL BE EITHER
+C                   0 --- INDICATING SUCCESSFUL TERMINATION
+C                OR 1 --- INDICATING OCCURENCE OF SOME ERROR CONDITIONS
+C
+C
+      IERR = 0
+C
+C
+C
+C SET INITIAL VALUES
+C
+C
+C
+      NSND = 0
+      NRCV = 0
+      DO 100 IDOM = 1 , MDOM
+          NPTSND(IDOM) = 0
+          NPTRCV(IDOM) = 0
+  100 CONTINUE
+C
+C
+C
+C SET DOMAIN LISTS FOR SEND
+C
+C
+C
+      NDUM = 0
+      DO 230 IBP = 1 , NPSET
+          IF(LPSET3(IBP).LE.0) GO TO 230
+C
+          NDUM = NDUM+1
+C
+          IFNEW = LPSET3(IBP)
+          DO 210 ICHK = 1 , NSND
+              IF(LSND(ICHK).EQ.IFNEW) THEN
+                  IDOM = ICHK
+                  GO TO 220
+              ENDIF
+  210     CONTINUE
+          NSND = NSND+1
+          IDOM = NSND
+C
+          IF(NSND.GT.MDOM) THEN
+              WRITE(IUT0,*) ERMSGB
+              WRITE(IUT0,*) EREXP1
+              IERR = 1
+              RETURN
+          ENDIF
+C
+          LSND(NSND) = IFNEW
+C
+  220     CONTINUE
+          NPTSND(IDOM) = NPTSND(IDOM)+1
+C
+          IF(NPTSND(IDOM).GT.MPT) THEN
+              WRITE(IUT0,*) ERMSGB
+              WRITE(IUT0,*) EREXP1
+              IERR = 1
+              RETURN
+          ENDIF
+C
+          IPSET(NPTSND(IDOM),IDOM) = LPSET1(IBP)
+          IPSRC(NPTSND(IDOM),IDOM) = NDUM
+  230 CONTINUE
+C
+C
+C
+C SET DOMAIN LISTS FOR RECEIVE
+C
+C
+C
+      DO 330 IBP = 1 , NPSET
+          IF(LPSET3(IBP).GE.0) GO TO 330
+          IFNEW = -LPSET3(IBP)
+          DO 310 ICHK = 1 , NRCV
+              IF(LRCV(ICHK).EQ.IFNEW) THEN
+                  IDOM = ICHK
+                  GO TO 320
+              ENDIF
+  310     CONTINUE
+          NRCV = NRCV+1
+          IDOM = NRCV
+C
+          IF(NRCV.GT.MDOM) THEN
+              WRITE(IUT0,*) ERMSGB
+              WRITE(IUT0,*) EREXP1
+              IERR = 1
+              RETURN
+          ENDIF
+C
+          LRCV(NRCV) = IFNEW
+C
+  320     CONTINUE
+          NPTRCV(IDOM) = NPTRCV(IDOM)+1
+  330 CONTINUE
+C
+C
+      RETURN
+      END
+C
+C
+      SUBROUTINE DDSET3(NSND,LSND,NPTSND,IPSET,IPSRC,VALX,VALY,VALZ,NB,
+     *                  NRCV,LRCV,NPTRCV,FX,FY,FZ,NP,
+     *                  IDIM,MPT,IUT0,IERR,BUFSND,BUFRCV,MAXBUF)
+      IMPLICIT REAL*4(A-H,O-Z)
+      DIMENSION LSND(NSND),NPTSND(NSND),IPSET(MPT,NSND),IPSRC(MPT,NSND),
+     1          LRCV(NRCV),NPTRCV(NRCV),
+     2          VALX(NB),VALY(NB),VALZ(NB),FX(NP),FY(NP),FZ(NP),
+     3          BUFSND(MAXBUF),BUFRCV(MAXBUF)
+C
+      LSND   (1) = LSND   (1)
+      LRCV   (1) = LRCV   (1)
+      NPTSND (1) = NPTSND (1)
+      NPTRCV (1) = NPTRCV (1)
+      IPSET(1,1) = IPSET(1,1)
+      IPSRC(1,1) = IPSRC(1,1)
+      VALX   (1) = VALX   (1)
+      VALY   (1) = VALY   (1)
+      VALZ   (1) = VALZ   (1)
+      FX     (1) = FX     (1)
+      FY     (1) = FY     (1)
+      FZ     (1) = FZ     (1)
+      IDIM       = IDIM
+      IUT0       = IUT0
+      IERR       = IERR
+      BUFSND(1)  = BUFSND (1)
+      BUFRCV(1)  = BUFRCV (1)
+C
+C
+      RETURN
+      END

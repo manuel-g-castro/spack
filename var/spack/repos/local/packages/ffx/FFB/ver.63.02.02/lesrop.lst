@@ -1,0 +1,2130 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:53:39 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : lesrop.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "LESROP"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.8.1                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE : LESROP                                                C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY Y.GUO               C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C CONTACT ADDRESS : IIS, THE UNIVERSITY OF TOKYO, CISS                 C
+         11                     C                                                                      C
+         12                     C THERMO-FLUID ANALYSIS SOLVERS FOR LARGE-SCALE-ASSEMBLY               C
+         13                     C                                                                      C
+         14                     C======================================================================C
+         15                           SUBROUTINE LESROP(IUT0,IUT5,IUT6,IPART,IFILTR,LOSEND,
+         16                          *                  LFREE,INRBC,IBCIO,EPSM,IMASS,
+         17                          *                  MSDEP,NSDEP,LHEAD,ISOLV,ISOLT,ISOLP,
+         18                          *                  NMAXB,NITRNR,CSMAX,IPREF,
+         19                          *                  XREF,YREF,ZREF,IPCAV,IDES,LVT0,
+         20                          *                  NITRIT,NITRIP,BTDCOE,DIVESC,
+         21                          *                  JSORT,JCOLOR,JUNROL,NDIVX,NDIVY,NDIVZ,NEIP,
+         22                          *                  OMEGA0,NRFN,IRFNMW,IRFNFF,NGRID,IRCAPC,
+         23                          *                  MER,MPR,MEPR,MPPR,MBR,MBPR,MDOMR,
+         24                          *                  IMONTR,ALPHAV,ALPHAP,
+         25                          *                  MFFO,MDGCOE,NFFO,NDGCOE,COEFFO,
+         26                          *                  NFRCNT,ALPHAQ,IDIAGV,THDT3D,PLIMIT,
+         27                          *                  JFSPRS,JPRESS,GRAV,IVELIN,VELIN0,IGRAV,
+         28                          *                  MAXPRO,LPRO,CPRO0,CPRO1,CPRO2,CTREF,
+         29                          *                  D000,U000,T000,TREF,RHO000,
+         30                          *                  IFIXFL,
+         31                          *                  EPST,EPSP,
+         32                          *                  EPSREV,EPSREP,
+         33                          *                  ALPHAT,EPSQ,EPSREQ,NS,NL,
+         34                          *                  IALE,NMAXA,EPSA,EPSREA,STPWR,NMODE,AOBJ,TOBJ,
+         35                          *                  MRFN,XRFMIN,YRFMIN,ZRFMIN,XRFMAX,YRFMAX,ZRFMAX,
+         36                          *                  IRFBOX,NLAYER,NLAYRT,
+         37                          *                  NLYNG,EYNG,MRSALE,IWRTIM,IALEDB,JSPADV,
+         38                          *                  IWRITE,EPSMID,JGRID,
+         39                          *                  MMRF,NMRF,OMGMRF,AMRF,ORGMRF,IDSM,
+         40                          *                  NBLKX,NBLKY,NBLKZ,JWRTOS,
+         41                          *                  IVOF,NSCYC,RHOF2,VISCM2,NMAXVF,EPSVF,EPSRVF,
+         42                          *                  PRT,JSSMAP,NUMSSB,NOUTSS,NITRSS,CODSSB,
+         43                          *                  IRFNFT,FILECD,FILECR,JNTFND,EPSOS,COSBIN,COSBFR,
+         44                          *                  EPSBLK,BLKMIN,ICAVI,CGAS,CLQD,F0,
+         45                          *                  IERR)
+         46                     C
+         47                           IMPLICIT NONE
+         48                     C
+         49                           INTEGER*4 IUT0,IUT5,IUT6,IPART,IFILTR,LOSEND,LFREE,INRBC,IBCIO,
+         50                          *          IMASS,MSDEP,NSDEP,LHEAD,ISOLV,ISOLT,ISOLP,NMAXB,
+         51                          *          NITRNR,IPREF,IPCAV,IDES,LVT0,NITRIT,NITRIP,
+         52                          *          JSORT,JCOLOR,JUNROL,NDIVX,NDIVY,NDIVZ,
+         53                          *          NRFN,IRFNMW,IRFNFF,NGRID,IRCAPC,
+         54                          *          MER,MPR,MEPR,MPPR,MBR,MBPR,MDOMR,IMONTR,
+         55                          *          MFFO,MDGCOE,NFFO,NFRCNT,IDIAGV,
+         56                          *          JFSPRS,JPRESS,IVELIN,IGRAV,
+         57                          *          IFIXFL,NS,NL,IALE,NMAXA,NMODE,MRFN,
+         58                          *          NLYNG,MRSALE,IWRTIM,IALEDB,JSPADV,IWRITE,JGRID,
+         59                          *          MMRF,NMRF,IDSM,NBLKX,NBLKY,NBLKZ,JWRTOS,IVOF,NSCYC,
+         60                          *          NMAXVF,JSSMAP,NOUTSS,NITRSS,JNTFND,ICAVI,IERR
+         61                     C
+         62                           REAL*4    EPSM,CSMAX,XREF,YREF,ZREF,BTDCOE,DIVESC,OMEGA0,
+         63                          *          ALPHAV,ALPHAP,ALPHAQ,THDT3D,PLIMIT,GRAV,
+         64                          *          EPST,EPSP,EPSREV,EPSREP,ALPHAT,EPSQ,EPSREQ,
+         65                          *          EPSA,EPSREA,STPWR,AOBJ,TOBJ,XRFMIN,YRFMIN,ZRFMIN,
+         66                          *          XRFMAX,YRFMAX,ZRFMAX,EYNG,EPSMID,
+         67                          *          RHOF2,VISCM2,EPSVF,EPSRVF,PRT,VELIN0,
+         68                          *          EPSOS,COSBIN,COSBFR,EPSBLK,BLKMIN,CGAS,CLQD,F0
+         69                     C
+         70                           INTEGER*4 MAXPRO,MKEYWD,LPRO(MAXPRO)
+         71                           REAL*4    CPRO0(9,MAXPRO),CPRO1(4,MAXPRO),
+         72                          *          CPRO2(4,MAXPRO),CTREF(4,MAXPRO)
+         73                           REAL*4    D000,U000,T000,TREF,RHO000,CP000,VS000,CD000
+         74                           REAL*4    OMGMRF(MMRF),AMRF(3,MMRF),ORGMRF(3,MMRF)
+         75                     C
+         76                           DIMENSION VELIN0(3)
+         77                           DIMENSION GRAV(3)
+         78                     C
+         79                           REAL*4 KINIT,EPINIT,ALPHAK,ALPHEO
+         80                     C
+         81                           DIMENSION OMEGA0(3)
+         82                           DIMENSION BTDCOE(4)
+         83                     C
+         84                           INTEGER*4 NDGCOE(MFFO)
+         85                           REAL*4    COEFFO(0:MDGCOE,MFFO)
+         86                     C
+         87                           INTEGER*4 NEIP(4)
+         88                     C
+         89                           INTEGER*4 NUMSSB(3)
+         90                           REAL*4    CODSSB(4)
+         91                     C
+         92                           DIMENSION XRFMIN(MRFN),YRFMIN(MRFN),ZRFMIN(MRFN)
+         93                           DIMENSION XRFMAX(MRFN),YRFMAX(MRFN),ZRFMAX(MRFN)
+         94                           REAL*4 XRMIN,YRMIN,ZRMIN,XRMAX,YRMAX,ZRMAX
+         95                           INTEGER*4 IRFBOX,NLAYER(MRFN),NLAYRT(MRFN)
+         96                     C
+         97                           INTEGER*4 I,J,IDUM,IRFN,IAUTO,ITLOCL,NDUM,IPRO,IMRF,IRFNB,
+         98                          *          ICS,ICE,NC
+         99                           REAL*4    CFLSET,CLFSET,EPSK,EPSEP,EPSREK,EPSREO,OMEGA2,
+        100                          *          AX,AY,AZ,ORGX,ORGY,ORGZ,AA
+        101                     C
+        102                           INTEGER*4 IRFNFT
+        103                           CHARACTER*60 FILE,FILECD,FILECR
+        104                     C
+        105                           PARAMETER ( MKEYWD = 93 )
+        106                           CHARACTER*8 CKEYWD(MKEYWD)
+        107                           DATA CKEYWD( 1) / '#OPTIONS' /
+        108                           DATA CKEYWD( 2) / '#OPTIONE' /
+        109                           DATA CKEYWD( 3) / '#GRDFILT' /
+        110                           DATA CKEYWD( 4) / '#OVERROP' /
+        111                           DATA CKEYWD( 5) / '#BC_FREE' /
+        112                           DATA CKEYWD( 6) / '#BC_NRBC' /
+        113                           DATA CKEYWD( 7) / '#BC_NRIO' /
+        114                           DATA CKEYWD( 8) / '#BC_EPSM' /
+        115                           DATA CKEYWD( 9) / '#BC_MICX' /
+        116                           DATA CKEYWD(10) / '#CALHEAD' /
+        117                           DATA CKEYWD(11) / '#SOL_TMP' /
+        118                           DATA CKEYWD(12) / '#SOL_PRS' /
+        119                           DATA CKEYWD(13) / '#ITR_RCM' /
+        120                           DATA CKEYWD(14) / '#ITR_NRX' /
+        121                           DATA CKEYWD(15) / '#MOD_DES' /
+        122                           DATA CKEYWD(16) / '#LIM_DSM' /
+        123                           DATA CKEYWD(17) / '#BC_PREF' /
+        124                           DATA CKEYWD(18) / '#CAVPREF' /
+        125                           DATA CKEYWD(19) / '#VT_INIT' /
+        126                           DATA CKEYWD(20) / '#ITRT_IN' /
+        127                           DATA CKEYWD(21) / '#ITRP_IN' /
+        128                           DATA CKEYWD(22) / '#COE_BTD' /
+        129                           DATA CKEYWD(23) / '#RO_SORT' /
+        130                           DATA CKEYWD(24) / '#RO_COLR' /
+        131                           DATA CKEYWD(25) / '#MLT_OMG' /
+        132                           DATA CKEYWD(26) / '#RCAP_RF' /
+        133                           DATA CKEYWD(27) / '#RF_MESH' /
+        134                           DATA CKEYWD(28) / '#RF_FLOW' /
+        135                           DATA CKEYWD(29) / '#RCAP_CP' /
+        136                           DATA CKEYWD(30) / '#SZ_GRID' /
+        137                           DATA CKEYWD(31) / '#SZ_CNCT' /
+        138                           DATA CKEYWD(32) / '#SZ_BOUN' /
+        139                           DATA CKEYWD(33) / '#MONITOR' /
+        140                           DATA CKEYWD(34) / '#DT_AUTO' /
+        141                           DATA CKEYWD(35) / '#DT_LOCL' /
+        142                           DATA CKEYWD(36) / '#CFL_VAL' /
+        143                           DATA CKEYWD(37) / '#RELAX_P' /
+        144                           DATA CKEYWD(38) / '#RELAX_V' /
+        145                           DATA CKEYWD(39) / '#FFOBJCT' /
+        146                           DATA CKEYWD(40) / '#FR_CONT' /
+        147                           DATA CKEYWD(41) / '#RELAX_Q' /
+        148                           DATA CKEYWD(42) / '#DIAGVEL' /
+        149                           DATA CKEYWD(43) / '#EFFE_DT' /
+        150                           DATA CKEYWD(44) / '#LIMIT_P' /
+        151                           DATA CKEYWD(45) / '#FS_PRES' /
+        152                           DATA CKEYWD(46) / '#PRS_ELM' /
+        153                           DATA CKEYWD(47) / '#INLT__K' /
+        154                           DATA CKEYWD(48) / '#INLT_EP' /
+        155                           DATA CKEYWD(49) / '#RELAX_K' /
+        156                           DATA CKEYWD(50) / '#RELAX_E' /
+        157                           DATA CKEYWD(51) / '#SETTURB' /
+        158                           DATA CKEYWD(52) / '#FIXFLOW' /
+        159                           DATA CKEYWD(53) / '#GRAVITY' /
+        160                           DATA CKEYWD(54) / '#INLTVEL' /
+        161                           DATA CKEYWD(55) / '#PRO_TBL' /
+        162                           DATA CKEYWD(56) / '#EPSIL_K' /
+        163                           DATA CKEYWD(57) / '#EPSIL_E' /
+        164                           DATA CKEYWD(58) / '#EPSRE_V' /
+        165                           DATA CKEYWD(59) / '#EPSRE_P' /
+        166                           DATA CKEYWD(60) / '#EPSRE_K' /
+        167                           DATA CKEYWD(61) / '#EPSRE_E' /
+        168                           DATA CKEYWD(62) / '#RELAX_T' /
+        169                           DATA CKEYWD(63) / '#EPSIL_T' /
+        170                           DATA CKEYWD(64) / '#EPSRE_T' /
+        171                           DATA CKEYWD(65) / '#IDR__NS' /
+        172                           DATA CKEYWD(66) / '#IDR__NL' /
+        173                           DATA CKEYWD(67) / '#USE_ALE' /
+        174                           DATA CKEYWD(68) / '#MRESALE' /
+        175                           DATA CKEYWD(69) / '#CL_TIME' /
+        176                           DATA CKEYWD(70) / '#ALE_DBG' /
+        177                           DATA CKEYWD(71) / '#ALELYNG' /
+        178                           DATA CKEYWD(72) / '#SPWRITE' /
+        179                           DATA CKEYWD(73) / '#GFWRITE' /
+        180                           DATA CKEYWD(74) / '#EPS_MID' /
+        181                           DATA CKEYWD(75) / '#AXUNROL' /
+        182                           DATA CKEYWD(76) / '#DBLGRID' /
+        183                           DATA CKEYWD(77) / '#SOL_VEL' /
+        184                           DATA CKEYWD(78) / '#DIV_ESC' /
+        185                           DATA CKEYWD(79) / '#MULTI_R' /
+        186                           DATA CKEYWD(80) / '#DSM_OLD' /
+        187                           DATA CKEYWD(81) / '#BLK_NUM' /
+        188                           DATA CKEYWD(82) / '#WRTOVST' /
+        189                           DATA CKEYWD(83) / '#MLPHASE' /
+        190                           DATA CKEYWD(84) / '#TUR_PRT' /
+        191                           DATA CKEYWD(85) / '#RFN_BOX' /
+        192                           DATA CKEYWD(86) / '#N_LAYER' /
+        193                           DATA CKEYWD(87) / '#N_LAYRT' /
+        194                           DATA CKEYWD(88) / '#MAP_SRC' /
+        195                           DATA CKEYWD(89) / '#RF__FIT' /
+        196                           DATA CKEYWD(90) / '#OVST_NF' /
+        197                           DATA CKEYWD(91) / '#BC_OVST' /
+        198                           DATA CKEYWD(92) / '#BLK_SIZ' /
+        199                           DATA CKEYWD(93) / '#CAV_MDL' /
+        200                     C
+        201                           CHARACTER*60 CBUF,CBUF2
+        202                     C
+        203                           CHARACTER*60 ERMSG1
+        204                          & / ' ## THIS PARAMETER DOES NOT WORK IN THIS VERSION (FFB8.1)  ' /
+        205                     C
+        206                           CHARACTER*60 ERMSGB
+        207                          & / ' ## SUBROUTINE LESROP: FATAL      ERROR OCCURENCE; RETURNED' /
+        208                     C
+        209                           CHARACTER*60 EREXP1
+        210                          & / ' AN ILLEGAL VALUE WAS SPECIFIED FOR CONTROL PARAMETER      ' /
+        211                     C
+        212                           CHARACTER*5 CONOFF(0:1)
+        213                           DATA CONOFF(0) /'OFF  '/
+        214                           DATA CONOFF(1) /'ON   '/
+        215                     C
+        216                     C
+        217                     C
+        218                     C      READ CONTROL PARAMETERS FOR OPTIONAL FUNCTIONS
+        219                     C
+        220                     C
+        221                     C     ARGUMENT LISTINGS
+        222                     C       (1) INPUT
+        223                     C          IUT0        ; FILE NUMBER TO WRITE  ERROR MESSAGE
+        224                     C          IUT5        ; FILE NUMBER TO READ PARAMETERS AND FILE NAMES
+        225                     C          IUT6        ; FILE NUMBER TO WRITE CALCULATION SEQUENCE
+        226                     C          MSDEP       ; MAXIMUM NUMBER OF OVERSET SURFACES
+        227                     C
+        228                     C
+        229                     C       (2) OUTPUT
+        230                     C          IFILTR      ; CONTROLS GRID-FILTER WIDTH AS FOLLOWS:
+        231                     C                   1 --- THE MINIMUM SIDE LENGTH
+        232                     C                   2 --- INVERSE SQUARE AVERAGE OF SIDE LENGTH
+        233                     C                   3 --- CUBIC ROUTE OF ELEMENT VOLUME
+        234                     C
+        235                     C          LOSEND      ; FLAG OF TREATING THE OVERSET FILE
+        236                     C                       WHEN IT REACHES THE END
+        237                     C                   0 --- THE POSITION IS FIXED AT THE END
+        238                     C                         OF THE OVERSET FILE.
+        239                     C                   1 --- THE OVERSET FILE WILL REOPEN AT THE HEAD
+        240                     C
+        241                     C          LFREE       ; FLAG OF TREATING THE FREE BOUNDARY
+        242                     C                   0 --- NO SPECIAL TREATMENT
+        243                     C                   1 --- THE NORMAL VELOCITY WILL BE SET TO ZERO
+        244                     C                         IF REVERSE FLOW IS DETECTED
+        245                     C                         AT THE FREE BOUNDARY.
+        246                     C
+        247                     C          INRBC       ; FLAG OF TREATING NON-REFLECTING B.C. (NRBC)
+        248                     C                   0 --- OFF
+        249                     C                   1 --- NRBC BASED ON ZERO PRESSURE GRADIENT
+        250                     C                         IN INCOMPRESSIBLE PART
+        251                     C                   2 --- NRBC BASED ON CONVECTIVE B.C.
+        252                     C                         IN INCOMPRESSIBLE PART
+        253                     C
+        254                     C          IBCIO       ; SELECTION OF BOUNDARIES WHICH USE NRBC
+        255                     C                   0 --- NRBC WILL NOT BE USED AT INLET AND OUTLET
+        256                     C                   1 --- NRBC WILL BE USED ONLY AT INLET
+        257                     C                   2 --- NRBC WILL BE USED ONLY AT OUTLET
+        258                     C                   3 --- NRBC WILL BE USED AT INLET AND OUTLET
+        259                     C
+        260                     C          EPSM        ; CONTROLING THE TYPE OF PRESSURE B.C.
+        261                     C                         AT INLET AND OUTLET, IF MACH NUMBER
+        262                     C                         IS LARGER THAN 'EPSM'
+        263                     C                         AND 'INRBC' IS GREATER THAN ZERO,
+        264                     C                         NON-REFLECTING BOUNDARY CONDITION
+        265                     C                         FOR THE COMPRESSIBLE PART OF THE PRESSURE
+        266                     C                         WILL BE APPLIED
+        267                     C
+        268                     C          IPREF       ; FLAG OF PRESSURE REF. POINT
+        269                     C                   0 --- NO PRESSURE REFERENCE POINT
+        270                     C                   1 --- USE (XREF,YREF,ZREF) AS PRESSURE REF. POINT
+        271                     C                   2 --- USE AVERAGE PRESSURE AT OUTLET AS
+        272                     C                         REF. PRESSURE
+        273                     C
+        274                     C          XREF        ; X-COORDINATE OF PRESSURE REFERENCE POINT
+        275                     C          YREF        ; Y-COORDINATE OF PRESSURE REFERENCE POINT
+        276                     C          ZREF        ; Z-COORDINATE OF PRESSURE REFERENCE POINT
+        277                     C
+        278                     C          IMASS       ; FLAG OF MASS IMBALANCE CORRECTION (MIC)
+        279                     C                   0 --- NO SPECIAL TREATMENT
+        280                     C                   1 --- THE FLOW RATE AT EACH OVERSET DOMAIN WILL BE
+        281                     C                         FORCED TO BALANCE BETWEEN INLET AND OUTLET.
+        282                     C                   2 --- THE FLOW RATE AT EACH OVERSET SURFACE WILL BE
+        283                     C                         FORCED TO BE EQUAL TO THE FLOW RATE
+        284                     C                         AT OVERALL INLET.
+        285                     C                         IN SOME CASES, IMASS=2 CAN NOT BE USED.
+        286                     C
+        287                     C          NSDEP       ; NUMBER OF OVERSET SURFACES
+        288                     C
+        289                     C
+        290                     C          LHEAD       ; FLAG OF CALCULATION OF HEAD (PRESSURE INCREASE)
+        291                     C                   0 --- HEAD WILL NOT BE CALCULATED.
+        292                     C                   1 --- HEAD WILL BE CALCULATED.
+        293                     C
+        294                     C          ISOLU       ; MATRIX SOLVER FOR MOMENTUM EQUATIONS
+        295                     C                   1 --- Bi-CGSTAB
+        296                     C                   2 --- JACOBI ITERATION
+        297                     C
+        298                     C          ISOLP       ; MATRIX SOLVER FOR PRESSURE EQUATION
+        299                     C                   1 --- Bi-CGSTAB
+        300                     C                   2 --- RESIDUAL CUTTING METHOD (RCM)
+        301                     C                   3 --- IDR
+        302                     C
+        303                     C          ISOLT       ; MATRIX SOLVER FOR HEAT TRANSFER EQUATION
+        304                     C                   1 --- Bi-CGSTAB
+        305                     C                   3 --- IDR
+        306                     C
+        307                     C          NMAXB       ; THE NUMBER OF INNER ITERATIONS OF RCM
+        308                     C
+        309                     C          NITRNR      ; ITERATION NUMBERS OF NEWTON-RAPHSON ITERATIONS
+        310                     C                       FOR MOMENTUM EQUATIONS
+        311                     C
+        312                     C          CSMAX       ; MAXIMUM CS VALUE IN DSM
+        313                     C
+        314                     C          IPCAV       ; FLAG OF REFERENCE PRESSURE IN THE DEFINITION
+        315                     C                       OF CAVITATION NUMBER
+        316                     C                   0 --- USE PRESSURE AT OUTLET AS REFERENCE PRESSURE
+        317                     C                   1 --- USE PRESSURE AT INLET AS REFERENCE PRESSURE
+        318                     C
+        319                     C          IDES        ; DUMMY PARAMETER
+        320                     C
+        321                     C          LVT0        ; DUMMY PARAMETER
+        322                     C
+        323                     C          NITRIT      ; ITERATION NUMBER OF INNER INTERATION FOR
+        324                     C                       MOMENTUM EQUATIONS IN OVERSET COMPUTATION
+        325                     C
+        326                     C          NITRIP      ; ITERATION NUMBER OF INNER INTERATION FOR
+        327                     C                       PRESSURE EQUATION IN OVERSET COMPUTATION
+        328                     C
+        329                     C          CBTD0       ;COEFFICIENT FOR THE BTD TERM
+        330                     C
+        331                     C          JSORT       ;RENUMBERING FLAG FOR SORTING      (0:OFF, 1:ON)
+        332                     C          JCOLOR      ;RENUMBERING FLAG FOR COLORING     (0:OFF, 1:ON)
+        333                     C          JUNROL      ;FULL UNROLL FLAG FOR AX OPERATION (0:OFF, 1:ON)
+        334                     C
+        335                     C          NLE         ;SIZE OF SPLITTED LOOP
+        336                     C
+        337                     C          NRFN        ;NUMBER OF REFINE  (DEFAULT=0)
+        338                     C                       IT MUST BE ZERO OR ONE IN THIS VERSION
+        339                     C          IRFNMW      ;REFINED MESH AND BOUN FILE WILL BE OUTPUT
+        340                     C                       WHEN THIS PARAMETER IS ONE (DEFAULT=0)
+        341                     C          IRFNFF      ;READ IN FLOW DATA (U,V,W,P) WILL BE REFINED
+        342                     C                       WHEN THIS PARAMETER IS ONE (DEFAULT=0)
+        343                     C          NGRID       ;
+        344                     C
+        345                     C          IRCAPC      ;RCAP_COUPLER I.F. FLAG ,0 OFF (DEFAULT), 1 ON
+        346                     C
+        347                     C          IALE        ; FLAG OF MOVING B.C. IN ALE METHOD
+        348                     C                   0 --- NO MOVING B.C.
+        349                     C                   1 --- DEFINED BY REVOCAP
+        350                     C                   2 --- DEFINED BY STANDARD FUNCTION
+        351                     C                   3 --- DEFINED BY USER SUBROUTINE
+        352                     C          NMAXA       ; NUMBER OF ITERATIONS
+        353                     C          EPSA        ; ABSOLUTE CONVERGENCE CRITERIA
+        354                     C          EPSREA      ; RELATIVE CONVERGENCE CRITERIA
+        355                     C          STPWR       ; STIFFENING POWER FOR YOUNG'S MODULUS
+        356                     C          NMODE       ;
+        357                     C          AOBJ        ; AMPLITUDE OF MOVING OBJECT
+        358                     C          TOBJ        ; CYCLE     OF MOVING OBJECT
+        359                     C
+        360                           IERR = 0
+        361                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPRO
+                              <<< Loop-information  End >>>
+        362     1  pp   4v            DO 101 I=1,MAXPRO
+        363     1   p   4v                LPRO(I)=0
+        364     1   p   4v       101  CONTINUE
+        365                     C
+        366                     C     /// DUMMY VALUES
+        367                           THDT3D = 1.0E+10
+        368                           IDIAGV = 1
+        369                     C
+        370                           ALPHAT=1.0
+        371                     C
+        372                           EPSREV = -1.0
+        373                           EPSREP = -1.0
+        374                           EPSQ = -1.0
+        375                           EPSREQ = -1.0
+        376                           EPSA   = -1.0
+        377                           EPSREA = -1.0
+        378                     C
+        379                        10 READ(IUT5,'(A60)',END=100) CBUF
+        380     1                     IF(CBUF(1:8).EQ.CKEYWD(1)) THEN
+        381     1                         WRITE(IUT6,*) ' LESROP: START READING OPTIONAL PARAMETERS '
+        382     1                     ELSE
+        383     1                         GO TO 10
+        384     1                     ENDIF
+        385                     C
+        386                      1000 CONTINUE
+        387                     C
+        388                           READ(IUT5,'(A60)') CBUF
+        389                     C
+        390                     C
+        391     1                     IF(CBUF(1:8).EQ.CKEYWD(3)) THEN
+        392     1                         WRITE(IUT6,*) ' LESROP:'
+        393     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(3), '" IS DETECTED.'
+        394     1               C
+        395     1                         CBUF2 = CBUF(9:60)
+        396     1                         READ(CBUF2,*) IFILTR
+        397     2                         IF(IFILTR.LT.1 .OR. IFILTR.GT.3) THEN
+        398     2                             WRITE(IUT0,'(A60)')
+        399     2                             WRITE(IUT0,'(A60)') EREXP1
+        400     2                             GO TO 999
+        401     2                         ENDIF
+        402     1               C
+        403     1                         WRITE(IUT6,*) ' LESROP: GRID FILTER TYPE FLAG: IFILTR=',
+        404     1                    &                  IFILTR
+        405     1                     ENDIF
+        406                     C
+        407                     C
+        408     1                     IF(CBUF(1:8).EQ.CKEYWD(4)) THEN
+        409     1                         WRITE(IUT6,*) ' LESROP:'
+        410     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(4), '" IS DETECTED.'
+        411     1                         WRITE(IUT6,*) ERMSG1
+        412     1               C
+        413     1                         LOSEND = 1
+        414     1               C
+        415     1                         WRITE(IUT6,*) ' LESROP: REOPEN FUNCTION OF OVERSET FILE '
+        416     1                     ENDIF
+        417                     C
+        418                     C
+        419     1                     IF(CBUF(1:8).EQ.CKEYWD(5)) THEN
+        420     1                         WRITE(IUT6,*) ' LESROP:'
+        421     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(5), '" IS DETECTED.'
+        422     1               C
+        423     1                         LFREE = 1
+        424     1               C
+        425     1                         WRITE(IUT6,*) ' LESROP: REVERSE FLOW ZERO SET FUNCTION '
+        426     1                     ENDIF
+        427                     C
+        428                     C
+        429     1                     IF(CBUF(1:8).EQ.CKEYWD(6)) THEN
+        430     1                         WRITE(IUT6,*) ' LESROP:'
+        431     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(6), '" IS DETECTED.'
+        432     1                         WRITE(IUT6,*) ERMSG1
+        433     1               C
+        434     1                         CBUF2 = CBUF(9:60)
+        435     1                         READ(CBUF2,*) INRBC
+        436     1               C
+        437     2                         IF(INRBC.LT.0 .OR. INRBC.GT.2) THEN
+        438     2                             WRITE(IUT0,'(A60)')
+        439     2                             WRITE(IUT0,'(A60)') EREXP1
+        440     2                             GO TO 999
+        441     2                         ENDIF
+        442     1               C
+        443     1                         WRITE(IUT6,*) ' LESROP: NRBC FLAG: INRBC =', INRBC
+        444     1                     ENDIF
+        445                     C
+        446                     C
+        447     1                     IF(CBUF(1:8).EQ.CKEYWD(7)) THEN
+        448     1                         WRITE(IUT6,*) ' LESROP:'
+        449     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(7), '" IS DETECTED.'
+        450     1                         WRITE(IUT6,*) ERMSG1
+        451     1               C
+        452     1                         CBUF2 = CBUF(9:60)
+        453     1                         READ(CBUF2,*) IBCIO
+        454     2                         IF(IBCIO.LT.0 .OR. IBCIO.GT.3) THEN
+        455     2                             WRITE(IUT0,'(A60)')
+        456     2                             WRITE(IUT0,'(A60)') EREXP1
+        457     2                             GO TO 999
+        458     2                         ENDIF
+        459     1               C
+        460     1                         WRITE(IUT6,*) ' LESROP: NRBC FLAG: IBCIO =',IBCIO
+        461     2                         IF(IBCIO.EQ.0) THEN
+        462     2                             WRITE(IUT6,*) ' LESROP: NO NRBC AT INLET AND OUTLET'
+        463     2                         ELSE IF(IBCIO.EQ.1) THEN
+        464     2                             WRITE(IUT6,*) ' LESROP: NRBC ONLY AT INLET'
+        465     2                         ELSE IF(IBCIO.EQ.2) THEN
+        466     2                             WRITE(IUT6,*) ' LESROP: NRBC ONLY AT OUTLET'
+        467     2                         ELSE IF(IBCIO.EQ.3) THEN
+        468     2                             WRITE(IUT6,*) ' LESROP: NRBC AT INLET AND OUTLET'
+        469     2                         ENDIF
+        470     1               C
+        471     1                     ENDIF
+        472                     C
+        473     1                     IF(CBUF(1:8).EQ.CKEYWD(8)) THEN
+        474     1                         WRITE(IUT6,*) ' LESROP:'
+        475     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(8), '" IS DETECTED.'
+        476     1                         WRITE(IUT6,*) ERMSG1
+        477     1               C
+        478     1                         CBUF2 = CBUF(9:60)
+        479     1                         READ(CBUF2,*) EPSM
+        480     2                         IF(EPSM.LE.0.E0) THEN
+        481     2                             WRITE(IUT0,'(A60)')
+        482     2                             WRITE(IUT0,'(A60)') EREXP1
+        483     2                             GO TO 999
+        484     2                         ENDIF
+        485     1               C
+        486     1                         WRITE(IUT6,'(A45,A13,1PE12.5)')
+        487     1                    &    '  LESROP: THE MINIMUM MACH NUMBER WHICH NRBC ',
+        488     1                    &    'CAN BE USED: ',EPSM
+        489     1                     ENDIF
+        490                     C
+        491                     C
+        492     1                     IF(CBUF(1:8).EQ.CKEYWD(9)) THEN
+        493     1                         WRITE(IUT6,*) ' LESROP:'
+        494     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(9), '" IS DETECTED.'
+        495     1                         WRITE(IUT6,*) ERMSG1
+        496     1               C
+        497     1                         CBUF2 = CBUF(9:60)
+        498     1                         READ(CBUF2,*) IMASS
+        499     2                         IF(IMASS.LT.0 .OR. IMASS.GT.2) THEN
+        500     2                             WRITE(IUT0,'(A60)')
+        501     2                             WRITE(IUT0,'(A60)') EREXP1
+        502     2                             GO TO 999
+        503     2                         ENDIF
+        504     1               C
+        505     2                         IF(IMASS.GT.0) THEN
+        506     2                             READ(CBUF2,*) IDUM,NSDEP
+        507     3                             IF(NSDEP.LE.0 .OR. NSDEP.GT.MSDEP
+        508     3                    &           .OR. MOD(NSDEP,2).NE.0) THEN
+        509     3                                 WRITE(IUT0,'(A60)')
+        510     3                                 WRITE(IUT0,'(A60)') EREXP1
+        511     3                                 GO TO 999
+        512     3                             ENDIF
+        513     2                         ENDIF
+        514     1               C
+        515     1                         WRITE(IUT6,*) ' LESROP: MIC FLAG  : IMASS =', IMASS
+        516     1                         IF(IMASS.GT.0)
+        517     1                    &    WRITE(IUT6,*) ' LESROP: NUMBER OF MIC SURFACE : NSDEP =',
+        518     1                    &    NSDEP
+        519     1               C
+        520     1                     ENDIF
+        521                     C
+        522     1                     IF(CBUF(1:8).EQ.CKEYWD(10)) THEN
+        523     1                         WRITE(IUT6,*) ' LESROP:'
+        524     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(10), '" IS DETECTED.'
+        525     1                         WRITE(IUT6,*) ERMSG1
+        526     1               C
+        527     1                         LHEAD = 1
+        528     1                         WRITE(IUT6,*) ' LESROP: HEAD CALCULATION FUNCTION OPEN'
+        529     1                     ENDIF
+        530                     C
+        531     1                     IF(CBUF(1:8).EQ.CKEYWD(11)) THEN
+        532     1                         WRITE(IUT6,*) ' LESROP:'
+        533     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(11), '" IS DETECTED.'
+        534     1               C
+        535     1                         CBUF2 = CBUF(9:60)
+        536     1                         READ(CBUF2,*) ISOLT
+        537     2                         IF(ISOLT.NE.1 .AND. ISOLT.NE.3) THEN
+        538     2                             WRITE(IUT0,'(A60)')
+        539     2                             WRITE(IUT0,'(A60)') EREXP1
+        540     2                             GO TO 999
+        541     2                         ENDIF
+        542     1               C
+        543     2                         IF(ISOLT.EQ.1) THEN
+        544     2                             WRITE(IUT6,*)
+        545     2                    &        ' LESROP: BI-CGSTAB WILL BE APPLIED FOR TRANSPORT EQ.'
+        546     2                         ELSE
+        547     2                             WRITE(IUT6,*)
+        548     2                    &        ' LESROP: IDR       WILL BE APPLIED FOR TRANSPORT EQ.'
+        549     2                         ENDIF
+        550     1               C
+        551     1                     ENDIF
+        552                     C
+        553                     C
+        554     1                     IF(CBUF(1:8).EQ.CKEYWD(12)) THEN
+        555     1                         WRITE(IUT6,*) ' LESROP:'
+        556     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(12), '" IS DETECTED.'
+        557     1               C
+        558     1                         CBUF2 = CBUF(9:60)
+        559     1                         READ(CBUF2,*) ISOLP
+        560     2                         IF(ISOLP.LT.1 .OR. ISOLP.GT.3)THEN
+        561     2                             WRITE(IUT0,'(A60)') ISOLP
+        562     2                             WRITE(IUT0,'(A60)') EREXP1
+        563     2                             GO TO 999
+        564     2                         ENDIF
+        565     1               C
+        566     2                         IF(ISOLP.EQ.1) THEN
+        567     2                             WRITE(IUT6,*)
+        568     2                    &        ' LESROP: BI-CGSTAB WIL BE APPLIED FOR PRS-E.Q.'
+        569     2                         ELSE IF(ISOLP.EQ.2) THEN
+        570     2                             WRITE(IUT6,*)
+        571     2                    *        ' LESROP: RCM WILL BE APPLIED FOR PRS.-E.Q.'
+        572     2                         ELSE IF(ISOLP.EQ.3) THEN
+        573     2                             WRITE(IUT6,*)
+        574     2                    *        ' LESROP: IDR WILL BE APPLIED FOR PRS.-E.Q.'
+        575     2                         ENDIF
+        576     1               C
+        577     1                     ENDIF
+        578                     C
+        579     1                     IF(CBUF(1:8).EQ.CKEYWD(13)) THEN
+        580     1                         WRITE(IUT6,*) ' LESROP:'
+        581     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(13), '" IS DETECTED.'
+        582     1               C
+        583     1                         CBUF2 = CBUF(9:60)
+        584     1                         READ(CBUF2,*) NMAXB
+        585     2                         IF(NMAXB.LT.1)THEN
+        586     2                             WRITE(IUT0,'(A60)')
+        587     2                             WRITE(IUT0,'(A60)') EREXP1
+        588     2                             GO TO 999
+        589     2                         ENDIF
+        590     1               C
+        591     1                         WRITE(IUT6,*)
+        592     1                    &    ' LESROP: NUMBER OF RCM INNER ITERATIONS =',NMAXB
+        593     1                     ENDIF
+        594                     C
+        595                     C
+        596     1                     IF(CBUF(1:8).EQ.CKEYWD(14)) THEN
+        597     1                         WRITE(IUT6,*) ' LESROP:'
+        598     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(14), '" IS DETECTED.'
+        599     1                         WRITE(IUT6,*) ERMSG1
+        600     1               C
+        601     1                         CBUF2 = CBUF(9:60)
+        602     1                         READ(CBUF2,*) NITRNR
+        603     2                         IF(NITRNR.LT.0)THEN
+        604     2                             WRITE(IUT0,'(A60)')
+        605     2                             WRITE(IUT0,'(A60)') EREXP1
+        606     2                             GO TO 999
+        607     2                         ENDIF
+        608     1               C
+        609     1                         WRITE(IUT6,*)
+        610     1                    &    ' LESROP: NUMBER OF NEWTON RAPSON ITERATIONS =',NITRNR
+        611     1                     ENDIF
+        612                     C
+        613     1                     IF(CBUF(1:8).EQ.CKEYWD(15)) THEN
+        614     1                         WRITE(IUT6,*) ' LESROP:'
+        615     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(15), '" IS DETECTED.'
+        616     1                         WRITE(IUT6,*) ERMSG1
+        617     1               C
+        618     1                         CBUF2 = CBUF(9:60)
+        619     1                         READ(CBUF2,*) IDES
+        620     2                         IF(IDES.LT.0.OR.IDES.GT.2) THEN
+        621     2                             WRITE(IUT0,'(A60)')
+        622     2                             WRITE(IUT0,'(A60)') EREXP1
+        623     2                             GO TO 999
+        624     2                         ENDIF
+        625     1               C
+        626     1               C          WRITE(IUT6,*)
+        627     1               C     &    ' LESROP: DES MODE: IDES =',IDES
+        628     1               C          IF(IDES.EQ.0) THEN
+        629     1               C              WRITE(IUT6,*) ' LESROP: RANS/LES HYBRID MODE'
+        630     1               C          ELSE IF(IDES.EQ.1) THEN
+        631     1               C              WRITE(IUT6,*) ' LESROP: RANS ONLY MODE'
+        632     1               C          ELSE IF(IDES.EQ.2) THEN
+        633     1               C              WRITE(IUT6,*) ' LESROP: LES ONLY MODE'
+        634     1               C          ENDIF
+        635     1                         WRITE(IUT6,*) ' LESROP: DUMMY PARAMETER '
+        636     1               C
+        637     1                     ENDIF
+        638                     C
+        639     1                     IF(CBUF(1:8).EQ.CKEYWD(16)) THEN
+        640     1                         WRITE(IUT6,*) ' LESROP:'
+        641     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(16), '" IS DETECTED.'
+        642     1                         WRITE(IUT6,*) ERMSG1
+        643     1               C
+        644     1                         CBUF2 = CBUF(9:60)
+        645     1                         READ(CBUF2,*) CSMAX
+        646     2                         IF(CSMAX.LT.0.E0)THEN
+        647     2                             WRITE(IUT0,'(A60)')
+        648     2                             WRITE(IUT0,'(A60)') EREXP1
+        649     2                             GO TO 999
+        650     2                         ENDIF
+        651     1               C
+        652     1                         WRITE(IUT6,'(A41,1PE12.5)')
+        653     1                    &    '  LESROP: UPPER LIMITATION OF CS IN DSM: ',CSMAX
+        654     1                     ENDIF
+        655                     C
+        656                     C
+        657     1                     IF(CBUF(1:8).EQ.CKEYWD(17)) THEN
+        658     1                         WRITE(IUT6,*) ' LESROP:'
+        659     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(17), '" IS DETECTED.'
+        660     1                         WRITE(IUT6,*) ERMSG1
+        661     1               C
+        662     1                         CBUF2 = CBUF(9:60)
+        663     1                         READ(CBUF2,*) IPREF
+        664     2                         IF(IPREF.LT.0.OR.IPREF.GT.2) THEN
+        665     2                             WRITE(IUT0,'(A60)')
+        666     2                             WRITE(IUT0,'(A60)') EREXP1
+        667     2                             GO TO 999
+        668     2                         ENDIF
+        669     1               C
+        670     1                         WRITE(IUT6,*)
+        671     1                    &    ' LESROP: FLAG OF REFERENCE PRESSURE POINT: ',IPREF
+        672     1               C
+        673     2                         IF(IPREF.EQ.0) THEN
+        674     2                             WRITE(IUT6,*)
+        675     2                    &        ' LESROP: NO REFERENCE PRESSURE POINT '
+        676     2                         ELSE IF(IPREF.EQ.1) THEN
+        677     2                             READ(CBUF2,*) IDUM,XREF,YREF,ZREF
+        678     2                             WRITE(IUT6,'(A45,1PE12.5,1PE12.5,1PE12.5)')
+        679     2                    &        '  LESROP: COORDINATE OF REF. PRESSURE POINT: ',
+        680     2                    &        XREF,YREF,ZREF
+        681     2                         ELSE IF(IPREF.EQ.2) THEN
+        682     2                             WRITE(IUT6,*)
+        683     2                    &        ' LESROP: TAKE AVERAGE PRESSURE AT OUTLET AS',
+        684     2                    &        ' REFERENCE PRESSURE '
+        685     2                         ENDIF
+        686     1                     ENDIF
+        687                     C
+        688     1                     IF(CBUF(1:8).EQ.CKEYWD(18)) THEN
+        689     1                         WRITE(IUT6,*) ' LESROP:'
+        690     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(18), '" IS DETECTED.'
+        691     1                         WRITE(IUT6,*) ERMSG1
+        692     1               C
+        693     1                         CBUF2 = CBUF(9:60)
+        694     1                         READ(CBUF2,*) IPCAV
+        695     2                         IF(IPCAV.LT.0.OR.IPCAV.GT.1) THEN
+        696     2                             WRITE(IUT0,'(A60)')
+        697     2                             WRITE(IUT0,'(A60)') EREXP1
+        698     2                             GO TO 999
+        699     2                         ENDIF
+        700     1               C
+        701     1                         WRITE(IUT6,*)
+        702     1                    &    ' LESROP: FLAG OF REF. PRESSURE IN THE DEF. OF CAVITATION',
+        703     1                    &    ' NUMBER:',IPCAV
+        704     2                         IF(IPCAV.EQ.0) THEN
+        705     2                             WRITE(IUT6,*) ' LESROP: USE PRESSURE AT OUTLET',
+        706     2                    &        ' AS REF. PRESSURE'
+        707     2                         ELSE IF(IPCAV.EQ.1) THEN
+        708     2                             WRITE(IUT6,*) ' LESROP: USE PRESSURE AT INLET',
+        709     2                    &        ' AS REF. PRESSURE'
+        710     2                         ENDIF
+        711     1               C
+        712     1                     ENDIF
+        713                     C
+        714     1                     IF(CBUF(1:8).EQ.CKEYWD(19)) THEN
+        715     1                         WRITE(IUT6,*) ' LESROP:'
+        716     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(19), '" IS DETECTED.'
+        717     1                         WRITE(IUT6,*) ERMSG1
+        718     1               C
+        719     1               C          WRITE(IUT6,*)
+        720     1               C     &    ' LESROP: EDDY VISCOSITY WILL BE REINITIATED',
+        721     1               C     &    ' BY LOCAL EQUILIBRIUM ASSUMPTION'
+        722     1               C
+        723     1                         WRITE(IUT6,*) ' LESROP: DUMMY PARAMETER '
+        724     1                         LVT0 = 1
+        725     1               C
+        726     1                     ENDIF
+        727                     C
+        728     1                     IF(CBUF(1:8).EQ.CKEYWD(20)) THEN
+        729     1                         WRITE(IUT6,*) ' LESROP:'
+        730     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(20), '" IS DETECTED.'
+        731     1               C
+        732     1                         CBUF2 = CBUF(9:60)
+        733     1                         READ(CBUF2,*) NITRIT
+        734     2                         IF(NITRIT.LT.1) THEN
+        735     2                             WRITE(IUT0,'(A60)')
+        736     2                             WRITE(IUT0,'(A60)') EREXP1
+        737     2                             GO TO 999
+        738     2                         ENDIF
+        739     1               C
+        740     1                         WRITE(IUT6,*) ' LESROP: INNER ITR. NUM. FOR MOM. EQ. =',
+        741     1                    &                  NITRIT
+        742     1                     ENDIF
+        743                     C
+        744     1                     IF(CBUF(1:8).EQ.CKEYWD(21)) THEN
+        745     1                         WRITE(IUT6,*) ' LESROP:'
+        746     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(21), '" IS DETECTED.'
+        747     1               C
+        748     1                         CBUF2 = CBUF(9:60)
+        749     1                         READ(CBUF2,*) NITRIP
+        750     2                         IF(NITRIP.LT.1) THEN
+        751     2                             WRITE(IUT0,'(A60)')
+        752     2                             WRITE(IUT0,'(A60)') EREXP1
+        753     2                             GO TO 999
+        754     2                         ENDIF
+        755     1               C
+        756     1                         WRITE(IUT6,*) ' LESROP: INNER ITR. NUM. FOR MOM. EQ. =',
+        757     1                    &                  NITRIP
+        758     1                     ENDIF
+        759                     C
+        760     1                     IF(CBUF(1:8).EQ.CKEYWD(22)) THEN
+        761     1                         WRITE(IUT6,*) ' LESROP:'
+        762     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(22), '" IS DETECTED.'
+        763     1               C
+        764     1                         CBUF2 = CBUF(9:60)
+        765     1                         READ(CBUF2,*) BTDCOE(1),BTDCOE(2),BTDCOE(3),BTDCOE(4)
+        766     2                         IF(BTDCOE(1).LT.0.0E0) THEN
+        767     2                             WRITE(IUT0,'(A60)')
+        768     2                             WRITE(IUT0,'(A60)') EREXP1
+        769     2                             GO TO 999
+        770     2                         ENDIF
+        771     1               C
+        772     1                         WRITE(IUT6,*) ' LESROP: COEFFICIENT OF BTD TERM '
+        773     1                         WRITE(IUT6,*)
+        774     1                         WRITE(IUT6,*) ' LESROP: BTD COEF FOR TET = ', BTDCOE(1)
+        775     1                         WRITE(IUT6,*) ' LESROP: BTD COEF FOR PYR = ', BTDCOE(2)
+        776     1                         WRITE(IUT6,*) ' LESROP: BTD COEF FOR WED = ', BTDCOE(3)
+        777     1                         WRITE(IUT6,*) ' LESROP: BTD COEF FOR HEX = ', BTDCOE(4)
+        778     1                     ENDIF
+        779                     C
+        780                     C
+        781     1                     IF(CBUF(1:8).EQ.CKEYWD(23)) THEN
+        782     1                         WRITE(IUT6,*) ' LESROP:'
+        783     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(23), '" IS DETECTED.'
+        784     1               C
+        785     1                         CBUF2 = CBUF(9:60)
+        786     1                         READ(CBUF2,*) JSORT,NDIVX,NDIVY,NDIVZ
+        787     2                         IF(JSORT.NE.0 .AND. JSORT.NE.1) THEN
+        788     2                             WRITE(IUT0,'(A60)')
+        789     2                             WRITE(IUT0,'(A60)') EREXP1
+        790     2                             GO TO 999
+        791     2                         ENDIF
+        792     1               C
+        793     1                         WRITE(IUT6,*) ' LESROP: REORDERING '
+        794     1                         WRITE(IUT6,*) ' LESROP: SORT       :',CONOFF(JSORT )
+        795     1                         WRITE(IUT6,*) ' LESROP: NDIVX      =',NDIVX
+        796     1                         WRITE(IUT6,*) ' LESROP: NDIVY      =',NDIVY
+        797     1                         WRITE(IUT6,*) ' LESROP: NDIVZ      =',NDIVZ
+        798     1               C
+        799     1                     ENDIF
+        800                     C
+        801     1                     IF(CBUF(1:8).EQ.CKEYWD(24)) THEN
+        802     1               #ifdef NOMETIS
+        803     1                         WRITE(IUT0,*)
+        804     1                    *    ' LESROP: THIS OPTION IS NOT AVALABLE WITH THIS SOLVER.'
+        805     1                         GO TO 999
+        806     1               #endif
+        807     1                         WRITE(IUT6,*) ' LESROP:'
+        808     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(24), '" IS DETECTED.'
+        809     1               C
+        810     1                         CBUF2 = CBUF(9:60)
+        811     1                         READ(CBUF2,*) JCOLOR,NEIP(1),NEIP(2),NEIP(3),NEIP(4)
+        812     2                         IF(JCOLOR.NE.0 .AND. JCOLOR.NE.1) THEN
+        813     2                             WRITE(IUT0,'(A60)')
+        814     2                             WRITE(IUT0,'(A60)') EREXP1
+        815     2                             GO TO 999
+        816     2                         ENDIF
+        817     1               C
+        818     1                         WRITE(IUT6,*) ' LESROP: REORDERING '
+        819     1                         WRITE(IUT6,*) ' LESROP: COLORING   :',CONOFF(JCOLOR)
+        820     1                         WRITE(IUT6,*) ' LESROP: NEIP(TET)  =',NEIP(1)
+        821     1                         WRITE(IUT6,*) ' LESROP: NEIP(PRD)  =',NEIP(2)
+        822     1                         WRITE(IUT6,*) ' LESROP: NEIP(WED)  =',NEIP(3)
+        823     1                         WRITE(IUT6,*) ' LESROP: NEIP(HEX)  =',NEIP(4)
+        824     1               C
+        825     1                     ENDIF
+        826                     C
+        827     1                     IF(CBUF(1:8).EQ.CKEYWD(75)) THEN
+        828     1                         WRITE(IUT6,*) ' LESROP:'
+        829     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(75),'" IS DETECTED.'
+        830     1                         JUNROL=1
+        831     1               C
+        832     1                         WRITE(IUT6,*) ' LESROP: AX OPERATION '
+        833     1                         WRITE(IUT6,*) ' LESROP: FULL UNROOL:',CONOFF(JUNROL)
+        834     1                     ENDIF
+        835                     C
+        836     1                     IF(CBUF(1:8).EQ.CKEYWD(76)) THEN
+        837     1                         WRITE(IUT6,*) ' LESROP:'
+        838     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(76), '" IS DETECTED.'
+        839     1               C
+        840     1                         JGRID = 2
+        841     1               C
+        842     1                         WRITE(IUT6,*)
+        843     1                    *    ' LESROP: DOUBLE PRECISION GRID DATA WILL BE READ'
+        844     1                     ENDIF
+        845                     C
+        846     1                     IF(CBUF(1:8).EQ.CKEYWD(25)) THEN
+        847     1                         WRITE(IUT6,*) ' LESROP:'
+        848     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(25), '" IS DETECTED.'
+        849     1               C
+        850     1                         CBUF2 = CBUF(9:60)
+        851     1                         READ(CBUF2,*) OMEGA0(1),OMEGA0(2),OMEGA0(3)
+        852     1               C
+        853     1                         WRITE(IUT6,*) ' LESROP: MULTI-OMEGA FUNCTION '
+        854     1                         WRITE(IUT6,*)
+        855     1                         WRITE(IUT6,*) ' NOTE THAT 1ST OMEGA WILL BE UPDATED'
+        856     1                         WRITE(IUT6,*)
+        857     1                         WRITE(IUT6,*) ' LESROP: 1ST OMEGA           =',OMEGA0(1)
+        858     1                         WRITE(IUT6,*) ' LESROP: 2ND OMEGA           =',OMEGA0(2)
+        859     1                         WRITE(IUT6,*) ' LESROP: 3RD OMEGA           =',OMEGA0(3)
+        860     1               C
+        861     1                         OMEGA0(1)=OMEGA0(1)/(U000/D000)
+        862     1                         OMEGA0(2)=OMEGA0(2)/(U000/D000)
+        863     1                         OMEGA0(3)=OMEGA0(3)/(U000/D000)
+        864     1               C
+        865     1                     ENDIF
+        866                     C
+        867                     C     * #RCAP_RF *
+        868     1                     IF(CBUF(1:8).EQ.CKEYWD(26)) THEN
+        869     1                         WRITE(IUT6,*) ' LESROP:'
+        870     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(26),'" IS DETECTED.'
+        871     1                         CBUF2 = CBUF(9:60)
+        872     1                         READ(CBUF2,*) NRFN,NGRID
+        873     1               C
+        874     2                         IF(NRFN.LT.0 .AND. NRFN.GT.5 ) THEN
+        875     2                             WRITE(IUT0,'(A60)')
+        876     2                             WRITE(IUT0,'(A60)') EREXP1
+        877     2                             WRITE(IUT0,'(A60)') 'NUM. OF REFINE MUST BE 0, 1 .. 5'
+        878     2                             GO TO 999
+        879     2                         ENDIF
+        880     1               C
+        881     2                         IF (NGRID.LT.-2) THEN
+        882     2                            WRITE(IUT0,'(A60)')
+        883     2                            WRITE(IUT0,'(A60)') EREXP1
+        884     2                            WRITE(IUT0,'(A60)') 'NUM. OF NGRID MUST BE LATGER THAN -2'
+        885     2                            GO TO 999
+        886     2                         ENDIF
+        887     1               C
+        888     1                         WRITE(IUT6,*) ' LESROP: NUMBER OF REFINE = ',NRFN
+        889     2                         IF(NGRID.EQ.-1) THEN
+        890     2                             WRITE(IUT6,*) ' LESROP: GLOBAL REFINE   '
+        891     2                         ELSE IF(NGRID.EQ.-2) THEN
+        892     2                             WRITE(IUT6,*) ' LESROP: READ REFINE TARGET SURFACE DATA'
+        893     2                         ELSE
+        894     2                             WRITE(IUT6,*) ' LESROP: NUMBER OF NGRID  = ',NGRID
+        895     2                         ENDIF
+        896     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1455
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    UNSWITCHING
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NLAYRT, NLAYER
+                              <<< Loop-information  End >>>
+        897     2  pp   2v                DO 300 IRFN=1,NRFN
+        898     3   p   2v                   IF (NGRID.GT.0) THEN
+        899     3       2                       NLAYER(IRFN)=NGRID
+        900     3       2                       NLAYRT(IRFN)=NGRID
+        901     3   p   2v                   ELSE
+        902     3   p   2v                      NLAYER(IRFN)=0
+        903     3   p   2v                      NLAYRT(IRFN)=0
+        904     3   p   2v                   ENDIF
+        905     2   p   2v       300      CONTINUE
+        906     1               C
+        907     1                      ENDIF
+        908                     C
+        909                     C
+        910     1                     IF(CBUF(1:8).EQ.CKEYWD(27)) THEN
+        911     1                         WRITE(IUT6,*) ' LESROP:'
+        912     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(27), '" IS DETECTED.'
+        913     1               C
+        914     1                         IRFNMW = 1
+        915     1               C
+        916     1                         WRITE(IUT6,*)
+        917     1                    *    ' LESROP: REFINED MESH AND B.C FILE WILL BE WRITTEN'
+        918     1                     ENDIF
+        919                     C
+        920     1                     IF(CBUF(1:8).EQ.CKEYWD(28)) THEN
+        921     1                         WRITE(IUT6,*) ' LESROP:'
+        922     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(28), '" IS DETECTED.'
+        923     1               C
+        924     1                         IRFNFF = 1
+        925     1               C
+        926     1                         WRITE(IUT6,*)
+        927     1                    *    ' LESROP: FLOW DATA READ IN WILL BE REFINED           '
+        928     1                     ENDIF
+        929                     C
+        930                     C      * #RCAP_CP *
+        931     1                     IF(CBUF(1:8).EQ.CKEYWD(29)) THEN
+        932     1                         WRITE(IUT6,*) ' LESROP:'
+        933     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(29),'" IS DETECTED.'
+        934     1                         IRCAPC=1
+        935     1                     ENDIF
+        936                     C
+        937     1                     IF(CBUF(1:8).EQ.CKEYWD(30)) THEN
+        938     1                         WRITE(IUT6,*) ' LESROP:'
+        939     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(30), '" IS DETECTED.'
+        940     1               C
+        941     1                         CBUF2 = CBUF(9:60)
+        942     1                         READ(CBUF2,*) MER,MPR
+        943     1               C
+        944     1                         WRITE(IUT6,*) ' LESROP: MAX. NUMBER FOR GRID'
+        945     1                         WRITE(IUT6,*) ' LESROP: MER  =',MER
+        946     1                         WRITE(IUT6,*) ' LESROP: MPR  =',MPR
+        947     1                     ENDIF
+        948                     C
+        949     1                     IF(CBUF(1:8).EQ.CKEYWD(31)) THEN
+        950     1                         WRITE(IUT6,*) ' LESROP:'
+        951     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(31), '" IS DETECTED.'
+        952     1               C
+        953     1                         CBUF2 = CBUF(9:60)
+        954     1                         READ(CBUF2,*) MEPR,MPPR
+        955     1               C
+        956     1                         WRITE(IUT6,*) ' LESROP: MAX. NUMBER FOR CNNECTIVITY DATA'
+        957     1                         WRITE(IUT6,*) ' LESROP: MEPR =',MEPR
+        958     1                         WRITE(IUT6,*) ' LESROP: MPPR =',MPPR
+        959     1                     ENDIF
+        960                     C
+        961     1                     IF(CBUF(1:8).EQ.CKEYWD(32)) THEN
+        962     1                         WRITE(IUT6,*) ' LESROP:'
+        963     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(32), '" IS DETECTED.'
+        964     1               C
+        965     1                         CBUF2 = CBUF(9:60)
+        966     1                         READ(CBUF2,*) MBR,MBPR,MDOMR
+        967     1               C
+        968     1                         WRITE(IUT6,*) ' LESROP: MAX. NUMBER FOR B.C. DATA'
+        969     1                         WRITE(IUT6,*) ' LESROP: MBR  =',MBR
+        970     1                         WRITE(IUT6,*) ' LESROP: MBPR =',MBPR
+        971     1                         WRITE(IUT6,*) ' LESROP: MDOMR=',MDOMR
+        972     1                     ENDIF
+        973                     C
+        974     1                     IF(CBUF(1:8).EQ.CKEYWD(33)) THEN
+        975     1                         WRITE(IUT6,*) ' LESROP:'
+        976     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(33), '" IS DETECTED.'
+        977     1               C
+        978     1                         IMONTR = 1
+        979     1                         WRITE(IUT6,*)
+        980     1                    *    ' LESROP: PARAMETER FILE WILL READ AT EVERY STEP'
+        981     1                     ENDIF
+        982                     C
+        983     1                     IF(CBUF(1:8).EQ.CKEYWD(34)) THEN
+        984     1                         WRITE(IUT6,*) ' LESROP:'
+        985     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(34), '" IS DETECTED.'
+        986     1               C
+        987     1                         IAUTO=1
+        988     1                         WRITE(IUT6,*)
+        989     1                    *    ' LESROP: TIME INCREMENT WILL BE DETERMINED AUTOMATICALLY'
+        990     1                     ENDIF
+        991                     C
+        992     1                     IF(CBUF(1:8).EQ.CKEYWD(35)) THEN
+        993     1                         WRITE(IUT6,*) ' LESROP:'
+        994     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(35), '" IS DETECTED.'
+        995     1               C
+        996     1                         ITLOCL=1
+        997     1                         WRITE(IUT6,*)
+        998     1                    *    ' LESROP: LOCAL TIME INCREMENT WILL BE USED'
+        999     1                     ENDIF
+       1000                     C
+       1001     1                     IF(CBUF(1:8).EQ.CKEYWD(36)) THEN
+       1002     1                         WRITE(IUT6,*) ' LESROP:'
+       1003     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(36), '" IS DETECTED.'
+       1004     1               C
+       1005     1                         CBUF2 = CBUF(9:60)
+       1006     1                         READ(CBUF2,*) CFLSET
+       1007     1               C
+       1008     1                         WRITE(IUT6,*)
+       1009     1                    *    ' LESROP: CFLSET :',CLFSET
+       1010     1                     ENDIF
+       1011                     C
+       1012     1                     IF(CBUF(1:8).EQ.CKEYWD(37)) THEN
+       1013     1                         WRITE(IUT6,*) ' LESROP:'
+       1014     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(37), '" IS DETECTED.'
+       1015     1               C
+       1016     1                         CBUF2 = CBUF(9:60)
+       1017     1                         READ(CBUF2,*) ALPHAP
+       1018     1               C
+       1019     2                         IF(ALPHAP.LE.0.0E0 .OR. ALPHAP.GT.1.0E0) THEN
+       1020     2                             WRITE(IUT0,'(A60)')
+       1021     2                             WRITE(IUT0,'(A60)') EREXP1
+       1022     2                             GO TO 999
+       1023     2                         ENDIF
+       1024     1               C
+       1025     1                         WRITE(IUT6,*)
+       1026     1                    *    ' LESROP: ALPHAP :',ALPHAP
+       1027     1                     ENDIF
+       1028                     C
+       1029     1                     IF(CBUF(1:8).EQ.CKEYWD(38)) THEN
+       1030     1                         WRITE(IUT6,*) ' LESROP:'
+       1031     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(38), '" IS DETECTED.'
+       1032     1               C
+       1033     1                         CBUF2 = CBUF(9:60)
+       1034     1                         READ(CBUF2,*) ALPHAV
+       1035     1               C
+       1036     2                         IF(ALPHAV.LE.0.0E0 .OR. ALPHAV.GT.1.0E0) THEN
+       1037     2                             WRITE(IUT0,'(A60)')
+       1038     2                             WRITE(IUT0,'(A60)') EREXP1
+       1039     2                             GO TO 999
+       1040     2                         ENDIF
+       1041     1               C
+       1042     1                         WRITE(IUT6,*)
+       1043     1                    *    ' LESROP: ALPHAV :',ALPHAV
+       1044     1                     ENDIF
+       1045                     C
+       1046     1                     IF(CBUF(1:8).EQ.CKEYWD(39)) THEN
+       1047     1                         WRITE(IUT6,*) ' LESROP:'
+       1048     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(39), '" IS DETECTED.'
+       1049     1               C
+       1050     2                        IF (IALE.NE.0) THEN
+       1051     2                           WRITE(IUT0,*)
+       1052     2                    &' LESROP: THIS OPTION IS NOT AVAILABLE WITH [#USE_ALE] OPTION '
+       1053     2                        ENDIF
+       1054     1               C
+       1055     1                         CBUF2 = CBUF(9:60)
+       1056     1                         READ(CBUF2,*) NFFO
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NDGCOE
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 3  FILL 14
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+       1057     2   s    s                DO 200 I=1,NFFO
+       1058     2   m    s                    READ  (IUT5,*) NDUM
+       1059     2   m    s                    BACKSPACE(IUT5)
+       1060     2   m    s                    READ  (IUT5,*) NDGCOE(I),(COEFFO(J,I),J=0,NDUM)
+       1061     2   m    s                    WRITE (IUT6,'(I6,A3,8E10.2)')
+       1062     2                    *        NDGCOE(I)," : ",(COEFFO(J,I),J=1,NDUM)
+       1063     2   p    s        200     CONTINUE
+       1064     1               C
+       1065     1                         WRITE(IUT6,*)
+       1066     1                    *    ' LESROP: NFFO :',NFFO
+       1067     1                     ENDIF
+       1068                     C
+       1069     1                     IF(CBUF(1:8).EQ.CKEYWD(40)) THEN
+       1070     1                         WRITE(IUT6,*) ' LESROP:'
+       1071     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(40), '" IS DETECTED.'
+       1072     1               C
+       1073     1                         CBUF2 = CBUF(9:60)
+       1074     1                         READ(CBUF2,*) NFRCNT
+       1075     1               C
+       1076     1                         WRITE(IUT6,*)
+       1077     1                    *    ' LESROP: NFRCNT :',NFRCNT
+       1078     1                     ENDIF
+       1079                     C
+       1080     1                     IF(CBUF(1:8).EQ.CKEYWD(41)) THEN
+       1081     1                         WRITE(IUT6,*) ' LESROP:'
+       1082     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(41), '" IS DETECTED.'
+       1083     1               C
+       1084     1                         CBUF2 = CBUF(9:60)
+       1085     1                         READ(CBUF2,*) ALPHAQ
+       1086     1               C
+       1087     2                         IF(ALPHAQ.LT.0.0E0 .OR. ALPHAQ.GT.1.0E0) THEN
+       1088     2                             WRITE(IUT0,'(A60)')
+       1089     2                             WRITE(IUT0,'(A60)') EREXP1
+       1090     2                             GO TO 999
+       1091     2                         ENDIF
+       1092     1               C
+       1093     1                         WRITE(IUT6,*)
+       1094     1                    *    ' LESROP: ALPHAQ :',ALPHAQ
+       1095     1                     ENDIF
+       1096                     C
+       1097     1                     IF(CBUF(1:8).EQ.CKEYWD(42)) THEN
+       1098     1                         WRITE(IUT6,*) ' LESROP:'
+       1099     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(42), '" IS DETECTED.'
+       1100     1               C
+       1101     1                         CBUF2 = CBUF(9:60)
+       1102     1                         READ(CBUF2,*) IDIAGV
+       1103     1               C
+       1104     1               CDEBG
+       1105     1               C         // ALLOW DEBUG MODE: IDIAGV=99 FOR NO RELAXATION
+       1106     2                         IF(IDIAGV.NE.0 .AND. IDIAGV.NE.1.AND.IDIAGV.NE.99) THEN
+       1107     2               CDEBG
+       1108     2                             WRITE(IUT0,'(A60)')
+       1109     2                             WRITE(IUT0,'(A60)') EREXP1
+       1110     2                             GO TO 999
+       1111     2                         ENDIF
+       1112     1               C
+       1113     1                         WRITE(IUT6,*)
+       1114     1                    *    ' LESROP: IDIAGV :',IDIAGV
+       1115     1                     ENDIF
+       1116                     C
+       1117     1                     IF(CBUF(1:8).EQ.CKEYWD(43)) THEN
+       1118     1                         WRITE(IUT6,*) ' LESROP:'
+       1119     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(43), '" IS DETECTED.'
+       1120     1               C
+       1121     1                         CBUF2 = CBUF(9:60)
+       1122     1                         READ(CBUF2,*) THDT3D
+       1123     2                         IF(THDT3D.LT.1.0E0) THEN
+       1124     2                             WRITE(IUT0,'(A60)')
+       1125     2                             WRITE(IUT0,'(A60)') 'THDT3D MUST BE LARGER THAN 1.0'
+       1126     2                             WRITE(IUT0,'(A60)') EREXP1
+       1127     2                             GO TO 999
+       1128     2                         ENDIF
+       1129     1               C
+       1130     1                         WRITE(IUT6,*)
+       1131     1                    *    ' LESROP: THDT3D :',THDT3D
+       1132     1                     ENDIF
+       1133                     C
+       1134     1                     IF(CBUF(1:8).EQ.CKEYWD(44)) THEN
+       1135     1                         WRITE(IUT6,*) ' LESROP:'
+       1136     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(44), '" IS DETECTED.'
+       1137     1               C
+       1138     1                         CBUF2 = CBUF(9:60)
+       1139     1                         READ(CBUF2,*) PLIMIT
+       1140     1               C
+       1141     1                         WRITE(IUT6,*)
+       1142     1                    *    ' LESROP: PLIMIT :',PLIMIT
+       1143     1                     ENDIF
+       1144                     C
+       1145     1                     IF(CBUF(1:8).EQ.CKEYWD(45)) THEN
+       1146     1                         WRITE(IUT6,*) ' LESROP:'
+       1147     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(45), '" IS DETECTED.'
+       1148     1               C
+       1149     1                         JFSPRS=1
+       1150     1                     ENDIF
+       1151                     C
+       1152     1                     IF(CBUF(1:8).EQ.CKEYWD(46)) THEN
+       1153     1                         WRITE(IUT6,*) ' LESROP:'
+       1154     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(46), '" IS DETECTED.'
+       1155     1               C
+       1156     1                         JPRESS=2
+       1157     1                     ENDIF
+       1158                     C
+       1159     1                     IF(CBUF(1:8).EQ.CKEYWD(47)) THEN
+       1160     1                         WRITE(IUT6,*) ' LESROP:'
+       1161     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(47), '" IS DETECTED.'
+       1162     1               C
+       1163     1                         CBUF2 = CBUF(9:60)
+       1164     1                         READ(CBUF2,*) KINIT
+       1165     1                     ENDIF
+       1166                     C
+       1167     1                     IF(CBUF(1:8).EQ.CKEYWD(48)) THEN
+       1168     1                         WRITE(IUT6,*) ' LESROP:'
+       1169     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(48), '" IS DETECTED.'
+       1170     1               C
+       1171     1                         CBUF2 = CBUF(9:60)
+       1172     1                         READ(CBUF2,*) EPINIT
+       1173     1                     ENDIF
+       1174                     C
+       1175     1                     IF(CBUF(1:8).EQ.CKEYWD(49)) THEN
+       1176     1                         WRITE(IUT6,*) ' LESROP:'
+       1177     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(49), '" IS DETECTED.'
+       1178     1               C
+       1179     1                         CBUF2 = CBUF(9:60)
+       1180     1                         READ(CBUF2,*) ALPHAK
+       1181     1                     ENDIF
+       1182                     C
+       1183     1                     IF(CBUF(1:8).EQ.CKEYWD(50)) THEN
+       1184     1                         WRITE(IUT6,*) ' LESROP:'
+       1185     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(50), '" IS DETECTED.'
+       1186     1               C
+       1187     1                         CBUF2 = CBUF(9:60)
+       1188     1                         READ(CBUF2,*) ALPHEO
+       1189     1                     ENDIF
+       1190                     C
+       1191     1                     IF(CBUF(1:8).EQ.CKEYWD(51)) THEN
+       1192     1                         WRITE(IUT6,*) ' LESROP:'
+       1193     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(51), '" IS DETECTED.'
+       1194     1                     ENDIF
+       1195                     C
+       1196     1                     IF(CBUF(1:8).EQ.CKEYWD(52)) THEN
+       1197     1                         WRITE(IUT6,*) ' LESROP:'
+       1198     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(52), '" IS DETECTED.'
+       1199     1               C
+       1200     1                         IFIXFL=1
+       1201     1                     ENDIF
+       1202                     C
+       1203     1                     IF(CBUF(1:8).EQ.CKEYWD(53)) THEN
+       1204     1                         WRITE(IUT6,*) ' LESROP:'
+       1205     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(53), '" IS DETECTED.'
+       1206     1               C
+       1207     1                         CBUF2 = CBUF(9:60)
+       1208     1                         READ(CBUF2,*) GRAV(1),GRAV(2),GRAV(3)
+       1209     1               C
+       1210     1                         WRITE(IUT6,*) ' LESROP: GRAVITY IS SET AS FOLLOWS; '
+       1211     1                         WRITE(IUT6,*) ' LESROP: GX                  =',GRAV(1)
+       1212     1                         WRITE(IUT6,*) ' LESROP: GY                  =',GRAV(2)
+       1213     1                         WRITE(IUT6,*) ' LESROP: GZ                  =',GRAV(3)
+       1214     1               C
+       1215     1                         IGRAV=1
+       1216     1                         GRAV(1)=GRAV(1)/(U000*U000/D000)
+       1217     1                         GRAV(2)=GRAV(2)/(U000*U000/D000)
+       1218     1                         GRAV(3)=GRAV(3)/(U000*U000/D000)
+       1219     1                     ENDIF
+       1220                     C
+       1221     1                     IF(CBUF(1:8).EQ.CKEYWD(54)) THEN
+       1222     1                         WRITE(IUT6,*) ' LESROP:'
+       1223     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(54), '" IS DETECTED.'
+       1224     1               C
+       1225     1                         CBUF2 = CBUF(9:60)
+       1226     1                         READ(CBUF2,*) VELIN0(1),VELIN0(2),VELIN0(3)
+       1227     1                         IVELIN=1
+       1228     1               C
+       1229     1                         WRITE(IUT6,*) ' LESROP: INLET VEL. IS SET AS FOLLOWS; '
+       1230     1                         WRITE(IUT6,*) ' LESROP: U                  =',VELIN0(1)
+       1231     1                         WRITE(IUT6,*) ' LESROP: V                  =',VELIN0(2)
+       1232     1                         WRITE(IUT6,*) ' LESROP: Z                  =',VELIN0(3)
+       1233     1               C
+       1234     1                         VELIN0(1)=VELIN0(1)/U000
+       1235     1                         VELIN0(2)=VELIN0(2)/U000
+       1236     1                         VELIN0(3)=VELIN0(3)/U000
+       1237     1                     ENDIF
+       1238                     C
+       1239     1                     IF(CBUF(1:8).EQ.CKEYWD(55)) THEN
+       1240     1                         WRITE(IUT6,*) ' LESROP:'
+       1241     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(55), '" IS DETECTED.'
+       1242     1               C
+       1243     1                         CBUF2 = CBUF(9:60)
+       1244     1                         READ(CBUF2,*) IPRO
+       1245     2                         IF(IPRO.LT.2.OR.IPRO.GT.MAXPRO) THEN
+       1246     2                             WRITE(IUT0,*) ' LESROP: INVALID PROPERTY-ID: ERROR '
+       1247     2                             IERR=1
+       1248     2                             RETURN
+       1249     2                         ENDIF
+       1250     1                         LPRO(IPRO)=1
+       1251     1                         READ(IUT5,*) (CPRO0(I,IPRO),I=1,9)
+       1252     1                         READ(IUT5,*) (CPRO1(I,IPRO),I=1,4)
+       1253     1                         READ(IUT5,*) (CPRO2(I,IPRO),I=1,4)
+       1254     1                         READ(IUT5,*) (CTREF(I,IPRO),I=1,4)
+       1255     1               C
+       1256     1                         WRITE(IUT6,*)
+       1257     1                         WRITE(IUT6,*)  ' PROPERTY-ID   ' ,          IPRO
+       1258     1                         WRITE(IUT6,*)  ' RHO_0         ' ,  CPRO0(1,IPRO)
+       1259     1                         WRITE(IUT6,*)  ' CP_0          ' ,  CPRO0(2,IPRO)
+       1260     1                         WRITE(IUT6,*)  ' NU_0          ' ,  CPRO0(3,IPRO)
+       1261     1                         WRITE(IUT6,*)  ' LAMBDA_0      ' , (CPRO0(I,IPRO),I=4,9)
+       1262     1                         WRITE(IUT6,*)  ' COEF. (1)     ' , (CPRO1(I,IPRO),I=1,4)
+       1263     1                         WRITE(IUT6,*)  ' COEF. (2)     ' , (CPRO2(I,IPRO),I=1,4)
+       1264     1                         WRITE(IUT6,*)  ' C-TREF.       ' , (CTREF(I,IPRO),I=1,4)
+       1265     1               C
+       1266     1                         CP000=(U000*U000/T000)
+       1267     1                         VS000=(D000*U000)
+       1268     1                         CD000=(RHO000*U000*U000*U000*D000/T000)
+       1269     1               C
+       1270     1                         CPRO0(1,IPRO)=CPRO0(1,IPRO)/RHO000
+       1271     1                         CPRO0(2,IPRO)=CPRO0(2,IPRO)/CP000
+       1272     1                         CPRO0(3,IPRO)=CPRO0(3,IPRO)/VS000
+       1273     1                         CPRO0(4,IPRO)=CPRO0(4,IPRO)/CD000
+       1274     1                         CPRO0(5,IPRO)=CPRO0(5,IPRO)/CD000
+       1275     1                         CPRO0(6,IPRO)=CPRO0(6,IPRO)/CD000
+       1276     1                         CPRO0(7,IPRO)=CPRO0(7,IPRO)/CD000
+       1277     1                         CPRO0(8,IPRO)=CPRO0(8,IPRO)/CD000
+       1278     1                         CPRO0(9,IPRO)=CPRO0(9,IPRO)/CD000
+       1279     1               C
+       1280     1                         CPRO1(1,IPRO)=CPRO1(1,IPRO)/(RHO000/T000)
+       1281     1                         CPRO1(2,IPRO)=CPRO1(2,IPRO)/(CP000 /T000)
+       1282     1                         CPRO1(3,IPRO)=CPRO1(3,IPRO)/(VS000 /T000)
+       1283     1                         CPRO1(4,IPRO)=CPRO1(4,IPRO)/(CD000 /T000)
+       1284     1               C
+       1285     1                         CPRO2(1,IPRO)=CPRO2(1,IPRO)/(RHO000/T000/T000)
+       1286     1                         CPRO2(2,IPRO)=CPRO2(2,IPRO)/(CP000 /T000/T000)
+       1287     1                         CPRO2(3,IPRO)=CPRO2(3,IPRO)/(VS000 /T000/T000)
+       1288     1                         CPRO2(4,IPRO)=CPRO2(4,IPRO)/(CD000 /T000/T000)
+       1289     1               C
+       1290     1                         CTREF(1,IPRO)=(CTREF(1,IPRO)-TREF)/T000
+       1291     1                         CTREF(2,IPRO)=(CTREF(2,IPRO)-TREF)/T000
+       1292     1                         CTREF(3,IPRO)=(CTREF(3,IPRO)-TREF)/T000
+       1293     1                         CTREF(4,IPRO)=(CTREF(4,IPRO)-TREF)/T000
+       1294     1               C
+       1295     1                     ENDIF
+       1296                     C
+       1297     1                     IF(CBUF(1:8).EQ.CKEYWD(56)) THEN
+       1298     1                         WRITE(IUT6,*) ' LESROP:'
+       1299     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(56), '" IS DETECTED.'
+       1300     1               C
+       1301     1                         CBUF2 = CBUF(9:60)
+       1302     1                         READ(CBUF2,*) EPSK
+       1303     1               C
+       1304     1                     ENDIF
+       1305                     C
+       1306     1                     IF(CBUF(1:8).EQ.CKEYWD(57)) THEN
+       1307     1                         WRITE(IUT6,*) ' LESROP:'
+       1308     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(57), '" IS DETECTED.'
+       1309     1               C
+       1310     1                         CBUF2 = CBUF(9:60)
+       1311     1                         READ(CBUF2,*) EPSEP
+       1312     1               C
+       1313     1                     ENDIF
+       1314                     C
+       1315     1                     IF(CBUF(1:8).EQ.CKEYWD(58)) THEN
+       1316     1                         WRITE(IUT6,*) ' LESROP:'
+       1317     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(58), '" IS DETECTED.'
+       1318     1               C
+       1319     1                         CBUF2 = CBUF(9:60)
+       1320     1                         READ(CBUF2,*) EPSREV
+       1321     1               C
+       1322     2                         IF(EPSREV.LE.0.0E0) THEN
+       1323     2                             WRITE(IUT0,'(A60)')
+       1324     2                             WRITE(IUT0,'(A60)') EREXP1
+       1325     2                             GO TO 999
+       1326     2                         ENDIF
+       1327     1               C
+       1328     1                     ENDIF
+       1329                     C
+       1330     1                     IF(CBUF(1:8).EQ.CKEYWD(59)) THEN
+       1331     1                         WRITE(IUT6,*) ' LESROP:'
+       1332     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(59), '" IS DETECTED.'
+       1333     1               C
+       1334     1                         CBUF2 = CBUF(9:60)
+       1335     1                         READ(CBUF2,*) EPSREP
+       1336     1               C
+       1337     2                         IF(EPSREP.LE.0.0E0) THEN
+       1338     2                             WRITE(IUT0,'(A60)')
+       1339     2                             WRITE(IUT0,'(A60)') EREXP1
+       1340     2                             GO TO 999
+       1341     2                         ENDIF
+       1342     1               C
+       1343     1                     ENDIF
+       1344                     C
+       1345     1                     IF(CBUF(1:8).EQ.CKEYWD(60)) THEN
+       1346     1                         WRITE(IUT6,*) ' LESROP:'
+       1347     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(60), '" IS DETECTED.'
+       1348     1               C
+       1349     1                         CBUF2 = CBUF(9:60)
+       1350     1                         READ(CBUF2,*) EPSREK
+       1351     1               C
+       1352     1                     ENDIF
+       1353                     C
+       1354     1                     IF(CBUF(1:8).EQ.CKEYWD(61)) THEN
+       1355     1                         WRITE(IUT6,*) ' LESROP:'
+       1356     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(61), '" IS DETECTED.'
+       1357     1               C
+       1358     1                         CBUF2 = CBUF(9:60)
+       1359     1                         READ(CBUF2,*) EPSREO
+       1360     1               C
+       1361     1                     ENDIF
+       1362                     C
+       1363     1                     IF(CBUF(1:8).EQ.CKEYWD(62)) THEN
+       1364     1                         WRITE(IUT6,*) ' LESROP:'
+       1365     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(62), '" IS DETECTED.'
+       1366     1               C
+       1367     1                         CBUF2 = CBUF(9:60)
+       1368     1                         READ(CBUF2,*) ALPHAT
+       1369     1               C
+       1370     2                         IF(ALPHAT.LE.0.0E0 .OR. ALPHAT.GT.1.0E0) THEN
+       1371     2                             WRITE(IUT0,'(A60)')
+       1372     2                             WRITE(IUT0,'(A60)') EREXP1
+       1373     2                             GO TO 999
+       1374     2                         ENDIF
+       1375     1               C
+       1376     1                     ENDIF
+       1377                     C
+       1378     1                     IF(CBUF(1:8).EQ.CKEYWD(63)) THEN
+       1379     1                         WRITE(IUT6,*) ' LESROP:'
+       1380     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(63), '" IS DETECTED.'
+       1381     1               C
+       1382     1                         CBUF2 = CBUF(9:60)
+       1383     1                         READ(CBUF2,*) EPSQ
+       1384     1               C
+       1385     2                         IF(EPSQ.LE.0.0E0) THEN
+       1386     2                             WRITE(IUT0,'(A60)')
+       1387     2                             WRITE(IUT0,'(A60)') EREXP1
+       1388     2                             GO TO 999
+       1389     2                         ENDIF
+       1390     1               C
+       1391     1                     ENDIF
+       1392                     C
+       1393     1                     IF(CBUF(1:8).EQ.CKEYWD(64)) THEN
+       1394     1                         WRITE(IUT6,*) ' LESROP:'
+       1395     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(64), '" IS DETECTED.'
+       1396     1               C
+       1397     1                         CBUF2 = CBUF(9:60)
+       1398     1                         READ(CBUF2,*) EPSREQ
+       1399     1               C
+       1400     2                         IF(EPSREQ.LE.0.0E0) THEN
+       1401     2                             WRITE(IUT0,'(A60)')
+       1402     2                             WRITE(IUT0,'(A60)') EREXP1
+       1403     2                             GO TO 999
+       1404     2                         ENDIF
+       1405     1               C
+       1406     1                     ENDIF
+       1407                     C
+       1408     1                     IF(CBUF(1:8).EQ.CKEYWD(65)) THEN
+       1409     1                         WRITE(IUT6,*) ' LESROP:'
+       1410     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(65), '" IS DETECTED.'
+       1411     1               C
+       1412     1                         CBUF2 = CBUF(9:60)
+       1413     1                         READ(CBUF2,*) NS
+       1414     1               C
+       1415     2                         IF(NS.LT.1.OR.NS.GT.32) THEN
+       1416     2                             WRITE(IUT0,'(A60)')
+       1417     2                             WRITE(IUT0,'(A60)') EREXP1
+       1418     2                             GO TO 999
+       1419     2                         ENDIF
+       1420     1               C
+       1421     1                         WRITE(IUT6,*) ' LESROP: NS PARAMETER IN IDR METHOD',
+       1422     1                    &                  NS
+       1423     1                     ENDIF
+       1424                     C
+       1425     1                     IF(CBUF(1:8).EQ.CKEYWD(66)) THEN
+       1426     1                         WRITE(IUT6,*) ' LESROP:'
+       1427     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(66), '" IS DETECTED.'
+       1428     1               C
+       1429     1                         CBUF2 = CBUF(9:60)
+       1430     1                         READ(CBUF2,*) NL
+       1431     1               C
+       1432     2                         IF(NL.LT.1.OR.NL.GT.32) THEN
+       1433     2                             WRITE(IUT0,'(A60)')
+       1434     2                             WRITE(IUT0,'(A60)') EREXP1
+       1435     2                             GO TO 999
+       1436     2                         ENDIF
+       1437     1               C
+       1438     1                         WRITE(IUT6,*) ' LESROP: NL PARAMETER IN IDR METHOD',
+       1439     1                    &                  NL
+       1440     1                     ENDIF
+       1441                     C
+       1442     1                     IF(CBUF(1:8).EQ.CKEYWD(67)) THEN
+       1443     1                        WRITE(IUT6,*) ' LESROP:'
+       1444     1                        WRITE(IUT6,*) ' LESROP: "',CKEYWD(67), '" IS DETECTED.'
+       1445     1               C
+       1446     2                        IF (NFFO.NE.0) THEN
+       1447     2                           WRITE(IUT0,*)
+       1448     2                    &' LESROP: THIS OPTION IS NOT AVAILABLE WITH [#FFOBJCT] OPTION '
+       1449     2                        ENDIF
+       1450     1               C
+       1451     1                        CBUF2 = CBUF(9:60)
+       1452     1                        READ(CBUF2,*) IALE,NMAXA,EPSA,STPWR,NMODE,AOBJ,TOBJ
+       1453     1               C
+       1454     2                        IF (IALE.EQ.1) THEN
+       1455     3                           IF (IRCAPC.EQ.0) THEN
+       1456     3                              WRITE(IUT0,*)
+       1457     3                    &' LESROP: [#RCAP_CP] OPTION MUST BE SET ON AHEAD'
+       1458     3                              GO TO 999
+       1459     3                           ENDIF
+       1460     2                        ELSE IF (IALE.EQ.2) THEN
+       1461     3                           IF (NMODE.LE.0.OR.AOBJ .LT.0.0E0.OR.TOBJ.LE.0.0E0) THEN
+       1462     3                              WRITE(IUT0,'(A60)')
+       1463     3                              WRITE(IUT0,'(A60)') EREXP1
+       1464     3                              GO TO 999
+       1465     3                           ENDIF
+       1466     2                        ELSE IF (IALE.EQ.3) THEN
+       1467     2                           WRITE(IUT0,*)
+       1468     2                    &' LESROP: THIS ALE MODE IS NOT AVALABLE IN THIS VERSION '
+       1469     2                           GO TO 999
+       1470     2                        ELSE IF (IALE.LT.1.OR.IALE.GT.3) THEN
+       1471     2                           WRITE(IUT0,'(A60)')
+       1472     2                           WRITE(IUT0,'(A60)') EREXP1
+       1473     2                           GO TO 999
+       1474     2                        ENDIF
+       1475     1               C
+       1476     2                        IF(STPWR.LT.0.0E0.OR.NMAXA.LE.0.OR.EPSA.LE.0.0E0) THEN
+       1477     2                           WRITE(IUT0,'(A60)')
+       1478     2                           WRITE(IUT0,'(A60)') EREXP1
+       1479     2                           GO TO 999
+       1480     2                        ENDIF
+       1481     1                        EPSREA=EPSA
+       1482     1               C
+       1483     1                        WRITE(IUT6,*)
+       1484     1                    &   ' LESROP: ALE METHOD WILL BE USED FOR MOVING MESH '
+       1485     1                        WRITE(IUT6,*) ' LESROP: MODE: IALE         = ', IALE
+       1486     1                        WRITE(IUT6,*) ' LESROP: NUM. OF ITERATIONS = ', NMAXA
+       1487     1                        WRITE(IUT6,*) ' LESROP: CONV. CRITERIA     = ', EPSA
+       1488     1                        WRITE(IUT6,*) ' LESROP: STIFFENING POWER   = ', STPWR
+       1489     2                        IF (IALE.EQ.2) THEN
+       1490     2                           WRITE(IUT6,*) ' LESROP: PARAM MODE         = ', NMODE
+       1491     2                           WRITE(IUT6,*) ' LESROP: AMP. OF OBJECT     = ', AOBJ
+       1492     2                           WRITE(IUT6,*) ' LESROP: CYC. OF OBJECT     = ', TOBJ
+       1493     2                        ENDIF
+       1494     1               C
+       1495     1                        AOBJ=AOBJ/D000
+       1496     1                        TOBJ=TOBJ*U000/D000
+       1497     1               C
+       1498     1                     ENDIF
+       1499                     C
+       1500     1                     IF(CBUF(1:8).EQ.CKEYWD(68)) THEN
+       1501     1                        WRITE(IUT6,*) ' LESROP:'
+       1502     1                        WRITE(IUT6,*) ' LESROP: "',CKEYWD(68), '" IS DETECTED.'
+       1503     1                        MRSALE=1
+       1504     1                     ENDIF
+       1505                     C
+       1506     1                     IF(CBUF(1:8).EQ.CKEYWD(69)) THEN
+       1507     1                        WRITE(IUT6,*) ' LESROP:'
+       1508     1                        WRITE(IUT6,*) ' LESROP: "',CKEYWD(69), '" IS DETECTED.'
+       1509     1                        IWRTIM=1
+       1510     1                     ENDIF
+       1511                     C
+       1512     1                     IF(CBUF(1:8).EQ.CKEYWD(70)) THEN
+       1513     1                        WRITE(IUT6,*) ' LESROP:'
+       1514     1                        WRITE(IUT6,*) ' LESROP: "',CKEYWD(70), '" IS DETECTED.'
+       1515     1                        IALEDB=1
+       1516     1                     ENDIF
+       1517                     C
+       1518     1                     IF(CBUF(1:8).EQ.CKEYWD(71)) THEN
+       1519     1                        WRITE(IUT6,*) ' LESROP:'
+       1520     1                        WRITE(IUT6,*) ' LESROP: "',CKEYWD(71), '" IS DETECTED.'
+       1521     1               C
+       1522     1                        CBUF2 = CBUF(9:60)
+       1523     1                        READ(CBUF2,*) NLYNG,EYNG
+       1524     1               C
+       1525     2                        IF(NLYNG.LT.0.OR.EYNG.LE.0.0E0) THEN
+       1526     2                           WRITE(IUT0,'(A60)')
+       1527     2                           WRITE(IUT0,'(A60)') EREXP1
+       1528     2                           GO TO 999
+       1529     2                        ENDIF
+       1530     1               C
+       1531     1                        WRITE(IUT6,*) ' LESROP: NUM. OF LAYER  = ', NLYNG
+       1532     1                        WRITE(IUT6,*) ' LESROP: YOUNGS MODULUS = ', EYNG
+       1533     1                     ENDIF
+       1534                     C
+       1535     1                     IF(CBUF(1:8).EQ.CKEYWD(72)) THEN
+       1536     1                         WRITE(IUT6,*) ' LESROP:'
+       1537     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(72), '" IS DETECTED.'
+       1538     1               C
+       1539     1                         JSPADV = 1
+       1540     1               C
+       1541     1                         WRITE(IUT6,*) ' LESROP: SURFACE PRESSURE WILL '
+       1542     1                         WRITE(IUT6,*) ' BE WRITTEN IN ADVENTURE FORMAT '
+       1543     1                     ENDIF
+       1544                     C
+       1545     1                     IF(CBUF(1:8).EQ.CKEYWD(73)) THEN
+       1546     1                         WRITE(IUT6,*) ' LESROP:'
+       1547     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(73), '" IS DETECTED.'
+       1548     1               C
+       1549     1                         CBUF2 = CBUF(9:60)
+       1550     1                         READ(CBUF2,*) IWRITE
+       1551     1               C
+       1552     1                         WRITE(IUT6,*) ' LESROP: GF-WRITE-MODE IWRITE IBCIO =',IWRITE
+       1553     2                         IF(IWRITE.EQ.1) THEN
+       1554     2                             WRITE(IUT6,*) ' LESROP: ASCII-MODE'
+       1555     2                         ELSE IF(IBCIO.EQ.2) THEN
+       1556     2                             WRITE(IUT6,*) ' LESROP: UNFORMATED-MODE'
+       1557     2                         ELSE IF(IBCIO.EQ.3) THEN
+       1558     2                             WRITE(IUT6,*) ' LESROP: BINARY MODE'
+       1559     2                         ELSE
+       1560     2                             IWRITE=2
+       1561     2                             WRITE(IUT6,*) ' LESROP: UNFORMATED-MODE'
+       1562     2                         ENDIF
+       1563     1               C
+       1564     1                     ENDIF
+       1565                     C
+       1566     1                     IF(CBUF(1:8).EQ.CKEYWD(74)) THEN
+       1567     1                         WRITE(IUT6,*) ' LESROP:'
+       1568     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(74), '" IS DETECTED.'
+       1569     1               C
+       1570     1                         CBUF2 = CBUF(9:60)
+       1571     1                         READ(CBUF2,*) EPSMID
+       1572     1               C
+       1573     2                         IF(EPSMID.LE.0.0E0) THEN
+       1574     2                             WRITE(IUT0,'(A60)')
+       1575     2                             WRITE(IUT0,'(A60)') EREXP1
+       1576     2                             GO TO 999
+       1577     2                         ENDIF
+       1578     1               C
+       1579     1                     ENDIF
+       1580                     C
+       1581     1                     IF(CBUF(1:8).EQ.CKEYWD(77)) THEN
+       1582     1                         WRITE(IUT6,*) ' LESROP:'
+       1583     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(77), '" IS DETECTED.'
+       1584     1               C
+       1585     1                         CBUF2 = CBUF(9:60)
+       1586     1                         READ(CBUF2,*) ISOLV
+       1587     2                         IF(ISOLV.NE.1 .AND. ISOLV.NE.2) THEN
+       1588     2                             WRITE(IUT0,'(A60)')
+       1589     2                             WRITE(IUT0,'(A60)') EREXP1
+       1590     2                             GO TO 999
+       1591     2                         ENDIF
+       1592     1                     ENDIF
+       1593                     C
+       1594     1                     IF(CBUF(1:8).EQ.CKEYWD(78)) THEN
+       1595     1                         WRITE(IUT6,*) ' LESROP:'
+       1596     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(78), '" IS DETECTED.'
+       1597     1               C
+       1598     1                         CBUF2 = CBUF(9:60)
+       1599     1                         READ(CBUF2,*) DIVESC
+       1600     1               C
+       1601     2                         IF(EPSMID.LE.0.0E0) THEN
+       1602     2                             WRITE(IUT0,'(A60)')
+       1603     2                             WRITE(IUT0,'(A60)') EREXP1
+       1604     2                             GO TO 999
+       1605     2                         ENDIF
+       1606     1               C
+       1607     1                         WRITE(IUT6,*) ' LESROP: DIVESC = ', DIVESC
+       1608     1               C
+       1609     1                     ENDIF
+       1610                     C
+       1611                     C
+       1612     1                     IF(CBUF(1:8).EQ.CKEYWD(79)) THEN
+       1613     1                         WRITE(IUT6,*) ' LESROP:'
+       1614     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(79), '" IS DETECTED.'
+       1615     1               C
+       1616     1                         CBUF2 = CBUF(9:60)
+       1617     1                         READ(CBUF2,*) IMRF,OMEGA2,AX,AY,AZ,ORGX,ORGY,ORGZ
+       1618     2                         IF(IMRF.LT.2 .AND. IMRF.GT.MMRF) THEN
+       1619     2                             WRITE(IUT0,'(A60)')
+       1620     2                             WRITE(IUT0,'(A60)') EREXP1
+       1621     2                             GO TO 999
+       1622     2                         ENDIF
+       1623     1               C
+       1624     2                         IF(AZ.NE.0.0E0) THEN
+       1625     2                             WRITE(IUT0,'(A60)') 'CURRENT VERSION DOES NOT SUPPORT '
+       1626     2                             WRITE(IUT0,'(A60)') 'Z-COMPONENT FOR JITEN-AXIS       '
+       1627     2                             WRITE(IUT0,'(A60)') 'SET 0.0E0 FOR AZ                 '
+       1628     2                             WRITE(IUT0,'(A60)') EREXP1
+       1629     2                             GO TO 999
+       1630     2                         ENDIF
+       1631     1               C
+       1632     2                         IF(ORGX.NE.0.0E0 .OR. ORGY.NE.0.0E0 .OR. ORGZ.NE.0.0E0) THEN
+       1633     2                             WRITE(IUT0,'(A60)') 'CURRENT VERSION DOES NOT SUPPORT '
+       1634     2                             WRITE(IUT0,'(A60)') 'OFF-SET OF JITEN-AXIS            '
+       1635     2                             WRITE(IUT0,'(A60)') 'SET 0.0 0.0 0.0 FOR ORGX,Y,Z     '
+       1636     2                             WRITE(IUT0,'(A60)') EREXP1
+       1637     2                             GO TO 999
+       1638     2                         ENDIF
+       1639     1               C
+       1640     1                         AA = SQRT(AX*AX+AY*AY+AZ*AZ)
+       1641     1                         OMGMRF(  IMRF) = OMEGA2/(U000/D000)
+       1642     1                         AMRF  (1,IMRF) = AX/AA
+       1643     1                         AMRF  (2,IMRF) = AY/AA
+       1644     1                         AMRF  (3,IMRF) = AZ/AA
+       1645     1                         ORGMRF(1,IMRF) = ORGX
+       1646     1                         ORGMRF(2,IMRF) = ORGY
+       1647     1                         ORGMRF(3,IMRF) = ORGZ
+       1648     1               C
+       1649     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(79), '" IS DETECTED.'
+       1650     1                         WRITE(IUT6,*) ' LESROP: ID          :',IMRF
+       1651     1                         WRITE(IUT6,*) ' LESROP: OMEGA2      :',OMGMRF(IMRF)
+       1652     1                         WRITE(IUT6,*) ' LESROP: DIR. OF AXIS:',(  AMRF(I,IMRF),I=1,3)
+       1653     1                         WRITE(IUT6,*) ' LESROP: ORG. OF AXIS:',(ORGMRF(I,IMRF),I=1,3)
+       1654     1                     ENDIF
+       1655                     C
+       1656     1                     IF(CBUF(1:8).EQ.CKEYWD(80)) THEN
+       1657     1                         WRITE(IUT6,*) ' LESROP:'
+       1658     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(80), '" IS DETECTED.'
+       1659     1               C
+       1660     1                         IDSM = 1
+       1661     1               C
+       1662     1                         WRITE(IUT6,*) ' LESROP: DSM IN LES3C WILL BE USED '
+       1663     1                     ENDIF
+       1664                     C
+       1665     1                     IF(CBUF(1:8).EQ.CKEYWD(81)) THEN
+       1666     1                         WRITE(IUT6,*) ' LESROP:'
+       1667     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(81), '" IS DETECTED.'
+       1668     1               C
+       1669     1                         CBUF2 = CBUF(9:60)
+       1670     1                         READ(CBUF2,*) NBLKX,NBLKY,NBLKZ
+       1671     1               C
+       1672     1                         WRITE(IUT6,*) ' LESROP: NBLKX      =',NBLKX
+       1673     1                         WRITE(IUT6,*) ' LESROP: NBLKY      =',NBLKY
+       1674     1                         WRITE(IUT6,*) ' LESROP: NBLKZ      =',NBLKZ
+       1675     1               C
+       1676     1                     ENDIF
+       1677                     C
+       1678                     C
+       1679     1                     IF(CBUF(1:8).EQ.CKEYWD(82)) THEN
+       1680     1                         WRITE(IUT6,*) ' LESROP:'
+       1681     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(82), '" IS DETECTED.'
+       1682     1               C
+       1683     1                         JWRTOS = 1
+       1684     1               C
+       1685     1                         WRITE(IUT6,*) ' LESROP: OVERSET DATA WILL WRITTEN'
+       1686     1                     ENDIF
+       1687                     C
+       1688     1                     IF(CBUF(1:8).EQ.CKEYWD(83)) THEN
+       1689     1                        WRITE(IUT6,*) ' LESROP:'
+       1690     1                        WRITE(IUT6,*) ' LESROP: "',CKEYWD(83), '" IS DETECTED.'
+       1691     1               C
+       1692     1                        CBUF2 = CBUF(9:60)
+       1693     1                        READ(CBUF2,*) IVOF,NSCYC,RHOF2,VISCM2,NMAXVF,EPSVF
+       1694     1               C
+       1695     2                        IF(NSCYC.LT.1) THEN
+       1696     2                           WRITE(IUT0,'(A60)')
+       1697     2                           WRITE(IUT0,'(A60)') EREXP1
+       1698     2                           GO TO 999
+       1699     2                        ENDIF
+       1700     1               C
+       1701     2                        IF(IVOF.LT.1.OR.IVOF.GT.2) THEN
+       1702     2                           WRITE(IUT0,'(A60)')
+       1703     2                           WRITE(IUT0,'(A60)') EREXP1
+       1704     2                           GO TO 999
+       1705     2                        ENDIF
+       1706     1               C
+       1707     2                        IF(RHOF2.LT.0.0E0.OR.VISCM2.LT.0.0E0) THEN
+       1708     2                           WRITE(IUT0,'(A60)')
+       1709     2                           WRITE(IUT0,'(A60)') EREXP1
+       1710     2                           GO TO 999
+       1711     2                        ENDIF
+       1712     1               C
+       1713     2                        IF(NMAXVF.LE.0.OR.EPSVF.LE.0.0E0) THEN
+       1714     2                           WRITE(IUT0,'(A60)')
+       1715     2                           WRITE(IUT0,'(A60)') EREXP1
+       1716     2                           GO TO 999
+       1717     2                        ENDIF
+       1718     1                        EPSRVF=EPSVF
+       1719     1               C
+       1720     1                        WRITE(IUT6,*)
+       1721     1                    *   ' LESROP: MODE: IVOF                          = ', IVOF
+       1722     1                        WRITE(IUT6,*)
+       1723     1                    *   ' LESROP: NUMBER OF SUBCYCLE                  = ', NSCYC
+       1724     1                        WRITE(IUT6,*)
+       1725     1                    *   ' LESROP: DENSITY OF SECOND FLUID             = ', RHOF2
+       1726     1                        WRITE(IUT6,*)
+       1727     1                    *   ' LESROP: MOLECULAR VISCOSITY OF SECOND FLUID = ', VISCM2
+       1728     1                        WRITE(IUT6,*)
+       1729     1                    *   ' LESROP: NUM. OF ITERATIONS                  = ', NMAXVF
+       1730     1                        WRITE(IUT6,*)
+       1731     1                    *   ' LESROP: CONV. CRITERIA                      = ', EPSVF
+       1732     1               C
+       1733     1                        RHOF2 =RHOF2 /RHO000
+       1734     1                        VISCM2=VISCM2/(U000*D000)
+       1735     1               C
+       1736     1                     ENDIF
+       1737                     C
+       1738     1                     IF(CBUF(1:8).EQ.CKEYWD(84)) THEN
+       1739     1                        WRITE(IUT6,*) ' LESROP:'
+       1740     1                        WRITE(IUT6,*) ' LESROP: "',CKEYWD(84), '" IS DETECTED.'
+       1741     1               C
+       1742     1                         CBUF2 = CBUF(9:60)
+       1743     1                         READ(CBUF2,*) PRT
+       1744     1               C
+       1745     1                         WRITE(IUT6,*) ' LESRO: TURABULENT PRANTL NUMBER =',PRT
+       1746     1               C
+       1747     2                         IF(PRT.LE.0) THEN
+       1748     2                            WRITE(IUT0,'(A60)')
+       1749     2                            WRITE(IUT0,'(A60)') EREXP1
+       1750     2                            GO TO 999
+       1751     2                         ENDIF
+       1752     1               C
+       1753     1                     ENDIF
+       1754                     C
+       1755     1                     IF(CBUF(1:8).EQ.CKEYWD(85)) THEN
+       1756     1                         WRITE(IUT6,*) ' LESROP:'
+       1757     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(83), '" IS DETECTED.'
+       1758     1               C
+       1759     1                         CBUF2 = CBUF(9:60)
+       1760     1                         READ(CBUF2,*) IRFNB, XRMIN, YRMIN, ZRMIN, XRMAX, YRMAX, ZRMAX
+       1761     1                         XRFMIN(IRFNB)=XRMIN
+       1762     1                         XRFMAX(IRFNB)=XRMAX
+       1763     1               
+       1764     1                         YRFMIN(IRFNB)=YRMIN
+       1765     1                         YRFMAX(IRFNB)=YRMAX
+       1766     1               
+       1767     1                         ZRFMIN(IRFNB)=ZRMIN
+       1768     1                         ZRFMAX(IRFNB)=ZRMAX
+       1769     1                         WRITE(IUT6,*) "    BOUNDING BOX: "
+       1770     1                         WRITE(IUT6,*) "        ",
+       1771     1                    *         XRFMIN(IRFNB), YRFMIN(IRFNB), ZRFMIN(IRFNB)
+       1772     1                         WRITE(IUT6,*) "        ",
+       1773     1                    *         XRFMAX(IRFNB), YRFMAX(IRFNB), ZRFMAX(IRFNB)
+       1774     1               C
+       1775     1                         IRFBOX=1
+       1776     1               C
+       1777     1                     ENDIF
+       1778                     C
+       1779     1                     IF(CBUF(1:8).EQ.CKEYWD(86)) THEN
+       1780     1                         WRITE(IUT6,*) ' LESROP:'
+       1781     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(84), '" IS DETECTED.'
+       1782     1               C
+       1783     2                         IF (NGRID.NE.-2) THEN
+       1784     2                            WRITE(IUT0,*)' LESROP: THIS OPTION IS NOT AVALABLE'
+       1785     2                            WRITE(IUT0,*)' BECAUSE NGRID IS NOT -2'
+       1786     2                            GO TO 999
+       1787     2                         ENDIF
+       1788     1               C
+       1789     1                         CBUF2 = CBUF(9:60)
+       1790     1                         READ(CBUF2,*) NLAYER(1), NLAYER(2), NLAYER(3), NLAYER(4)
+       1791     1               C
+       1792     1                     ENDIF
+       1793                     C
+       1794     1                     IF(CBUF(1:8).EQ.CKEYWD(87)) THEN
+       1795     1                         WRITE(IUT6,*) ' LESROP:'
+       1796     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(85), '" IS DETECTED.'
+       1797     1               C
+       1798     2                         IF (NGRID.NE.-2) THEN
+       1799     2                            WRITE(IUT0,*)' LESROP: THIS OPTION IS NOT AVALABLE'
+       1800     2                            WRITE(IUT0,*)' BECAUSE NGRID IS NOT -2'
+       1801     2                            GO TO 999
+       1802     2                         ENDIF
+       1803     1               C
+       1804     1                         CBUF2 = CBUF(9:60)
+       1805     1                         READ(CBUF2,*) NLAYRT(1), NLAYRT(2), NLAYRT(3), NLAYRT(4)
+       1806     1               C
+       1807     1                     ENDIF
+       1808                     C
+       1809     1                     IF(CBUF(1:8).EQ.CKEYWD(88)) THEN
+       1810     1                         WRITE(IUT6,*) ' LESROP:'
+       1811     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(86), '" IS DETECTED.'
+       1812     1               C
+       1813     1                         JSSMAP=1
+       1814     1               C
+       1815     1                         CBUF2 = CBUF(9:60)
+       1816     1                         READ(CBUF2,*) NUMSSB(1),NUMSSB(2),NUMSSB(3),NOUTSS,NITRSS,
+       1817     1                    *                  CODSSB(1),CODSSB(2),CODSSB(3),CODSSB(4)
+       1818     2                         IF(BTDCOE(1).LT.0.0E0) THEN
+       1819     2                             WRITE(IUT0,'(A60)')
+       1820     2                             WRITE(IUT0,'(A60)') EREXP1
+       1821     2                             GO TO 999
+       1822     2                         ENDIF
+       1823     1               C
+       1824     1                         WRITE(IUT6,*)
+       1825     1                         WRITE(IUT6,*) ' LESROP: PARAMETERS OF SOUND SOURCE BOX'
+       1826     1                         WRITE(IUT6,*) ' LESROP: NX                 ', NUMSSB(1)
+       1827     1                         WRITE(IUT6,*) ' LESROP: NY                 ', NUMSSB(2)
+       1828     1                         WRITE(IUT6,*) ' LESROP: NZ                 ', NUMSSB(3)
+       1829     1                         WRITE(IUT6,*) ' LESROP: OUTPUT INTERVAL    ', NOUTSS
+       1830     1                         WRITE(IUT6,*) ' LESROP: NUM. OF TEST-FILTER', NITRSS
+       1831     1                         WRITE(IUT6,*) ' LESROP: X0                 ', CODSSB(1)
+       1832     1                         WRITE(IUT6,*) ' LESROP: Y0                 ', CODSSB(2)
+       1833     1                         WRITE(IUT6,*) ' LESROP: Z0                 ', CODSSB(3)
+       1834     1                         WRITE(IUT6,*) ' LESROP: GRID SIZE          ', CODSSB(4)
+       1835     1                         WRITE(IUT6,*)
+       1836     1                     ENDIF
+       1837                     C
+       1838     1                     IF(CBUF(1:8).EQ.CKEYWD(89)) THEN
+       1839     1                         WRITE(IUT6,*) ' LESROP:'
+       1840     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(89), '" IS DETECTED.'
+       1841     1               C
+       1842     1                         IRFNFT = 1
+       1843     1               C
+       1844     1                         ICS=0
+       1845     1                         ICE=0
+       1846     2                         DO 2000 I=9,60
+       1847     3                            IF (ICS.EQ.0.AND.CBUF(I:I).NE.' ') THEN
+       1848     3                               ICS=I
+       1849     3                               GOTO 2000
+       1850     3                            ENDIF
+       1851     3                            IF (ICS.GT.0.AND.CBUF(I:I).EQ.' ') THEN
+       1852     3                               ICE=I-1
+       1853     3                               GOTO 2010
+       1854     3                            ENDIF
+       1855     2                2000     CONTINUE
+       1856     1                2010     CONTINUE
+       1857     1               C
+       1858     1                         NC=ICE-ICS+1
+       1859     1                         FILECD(1:NC) = CBUF(ICS:ICE)
+       1860     1               C
+       1861     1                         CALL RFNAME(FILECD,FILECR,IUT0,IERR)
+       1862     2                         IF(IPART.GE.1) THEN
+       1863     2                            CALL MFNAME(FILECD,FILE,IPART,IUT0,IERR)
+       1864     2                            FILECD = FILE
+       1865     2                            CALL MFNAME(FILECR,FILE,IPART,IUT0,IERR)
+       1866     2                            FILECR = FILE
+       1867     2                         ENDIF
+       1868     1                         IF (IERR.NE.0) GOTO 999
+       1869     1               C
+       1870     1                         WRITE(IUT6,'(A29,A52)') ' LESROP: REVOCAP CAD FILE = ',FILECD
+       1871     1               C
+       1872     1                     ENDIF
+       1873                     C
+       1874     1                     IF(CBUF(1:8).EQ.CKEYWD(90)) THEN
+       1875     1                         WRITE(IUT6,*) ' LESROP:'
+       1876     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(90), '" IS DETECTED.'
+       1877     1               C
+       1878     1                         JNTFND=1
+       1879     1               C
+       1880     1                         CBUF2 = CBUF(9:60)
+       1881     1                         READ(CBUF2,*) EPSOS
+       1882     1               C
+       1883     1                         WRITE(IUT6,'(A29,E13.5)') ' LESROP: DISTANS CRITERIA = ',EPSOS
+       1884     1               C
+       1885     1                     ENDIF
+       1886                     C
+       1887     1                     IF(CBUF(1:8).EQ.CKEYWD(91)) THEN
+       1888     1                         WRITE(IUT6,*) ' LESROP:'
+       1889     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(90), '" IS DETECTED.'
+       1890     1               C
+       1891     1                         CBUF2 = CBUF(9:60)
+       1892     1                         READ(CBUF2,*) COSBIN,COSBFR
+       1893     2                         IF(      COSBIN.LT.0.0E0 .OR. COSBIN.GT.1.0E0
+       1894     2                    *        .OR. COSBFR.LT.0.0E0 .OR. COSBFR.GT.1.0E0 ) THEN
+       1895     2                             WRITE(IUT0,'(A60)')
+       1896     2                             WRITE(IUT0,'(A60)') EREXP1
+       1897     2                             GO TO 999
+       1898     2                         ENDIF
+       1899     1               C
+       1900     1                         WRITE(IUT6,*) ' LESROP: COEFFICIENT OF BTD TERM '
+       1901     1                         WRITE(IUT6,*)
+       1902     1                         WRITE(IUT6,*) ' LESROP: COEF FOR O.S. VEL. BC.:',COSBIN
+       1903     1                         WRITE(IUT6,*) ' LESROP: COEF FOR O.S. PRS. BC.:',COSBFR
+       1904     1                     ENDIF
+       1905                     C
+       1906     1                     IF(CBUF(1:8).EQ.CKEYWD(92)) THEN
+       1907     1                         WRITE(IUT6,*) ' LESROP:'
+       1908     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(92), '" IS DETECTED.'
+       1909     1               C
+       1910     1                         CBUF2 = CBUF(9:60)
+       1911     1                         READ(CBUF2,*) EPSBLK,BLKMIN
+       1912     2                         IF(BTDCOE(1).LT.0.0E0) THEN
+       1913     2                             WRITE(IUT0,'(A60)')
+       1914     2                             WRITE(IUT0,'(A60)') EREXP1
+       1915     2                             GO TO 999
+       1916     2                         ENDIF
+       1917     1               C
+       1918     1                         WRITE(IUT6,*) ' LESROP: COEFFICIENT OF BTD TERM '
+       1919     1                         WRITE(IUT6,*)
+       1920     1                         WRITE(IUT6,*) ' LESROP: BLOCK MERGIN RATIO  = ', EPSBLK
+       1921     1                         WRITE(IUT6,*) ' LESROP: MIN. SIZE OF BLOCAK = ', BLKMIN
+       1922     1                     ENDIF
+       1923                     C
+       1924     1                     IF(CBUF(1:8).EQ.CKEYWD(93)) THEN
+       1925     1                         WRITE(IUT6,*) ' LESROP:'
+       1926     1                         WRITE(IUT6,*) ' LESROP: "',CKEYWD(93), '" IS DETECTED.'
+       1927     1               C
+       1928     1                         CBUF2 = CBUF(9:60)
+       1929     1                         READ(CBUF2,*) ICAVI,CGAS,CLQD,F0
+       1930     2                         IF(ICAVI.EQ.1) THEN
+       1931     2                             WRITE(IUT6,*) ' LESROP: OKITA MODEL IS SELECTED:'
+       1932     2                             WRITE(IUT6,*) ' LESROP: CGAS                   :',CGAS
+       1933     2                             WRITE(IUT6,*) ' LESROP: CLQD                   :',CLQD
+       1934     2                         ELSE IF(ICAVI.EQ.2) THEN
+       1935     2                             WRITE(IUT6,*) ' LESROP: MARKLE MODEL IS SELECTED:'
+       1936     2                             WRITE(IUT6,*) ' LESROP: CGAS                   :',CGAS
+       1937     2                             WRITE(IUT6,*) ' LESROP: CLQD                   :',CLQD
+       1938     2                         ELSE IF(ICAVI.EQ.3) THEN
+       1939     2                             WRITE(IUT6,*) ' LESROP: KUNZE  MODEL IS SELECTED:'
+       1940     2                             WRITE(IUT6,*) ' LESROP: CGAS(DASH)             :',CGAS
+       1941     2                             WRITE(IUT6,*) ' LESROP: CLQD                   :',CLQD
+       1942     2                             WRITE(IUT6,*) ' LESROP: F0                     :',F0
+       1943     2                         ELSE
+       1944     2                             IERR=1
+       1945     2                             RETURN
+       1946     2                         ENDIF
+       1947     1                     ENDIF
+       1948                     C
+       1949     1                     IF(CBUF(1:8).EQ.CKEYWD(2)) THEN
+       1950     1                         WRITE(IUT6,*) ' LESROP: END   READING OPTIONAL PARAMETERS'
+       1951     1                     ELSE
+       1952     1                         GO TO 1000
+       1953     1                     ENDIF
+       1954                     C
+       1955                     C     DEFAULT VALUES
+       1956                     C
+       1957                           IF(EPSREV.LT.0.0) EPSREV = EPST
+       1958                           IF(EPSREP.LT.0.0) EPSREP = EPSP
+       1959                           IF(EPSQ.LT.0.0) EPSQ = EPST
+       1960                           IF(EPSREQ.LT.0.0) EPSREQ = EPSQ
+       1961                     C
+       1962                           RETURN
+       1963                     C
+       1964                       999 CONTINUE
+       1965                     CC    IDUM = IDUM
+       1966                           WRITE(IUT0,'(A60)') ERMSGB
+       1967                           IERR = 1
+       1968                           RETURN
+       1969                     C
+       1970                       100 WRITE(IUT6,*) ' LESROP: NO OPTIONAL PARAMETERS'
+       1971                           RETURN
+       1972                     C
+       1973                     C
+       1974                           END
+
+ Diagnostic messages: program name(LESROP)
+   jwd2008i-i  "lesrop.f", line 15: この仮引数'NMRF'は、副プログラム中で使用されていません。
+   jwd8220o-i  "lesrop.f", line 15: 副作用の可能性のある最適化を行いました。
+   jwd5001p-i  "lesrop.f", line 362: このDOループを並列化しました。(名前:I)
+   jwd6001s-i  "lesrop.f", line 362: このDOループをSIMD化しました。(名前:I)
+   jwd8663o-i  "lesrop.f", line 362: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "lesrop.f", line 362: ループを展開数4回でアンローリングしました。
+   jwd5132p-i  "lesrop.f", line 379: DO WHILE文、DO UNTIL文、およびIF/GO TO文によるループは並列化できません。
+   jwd6132s-i  "lesrop.f", line 379: DO WHILE文、DO UNTIL文、およびIF/GO TO文によるループはSIMD化できません。
+   jwd5132p-i  "lesrop.f", line 386: DO WHILE文、DO UNTIL文、およびIF/GO TO文によるループは並列化できません。
+   jwd8209o-i  "lesrop.f", line 861: 多項式の演算順序を変更しました。
+   jwd8209o-i  "lesrop.f", line 862: 多項式の演算順序を変更しました。
+   jwd8209o-i  "lesrop.f", line 863: 多項式の演算順序を変更しました。
+   jwd8321o-i  "lesrop.f", line 897: ループをループアンスイッチングしました。
+   jwd5001p-i  "lesrop.f", line 897: このDOループを並列化しました。(名前:IRFN)
+   jwd6001s-i  "lesrop.f", line 897: このDOループをSIMD化しました。(名前:IRFN)
+   jwd8663o-i  "lesrop.f", line 897: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "lesrop.f", line 897: ループを展開数2回でアンローリングしました。
+   jwd2005i-w  "lesrop.f", line 1008: この変数'CLFSET'は、値を設定せずに引用されています。
+   jwd5302p-i  "lesrop.f", line 1057: 部分的な並列化による性能向上が得られない可能性があるため、このDOループの並列化を抑止しました。
+   jwd8664o-i  "lesrop.f", line 1057: ループ内に関数呼出しなどの最適化対象外の命令があるため、ソフトウェアパイプライニングを適用できません。
+   jwd5208p-i  "lesrop.f", line 1058: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:NDUM)
+   jwd5121p-i  "lesrop.f", line 1058: DOループ内に、自動並列化の制約となる入出力文が存在します。
+   jwd6208s-i  "lesrop.f", line 1058: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループはSIMD化できません。(名前:NDUM)
+   jwd6121s-i  "lesrop.f", line 1058: DOループ内に、SIMD化の制約となる入出力文が存在します。
+   jwd5101p-i  "lesrop.f", line 1059: DOループ内に、自動並列化の制約となる文が存在します。
+   jwd6101s-i  "lesrop.f", line 1059: DOループ内に、SIMD化の制約となる文が存在します。
+   jwd5208p-i  "lesrop.f", line 1060: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:COEFFO)
+   jwd5208p-i  "lesrop.f", line 1060: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:NDGCOE)
+   jwd5121p-i  "lesrop.f", line 1060: DOループ内に、自動並列化の制約となる入出力文が存在します。
+   jwd6208s-i  "lesrop.f", line 1060: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループはSIMD化できません。(名前:COEFFO)
+   jwd6208s-i  "lesrop.f", line 1060: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループはSIMD化できません。(名前:NDGCOE)
+   jwd6121s-i  "lesrop.f", line 1060: DOループ内に、SIMD化の制約となる入出力文が存在します。
+   jwd5121p-i  "lesrop.f", line 1061: DOループ内に、自動並列化の制約となる入出力文が存在します。
+   jwd6121s-i  "lesrop.f", line 1061: DOループ内に、SIMD化の制約となる入出力文が存在します。
+   jwd8209o-i  "lesrop.f", line 1216: 多項式の演算順序を変更しました。
+   jwd8209o-i  "lesrop.f", line 1217: 多項式の演算順序を変更しました。
+   jwd8209o-i  "lesrop.f", line 1218: 多項式の演算順序を変更しました。
+   jwd8209o-i  "lesrop.f", line 1268: 多項式の演算順序を変更しました。
+   jwd8209o-i  "lesrop.f", line 1280: 多項式の演算順序を変更しました。
+   jwd8209o-i  "lesrop.f", line 1281: 多項式の演算順序を変更しました。
+   jwd8209o-i  "lesrop.f", line 1282: 多項式の演算順序を変更しました。
+   jwd8209o-i  "lesrop.f", line 1283: 多項式の演算順序を変更しました。
+   jwd8209o-i  "lesrop.f", line 1285: 多項式の演算順序を変更しました。
+   jwd8209o-i  "lesrop.f", line 1286: 多項式の演算順序を変更しました。
+   jwd8209o-i  "lesrop.f", line 1287: 多項式の演算順序を変更しました。
+   jwd8209o-i  "lesrop.f", line 1288: 多項式の演算順序を変更しました。
+   jwd8209o-i  "lesrop.f", line 1496: 多項式の演算順序を変更しました。
+   jwd8209o-i  "lesrop.f", line 1640: 多項式の演算順序を変更しました。
+   jwd8209o-i  "lesrop.f", line 1641: 多項式の演算順序を変更しました。
+   jwd5131p-i  "lesrop.f", line 1846: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd6131s-i  "lesrop.f", line 1846: ループ出口が2つ以上あるため、このDOループはSIMD化できません。
+   jwd8671o-i  "lesrop.f", line 1846: ループの形状が最適化の対象外であるため、ソフトウェアパイプライニングを適用できません。
+
+ Procedure information
+   Lines      : 1974
+   Statements : 1311
+   Stack(byte): 67984
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 1974
+   Total statements : 1311
+   Total stack(byte): 67984
+   Total prefetch num: 0
+

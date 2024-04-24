@@ -1,0 +1,287 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:52:52 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : advdif.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "ADVDIF"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE ADVDIF(N1,N2,NE,NP,MELM,NEX,NODE,IDIAGV,
+          2                          *                  UG,VG,WG,DT,VISC,CEB,
+          3                          *                  EAP1,EAP2,EAP3,EBP,AP,MEP,MP,IENP,JENP,NEP,
+          4                          *                  A,X,RHS,AD,
+          5                          *                  AR,RHOCP,DELTA,IERR)
+          6                           IMPLICIT NONE
+          7                           INTEGER*4 N1,N2,NE,NP,MELM,NEX(12)
+          8                           INTEGER*4 NODE(N2,NE)
+          9                           REAL*4    UG(NE),VG(NE),WG(NE),DT
+         10                           REAL*4    VISC(NE),CEB
+         11                           REAL*4    EAP1(N2,MEP,NP),EAP2(3,N2,MEP,NP),EAP3(6,N2,MEP,NP)
+         12                           REAL*4    EBP(3,N2,MEP,NP),AP(N2,MEP,NP)
+         13                           INTEGER*4 MEP,MP
+         14                           INTEGER*4 IENP(MEP,MP),JENP(MEP,MP),NEP(MP)
+         15                           REAL*4    A(N1,N2,NE),X(NP),RHS(NP),AD(NP),AR(NP)
+         16                           REAL*4    RHOCP(NE),DELTA(NE)
+         17                     C
+         18                           INTEGER*4 NETET,NEPRD,NEWED,NEHEX
+         19                           INTEGER*4 NTET,NPRD,NWED,NHEX
+         20                           INTEGER*4 NSKIP1,NSKIP2,NSKIP3,NSKIP4
+         21                           INTEGER*4 IE,IP,IPE,I,J,K,IERR,
+         22                          *          IEE1,IEE2,IEE3,IEE4,
+         23                          *          IDIAGV,NN
+         24                           REAL*4    UU,VV,WW,AT,DTH,UABS,
+         25                          *          AD1,AC1,AT1,AUPWD1,CRHS1
+         26                     C
+         27                           REAL*4    DIJ(8,8)
+         28                           DATA DIJ /1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+         29                          &          0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+         30                          &          0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+         31                          &          0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0, 0.0,
+         32                          &          0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0, 0.0,
+         33                          &          0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0,
+         34                          &          0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0,
+         35                          &          0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0/
+         36                     C
+         37                           REAL*4 CUPWD
+         38                           DATA CUPWD /1.0E0/
+         39                     C
+         40                           NETET =NEX( 1)
+         41                           NEPRD =NEX( 2)
+         42                           NEWED =NEX( 3)
+         43                           NEHEX =NEX( 4)
+         44                           NTET  =NEX( 5)
+         45                           NPRD  =NEX( 6)
+         46                           NWED  =NEX( 7)
+         47                           NHEX  =NEX( 8)
+         48                           NSKIP1=NEX( 9)
+         49                           NSKIP2=NEX(10)
+         50                           NSKIP3=NEX(11)
+         51                           NSKIP4=NEX(12)
+         52                     C
+         53                     C   == TET. ==
+         54                           IEE1=NETET
+         55                     C
+         56                     C   == PYRAMID ==
+         57                           IEE2=NETET+NEPRD
+         58                     C
+         59                     C   == WEDGE ==
+         60                           IEE3=NETET+NEPRD+NEWED
+         61                     C
+         62                     C   == HEX. ==
+         63                           IEE4=NETET+NEPRD+NEWED+NEHEX
+         64                     C
+         65                           DTH = DT*0.5E0
+         66                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1143
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      RHS, AR, AD
+                              <<< Loop-information  End >>>
+         67     1  pp   2v            DO 100 IP=1,NP
+         68     1   p   2v                AD (IP)=0.0E0
+         69     1   p   2v                AR(IP)=0.0E0
+         70     1   p   2v                RHS(IP)=0.0E0
+         71     1   p   2v        100 CONTINUE
+         72                     C
+         73     1                     DO 1040 IP=1,NP
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      EAP3, EAP2, EBP, DIJ, AP
+                              <<< Loop-information  End >>>
+         74     2                         DO 1030 IPE=1,NEP(IP)
+         75     2                             IE =IENP(IPE,IP)
+         76     2                             I  =JENP(IPE,IP)
+         77     2                             UU =UG(IE)
+         78     2                             VV =VG(IE)
+         79     2                             WW =WG(IE)
+         80     2                             UABS =SQRT(UU*UU+VV*VV+WW*WW+1.0E-10)
+         81     2               C
+         82     3                             IF(IE.LE.IEE1) THEN
+         83     3                                 NN = NEX(5)
+         84     3                             ELSE IF (IE.LE.IEE2) THEN
+         85     3                                 NN = NEX(6)
+         86     3                             ELSE IF (IE.LE.IEE3) THEN
+         87     3                                 NN = NEX(7)
+         88     3                             ELSE
+         89     3                                 NN = NEX(8)
+         90     3                             ENDIF
+         91     2               C
+         92     2                             AT = 0.0E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1778
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+         93     3  pp    v                    DO 1010 K=1,NN
+         94     3   p    v                        AT = AT + EAP1(K,IPE,IP)
+         95     3   p    v       1010         CONTINUE
+         96     2               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SOFTWARE PIPELINING(IPC: 1.48, ITR: 4, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      EBP, EAP2, EAP3, DIJ, AP
+                              <<< Loop-information  End >>>
+         97     3   s    s                    DO 1020 K=1,NN
+         98     3               C
+         99     3               CC [HEX. TIME-TERM]
+        100     3   m    m                        AT  = AT*RHOCP(IE)
+        101     3   s    s                        AT1 = AT*DIJ(K,1)
+        102     3               C
+        103     3               CC [HEX. COVECTION-TERM]
+        104     3   p    v                        AC1=(UU*EAP2(1,K,IPE,IP)+VV*EAP2(2,K,IPE,IP)
+        105     3                    *                +WW*EAP2(3,K,IPE,IP))*DTH
+        106     3   p    v                        AC1 = AC1*RHOCP(IE)
+        107     3               C
+        108     3               CC [HEX. UPWIND-TERM]
+        109     3   p    v                        AUPWD1 = DTH*CUPWD
+        110     3                    *              *(UU*(UU*EAP3(1,K,IPE,IP)+VV*EAP3(2,K,IPE,IP)
+        111     3                    *               +WW*EAP3(3,K,IPE,IP))
+        112     3                    *               +VV*(UU*EBP (1,K,IPE,IP)+VV*EAP3(2,K,IPE,IP)
+        113     3                    *                   +WW*EAP3(5,K,IPE,IP))
+        114     3                    *               +WW*(UU*EBP (3,K,IPE,IP)+VV*EBP (2,K,IPE,IP)
+        115     3                    *                   +WW*EAP3(3,K,IPE,IP)))*DTH
+        116     3   p    v                        AUPWD1 = AUPWD1*RHOCP(IE)*(DELTA(IE)**0.33333E0)
+        117     3                    *                     /(UABS*DT)
+        118     3               C
+        119     3               CC [HEX. DIFFUSION-TERM]
+        120     3   p    v                        AD1 = (EAP3(1,K,IPE,IP)+EAP3(2,K,IPE,IP)
+        121     3                    *                  +EAP3(3,K,IPE,IP))*VISC(IE)*DTH
+        122     3               C
+        123     3   p    v                        AP(K,IPE,IE) = AT1+AC1*(1.0E0+CEB)+AD1*(1.0E0+CEB)
+        124     3                    *                           +AUPWD1
+        125     3               C
+        126     3   p    v                        CRHS1 = AT1-AC1*(1.0E0-CEB)-AD1*(1.0E0-CEB)-AUPWD1
+        127     3               C
+        128     3   p    v                        RHS(IP)=RHS(IP)+CRHS1*X(IP)
+        129     3   p    v       1020         CONTINUE
+        130     2                1030     CONTINUE
+        131     1                         AD(IP)=AD(IP)+AP(I,IPE,IP)
+        132     1                1040 CONTINUE
+        133                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1455
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.00, ITR: 320, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      AD, AR
+                              <<< Loop-information  End >>>
+        134     1  pp   4v            DO 5000 IP=1,NP
+        135     1   p   4v                AR(IP)=AD(IP)
+        136     1   p   4v       5000 CONTINUE
+        137                     C
+        138                           RETURN
+        139                           END
+        140                     
+
+ Diagnostic messages: program name(ADVDIF)
+   jwd2008i-i  "advdif.f", line 1: この仮引数'IERR'は、副プログラム中で使用されていません。
+   jwd2008i-i  "advdif.f", line 1: この仮引数'IDIAGV'は、副プログラム中で使用されていません。
+   jwd2008i-i  "advdif.f", line 1: この仮引数'MELM'は、副プログラム中で使用されていません。
+   jwd8220o-i  "advdif.f", line 1: 副作用の可能性のある最適化を行いました。
+   jwd2008i-i  "advdif.f", line 8: この仮引数'NODE'は、副プログラム中で使用されていません。
+   jwd2008i-i  "advdif.f", line 15: この仮引数'A'は、副プログラム中で使用されていません。
+   jwd2006i-i  "advdif.f", line 21: この名前'J'は、宣言だけされていて引用されていません。
+   jwd5001p-i  "advdif.f", line 67: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "advdif.f", line 67: このDOループをSIMD化しました。(名前:IP)
+   jwd8663o-i  "advdif.f", line 67: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "advdif.f", line 67: ループを展開数2回でアンローリングしました。
+   jwd5202p-i  "advdif.f", line 73: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:I)
+   jwd5208p-i  "advdif.f", line 73: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:AP)
+   jwd5208p-i  "advdif.f", line 74: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:AP)
+   jwd5208p-i  "advdif.f", line 74: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:RHS)
+   jwd8209o-i  "advdif.f", line 80: 多項式の演算順序を変更しました。
+   jwd5004p-i  "advdif.f", line 93: リダクション演算を含むDOループを並列化しました。(名前:K)
+   jwd6004s-i  "advdif.f", line 93: リダクション演算を含むDOループをSIMD化しました。(名前:K)
+   jwd8209o-i  "advdif.f", line 94: 多項式の演算順序を変更しました。
+   jwd6302s-i  "advdif.f", line 97: 部分的なSIMD化による性能向上が得られない可能性があるため、このDOループのSIMD化を抑止しました。
+   jwd8209o-i  "advdif.f", line 97: 多項式の演算順序を変更しました。
+   jwd8204o-i  "advdif.f", line 97: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "advdif.f", line 97: ループの繰返し数が4回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5202p-i  "advdif.f", line 100: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:AT)
+   jwd6202s-i  "advdif.f", line 100: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:AT)
+   jwd8209o-i  "advdif.f", line 106: 多項式の演算順序を変更しました。
+   jwd8209o-i  "advdif.f", line 109: 多項式の演算順序を変更しました。
+   jwd8209o-i  "advdif.f", line 116: 多項式の演算順序を変更しました。
+   jwd8206o-i  "advdif.f", line 116: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "advdif.f", line 120: 多項式の演算順序を変更しました。
+   jwd8209o-i  "advdif.f", line 123: 多項式の演算順序を変更しました。
+   jwd8209o-i  "advdif.f", line 128: 多項式の演算順序を変更しました。
+   jwd5001p-i  "advdif.f", line 134: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "advdif.f", line 134: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "advdif.f", line 134: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "advdif.f", line 134: ループの繰返し数が320回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+
+ Procedure information
+   Lines      : 140
+   Statements : 84
+   Stack(byte): 15072
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 140
+   Total statements : 84
+   Total stack(byte): 15072
+   Total prefetch num: 0
+

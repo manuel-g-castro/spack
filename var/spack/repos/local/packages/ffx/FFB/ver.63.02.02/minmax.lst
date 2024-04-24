@@ -1,0 +1,306 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:53:12 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : minmax.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "MINMAX"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE MINMAX(N2,NE,NP,NEX,X,Y,Z,NODE,
+          2                          *                  XMINE,YMINE,ZMINE,XMAXE,YMAXE,ZMAXE)
+          3                           IMPLICIT NONE
+          4                     
+          5                     ***** DEFINE ARGUMENTS *****
+          6                           INTEGER N2,NE,NP,NEX(8)
+          7                           REAL X, Y, Z
+          8                           INTEGER NODE
+          9                           REAL XMINE, YMINE, ZMINE
+         10                           REAL XMAXE, YMAXE, ZMAXE
+         11                           DIMENSION X(NP),Y(NP),Z(NP)
+         12                           DIMENSION NODE(N2,NE)
+         13                           DIMENSION XMINE(NE)
+         14                           DIMENSION YMINE(NE)
+         15                           DIMENSION ZMINE(NE)
+         16                           DIMENSION XMAXE(NE)
+         17                           DIMENSION YMAXE(NE)
+         18                           DIMENSION ZMAXE(NE)
+         19                     
+         20                     ***** OBJECTS *****
+         21                           REAL XMIN, XMAX, YMIN, YMAX, ZMIN, ZMAX
+         22                           INTEGER IN, IE, IEBEG, IEEND
+         23                           INTEGER NEHEX,NEPRD,NEWED,NETET
+         24                           INTEGER  NHEX, NPRD, NWED, NTET
+         25                     
+         26                     ***** DATA *****
+         27                           NETET=NEX(1)
+         28                           NEPRD=NEX(2)
+         29                           NEWED=NEX(3)
+         30                           NEHEX=NEX(4)
+         31                            NTET=NEX(5)
+         32                            NPRD=NEX(6)
+         33                            NWED=NEX(7)
+         34                            NHEX=NEX(8)
+         35                     
+         36                     ********************
+         37                     ***** TET LOOP *****
+         38                     ********************
+         39                           IEBEG=1
+         40                           IEEND=NETET
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE
+                              <<< Loop-information  End >>>
+         41     1  pp                 DO IE=IEBEG,IEEND
+         42     1   p                    XMIN=+1E30
+         43     1   p                    XMAX=-1E30
+         44     1   p                    YMIN=+1E30
+         45     1   p                    YMAX=-1E30
+         46     1   p                    ZMIN=+1E30
+         47     1   p                    ZMAX=-1E30
+         48     1               
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.30, ITR: 256, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE
+                              <<< Loop-information  End >>>
+         49     2   p   2v               DO IN=1,NTET
+         50     2   p   2v                  XMIN =MIN(XMIN,X(NODE(IN,IE)))
+         51     2   p   2v                  XMAX =MAX(XMAX,X(NODE(IN,IE)))
+         52     2   p   2v                  YMIN =MIN(YMIN,Y(NODE(IN,IE)))
+         53     2   p   2v                  YMAX =MAX(YMAX,Y(NODE(IN,IE)))
+         54     2   p   2v                  ZMIN =MIN(ZMIN,Z(NODE(IN,IE)))
+         55     2   p   2v                  ZMAX =MAX(ZMAX,Z(NODE(IN,IE)))
+         56     2   p   2v               ENDDO
+         57     1               
+         58     1   p                    XMINE(IE)=XMIN
+         59     1   p                    XMAXE(IE)=XMAX
+         60     1   p                    YMINE(IE)=YMIN
+         61     1   p                    YMAXE(IE)=YMAX
+         62     1   p                    ZMINE(IE)=ZMIN
+         63     1   p                    ZMAXE(IE)=ZMAX
+         64     1   p                 ENDDO
+         65                     
+         66                     ********************
+         67                     ***** PYR LOOP *****
+         68                     ********************
+         69                           IEBEG=IEBEG+NETET
+         70                           IEEND=IEEND+NEPRD
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE
+                              <<< Loop-information  End >>>
+         71     1  pp                 DO IE=IEBEG,IEEND
+         72     1   p                    XMIN=+1E30
+         73     1   p                    XMAX=-1E30
+         74     1   p                    YMIN=+1E30
+         75     1   p                    YMAX=-1E30
+         76     1   p                    ZMIN=+1E30
+         77     1   p                    ZMAX=-1E30
+         78     1               
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.30, ITR: 256, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE
+                              <<< Loop-information  End >>>
+         79     2   p   2v               DO IN=1,NPRD
+         80     2   p   2v                  XMIN =MIN(XMIN,X(NODE(IN,IE)))
+         81     2   p   2v                  XMAX =MAX(XMAX,X(NODE(IN,IE)))
+         82     2   p   2v                  YMIN =MIN(YMIN,Y(NODE(IN,IE)))
+         83     2   p   2v                  YMAX =MAX(YMAX,Y(NODE(IN,IE)))
+         84     2   p   2v                  ZMIN =MIN(ZMIN,Z(NODE(IN,IE)))
+         85     2   p   2v                  ZMAX =MAX(ZMAX,Z(NODE(IN,IE)))
+         86     2   p   2v               ENDDO
+         87     1               
+         88     1   p                    XMINE(IE)=XMIN
+         89     1   p                    XMAXE(IE)=XMAX
+         90     1   p                    YMINE(IE)=YMIN
+         91     1   p                    YMAXE(IE)=YMAX
+         92     1   p                    ZMINE(IE)=ZMIN
+         93     1   p                    ZMAXE(IE)=ZMAX
+         94     1   p                 ENDDO
+         95                     
+         96                     ********************
+         97                     ***** WED LOOP *****
+         98                     ********************
+         99                           IEBEG=IEBEG+NEPRD
+        100                           IEEND=IEEND+NEWED
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE
+                              <<< Loop-information  End >>>
+        101     1  pp                 DO IE=IEBEG,IEEND
+        102     1   p                    XMIN=+1E30
+        103     1   p                    XMAX=-1E30
+        104     1   p                    YMIN=+1E30
+        105     1   p                    YMAX=-1E30
+        106     1   p                    ZMIN=+1E30
+        107     1   p                    ZMAX=-1E30
+        108     1               
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.30, ITR: 256, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE
+                              <<< Loop-information  End >>>
+        109     2   p   2v               DO IN=1,NWED
+        110     2   p   2v                  XMIN =MIN(XMIN,X(NODE(IN,IE)))
+        111     2   p   2v                  XMAX =MAX(XMAX,X(NODE(IN,IE)))
+        112     2   p   2v                  YMIN =MIN(YMIN,Y(NODE(IN,IE)))
+        113     2   p   2v                  YMAX =MAX(YMAX,Y(NODE(IN,IE)))
+        114     2   p   2v                  ZMIN =MIN(ZMIN,Z(NODE(IN,IE)))
+        115     2   p   2v                  ZMAX =MAX(ZMAX,Z(NODE(IN,IE)))
+        116     2   p   2v               ENDDO
+        117     1               
+        118     1   p                    XMINE(IE)=XMIN
+        119     1   p                    XMAXE(IE)=XMAX
+        120     1   p                    YMINE(IE)=YMIN
+        121     1   p                    YMAXE(IE)=YMAX
+        122     1   p                    ZMINE(IE)=ZMIN
+        123     1   p                    ZMAXE(IE)=ZMAX
+        124     1   p                 ENDDO
+        125                     
+        126                     ********************
+        127                     ***** HEX LOOP *****
+        128                     ********************
+        129                           IEBEG=IEBEG+NEWED
+        130                           IEEND=IEEND+NEHEX
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE
+                              <<< Loop-information  End >>>
+        131     1  pp                 DO IE=IEBEG,IEEND
+        132     1   p                    XMIN=+1E30
+        133     1   p                    XMAX=-1E30
+        134     1   p                    YMIN=+1E30
+        135     1   p                    YMAX=-1E30
+        136     1   p                    ZMIN=+1E30
+        137     1   p                    ZMAX=-1E30
+        138     1               
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.30, ITR: 256, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE
+                              <<< Loop-information  End >>>
+        139     2   p   2v               DO IN=1,NHEX
+        140     2   p   2v                  XMIN =MIN(XMIN,X(NODE(IN,IE)))
+        141     2   p   2v                  XMAX =MAX(XMAX,X(NODE(IN,IE)))
+        142     2   p   2v                  YMIN =MIN(YMIN,Y(NODE(IN,IE)))
+        143     2   p   2v                  YMAX =MAX(YMAX,Y(NODE(IN,IE)))
+        144     2   p   2v                  ZMIN =MIN(ZMIN,Z(NODE(IN,IE)))
+        145     2   p   2v                  ZMAX =MAX(ZMAX,Z(NODE(IN,IE)))
+        146     2   p   2v               ENDDO
+        147     1               
+        148     1   p                    XMINE(IE)=XMIN
+        149     1   p                    XMAXE(IE)=XMAX
+        150     1   p                    YMINE(IE)=YMIN
+        151     1   p                    YMAXE(IE)=YMAX
+        152     1   p                    ZMINE(IE)=ZMIN
+        153     1   p                    ZMAXE(IE)=ZMAX
+        154     1   p                 ENDDO
+        155                     
+        156                           RETURN
+        157                           END
+
+ Diagnostic messages: program name(MINMAX)
+   jwd5001p-i  "minmax.f", line 41: このDOループを並列化しました。(名前:IE)
+   jwd6004s-i  "minmax.f", line 49: リダクション演算を含むDOループをSIMD化しました。(名前:IN)
+   jwd8204o-i  "minmax.f", line 49: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "minmax.f", line 49: ループの繰返し数が256回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "minmax.f", line 71: このDOループを並列化しました。(名前:IE)
+   jwd6004s-i  "minmax.f", line 79: リダクション演算を含むDOループをSIMD化しました。(名前:IN)
+   jwd8204o-i  "minmax.f", line 79: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "minmax.f", line 79: ループの繰返し数が256回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "minmax.f", line 101: このDOループを並列化しました。(名前:IE)
+   jwd6004s-i  "minmax.f", line 109: リダクション演算を含むDOループをSIMD化しました。(名前:IN)
+   jwd8204o-i  "minmax.f", line 109: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "minmax.f", line 109: ループの繰返し数が256回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "minmax.f", line 131: このDOループを並列化しました。(名前:IE)
+   jwd6004s-i  "minmax.f", line 139: リダクション演算を含むDOループをSIMD化しました。(名前:IN)
+   jwd8204o-i  "minmax.f", line 139: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "minmax.f", line 139: ループの繰返し数が256回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+
+ Procedure information
+   Lines      : 157
+   Statements : 125
+   Stack(byte): 864
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 157
+   Total statements : 125
+   Total stack(byte): 864
+   Total prefetch num: 0
+

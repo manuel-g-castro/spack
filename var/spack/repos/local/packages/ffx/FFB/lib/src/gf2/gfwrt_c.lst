@@ -1,0 +1,668 @@
+Fujitsu C/C++ Version 4.4.0a   Thu Feb 18 12:40:05 2021
+Compilation information
+  Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/gf2
+  Source file       : gfwrt_c.c
+(line-no.)(optimize)
+        1             /*  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  */
+        2             /*    BASIC OUTPUT UTILITY FOR GENERAL FILE VERSION 2.1                     */
+        3             /*                                                                          */
+        4             /*      Written by  Y. Yamade                                               */
+        5             /*      Since       9 Oct. 2002                                             */
+        6             /*      Reference   gfwrt.f of LES3D                                        */
+        7             /*                                                                          */
+        8             /*  ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++  */
+        9             /*                                                                          */
+       10             /*    ARGUMENT LISTINGS                                                     */
+       11             /*      (1) INPUT                                                           */
+       12             /*INT*4    ITYPE       ; SPECIFIES THE TYPE OF ACTION TO BE TAKEN           */
+       13             /*           OPEN     --- OPEN  FILE,     WRITE COMMENT STRINGS             */
+       14             /*           NEWSET   --- DEFINE NEW SET, WRITE COMMENT STRINGS             */
+       15             /*           CLOSE    --- CLOSE FILE                                        */
+       16             /*           INTARY   --- WRITE KEYWORD, DATA NAME, INTEGER ARRAY DATA      */
+       17             /*           FLTARY   --- WRITE KEYWORD, DATA NAME, FLOAT   ARRAY DATA      */
+       18             /*    NOTES; IF EITHER NUM2 OR NUM ARGUMENTS (DESCRIBED LATER) IS LESS      */
+       19             /*          THAN 1, NO DATA WILL BE WRITTEN TO THE FILE EXCEPT THE DATA     */
+       20             /*          HEADDER, DATA NAME, AND THE ELEMENT NUMBERS.                    */
+       21             /*                                                                          */
+       22             /*INT*4    ISRCE       ; SPECIFIES SOURCE VARIABLE/ARRAYS TO BE WRITTEN     */
+       23             /*                      TO THE FILE WHEN WRITING ARRAY DATA                 */
+       24             /*           ARY2D    --- 2-D ARRAY PASSED THROUGH IARY2D OR FARY2D         */
+       25             /*                       ARGUMENTS WILL BE WRITTEN TO THE FILE.             */
+       26             /*           ARY1D    --- 1-D ARRAYS PASSED THROUGH IARY1, IARY2, IARY3     */
+       27             /*                       OR FARY1, FARY2, FARY3 ARGUMENTS WILL BE           */
+       28             /*                       WRITTEN TO THE FILE.                               */
+       29             /*           ARY0D    --- VARIABLE PASSED THROUGH IVAR OR FVAR ARGUMENTS    */
+       30             /*                       WILL BE WRITTEN TO THE FILE.                       */
+       31             /*    NOTES; FOLLOWING CASES LISTED BELOW WILL BE REGARDED AS AN ERROR.     */
+       32             /*          IN SUCH CASES, NO DATA WILL WRITTEN TO THE FILE, EXCEPT THE     */
+       33             /*          DATA HEADDER, DATA NAME, AND THE ELEMENT NUMBERS.               */
+       34             /*           (1) NUM2 > MAX2              FOR ISRCE = ARY2D                 */
+       35             /*           (2) NUM2 > 3                 FOR ISRCE = ARY1D                 */
+       36             /*           (3) NUM2 > 1    OR NUM > 1   FOR ISRCE = ARY0D                 */
+       37             /*                                                                          */
+       38             /*INT*4    IMODE       ; SPECIFIES THE TYPE OF OUTPUT MODE                  */
+       39             /*           ASCII    --- ASCII               MODE                          */
+       40             /*           UNFMT    --- FORTRAN UNFORMATTED MODE                          */
+       41             /*           BINARY   --- BINARY              MODE ( NOT SUPPORTED )        */
+       42             /*INT*4    IUNIT       ; FILE BUFFER NUMBER TO BE USED TO ACCESS            */
+       43             /*                      THE SPECIFIED FILE                                  */
+       44             /*CHAR*(*) FILENM      ; FILE NAME TO BE OPENED                             */
+       45             /*    NOTES; FILENM ARGUMENT MUST BE SPECIFIED ONLY WHEN OPENING            */
+       46             /*          A FILE ( IE. ITYPE = OPEN ).                                    */
+       47             /*CHAR*8   KEYWRD      ; A CHARACTER STRING TO BE PUT ON EACH DATA,         */
+       48             /*                      SPECIFYING ITS KEY CHARACTERISTICS                  */
+       49             /*CHAR*30  NAME        ; A CHARACTER STRING TO BE PUT ON EACH DATA,         */
+       50             /*                      SPECIFYING ITS NAME.                                */
+       51             /*                                                                          */
+       52             /*CHAR*60  COMMNT(NUM2); AN 1-D ARRAY OF CHARACTER STRINGS TO BE PUT ON     */
+       53             /*                      EACH FILE AND EACH SET, WHEN NUM2 ARGUMENT IS       */
+       54             /*                      GREATER THAN 0.                                     */
+       55             /*    NOTES; KEYWRD ARGUMENT AND NAME ARGUMENT MUST BE SPECIFIED            */
+       56             /*          EXCEPT WHEN OPENING FILE, DEFINING A NEW SET, OR CLOSING        */
+       57             /*          FILE.                                                           */
+       58             /*           COMMNT ARGUMENT MUST BE SPECIFIED ONLY WHEN OPENING FILE       */
+       59             /*          OR DEFINING A NEW SET ( IE. ITYPE = OPEN AND NEWSET ).          */
+       60             /*INT*4    IVAR        ; AN INTEGER VARIABLE   TO BE WRITTEN TO THE FILE    */
+       61             /*                      WHEN ITYPE=INTARY, ISRCE=ARY0D, AND NUM2=NUM=1      */
+       62             /*INT*4    IARY1(NUM)  ; AN 1-D INTEGER ARRAY  TO BE WRITTEN TO THE FILE    */
+       63             /*                      WHEN ITYPE=INTARY, ISRCE=ARY1D, AND NUM2=(1,2,3)    */
+       64             /*INT*4    IARY2(NUM)  ; AN 1-D INTEGER ARRAY  TO BE WRITTEN TO THE FILE    */
+       65             /*                      WHEN ITYPE=INTARY, ISRCE=ARY1D, AND NUM2=(  2,3)    */
+       66             /*INT*4    IARY3(NUM)  ; AN 1-D INTEGER ARRAY  TO BE WRITTEN TO THE FILE    */
+       67             /*                      WHEN ITYPE=INTARY, ISRCE=ARY1D, AND NUM2=(    3)    */
+       68             /*INT*4    IARY2D(MAX2,; A  2-D INTEGER ARRAY  TO BE WRITTEN TO THE FILE    */
+       69             /*                 NUM) WHEN ITYPE=INTARY, ISRCE=ARY2D                      */
+       70             /*REAL*4   FVAR        ; AN FLOAT   VARIABLE   TO BE WRITTEN TO THE FILE    */
+       71             /*                      WHEN ITYPE=FLTARY, ISRCE=ARY0D, AND NUM2=NUM=1      */
+       72             /*REAL*4   FARY1(NUM)  ; AN 1-D FLOAT   ARRAY  TO BE WRITTEN TO THE FILE    */
+       73             /*                      WHEN ITYPE=FLTARY, ISRCE=ARY1D, AND NUM2=(1,2,3)    */
+       74             /*REAL*4   FARY2(NUM)  ; AN 1-D FLOAT   ARRAY  TO BE WRITTEN TO THE FILE    */
+       75             /*                      WHEN ITYPE=FLTARY, ISRCE=ARY1D, AND NUM2=(  2,3)    */
+       76             /*REAL*4   FARY3(NUM)  ; AN 1-D FLOAT   ARRAY  TO BE WRITTEN TO THE FILE    */
+       77             /*                      WHEN ITYPE=FLTARY, ISRCE=ARY1D, AND NUM2=(    3)    */
+       78             /*REAL*4   FARY2D(MAX2,; A  2-D FLOAT   ARRAY  TO BE WRITTEN TO THE FILE    */
+       79             /*                 NUM) WHEN ITYPE=FLTARY, ISRCE=ARY2D                      */
+       80             /*INT*4    NUM         ; NUMBER OF FIRST  ARRAY ELEMENTS TO BE WRITTEN      */
+       81             /*                      TO THE FILE FOR WRITING ARRAY DATA                  */
+       82             /*INT*4    NUM2        ; NUMBER OF SECOND ARRAY ELEMENTS TO BE WRITTEN      */
+       83             /*                      TO THE FILE FOR WRITING ARRAY DATA,                 */
+       84             /*                       NUMBER OF COMMENT STRINGS       TO BE WRITTEN      */
+       85             /*                      TO THE FILE FOR OPENING FILE OR DEFINING A NEW      */
+       86             /*                      SET ( IE. ITYPE = OPEN AND NEWSET ).                */
+       87             /*INT*4    MAX2        ; THE SECOND DIMENSION SIZE OF 2-D ARRAYS PASSED     */
+       88             /*    NOTES; NUM, AND NUM2 ARGUMENTS MUST BE SPECIFIED WHEN WRITING AN      */
+       89             /*          ARRAY DATA (IE. ITYPE=INTARY OR FLTARY).                        */
+       90             /*           NUM2 ARGUMENT MUST ALSO BE SPECIFIED WHEN OPENING FILE OR      */
+       91             /*          DEFINING A NEW SET (IE. ITYPE = OPEN OR NEWSET).                */
+       92             /*           MAX2 ARGUMENT MUST BE SPECIFIED WHEN WRITING AN ARRAY DATA     */
+       93             /*          FROM 2-D SOURCE ARRAYS (IE. ITYPE=(INTARY OR FLTARY) AND        */
+       94             /*          (NUM2>3 OR ISRCE=ARY2D).                                        */
+       95             /*INT*4    IUT0        ; FILE   NUMBER TO REPORT ERROR OCCURENCE            */
+       96             /*      (2) OUPTUT                                                          */
+       97             /*INT*4    IERR        ; RETURN CODE WHOSE VALUE WILL BE EITHER             */
+       98             /*           0       --- INDICATING SUCCESSFUL TERMINATION                  */
+       99             /*       OR  1       --- INDICATING OCCURENCE OF SOME ERROR CONDITIONS      */
+      100             /****************************************************************************/
+      101             #include <stdio.h>
+      102             #include <string.h>
+      103             #include "gfc.h"
+      104             
+      105             void gfwrt_();
+      106             
+      107             #if F2C001
+      108             #define open_f_   OPEN_F
+      109             #define close_f_  CLOSE_F
+      110             #define rw_c1_08_ RW_C1_08
+      111             #define rw_c1_30_ RW_C1_30
+      112             #define rw_c1_60_ RW_C1_60
+      113             #define rw_i1_    RW_I1
+      114             #define rw_i2_    RW_I2
+      115             #define rw_i3_    RW_I3
+      116             #define rw_in_    RW_IN
+      117             #define rw_f1_    RW_F1
+      118             #define rw_f2_    RW_F2
+      119             #define rw_f3_    RW_F3
+      120             #define rw_fn_    RW_FN
+      121             #define rw_d1_    RW_D1
+      122             #define rw_d2_    RW_D2
+      123             #define rw_d3_    RW_D3
+      124             #define rw_dn_    RW_DN
+      125             #endif
+      126             
+      127             void gfwrt_(int *ITYPE,int *ISRCE,int *IMODE,int *IWREV,
+      128                        int *IUNIT,char *FILENMd,char *KEYWRD,char *NAME,char *COMMNT,
+      129                        int   *IVAR ,int   *IARY1 ,int   *IARY2,int   *IARY3,int   *IARY2D,
+      130                        float *FVAR ,float *FARY1 ,float *FARY2,float *FARY3,float *FARY2D,
+      131                        int *NUM,int *NUM2,int *max2d,int *IUT0,int *IERR)
+      132             {
+      133             
+      134               const char *ERMSGA = " ## SUBROUTINE GFWRT : RECOVERBLE ERROR OCCURENCE; CONTINUE";
+      135               const char *ERMSGB = " ## SUBROUTINE GFWRT : FATAL      ERROR OCCURENCE; RETURNED";
+      136               const char *ERRCV1 = " ## THE PARAMETER 'IWREV'  WILL BE SET TO THE DEFAULT VALUE ";
+      137               const char *EREXP1 = " AN ILLEGAL VALUE WAS SPECIFIED FOR A CONTROL PARAMETER    ";
+      138               const char *EREXP2 = " SPECIFIED DATA SIZE (NUM2 AND/OR NUM) IS TO LARGE.        ";
+      139               const char *EREXP3 = "  CANNOT OPEN THE SPECIFIED FILE.                          ";
+      140               const char *EREXP4 = " SPECIFIED FILE NUMSER MUST BE LESS THAN 100.              ";
+      141             
+      142               const char *WRMSG0 = " ## SUBROUTINE GFWRT : WARNING                             ";
+      143               const char *WRMSG1 = " ENDIAN WILl BE REVERSED WHEN WRITING IN BINARY MODE       ";
+      144             
+      145               int   IRW=2;
+      146             
+      147               int   MAX2;
+      148               char  FILENM[61]=" ";
+      149               int   i,j1,j2;
+      150               int   NUMd,NUM2d;
+      151               int   IDUM;
+      152               float FDUM;
+      153               double DDUM;
+      154               *IERR = 0;
+      155             
+      156               MAX2=*max2d;  
+                       <<< Loop-information Start >>>
+                       <<<  [OPTIMIZATION]
+                       <<<    PREFETCH(HARD) Expected by compiler :
+                       <<<      FILENM, (unknown)
+                       <<< Loop-information  End >>>
+      157          s    i=0;while( *(FILENMd+i) != ' ' && i<61){*(FILENM+i)=*(FILENMd+i);i++;}
+      158             
+      159               /*[1] CHECK PARAMTER */
+      160             
+      161               if(     *ITYPE!=OPEN   && *ITYPE!=CLOSE 
+      162                    && *ITYPE!=NEWSET && *ITYPE!=INTARY 
+      163                    && *ITYPE!=FLTARY && *ITYPE!=DBLARY   ){
+      164                   sprintf(MESSAGE,ERMSGB);print_std(IUT0,MESSAGE);
+      165                   sprintf(MESSAGE,EREXP1);print_std(IUT0,MESSAGE);
+      166                   *IERR = 1;
+      167                   return;
+      168               }
+      169             
+      170               if( ( *ITYPE==INTARY && *ITYPE==FLTARY && *ITYPE==DBLARY) 
+      171                   &&
+      172                   ( *ISRCE!=ARY2D && *ISRCE!=ARY1D && *ISRCE!=ARY0D  )  ){
+      173                   sprintf(MESSAGE,ERMSGB);print_std(IUT0,MESSAGE);
+      174                   sprintf(MESSAGE,EREXP1);print_std(IUT0,MESSAGE);
+      175                   *IERR = 1;
+      176                   return;
+      177               }
+      178             
+      179               if( *IMODE!=ASCII && *IMODE!=UNFMT && *IMODE!=BINARY){
+      180                   sprintf(MESSAGE,ERMSGB);print_std(IUT0,MESSAGE);
+      181                   sprintf(MESSAGE,EREXP1);print_std(IUT0,MESSAGE);
+      182                   *IERR = 1;
+      183                   return;
+      184               }
+      185             
+      186               if( ( *ITYPE==INTARY && *ITYPE==FLTARY && *ITYPE==DBLARY) 
+      187                   &&
+      188                      (    (*ISRCE==ARY2D && *NUM2 > MAX2         )
+      189                        || (*ISRCE==ARY1D && *NUM2 > 3            )  
+      190                        || (*ISRCE==ARY0D && (*NUM2>1 || *NUM>1)  )  
+      191                      )
+      192                 ){
+      193                   sprintf(MESSAGE,ERMSGB);print_std(IUT0,MESSAGE);
+      194                   sprintf(MESSAGE,EREXP2);print_std(IUT0,MESSAGE);
+      195                   *IERR = 1;
+      196                   return;
+      197               }
+      198             
+      199               if(  *IUNIT >= FILEMAX ){ 
+      200                   sprintf(MESSAGE,ERMSGB);print_std(IUT0,MESSAGE);
+      201                   sprintf(MESSAGE,EREXP4);print_std(IUT0,MESSAGE);
+      202                   *IERR = 1;
+      203                   return;
+      204               }
+      205             
+      206               if( *IMODE==BINARY && ( *IWREV!=0 && *IWREV!=1 ) ){ 
+      207                   sprintf(MESSAGE,ERMSGA);print_std(IUT0,MESSAGE);
+      208                   sprintf(MESSAGE,ERRCV1);print_std(IUT0,MESSAGE);
+      209                   *IWREV=0;
+      210               }
+      211             
+      212               /*[2] OPEN */ 
+      213               if(*ITYPE==OPEN){
+      214             
+      215                   if(*IMODE==BINARY){
+      216                       if( (fp[*IUNIT] = fopen(FILENM,"w"))  == NULL ){
+      217                           sprintf(MESSAGE,ERMSGB);print_std(IUT0,MESSAGE);
+      218                           sprintf(MESSAGE,EREXP3);print_std(IUT0,MESSAGE);
+      219                           *IERR = 1;
+      220                           return;
+      221                       }
+      222                   }
+      223                   else{
+      224                       open_f_(IUNIT,IMODE,FILENMd,IERR);
+      225                       if(*IERR!=0){
+      226                           sprintf(MESSAGE,ERMSGB);print_std(IUT0,MESSAGE);
+      227                           sprintf(MESSAGE,EREXP3);print_std(IUT0,MESSAGE);
+      228                           *IERR = 1;
+      229                           return;
+      230                       }
+      231                   }
+      232             
+      233                   j1=0;
+      234                   if(*IMODE==BINARY){
+      235                       fwrite ((char *)HEADER[BINARY],8,1,fp[*IUNIT] );
+      236                       if(*IWREV==0)fwrite ((char *)(IENDIAN+0),4,1,fp[*IUNIT] );
+      237                       if(*IWREV==1)fwrite ((char *)(IENDIAN+1),4,1,fp[*IUNIT] );
+      238                       NUM2d=*NUM2;
+      239                       if(*IWREV==1){ conv(&NUM2d,4); } 
+      240                       fwrite ((char *)&NUM2d   ,4,1,fp[*IUNIT] );
+      241                       for(i=0;i<*NUM2;i++){ fwrite((char *)COMMNT+i*60,1,60,fp[*IUNIT] ); }
+      242                   }
+      243                   if(( *IMODE==ASCII || *IMODE==UNFMT )){
+      244                       rw_c1_08_(&IRW,IMODE,IUNIT,HEADER[*IMODE],IERR);
+      245                       rw_i1_(&IRW,IMODE,IUNIT,&ONE,&ONE,NUM2,IERR); 
+      246                       for(i=0;i<*NUM2;i++){ rw_c1_60_(&IRW,IMODE,IUNIT,COMMNT+i*60,IERR); }
+      247                       if(*IERR!=0)return;
+      248                   }
+      249             
+      250                   if(  *IMODE==BINARY &&  *IWREV==1  ){ 
+      251                       sprintf(MESSAGE,WRMSG0);print_std(IUT0,MESSAGE);
+      252                       sprintf(MESSAGE,WRMSG1);print_std(IUT0,MESSAGE);
+      253                   }
+      254              
+      255                   return; 
+      256             
+      257               }/* if(*ITYPE==OPEN) */
+      258             
+      259               /*[3] NEWSET */
+      260               if(*ITYPE==NEWSET){ 
+      261             
+      262                   j1=0;
+      263                   if(*IMODE==BINARY){
+      264                       fwrite ((char *)HEADER[NEWSET],8,1,fp[*IUNIT] );
+      265                       NUM2d=*NUM2;
+      266                       if(*IWREV==1){ conv(&NUM2d,4); } 
+      267                       fwrite ((char *)&NUM2d   ,4,1,fp[*IUNIT] );
+      268                       for(i=0;i<*NUM2;i++){ fwrite ((char *)COMMNT+i*60,1,60,fp[*IUNIT] ); }
+      269                   }
+      270                   if(( *IMODE==ASCII || *IMODE==UNFMT )){
+      271                       rw_c1_08_(&IRW,IMODE,IUNIT,HEADER[NEWSET],IERR);
+      272                       rw_i1_(&IRW,IMODE,IUNIT,&ONE,&ONE,NUM2,IERR); 
+      273                       for(i=0;i<*NUM2;i++){ rw_c1_60_(&IRW,IMODE,IUNIT,COMMNT+i*60,IERR); }
+      274                       if(*IERR!=0)return;
+      275                   }
+      276                   return; 
+      277               }/* if(*ITYPE==NEWSET) */
+      278             
+      279               /*[4] CLOSE */
+      280               if(*ITYPE==CLOSE){
+      281             
+      282                   if(*IMODE==BINARY){
+      283                       fwrite ((char *)HEADER[CLOSE],1,8,fp[*IUNIT] );
+      284                       fclose(fp[*IUNIT]);
+      285                   }
+      286                   if(( *IMODE==ASCII || *IMODE==UNFMT )){
+      287                       rw_c1_08_(&IRW,IMODE,IUNIT,HEADER[CLOSE],IERR);
+      288                       close_f_(IUNIT,IERR);
+      289                       if(*IERR!=0)return;
+      290                   }
+      291                   return; 
+      292               }/* if(*ITYPE==CLOSE) */
+      293             
+      294               /*[5] DATA (INTARY,FLTARY,DBLARY) */
+      295               if(*ITYPE==INTARY || *ITYPE==FLTARY|| *ITYPE==DBLARY){
+      296             
+      297                   if(*IMODE==BINARY){
+      298                       fwrite ((char *)HEADER[*ITYPE], 8,1,fp[*IUNIT] );
+      299                       fwrite ((char *)KEYWRD        , 8,1,fp[*IUNIT] );
+      300                       fwrite ((char *)NAME          ,30,1,fp[*IUNIT] );
+      301                       NUM2d=*NUM2;
+      302                        if(*IWREV==1){ conv(&NUM2d,4); } 
+      303                       fwrite ((char *)&NUM2d   ,4,1,fp[*IUNIT] );
+      304                       NUMd =*NUM ;
+      305                       if(*IWREV==1){ conv(&NUMd ,4); } 
+      306                       fwrite ((char *)&NUMd    ,4,1,fp[*IUNIT] );
+      307                   }
+      308                   if(( *IMODE==ASCII || *IMODE==UNFMT )){
+      309                       rw_c1_08_(&IRW,IMODE,IUNIT,HEADER[*ITYPE],IERR);
+      310                       rw_c1_08_(&IRW,IMODE,IUNIT,KEYWRD        ,IERR);
+      311                       rw_c1_30_(&IRW,IMODE,IUNIT,NAME          ,IERR);
+      312                       rw_i2_(&IRW,IMODE,IUNIT,&ONE,&ONE,NUM2,NUM,IERR); 
+      313                       if(*IERR!=0)return;
+      314                   } /* if(*IMODE==BINARY) */
+      315             
+      316                   if( *NUM2<=0 || *NUM<=0 ) goto line150;
+      317             
+      318                   if( *ISRCE == ARY0D){
+      319                       
+      320                       IDUM=*IVAR;
+      321                       FDUM=*FVAR;
+      322                       if(*ITYPE==DBLARY)DDUM=*(double *)FVAR; 
+      323             
+      324                       if( *ITYPE==INTARY && *IMODE==BINARY ){
+      325                           if(*IWREV==1){ conv(&IDUM,4); } 
+      326                           fwrite ((char *)&IDUM ,4,1,fp[*IUNIT] );
+      327              	  }
+      328                       if( *ITYPE==INTARY && ( *IMODE==ASCII || *IMODE==UNFMT ) ){
+      329                           rw_i1_(&IRW,IMODE,IUNIT,&ONE,&ONE,&IDUM,IERR); 
+      330              	  }
+      331                       if( *ITYPE==FLTARY && *IMODE==BINARY ){
+      332                           if(*IWREV==1){ conv(&FDUM,4); } 
+      333                           fwrite ((char *)&FDUM ,4,1,fp[*IUNIT] );
+      334             	  }
+      335                       if( *ITYPE==FLTARY && ( *IMODE==ASCII || *IMODE==UNFMT ) ){
+      336                           rw_f1_(&IRW,IMODE,IUNIT,&ONE,&ONE,&FDUM,IERR); 
+      337             	  }
+      338                       if( *ITYPE==DBLARY && *IMODE==BINARY ){
+      339                           if(*IWREV==1){ conv(&DDUM,8); } 
+      340                           fwrite ((char *)&DDUM ,8,1,fp[*IUNIT] );
+      341             	  }
+      342                       if( *ITYPE==DBLARY && ( *IMODE==ASCII || *IMODE==UNFMT ) ){
+      343                           rw_d1_(&IRW,IMODE,IUNIT,&ONE,&ONE,&DDUM,IERR); 
+      344             	  } 
+      345             
+      346                   if(*IERR!=0)return;    
+      347                   goto line150;
+      348                   } /* if( *ISRCE == ARY0D) */
+      349             
+      350                   if( *NUM2 == 1 && *ISRCE == ARY1D ){
+      351             
+      352                       j1=0; 
+      353                       if( *ITYPE==INTARY && *IMODE==BINARY ){
+                       <<< Loop-information Start >>>
+                       <<<  [OPTIMIZATION]
+                       <<<    PREFETCH(HARD) Expected by compiler :
+                       <<<      (unknown)
+                       <<<    SPILLS :
+                       <<<      GENERAL   : SPILL 0  FILL 2
+                       <<<      SIMD&FP   : SPILL 0  FILL 0
+                       <<<      SCALABLE  : SPILL 0  FILL 0
+                       <<<      PREDICATE : SPILL 0  FILL 0
+                       <<< Loop-information  End >>>
+      354                           for(i=0;i< *NUM * (*NUM2);i++){
+      355                               IDUM=*(IARY1+i);
+      356                               if(*IWREV==1){ conv(&IDUM,4); } 
+      357                               fwrite ((char *)&IDUM ,4,1,fp[*IUNIT] );
+      358                           }
+      359                       }
+      360                       if( *ITYPE==INTARY && ( *IMODE==ASCII || *IMODE==UNFMT ) ){
+      361                            rw_i1_(&IRW,IMODE,IUNIT,NUM,NUM,IARY1,IERR); 
+      362             	  }
+      363                       if( *ITYPE==FLTARY && *IMODE==BINARY ){
+                       <<< Loop-information Start >>>
+                       <<<  [OPTIMIZATION]
+                       <<<    PREFETCH(HARD) Expected by compiler :
+                       <<<      (unknown)
+                       <<<    SPILLS :
+                       <<<      GENERAL   : SPILL 1  FILL 4
+                       <<<      SIMD&FP   : SPILL 0  FILL 0
+                       <<<      SCALABLE  : SPILL 0  FILL 0
+                       <<<      PREDICATE : SPILL 0  FILL 0
+                       <<< Loop-information  End >>>
+      364                           for(i=0;i< *NUM * (*NUM2);i++){
+      365                               FDUM=*(FARY1+i);
+      366                               if(*IWREV==1){ conv(&FDUM,4); } 
+      367                               fwrite ((char *)&FDUM ,4,1,fp[*IUNIT] );
+      368                           }
+      369             	  }
+      370                       if( *ITYPE==FLTARY && ( *IMODE==ASCII || *IMODE==UNFMT ) ){
+      371                            rw_f1_(&IRW,IMODE,IUNIT,NUM,NUM,FARY1,IERR); 
+      372             	  }
+      373                       if( *ITYPE==DBLARY && *IMODE==BINARY ){
+                       <<< Loop-information Start >>>
+                       <<<  [OPTIMIZATION]
+                       <<<    PREFETCH(HARD) Expected by compiler :
+                       <<<      (unknown)
+                       <<<    SPILLS :
+                       <<<      GENERAL   : SPILL 0  FILL 2
+                       <<<      SIMD&FP   : SPILL 0  FILL 0
+                       <<<      SCALABLE  : SPILL 0  FILL 0
+                       <<<      PREDICATE : SPILL 0  FILL 0
+                       <<< Loop-information  End >>>
+      374                           for(i=0;i< *NUM * (*NUM2);i++){
+      375                               DDUM=*(double *)(FARY1+i*2);
+      376                               if(*IWREV==1){ conv(&DDUM,8); } 
+      377                               fwrite ((char *)&DDUM ,8,1,fp[*IUNIT] );
+      378                           }
+      379             	  }
+      380                       if( *ITYPE==DBLARY && ( *IMODE==ASCII || *IMODE==UNFMT ) ){
+      381                            rw_d1_(&IRW,IMODE,IUNIT,NUM,NUM,FARY1,IERR); 
+      382             	  }
+      383                       
+      384                   if(*IERR!=0)return;    
+      385                   goto line150;
+      386                   } /* if( *NUM2 == 1 && *ISRCE == ARY1D ) */
+      387             
+      388                   if( *NUM2 == 2 && *ISRCE == ARY1D ){
+      389                       
+      390                       j1=0;
+      391                       if( *ITYPE==INTARY && *IMODE==BINARY ){
+                       <<< Loop-information Start >>>
+                       <<<  [OPTIMIZATION]
+                       <<<    SPILLS :
+                       <<<      GENERAL   : SPILL 0  FILL 3
+                       <<<      SIMD&FP   : SPILL 0  FILL 0
+                       <<<      SCALABLE  : SPILL 0  FILL 0
+                       <<<      PREDICATE : SPILL 0  FILL 0
+                       <<< Loop-information  End >>>
+      392                           for(i=0;i< *NUM * (*NUM2);i++){
+      393                               if((i%2)==0)IDUM=*(IARY1+(i-0)/2);
+      394                               if((i%2)==1)IDUM=*(IARY2+(i-1)/2);
+      395                               if(*IWREV==1){ conv(&IDUM,4); } 
+      396                               fwrite ((char *)&IDUM ,4,1,fp[*IUNIT] );
+      397                           }
+      398                       }
+      399                       if( *ITYPE==INTARY && ( *IMODE==ASCII || *IMODE==UNFMT ) ){
+      400                            rw_i2_(&IRW,IMODE,IUNIT,NUM,NUM,IARY1,IARY2,IERR);  
+      401              	  }
+      402                       if( *ITYPE==FLTARY && *IMODE==BINARY ){
+                       <<< Loop-information Start >>>
+                       <<<  [OPTIMIZATION]
+                       <<<    SPILLS :
+                       <<<      GENERAL   : SPILL 0  FILL 3
+                       <<<      SIMD&FP   : SPILL 0  FILL 0
+                       <<<      SCALABLE  : SPILL 0  FILL 0
+                       <<<      PREDICATE : SPILL 0  FILL 0
+                       <<< Loop-information  End >>>
+      403                           for(i=0;i< *NUM * (*NUM2);i++){
+      404                               if((i%2)==0)FDUM=*(FARY1+(i-0)/2);
+      405                               if((i%2)==1)FDUM=*(FARY2+(i-1)/2);
+      406                               if(*IWREV==1){ conv(&FDUM,4); } 
+      407                               fwrite ((char *)&FDUM ,4,1,fp[*IUNIT] );
+      408                           }
+      409             	  }
+      410                       if( *ITYPE==FLTARY && ( *IMODE==ASCII || *IMODE==UNFMT ) ){
+      411                            rw_f2_(&IRW,IMODE,IUNIT,NUM,NUM,FARY1,FARY2,IERR);  
+      412                       }
+      413                       if( *ITYPE==DBLARY && *IMODE==BINARY ){
+                       <<< Loop-information Start >>>
+                       <<<  [OPTIMIZATION]
+                       <<<    SPILLS :
+                       <<<      GENERAL   : SPILL 0  FILL 3
+                       <<<      SIMD&FP   : SPILL 0  FILL 0
+                       <<<      SCALABLE  : SPILL 0  FILL 0
+                       <<<      PREDICATE : SPILL 0  FILL 0
+                       <<< Loop-information  End >>>
+      414                           for(i=0;i< *NUM * (*NUM2);i++){
+      415                               if((i%2)==0)DDUM=*(double *)(FARY1+((i-0)/2)*2);
+      416                               if((i%2)==1)DDUM=*(double *)(FARY2+((i-1)/2)*2);
+      417                               if(*IWREV==1){ conv(&DDUM,8); } 
+      418                               fwrite ((char *)&DDUM ,8,1,fp[*IUNIT] );
+      419                           }
+      420                       }
+      421                       if( *ITYPE==DBLARY && ( *IMODE==ASCII || *IMODE==UNFMT ) ){
+      422                            rw_d2_(&IRW,IMODE,IUNIT,NUM,NUM,FARY1,FARY2,IERR);  
+      423                       }
+      424                      
+      425                   if(*IERR!=0)return;    
+      426                   goto line150;
+      427                   } /* if( *NUM2 == 2 && *ISRCE == ARY1D ) */
+      428             
+      429                   if( *NUM2 == 3 && *ISRCE == ARY1D ){
+      430             
+      431                       j1=0;
+      432                       if( *ITYPE==INTARY && *IMODE==BINARY ){
+                       <<< Loop-information Start >>>
+                       <<<  [OPTIMIZATION]
+                       <<<    SPILLS :
+                       <<<      GENERAL   : SPILL 5  FILL 14
+                       <<<      SIMD&FP   : SPILL 0  FILL 0
+                       <<<      SCALABLE  : SPILL 0  FILL 0
+                       <<<      PREDICATE : SPILL 0  FILL 0
+                       <<< Loop-information  End >>>
+      433                           for(i=0;i< *NUM * (*NUM2);i++){
+      434                               if((i%3)==0)IDUM=*(IARY1+(i-0)/3);
+      435                               if((i%3)==1)IDUM=*(IARY2+(i-1)/3);
+      436                               if((i%3)==2)IDUM=*(IARY3+(i-2)/3);
+      437                               if(*IWREV==1){ conv(&IDUM,4); } 
+      438                               fwrite ((char *)&IDUM ,4,1,fp[*IUNIT] );
+      439                           }
+      440                       }
+      441                       if( *ITYPE==INTARY && ( *IMODE==ASCII || *IMODE==UNFMT ) ){
+      442                            rw_i3_(&IRW,IMODE,IUNIT,NUM,NUM,IARY1,IARY2,IARY3,IERR);  
+      443                       }
+      444                       if( *ITYPE==FLTARY && *IMODE==BINARY ){
+                       <<< Loop-information Start >>>
+                       <<<  [OPTIMIZATION]
+                       <<<    SPILLS :
+                       <<<      GENERAL   : SPILL 4  FILL 12
+                       <<<      SIMD&FP   : SPILL 0  FILL 0
+                       <<<      SCALABLE  : SPILL 0  FILL 0
+                       <<<      PREDICATE : SPILL 0  FILL 0
+                       <<< Loop-information  End >>>
+      445                           for(i=0;i< *NUM * (*NUM2);i++){
+      446                               if((i%3)==0)FDUM=*(FARY1+(i-0)/3);
+      447                               if((i%3)==1)FDUM=*(FARY2+(i-1)/3);
+      448                               if((i%3)==2)FDUM=*(FARY3+(i-2)/3);
+      449                               if(*IWREV==1){ conv(&FDUM,4); } 
+      450                               fwrite ((char *)&FDUM ,4,1,fp[*IUNIT] );
+      451                           }
+      452                       }
+      453                       if( *ITYPE==FLTARY && ( *IMODE==ASCII || *IMODE==UNFMT ) ){
+      454                            rw_f3_(&IRW,IMODE,IUNIT,NUM,NUM,FARY1,FARY2,FARY3,IERR);  
+      455                       }
+      456                       if( *ITYPE==DBLARY && *IMODE==BINARY ){
+                       <<< Loop-information Start >>>
+                       <<<  [OPTIMIZATION]
+                       <<<    SPILLS :
+                       <<<      GENERAL   : SPILL 4  FILL 13
+                       <<<      SIMD&FP   : SPILL 0  FILL 0
+                       <<<      SCALABLE  : SPILL 0  FILL 0
+                       <<<      PREDICATE : SPILL 0  FILL 0
+                       <<< Loop-information  End >>>
+      457                           for(i=0;i< *NUM * (*NUM2);i++){
+      458                               if((i%3)==0)DDUM=*(double *)(FARY1+((i-0)/3)*2);
+      459                               if((i%3)==1)DDUM=*(double *)(FARY2+((i-1)/3)*2);
+      460                               if((i%3)==2)DDUM=*(double *)(FARY3+((i-2)/3)*2);
+      461                               if(*IWREV==1){ conv(&DDUM,8); } 
+      462                               fwrite ((char *)&DDUM ,8,1,fp[*IUNIT] );
+      463                           }
+      464                       }
+      465                       if( *ITYPE==DBLARY && ( *IMODE==ASCII || *IMODE==UNFMT ) ){
+      466                            rw_d3_(&IRW,IMODE,IUNIT,NUM,NUM,FARY1,FARY2,FARY3,IERR);  
+      467                       }
+      468                      
+      469                   if(*IERR!=0)return;    
+      470                   goto line150;
+      471                   } /* if( *NUM2 == 1 && *ISRCE == ARY1D ) */
+      472             
+      473                   if( *ISRCE == ARY2D ){
+      474             
+      475                       j1=0;
+      476                       j2=0;
+      477                       if( *ITYPE==INTARY && *IMODE==BINARY ){
+                       <<< Loop-information Start >>>
+                       <<<  [OPTIMIZATION]
+                       <<<    SPILLS :
+                       <<<      GENERAL   : SPILL 2  FILL 6
+                       <<<      SIMD&FP   : SPILL 0  FILL 0
+                       <<<      SCALABLE  : SPILL 0  FILL 0
+                       <<<      PREDICATE : SPILL 0  FILL 0
+                       <<< Loop-information  End >>>
+      478                           for(i=0;i< *NUM * (*NUM2);i++){
+      479                               IDUM=*(IARY2D+j1*MAX2+j2);                
+      480                               j2++;if(j2==*NUM2){j2=0;j1++;}
+      481                               if(*IWREV==1){ conv(&IDUM,4); } 
+      482                               fwrite ((char *)&IDUM ,4,1,fp[*IUNIT] );
+      483                           }
+      484                       }
+      485                       if( *ITYPE==INTARY && ( *IMODE==ASCII || *IMODE==UNFMT ) ){
+      486                            rw_in_(&IRW,IMODE,IUNIT,NUM,max2d,NUM,NUM2,IARY2D,IERR);  
+      487                       }
+      488                       if( *ITYPE==FLTARY && *IMODE==BINARY ){
+                       <<< Loop-information Start >>>
+                       <<<  [OPTIMIZATION]
+                       <<<    SPILLS :
+                       <<<      GENERAL   : SPILL 2  FILL 6
+                       <<<      SIMD&FP   : SPILL 0  FILL 0
+                       <<<      SCALABLE  : SPILL 0  FILL 0
+                       <<<      PREDICATE : SPILL 0  FILL 0
+                       <<< Loop-information  End >>>
+      489                           for(i=0;i< *NUM * (*NUM2);i++){
+      490                               FDUM=*(FARY2D+j1*MAX2+j2);                
+      491                               j2++;if(j2==*NUM2){j2=0;j1++;}
+      492                               if(*IWREV==1){ conv(&FDUM,4); } 
+      493                               fwrite ((char *)&FDUM ,4,1,fp[*IUNIT] );
+      494                           }
+      495                       }
+      496                       if( *ITYPE==FLTARY && ( *IMODE==ASCII || *IMODE==UNFMT ) ){
+      497                            rw_fn_(&IRW,IMODE,IUNIT,NUM,max2d,NUM,NUM2,FARY2D,IERR);  
+      498                       }
+      499                       if( *ITYPE==DBLARY && *IMODE==BINARY ){
+                       <<< Loop-information Start >>>
+                       <<<  [OPTIMIZATION]
+                       <<<    SPILLS :
+                       <<<      GENERAL   : SPILL 2  FILL 7
+                       <<<      SIMD&FP   : SPILL 0  FILL 0
+                       <<<      SCALABLE  : SPILL 0  FILL 0
+                       <<<      PREDICATE : SPILL 0  FILL 0
+                       <<< Loop-information  End >>>
+      500                           for(i=0;i< *NUM * (*NUM2);i++){
+      501                               DDUM=*(double *)(FARY2D+(j1*MAX2+j2)*2);                
+      502                               j2++;if(j2==*NUM2){j2=0;j1++;}
+      503                               if(*IWREV==1){ conv(&DDUM,8); } 
+      504                               fwrite ((char *)&DDUM ,8,1,fp[*IUNIT] );
+      505                           }
+      506                       }
+      507                       if( *ITYPE==DBLARY && ( *IMODE==ASCII || *IMODE==UNFMT ) ){
+      508                            rw_dn_(&IRW,IMODE,IUNIT,NUM,max2d,NUM,NUM2,FARY2D,IERR);  
+      509                       }
+      510                       
+      511                   if(*IERR!=0)return;    
+      512                   goto line150;
+      513                   } /* if( *ISRCE == ARY2D ) */
+      514             
+      515                   line150: ;
+      516                   return; 
+      517              
+      518               }/* if(*ITYPE==INTARY || *ITYPE==FLTARY) */
+      519             
+      520             }
+Total prefetch num: 0
+Statistics information
+  Option information
+    Command line options : -Kident_mpi -Kvisimpact,ocl,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI023/include/mpi/fujitsu -pthread
+    Effective options    : -g0 -mt -Qy -std=gnu11 -x- -O3 -Knoalias_const -Kalign_loops
+                           -Karray_declaration_opt -Knoarray_private -Kassume=noshortloop
+                           -Kassume=nomemory_bandwidth -Kassume=notime_saving_compilation
+                           -Kcmodel=small -Kconst -Knodynamic_iteration -Keval
+                           -Keval_noconcurrent -Knoextract_stride_store -Kfast_matmul
+                           -Knofconst -Knofenv_access -Kfp_contract -Kfp_relaxed -Kfsimple
+                           -Kfz -Khpctag -Kilfunc=procedure -Klargepage -Klib
+                           -Kloop_blocking -Kloop_fission -Kloop_nofission_stripmining
+                           -Kloop_fission_threshold=50 -Kloop_fusion -Kloop_interchange
+                           -Kloop_part_parallel -Kloop_part_simd -Kloop_perfect_nest
+                           -Kloop_noversioning -Klooptype=f -Knomemalias -Kmfunc=1 -Kocl
+                           -Komitfp -Kopenmp -Kopenmp_noassume_norecurrence
+                           -Kopenmp_nocollapse_except_innermost -Kopenmp_noordered_reduction
+                           -Knoopenmp_simd -Knooptlib_string -Knooptmsg
+                           -Knopc_relative_literal_loads -Kparallel
+                           -Kparallel_nofp_precision -Knopreex -Kprefetch_cache_level=all
+                           -Kprefetch_noconditional -Kprefetch_noindirect -Kprefetch_noinfer
+                           -Kprefetch_sequential=auto -Kprefetch_nostride -Kprefetch_strong
+                           -Kprefetch_strong_L2 -Knopreload -Krdconv=1 -Kreduction
+                           -Kregion_extension -Krestp=restrict -Ksch_post_ra -Ksch_pre_ra
+                           -Ksibling_calls -Ksimd=auto -Ksimd_packed_promotion
+                           -Ksimd_reduction_product -Ksimd_reg_size=512
+                           -Ksimd_nouncounted_loop -Ksimd_use_multiple_structures
+                           -Knostrict_aliasing -Knostriping -KA64FX -KARMV8_3_A -KSVE -Kswp
+                           -Kswp_freg_rate=100 -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                           -Kswp_policy=auto -Kunroll -Knounroll_and_jam -Knozfill
+                           -Ncancel_overtime_compilation -Nnocoverage -Nnoexceptions
+                           -Nnofjcex -Nfjprof -Nnohook_func -Nnohook_time -Nfjomplib -Nline
+                           -Nlst=p -Nlst=t -Nquickdbg=noheapchk -Nquickdbg=nosubchk
+                           -NRnotrap -Nnoreordered_variable_stack -Nrt_notune
+                           -Nsetvalue=noheap -Nsetvalue=nostack -Nsetvalue=noscalar
+                           -Nsetvalue=noarray -Nsetvalue=nostruct -Nsrc -Nsta

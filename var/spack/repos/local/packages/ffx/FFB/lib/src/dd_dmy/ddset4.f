@@ -1,0 +1,55 @@
+      SUBROUTINE DDMAXI(IBUF,IMAX,IERR)
+      IMPLICIT NONE
+C
+      INTEGER*4 IBUF,IMAX,IERR
+C
+      IMAX=IBUF
+C
+      RETURN
+      END
+C
+      SUBROUTINE DDSET4(IPART,NPART,NUM,LDATA,IERR)
+      IMPLICIT NONE
+      INTEGER*4 IPART,NPART,NUM,LDATA(NUM,NPART),IERR
+      INTEGER*4 LBUF(NUM),I
+C
+      RETURN
+      END
+C
+      SUBROUTINE DDSET5(IPART,MBPDOM,
+     *                  NDOMS,LDOMS,NBDOMS,LBUFS,
+     *                  NDOMR,LDOMR,NBDOMR,LBUFR,IERR)
+      IMPLICIT NONE
+      INTEGER*4 IPART,MBPDOM,IERR,
+     *          NDOMS               ,NDOMR               , 
+     *          LDOMS (       NDOMS),LDOMR (       NDOMR),
+     *          NBDOMS(       NDOMS),NBDOMR(       NDOMR),
+     *          LBUFS (MBPDOM,NDOMS),LBUFR (MBPDOM,NDOMR)
+C
+      INTEGER*4 NCOM,ISLFR,ISLFS,IDOMR,IDOMS,I
+      DATA NCOM  /0/
+      DATA ISLFR /0/
+      DATA ISLFS /0/
+C
+      RETURN
+      END
+C
+      SUBROUTINE DDSET6(IPART,MCOMM,
+     *                  NDOMS,LDOMS,NBDOMS,LISTS,LBUFS,
+     *                  NDOMR,LDOMR,NBDOMR,LISTR,LBUFR,IERR)
+      IMPLICIT NONE
+      INTEGER*4 IPART,MBPDOM,IERR,
+     *          MCOMM,NDOMS,NDOMR, 
+     *          LDOMS (NDOMS),LDOMR (NDOMR),
+     *          NBDOMS(NDOMS),NBDOMR(NDOMR),
+     *          LISTS (NDOMS),LISTR (NDOMR),
+     *          LBUFS (MCOMM),LBUFR (MCOMM)
+C
+      INTEGER*4 NCOM,ISLFR,ISLFS,IDOMR,IDOMS,I
+      DATA NCOM  /0/
+      DATA ISLFR /0/
+      DATA ISLFS /0/
+C
+      RETURN
+      END
+C

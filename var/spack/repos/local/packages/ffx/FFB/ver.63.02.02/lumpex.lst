@@ -1,0 +1,178 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:53:10 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : lumpex.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "LUMPEX"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE LUMPEX(N2,NE,NP,NEX,MELM,EAP1,IENP,NEP,MEP,MP,CM)
+          2                           IMPLICIT NONE
+          3                     
+          4                     ***** DEFINE ARGUMENTS *****
+          5                           INTEGER N2,NE,NP,NEX(12),MELM,IENP,NEP,MEP,MP
+          6                           REAL EAP1, CM
+          7                           DIMENSION CM(NP)
+          8                           DIMENSION EAP1(N2,MEP,NP)
+          9                           DIMENSION IENP(MEP,MP),NEP(MP)
+         10                     
+         11                     ***** OBJECTS *****
+         12                           INTEGER IP,IN, JN, NN, IE, IEBEG, IEEND
+         13                           INTEGER NEHEX, NEWED, NEPRD, NETET
+         14                           INTEGER IEE1,IEE2,IEE3,IEE4,IPE,K
+         15                           REAL    CM1
+         16                     C
+         17                           NETET=NEX(1)
+         18                           NEPRD=NEX(2)
+         19                           NEWED=NEX(3)
+         20                           NEHEX=NEX(4)
+         21                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      CM
+                              <<< Loop-information  End >>>
+         22     1  pp   4v            DO 100 IP=1,NP
+         23     1   p   4v                CM(IP)=0.0
+         24     1   p   4v        100 CONTINUE
+         25                     C
+         26                     C   == TET. ==
+         27                           IEE1=NETET
+         28                     C
+         29                     C   == PYRAMID ==
+         30                           IEE2=NETET+NEPRD
+         31                     C
+         32                     C   == WEDGE ==
+         33                           IEE3=NETET+NEPRD+NEWED
+         34                     C
+         35                     C   == HEX. ==
+         36                           IEE4=NETET+NEPRD+NEWED+NEHEX
+         37                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<< Loop-information  End >>>
+         38     1  pp                 DO IP=1,NP
+         39     1   p                     CM1 = 0.0E0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      EAP1
+                              <<< Loop-information  End >>>
+         40     2   p                     DO IPE=1,NEP(IP)
+         41     2   p                         IE =IENP(IPE,IP)
+         42     3   p                         IF(IE.LE.IEE1) THEN
+         43     3   p                             NN=NEX(5)
+         44     3   p                         ELSE IF (IE.LE.IEE2) THEN
+         45     3   p                             NN=NEX(6)
+         46     3   p                         ELSE IF (IE.LE.IEE3) THEN
+         47     3   p                             NN=NEX(7)
+         48     3   p                         ELSE
+         49     3   p                             NN=NEX(8)
+         50     3   p                         ENDIF
+         51     2               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.71, ITR: 512, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      EAP1
+                              <<< Loop-information  End >>>
+         52     3   p   8v                    DO K=1,NN
+         53     3   p   8v                        CM1 = CM1 + EAP1(K,IPE,IP)
+         54     3   p   8v                    ENDDO
+         55     2   p                         CM(IP) = CM1
+         56     2   p                     ENDDO
+         57     1   p                 ENDDO
+         58                     
+         59                           RETURN
+         60                           END
+
+ Diagnostic messages: program name(LUMPEX)
+   jwd2008i-i  "lumpex.f", line 1: この仮引数'MELM'は、副プログラム中で使用されていません。
+   jwd2008i-i  "lumpex.f", line 1: この仮引数'NE'は、副プログラム中で使用されていません。
+   jwd8220o-i  "lumpex.f", line 1: 副作用の可能性のある最適化を行いました。
+   jwd2006i-i  "lumpex.f", line 12: この名前'IEEND'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "lumpex.f", line 12: この名前'IEBEG'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "lumpex.f", line 12: この名前'JN'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "lumpex.f", line 12: この名前'IN'は、宣言だけされていて引用されていません。
+   jwd5001p-i  "lumpex.f", line 22: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "lumpex.f", line 22: このDOループをSIMD化しました。(名前:IP)
+   jwd8663o-i  "lumpex.f", line 22: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "lumpex.f", line 22: ループを展開数4回でアンローリングしました。
+   jwd5001p-i  "lumpex.f", line 38: このDOループを並列化しました。(名前:IP)
+   jwd6004s-i  "lumpex.f", line 52: リダクション演算を含むDOループをSIMD化しました。(名前:K)
+   jwd8204o-i  "lumpex.f", line 52: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "lumpex.f", line 52: ループの繰返し数が512回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "lumpex.f", line 53: 多項式の演算順序を変更しました。
+   jwd8208o-i  "lumpex.f", line 53: ループ内の総和または乗積演算の計算方法を変更しました。
+
+ Procedure information
+   Lines      : 60
+   Statements : 43
+   Stack(byte): 832
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 60
+   Total statements : 43
+   Total stack(byte): 832
+   Total prefetch num: 0
+

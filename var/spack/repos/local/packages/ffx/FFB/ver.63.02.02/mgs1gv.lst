@@ -1,0 +1,206 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:53:11 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : mgs1gv.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "MGS1GV"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE MGS1GV(NP,NS,XM,YM,WEIGHT)
+          2                     C
+          3                           IMPLICIT NONE
+          4                     C
+          5                     C   INPUTS
+          6                           INTEGER*4 NP,NS
+          7                           REAL*4 XM(NP,NS),WEIGHT(NP)
+          8                     C
+          9                     C   OUTPUTS
+         10                           REAL*4 YM(NS,NP)
+         11                     C
+         12                     C   WORKS
+         13                           INTEGER*4 I,J,IP
+         14                           REAL*4 U(NP),V(NP)
+         15                           REAL*4 SIGII,SIGIJ,SBUF(2),RBUF(2),ZZ
+         16                           INTEGER*4 IERR
+         17                     C
+         18                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      XM, U
+                              <<< Loop-information  End >>>
+         19     1                     DO 100 J=1, NS
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1067
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.60, ITR: 160, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      XM
+                              <<< Loop-information  End >>>
+         20     2  pp   2v                DO 110 IP=1, NP
+         21     2   p   2v                    YM(J,IP) = XM(IP,J)
+         22     2   p   2v       110      CONTINUE
+         23     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      V, U
+                              <<< Loop-information  End >>>
+         24     2                         DO 200 I=1, J-1
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 800
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.66, ITR: 192, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      V, U
+                              <<< Loop-information  End >>>
+         25     3  pp   2v                    DO 210 IP=1, NP
+         26     3   p   2v                        U(IP) = YM(I,IP)
+         27     3   p   2v                        V(IP) = YM(J,IP)
+         28     3   p   2v       210          CONTINUE
+         29     2               C
+         30     2                             CALL DOTWVC(NP,U,V,WEIGHT,SIGIJ)
+         31     2                             CALL DOTWVC(NP,U,U,WEIGHT,SIGII)
+         32     2               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 843
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+         33     3  pp   2v                    DO 220 IP=1, NP
+         34     3   p   2v                        YM(J,IP) = YM(J,IP) - (SIGIJ / SIGII) * YM(I,IP)
+         35     3   p   2v       220          CONTINUE
+         36     2                200      CONTINUE
+         37     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1231
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.55, ITR: 384, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      U
+                              <<< Loop-information  End >>>
+         38     2  pp   4v                DO 120 IP=1, NP
+         39     2   p   4v                    U(IP) = YM(J,IP)
+         40     2   p   4v       120      CONTINUE
+         41     1               C
+         42     1                         CALL DOTWVC(NP,U,U,WEIGHT,ZZ)
+         43     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1143
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+         44     2  pp   4v                DO 130 IP=1, NP
+         45     2   p   4v                    YM(J,IP) = YM(J,IP) / SQRT(ZZ)
+         46     2   p   4v       130      CONTINUE
+         47     1               C
+         48     1                100  CONTINUE
+         49                     C
+         50                           RETURN
+         51                           END
+         52                     C
+
+ Diagnostic messages: program name(MGS1GV)
+   jwd8220o-i  "mgs1gv.f", line 1: 副作用の可能性のある最適化を行いました。
+   jwd2006i-i  "mgs1gv.f", line 15: この名前'RBUF'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "mgs1gv.f", line 15: この名前'SBUF'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "mgs1gv.f", line 16: この名前'IERR'は、宣言だけされていて引用されていません。
+   jwd5122p-i  "mgs1gv.f", line 19: DOループ内に、自動並列化の制約となる手続引用が存在します。
+   jwd5001p-i  "mgs1gv.f", line 20: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "mgs1gv.f", line 20: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "mgs1gv.f", line 20: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "mgs1gv.f", line 20: ループの繰返し数が160回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5122p-i  "mgs1gv.f", line 24: DOループ内に、自動並列化の制約となる手続引用が存在します。
+   jwd5001p-i  "mgs1gv.f", line 25: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "mgs1gv.f", line 25: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "mgs1gv.f", line 25: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "mgs1gv.f", line 25: ループの繰返し数が192回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "mgs1gv.f", line 33: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "mgs1gv.f", line 33: このDOループをSIMD化しました。(名前:IP)
+   jwd8663o-i  "mgs1gv.f", line 33: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "mgs1gv.f", line 33: ループを展開数2回でアンローリングしました。
+   jwd5001p-i  "mgs1gv.f", line 38: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "mgs1gv.f", line 38: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "mgs1gv.f", line 38: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "mgs1gv.f", line 38: ループの繰返し数が384回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "mgs1gv.f", line 44: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "mgs1gv.f", line 44: このDOループをSIMD化しました。(名前:IP)
+   jwd8206o-i  "mgs1gv.f", line 44: 除算を逆数の乗算に変更しました。
+   jwd8662o-i  "mgs1gv.f", line 44: スケジューリング結果を得られなかったため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "mgs1gv.f", line 44: ループを展開数4回でアンローリングしました。
+   jwd8206o-i  "mgs1gv.f", line 45: 除算を逆数の乗算に変更しました。
+
+ Procedure information
+   Lines      : 52
+   Statements : 34
+   Stack(byte): 2352
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 52
+   Total statements : 34
+   Total stack(byte): 2352
+   Total prefetch num: 0
+

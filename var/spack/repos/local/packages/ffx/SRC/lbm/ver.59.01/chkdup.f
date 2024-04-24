@@ -1,0 +1,33 @@
+      SUBROUTINE CHKDUP(NP,NG,MPBOUN,NPBOUN,LPBOUN,LWORK,IERR)
+      IMPLICIT NONE
+      INTEGER*4 NP,NG,IERR
+      INTEGER*4 MPBOUN,NPBOUN,LPBOUN(5,MPBOUN)
+      INTEGER*4 LWORK(NP,NG+1,NG+1,NG+1)
+      INTEGER*4 I,J,K,IP,IPB
+C
+      IERR=0
+C
+      DO 100 K =1,NG+1
+      DO 110 J =1,NG+1
+      DO 120 I =1,NG+1
+      DO 130 IP=1,NP
+          LWORK(IP,I,J,K)=0
+  130 CONTINUE
+  120 CONTINUE
+  110 CONTINUE
+  100 CONTINUE
+C
+      DO 200 IPB=1,NPBOUN
+          I =LPBOUN(1,IPB)
+          J =LPBOUN(2,IPB)
+          K =LPBOUN(3,IPB)
+          IP=LPBOUN(4,IPB)
+          IF(LWORK(IP,I,J,K).EQ.1) THEN
+              IERR=1
+              RETURN
+          ENDIF
+          LWORK(IP,I,J,K)=1
+ 200  CONTINUE
+C
+      RETURN
+      END

@@ -1,0 +1,1316 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:52:59 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : dyn3dx.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "DYN3DX"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.8.1                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE : DYN3DX                                                C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY Y.YAMADE            C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C CONTACT ADDRESS : IIS, THE UNIVERSITY OF TOKYO, CISS                 C
+         11                     C                                                                      C
+         12                     C THERMO-FLUID ANALYSIS SOLVERS FOR LARGE-SCALE-ASSEMBLY               C
+         13                     C                                                                      C
+         14                     C======================================================================C
+         15                           SUBROUTINE DYN3DX(MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+         16                          *                  VISCM,ALFDYN,FILTER,U,V,W,RES,NITR,
+         17                          *                  CM,ATEST0,AAVER0,
+         18                          *                  NODE,ME,MP,NE,NP,N2,NEX,
+         19                          *                  MELM,EAP1,EAP2,IENP,JENP,NODP,NEP,MEP,
+         20                          *                  IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+         21                          *                  NUMIP,CS,AML,AMM,S,UI,UIJ,SIJN,SIJ,SSIJ,
+         22                          *                  RX,RY,FX,FY,FZ,WRK01,WRK02,WRK03,
+         23                          *                  WRK04,WRK05,WRK06,WRK07,WRK08,LFIX3D,
+         24                          *                  MWRK,WRKN,
+         25                          *                  NPP,NCRS,IPCRS,ATESPC,AAVEPC,
+         26                          *                  JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS,
+         27                          *                  CSMAX,
+         28                          *                  IUT0,IERR,IUT6,ICRS_T)
+         29                           IMPLICIT NONE
+         30                     C
+         31                           INTEGER*4 MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+         32                          *          NITR,NODE,ME,MP,NE,NP,N2,NEX,
+         33                          *          MELM,IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+         34                          *          NUMIP,LFIX3D,MWRK,NPP,NCRS,IPCRS,
+         35                          *          IUT0,IERR,IUT6,IENP,JENP,NODP,NEP,MEP
+         36                     C
+         37                           REAL*4    VISCM,ALFDYN,FILTER,U,V,W,RES,
+         38                          *          CM,ATEST0,AAVER0,EAP1,EAP2,
+         39                          *          CS,AML,AMM,S,UI,UIJ,SIJN,SIJ,SSIJ,
+         40                          *          RX,RY,FX,FY,FZ,WRK01,WRK02,WRK03,
+         41                          *          WRK04,WRK05,WRK06,WRK07,WRK08,WRKN,
+         42                          *          ATESPC,AAVEPC,CSMAX
+         43                     C
+         44                           INTEGER*4 NMAX,NETET,NEPRD,NEWED,NEHEX,NTET,NPRD,NWED,NHEX,
+         45                          *          IES1,IEE1,IES2,IEE2,IES3,IEE3,IES4,IEE4,MAXBUF,
+         46                          *          IERR1,IERR2,IERR3,IDUM,IP,IE
+         47                     C
+         48                           REAL*4    CLEAR,EPS,EPSDYN,ALF2,DUMMY,UKK,COEF,AMLE,AMME,SE,SGS
+         49                     C
+         50                           DIMENSION NCOLOR(4),NCPART(MCOLOR,4),LLOOP(MCPART,MCOLOR,4)
+         51                           DIMENSION FILTER(NE),U(NP),V(NP),W(NP),CM(NP),
+         52                          *          ATEST0(NP),AAVER0(NP),NODE(N2,NE),NEX(12)
+         53                           DIMENSION NPP(NP)
+         54                           DIMENSION IPCRS(NCRS),ATESPC(NCRS),AAVEPC(NCRS)
+         55                     C
+         56                           DIMENSION LDOM(NDOM),NBPDOM(NDOM),
+         57                          1          IPSLF(MBPDOM,NDOM),IPSND(MBPDOM,NDOM),NUMIP(NP)
+         58                     C
+         59                           DIMENSION CS  (NE),AML  (NP),AMM   (NP),S     (NP),
+         60                          1          UI(MP,3),UIJ(MP,6),SIJN(MP,6),SIJ (MP,6),SSIJ(MP,6)
+         61                     C
+         62                           DIMENSION RX(0:N2,NE),RY(0:N2,NE),
+         63                          1          FX(NP),FY(NP),FZ(NP),
+         64                          2          WRK01(NE),WRK02(NE),WRK03(NE),WRK04(NP),
+         65                          3          WRK05(NP),WRK06(NP),WRK07(NP),WRK08(NP),
+         66                          4          LFIX3D(NP),WRKN(MWRK,2)
+         67                     C
+         68                           DIMENSION EAP1(N2,MEP,NP), EAP2(3,N2,MEP,NP)
+         69                           DIMENSION IENP(MEP,MP),JENP(MEP,MP),NODP(N2,MEP,NP),NEP(MP)
+         70                     C
+         71                           DIMENSION RES(23),NITR(23)
+         72                     C
+         73                     C     [FULL UNROOL]
+         74                           INTEGER*4 JUNROL
+         75                           INTEGER*4 NPPMAX,NCRS2,ITPCRS(NCRS2)
+         76                           REAL*4    TS(0:NP),TACRS(NCRS2)
+         77                     C
+         78                           INTEGER*4 ICRS_T(NP)
+         79                     
+         80                           CHARACTER*60 ERMSGC
+         81                          & /' ## SUBROUTINE DYN3DX: FATAL      ERROR REPORT   ; RETURNED' /
+         82                     C
+         83                           DATA CLEAR  / 0.15   /
+         84                           DATA EPS    / 1.0E-2 /
+         85                     C
+         86                           DATA EPSDYN  / 1.0E-6 /
+         87                           DATA NMAX    / 10     /
+         88                     C
+         89                           REAL*4 EPSE
+         90                     C
+         91                           INTEGER*4 IBCGS
+         92                           DATA IBCGS  / 0 /
+         93                     C
+         94                     C      COMPUTE SMAGIRINSKY CONSTANT BY DYNAMIC PROCEDURE PROPOSED
+         95                     C     BY GERMANO AND LILLY
+         96                     C         ( 3-D CALCULATION : SINGLE WORD & MULTI ELEMENT VERSION )
+         97                     C                                           CODED BASED ON 'DYNA3D'
+         98                     C
+         99                     C ************ COMPUTATIONAL COST EXCEPT FOR MATRIX SOLVER *******
+        100                     C =============================TET======================================
+        101                     C          OPERATION COUNTS:    408 FLOP /ELEMENT
+        102                     C          DATA LOADINGS   :    496 WORDS/ELEMENT
+        103                     C                           (     0 WORDS CONTIGUOUSLY,
+        104                     C                               244 WORDS BY STRIDE, AND
+        105                     C                               252 WORDS BY LIST )
+        106                     C
+        107                     C =============================WED======================================
+        108                     C          OPERATION COUNTS:   1002 FLOP /ELEMENT
+        109                     C          DATA LOADINGS   :    972 WORDS/ELEMENT
+        110                     C                           (    32 WORDS CONTIGUOUSLY,
+        111                     C                               522 WORDS BY STRIDE, AND
+        112                     C                               450 WORDS BY LIST )
+        113                     C
+        114                     C =============================HEX======================================
+        115                     C          OPERATION COUNTS:   1704 FLOP /ELEMENT
+        116                     C          DATA LOADINGS   :   1600 WORDS/ELEMENT
+        117                     C                           (    41 WORDS CONTIGUOUSLY,
+        118                     C                               904 WORDS BY STRIDE, AND
+        119                     C                               696 WORDS BY LIST )
+        120                     C
+        121                     C        MODIFIED TO APPLY IMPLICIT METHOD FOR TEST AND AVERAGING
+        122                     C      OPERATION, BY Y.YAMADE 2005.11.15
+        123                     C
+        124                     C
+        125                     C     NOTE ; IN-DOMAIN NOR INTER-DOMAIN CYCLIC BOUNDARY CONDITIONS HAVE
+        126                     C           NOT BEEN SUPPORTED YET.
+        127                     C
+        128                     C     OPERATION COUNTS AND DATA LOADING FOR THE OPERATIONS IN THIS ROUTINE
+        129                     C    ARE ABLE TO BE ESTIMETED AS FOLLOWS.
+        130                     C
+        131                     C          OPERATION COUNTS:  9361 FLOP /ELEMENT/ITERATION
+        132                     C          DATA LOADINGS   : 12591 WORDS/ELEMENT/ITERATION
+        133                     C                           ( 8423 WORDS CONTIGUOUSLY,
+        134                     C                             1016 WORDS BY 4-WORD STRIDE, AND
+        135                     C                             3152 WORDS BY LIST )
+        136                     C     ARGUMENT LISTINGS
+        137                     C       (1) INPUT
+        138                     C          NLOOP       ;NUMBER OF LOOPS
+        139                     C          LLOOP       ;POINTER FOR SPLITTED ELEMENT LIST
+        140                     C
+        141                     C          VISCM       ; MOLECULAR VISCOSITY (USED TO CLEAR CS VALUES)
+        142                     C          ALFDYN      ; RATIO OF WIDTH OF TEST-FILTERED GRID FILTER TO
+        143                     C                       THAT OF GRID FILTER
+        144                     C          FILTER  (IE); ELEMENT GRID FILTER WIDTH
+        145                     C
+        146                     C          U       (IP); X-DIR. VELOCITY COMPONENT
+        147                     C          V       (IP); Y-DIR. VELOCITY COMPONENT
+        148                     C          W       (IP); Z-DIR. VELOCITY COMPONENT
+        149                     C
+        150                     C
+        151                     C          VOL     (IE); ELEMENT VOLUME
+        152                     C          CM      (IP); LUMPED MASS MATRIX
+        153                     C
+        154                     C          ATEST(I,J,IE);ELEMNT-WIZE MATRIX FOR TEST FILTERING
+        155                     C          AAVER(I,J,IE);ELEMNT-WIZE MATRIX FOR AVERAGING
+        156                     C          NPP     (IP); NUMBER OF ADJACENT NODES    TO NODE    IP
+        157                     C          NCRS   ; NUMBER OF NONZERO ELEMENTS IN MATRIX OF CRS FORMAT
+        158                     C          IPCRS (ICRS); NODE NO. TABLE BASED ON CRS FORMAT
+        159                     C          ATESPC(ICRS);NODE-BASE MATRIX COEFFICIENT FOR TEST FILTERING
+        160                     C          AAVEPC(ICRS);NODE-BASE MATRIX COEFFICIENT FOR AVERAGING
+        161                     C          ATEST0  (IP) ;0.25/(DISGONAL TERM OF ATEST)
+        162                     C          AAVER0  (IP) ;0.25/(DISGONAL TERM OF AAVER)
+        163                     C
+        164                     C          NODE  (I,IE); NODE NO. TABLE BASED ON ELEMENT
+        165                     C          ME          ; MAX. NUMBER OF TOTAL ELEMENTS
+        166                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+        167                     C          NP          ; NUMBER OF TOTAL    NODES
+        168                     C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT ( = 8 )
+        169                     C
+        170                     C          IPART       ; SUB-DOMAIN NUMBER THAT THIS TASK SHOULD TAKE/IS
+        171                     C                       TAKING CARE OF. IPART BEING SET ZERO MEANS THAT
+        172                     C                       THE PROGRAM SHOULD RUN/IS RUNNING IN SERIAL
+        173                     C                       MODE.
+        174                     C
+        175                     C          LDOM  (IDOM); NEIBERING SUB-DOMAIN NUMBER
+        176                     C          NBPDOM(IDOM); NUMBER OF INTER-CONNECT BOUNDARY NODES
+        177                     C                       SHARING WITH THE IDOM'TH NEIBERING SUB-DOMAIN,
+        178                     C                       LDOM(IDOM)
+        179                     C          NDOM        ; NUMBER OF THE NERIBERING SUB-DOMAINS
+        180                     C          IPSLF (IBP,IDOM); INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+        181                     C                           CALLING TASK'S SUB-DOMAIN, FOR THE IDOM'TH
+        182                     C                           NEIBERING SUB-DOMAIN, LDOM(IDOM)
+        183                     C          IPSND (IBP,IDOM); INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+        184                     C                           SUB-DOMAIN THAT IS RECEIVING THE CALLING
+        185                     C                           TASK'S RESIDUALS.
+        186                     C          MBPDOM      ; THE MAXIMUM NUMBER OF THE INTER-CONNECT
+        187                     C                       BOUNDARY NODES FOR ONE NEIBERING SUB-DOMAIN
+        188                     C
+        189                     C          IUT0        ; FILE NUMBER TO REPORT ERROR OCCURENCE
+        190                     C
+        191                     C       (2) OUTPUT
+        192                     C          CS      (IE); ELEMENT SMAGORINSKY CONSTANT
+        193                     C          AML     (IP); LEAST-SQUARE AVERAGED LEONARD STRESS
+        194                     C          AMM     (IP); LEAST-SQUARE AVERAGED MODELED REYNOLDS STRESS
+        195                     C          S       (IP); TEST-FILTERED STRAIN VELOCITY TENSOR MAGNITUDE
+        196                     C          UI    (3,IP); TEST-FILTERED VELOCITIES
+        197                     C          UIJ   (6,IP); TEST-FILTERED VELOCITY CORRELATIONS
+        198                     C          SIJN  (6,IP); NODAL STRAIN VELOCITY TENSOR
+        199                     C          SIJ   (6,IP); TEST-FILTERED STRAIN VELOCITY TENSOR
+        200                     C          SSIJ  (6,IP); TEST-FILTERED STRAIN VELOCITY TENSOR MULTIPLIED
+        201                     C                       BY ITS MAGNITUDE
+        202                     C
+        203                     C          IERR        ; RETURN CODE TO REPORT ERROR OCCURENCE
+        204                     C                   0 --- NORMAL TERMINATION
+        205                     C                   1 --- A FATAL ERROR HAS OCCURED
+        206                     C
+        207                     C       (4) WORK
+        208                     C          RX    (I,IE); HOLDS X-DIR. ELEMENT RESIDUAL
+        209                     C          RY    (I,IE); HOLDS Y-DIR. ELEMENT RESIDUAL
+        210                     C          FX      (IP); HOLDS X-DIR. NODE    RESIDUAL
+        211                     C          FY      (IP); HOLDS Y-DIR. NODE    RESIDUAL
+        212                     C          FZ      (IP); HOLDS Z-DIR. NODE    RESIDUAL
+        213                     C
+        214                           EPSE=EPSDYN
+        215                     C
+        216                           NETET=NEX(1)
+        217                           NEPRD=NEX(2)
+        218                           NEWED=NEX(3)
+        219                           NEHEX=NEX(4)
+        220                           NE   =NETET+NEPRD+NEWED+NEHEX
+        221                     C
+        222                           NTET =NEX(5)
+        223                           NPRD =NEX(6)
+        224                           NWED =NEX(7)
+        225                           NHEX =NEX(8)
+        226                     C
+        227                     C     * TET *
+        228                           IES1=1
+        229                           IEE1=NETET
+        230                     C
+        231                     C     * PYRAMID *
+        232                           IES2=NETET+1
+        233                           IEE2=NETET+NEPRD
+        234                     C
+        235                     C     * WEDGE *
+        236                           IES3=NETET+NEPRD+1
+        237                           IEE3=NETET+NEPRD+NEWED
+        238                     C
+        239                     C     * HEX *
+        240                           IES4=NETET+NEPRD+NEWED+1
+        241                           IEE4=NETET+NEPRD+NEWED+NEHEX
+        242                     C
+        243                     C
+        244                           ALF2   = ALFDYN*ALFDYN
+        245                     C
+        246                           MAXBUF = NE*(N2+1)
+        247                           IERR1=0
+        248                           IERR2=0
+        249                           IERR3=0
+        250                     C
+        251                           IDUM=3
+        252                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LFIX3D
+                              <<< Loop-information  End >>>
+        253     1  pp   4v            DO 50 IP=1,NP
+        254     1   p   4v                LFIX3D(IP)=0
+        255     1   p   4v         50 CONTINUE
+        256                     C
+        257                     C
+        258                     CCYY 1. COMPUTE NODAL VALUE OF STRAIN VELOCITY TENSOR
+        259                     C
+        260                     C
+        261                     C  (1) DIAGONAL TERMS
+        262                     C
+        263                     C
+        264                           CALL NNXYZ
+        265                          &   ( "DIAGONAL    ",MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+        266                          &     ME,MP,NE,NP,NODE,N2,NEX,
+        267                          &     MELM,EAP2,IENP,JENP,NEP,MEP,
+        268                          &     FX,FY,FZ,U,V,W)
+        269                           CALL DDCOMX(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        270                          &            FX,FY,FZ,NP,IUT0,IERR,
+        271                          &            RX,RY,MAXBUF)
+        272     1                     IF(IERR.NE.0) THEN
+        273     1                        WRITE(IUT0,*)
+        274     1                        WRITE(IUT0,*) ERMSGC
+        275     1                        RETURN
+        276     1                     ENDIF
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 552
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.60, ITR: 144, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      SIJN, FZ, CM, FY, FX
+                              <<< Loop-information  End >>>
+        277     1  pp    v            DO 101 IP=1,NP
+        278     1   p    v               SIJN(IP,1)=FX(IP)*CM(IP)
+        279     1   p    v               SIJN(IP,2)=FY(IP)*CM(IP)
+        280     1   p    v               SIJN(IP,3)=FZ(IP)*CM(IP)
+        281     1   p    v       101  CONTINUE
+        282                     C
+        283                     C
+        284                     C  (2) OFF-DIAGONAL TERMS
+        285                     C
+        286                     C
+        287                           CALL NNXYZ
+        288                          &   ( "OFF-DIAGONAL",MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+        289                          &     ME,MP,NE,NP,NODE,N2,NEX,
+        290                          &     MELM,EAP2,IENP,JENP,NEP,MEP,
+        291                          &     FX,FY,FZ,U,V,W)
+        292                           CALL DDCOMX(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        293                          &            FX,FY,FZ,NP,IUT0,IERR,
+        294                          &            RX,RY,MAXBUF)
+        295     1                     IF(IERR.NE.0) THEN
+        296     1                        WRITE(IUT0,*)
+        297     1                        WRITE(IUT0,*) ERMSGC
+        298     1                        RETURN
+        299     1                     ENDIF
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 247
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED(lines: 300,310)
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.68, ITR: 128, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FX, SIJN, FY, FZ, CM, S
+                              <<< Loop-information  End >>>
+        300     1  pp    v            DO 102 IP=1,NP
+        301     1   p    v               SIJN(IP,4)=FX(IP)*CM(IP)
+        302     1   p    v               SIJN(IP,5)=FY(IP)*CM(IP)
+        303     1   p    v               SIJN(IP,6)=FZ(IP)*CM(IP)
+        304     1   p    v       102  CONTINUE
+        305                     C
+        306                     C
+        307                     CCYY 2. COMPUTE CONTRACTION OF STRAIN VELOCITY TENSOR
+        308                     C
+        309                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED
+                              <<< Loop-information  End >>>
+        310     1                     DO 200 IP = 1 , NP
+        311     1                         S(IP) = SQRT(2.E0*SIJN(IP,1)*SIJN(IP,1)
+        312     1                    &                +2.E0*SIJN(IP,2)*SIJN(IP,2)
+        313     1                    &                +2.E0*SIJN(IP,3)*SIJN(IP,3)
+        314     1                    &                +4.E0*SIJN(IP,4)*SIJN(IP,4)
+        315     1                    &                +4.E0*SIJN(IP,5)*SIJN(IP,5)
+        316     1                    &                +4.E0*SIJN(IP,6)*SIJN(IP,6))
+        317     1                 200 CONTINUE
+        318                     C
+        319                     C
+        320                     C
+        321                     CCYY 3. TEST-FILTER VELOCITY VECTOR
+        322                     C
+        323                     C
+        324                     C
+        325                           CALL NNLUMP
+        326                          &   ( "ONE",MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+        327                          &     ME,MP,NE,NP,NODE,N2,NEX,MELM,
+        328                          &     FX,FY,FZ,U,V,W,DUMMY,DUMMY,DUMMY,
+        329                          &     EAP1,IENP,NEP,MEP )
+        330                           CALL DDCOMX(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        331                          &            FX,FY,FZ,NP,IUT0,IERR,
+        332                          &            RX,RY,MAXBUF)
+        333     1                     IF(IERR.NE.0) THEN
+        334     1                        WRITE(IUT0,*)
+        335     1                        WRITE(IUT0,*) ERMSGC
+        336     1                        RETURN
+        337     1                     ENDIF
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 422
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.62, ITR: 112, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FX, FY, UI, ATEST0, FZ
+                              <<< Loop-information  End >>>
+        338     1  pp    v            DO 330 IP = 1 , NP
+        339     1   p    v                UI(IP,1)=FX(IP)
+        340     1   p    v                UI(IP,2)=FY(IP)
+        341     1   p    v                UI(IP,3)=FZ(IP)
+        342     1   p    v                FX(IP)=FX(IP)*ATEST0(IP)
+        343     1   p    v                FY(IP)=FY(IP)*ATEST0(IP)
+        344     1   p    v                FZ(IP)=FZ(IP)*ATEST0(IP)
+        345     1   p    v        330 CONTINUE
+        346                     C
+        347                           IF(JUNROL.EQ.1)
+        348                          *CALL CRSCVA(NP,NPPMAX,NCRS,NCRS2,NPP,ATESPC,TACRS,ICRS_T)
+        349                     C
+        350                           CALL BCGS3X
+        351                          *   ( IBCGS,IPART,NMAX,EPSDYN,ME,N2,NE,NEX,NP,
+        352                          *     NPP,NCRS,IPCRS,ATESPC,NODE,FX,UI(1,1),NITR(1),RES(1),
+        353                          *     NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,NUMIP,
+        354                          *     WRK01,WRK02,WRK03,WRK04,WRK05,WRK06,WRK07,WRK08,RX,RY,
+        355                          *     MWRK,WRKN,IUT0,IERR1,ATEST0,LFIX3D,
+        356                          *     JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS)
+        357                           CALL BCGS3X
+        358                          *   ( IBCGS,IPART,NMAX,EPSDYN,ME,N2,NE,NEX,NP,
+        359                          *     NPP,NCRS,IPCRS,ATESPC,NODE,FY,UI(1,2),NITR(2),RES(2),
+        360                          *     NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,NUMIP,
+        361                          *     WRK01,WRK02,WRK03,WRK04,WRK05,WRK06,WRK07,WRK08,RX,RY,
+        362                          *     MWRK,WRKN,IUT0,IERR1,ATEST0,LFIX3D,
+        363                          *     JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS)
+        364                           CALL BCGS3X
+        365                          *   ( IBCGS,IPART,NMAX,EPSDYN,ME,N2,NE,NEX,NP,
+        366                          *     NPP,NCRS,IPCRS,ATESPC,NODE,FZ,UI(1,3),NITR(3),RES(3),
+        367                          *     NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,NUMIP,
+        368                          *     WRK01,WRK02,WRK03,WRK04,WRK05,WRK06,WRK07,WRK08,RX,RY,
+        369                          *     MWRK,WRKN,IUT0,IERR1,ATEST0,LFIX3D,
+        370                          *     JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS)
+        371                     C
+        372     1                     IF(IERR1.NE.0.OR.IERR2.NE.0.OR.IERR3.NE.0) THEN
+        373     1                         IERR=1
+        374     1                         WRITE(IUT0,*)
+        375     1                         WRITE(IUT0,*) ERMSGC
+        376     1                         RETURN
+        377     1                     ENDIF
+        378                     C
+        379                     C
+        380                     CCYY 4. TEST-FILTER VELOCITY CORRELATION TENSOR
+        381                     C
+        382                     C
+        383                     C  (1) DIAGONAL TERMS
+        384                     C
+        385                     C
+        386                           CALL NNLUMP
+        387                          &   ( "TWO",MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+        388                          &     ME,MP,NE,NP,NODE,N2,NEX,MELM,
+        389                          &     FX,FY,FZ,U,V,W,U,V,W,
+        390                          &     EAP1,IENP,NEP,MEP )
+        391                           CALL DDCOMX(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        392                          &            FX,FY,FZ,NP,IUT0,IERR,
+        393                          &            RX,RY,MAXBUF)
+        394     1                     IF(IERR.NE.0) THEN
+        395     1                        WRITE(IUT0,*)
+        396     1                        WRITE(IUT0,*) ERMSGC
+        397     1                        RETURN
+        398     1                     ENDIF
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 422
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.62, ITR: 112, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FX, FY, UIJ, ATEST0, FZ
+                              <<< Loop-information  End >>>
+        399     1  pp    v            DO 430 IP = 1 , NP
+        400     1   p    v                UIJ(IP,1)=FX(IP)
+        401     1   p    v                UIJ(IP,2)=FY(IP)
+        402     1   p    v                UIJ(IP,3)=FZ(IP)
+        403     1   p    v                FX(IP)=FX(IP)*ATEST0(IP)
+        404     1   p    v                FY(IP)=FY(IP)*ATEST0(IP)
+        405     1   p    v                FZ(IP)=FZ(IP)*ATEST0(IP)
+        406     1   p    v        430 CONTINUE
+        407                     C
+        408                           CALL BCGS3X
+        409                          *   ( IBCGS,IPART,NMAX,EPSDYN,ME,N2,NE,NEX,NP,
+        410                          *     NPP,NCRS,IPCRS,ATESPC,NODE,FX,UIJ(1,1),NITR(4),RES(4),
+        411                          *     NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,NUMIP,
+        412                          *     WRK01,WRK02,WRK03,WRK04,WRK05,WRK06,WRK07,WRK08,RX,RY,
+        413                          *     MWRK,WRKN,IUT0,IERR1,ATEST0,LFIX3D,
+        414                          *     JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS)
+        415                           CALL BCGS3X
+        416                          *   ( IBCGS,IPART,NMAX,EPSDYN,ME,N2,NE,NEX,NP,
+        417                          *     NPP,NCRS,IPCRS,ATESPC,NODE,FY,UIJ(1,2),NITR(5),RES(5),
+        418                          *     NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,NUMIP,
+        419                          *     WRK01,WRK02,WRK03,WRK04,WRK05,WRK06,WRK07,WRK08,RX,RY,
+        420                          *     MWRK,WRKN,IUT0,IERR2,ATEST0,LFIX3D,
+        421                          *     JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS)
+        422                           CALL BCGS3X
+        423                          *   ( IBCGS,IPART,NMAX,EPSDYN,ME,N2,NE,NEX,NP,
+        424                          *     NPP,NCRS,IPCRS,ATESPC,NODE,FZ,UIJ(1,3),NITR(6),RES(6),
+        425                          *     NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,NUMIP,
+        426                          *     WRK01,WRK02,WRK03,WRK04,WRK05,WRK06,WRK07,WRK08,RX,RY,
+        427                          *     MWRK,WRKN,IUT0,IERR3,ATEST0,LFIX3D,
+        428                          *     JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS)
+        429                     C
+        430     1                     IF(IERR1.NE.0.OR.IERR2.NE.0.OR.IERR3.NE.0) THEN
+        431     1                         IERR=1
+        432     1                         WRITE(IUT0,*)
+        433     1                         WRITE(IUT0,*) ERMSGC
+        434     1                         RETURN
+        435     1                     ENDIF
+        436                     C
+        437                     C
+        438                     C  (2) OFF-DIAGONAL TERMS
+        439                     C
+        440                     C
+        441                           CALL NNLUMP
+        442                          &   ( "TWO",MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+        443                          &     ME,MP,NE,NP,NODE,N2,NEX,MELM,
+        444                          &     FX,FY,FZ,V,W,U,W,U,V,
+        445                          &     EAP1,IENP,NEP,MEP )
+        446                           CALL DDCOMX(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        447                          &            FX,FY,FZ,NP,IUT0,IERR,
+        448                          &            RX,RY,MAXBUF)
+        449     1                     IF(IERR.NE.0) THEN
+        450     1                        WRITE(IUT0,*)
+        451     1                        WRITE(IUT0,*) ERMSGC
+        452     1                        RETURN
+        453     1                     ENDIF
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 422
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.62, ITR: 112, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FX, FY, UIJ, ATEST0, FZ
+                              <<< Loop-information  End >>>
+        454     1  pp    v            DO 530 IP = 1 , NP
+        455     1   p    v                UIJ(IP,4)=FX(IP)
+        456     1   p    v                UIJ(IP,5)=FY(IP)
+        457     1   p    v                UIJ(IP,6)=FZ(IP)
+        458     1   p    v                FX(IP)=FX(IP)*ATEST0(IP)
+        459     1   p    v                FY(IP)=FY(IP)*ATEST0(IP)
+        460     1   p    v                FZ(IP)=FZ(IP)*ATEST0(IP)
+        461     1   p    v        530 CONTINUE
+        462                     C
+        463                           CALL BCGS3X
+        464                          *   ( IBCGS,IPART,NMAX,EPSDYN,ME,N2,NE,NEX,NP,
+        465                          *     NPP,NCRS,IPCRS,ATESPC,NODE,FX,UIJ(1,4),NITR(7),RES(7),
+        466                          *     NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,NUMIP,
+        467                          *     WRK01,WRK02,WRK03,WRK04,WRK05,WRK06,WRK07,WRK08,RX,RY,
+        468                          *     MWRK,WRKN,IUT0,IERR1,ATEST0,LFIX3D,
+        469                          *     JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS)
+        470                           CALL BCGS3X
+        471                          *   ( IBCGS,IPART,NMAX,EPSDYN,ME,N2,NE,NEX,NP,
+        472                          *     NPP,NCRS,IPCRS,ATESPC,NODE,FY,UIJ(1,5),NITR(8),RES(8),
+        473                          *     NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,NUMIP,
+        474                          *     WRK01,WRK02,WRK03,WRK04,WRK05,WRK06,WRK07,WRK08,RX,RY,
+        475                          *     MWRK,WRKN,IUT0,IERR2,ATEST0,LFIX3D,
+        476                          *     JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS)
+        477                           CALL BCGS3X
+        478                          *   ( IBCGS,IPART,NMAX,EPSDYN,ME,N2,NE,NEX,NP,
+        479                          *     NPP,NCRS,IPCRS,ATESPC,NODE,FZ,UIJ(1,6),NITR(9),RES(9),
+        480                          *     NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,NUMIP,
+        481                          *     WRK01,WRK02,WRK03,WRK04,WRK05,WRK06,WRK07,WRK08,RX,RY,
+        482                          *     MWRK,WRKN,IUT0,IERR3,ATEST0,LFIX3D,
+        483                          *     JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS)
+        484                     C
+        485     1                     IF(IERR1.NE.0.OR.IERR2.NE.0.OR.IERR3.NE.0) THEN
+        486     1                         IERR=1
+        487     1                         WRITE(IUT0,*)
+        488     1                         WRITE(IUT0,*) ERMSGC
+        489     1                         RETURN
+        490     1                     ENDIF
+        491                     C
+        492                     C
+        493                     CCYY 5. TEST-FILTER STRAIN VELOCITY TENSOR
+        494                     C
+        495                     C
+        496                     C  (1) DIAGONAL TERMS
+        497                     C
+        498                     C
+        499                           CALL NNLUMP
+        500                          &   ( "ONE",MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+        501                          &     ME,MP,NE,NP,NODE,N2,NEX,MELM,
+        502                          &     FX,FY,FZ,SIJN(1,1),SIJN(1,2),SIJN(1,3),DUMMY,DUMMY,DUMMY,
+        503                          &     EAP1,IENP,NEP,MEP )
+        504                           CALL DDCOMX(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        505                          &            FX,FY,FZ,NP,IUT0,IERR,
+        506                          &            RX,RY,MAXBUF)
+        507     1                     IF(IERR.NE.0) THEN
+        508     1                        WRITE(IUT0,*)
+        509     1                        WRITE(IUT0,*) ERMSGC
+        510     1                        RETURN
+        511     1                     ENDIF
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 422
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.62, ITR: 112, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FX, FY, SIJ, ATEST0, FZ
+                              <<< Loop-information  End >>>
+        512     1  pp    v            DO 630 IP = 1 , NP
+        513     1   p    v                SIJ(IP,1)=FX(IP)
+        514     1   p    v                SIJ(IP,2)=FY(IP)
+        515     1   p    v                SIJ(IP,3)=FZ(IP)
+        516     1   p    v                FX(IP)=FX(IP)*ATEST0(IP)
+        517     1   p    v                FY(IP)=FY(IP)*ATEST0(IP)
+        518     1   p    v                FZ(IP)=FZ(IP)*ATEST0(IP)
+        519     1   p    v        630 CONTINUE
+        520                     C
+        521                           CALL BCGS3X
+        522                          *   ( IBCGS,IPART,NMAX,EPSDYN,ME,N2,NE,NEX,NP,
+        523                          *     NPP,NCRS,IPCRS,ATESPC,NODE,FX,SIJ(1,1),NITR(10),RES(10),
+        524                          *     NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,NUMIP,
+        525                          *     WRK01,WRK02,WRK03,WRK04,WRK05,WRK06,WRK07,WRK08,RX,RY,
+        526                          *     MWRK,WRKN,IUT0,IERR1,ATEST0,LFIX3D,
+        527                          *     JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS)
+        528                           CALL BCGS3X
+        529                          *   ( IBCGS,IPART,NMAX,EPSDYN,ME,N2,NE,NEX,NP,
+        530                          *     NPP,NCRS,IPCRS,ATESPC,NODE,FY,SIJ(1,2),NITR(11),RES(11),
+        531                          *     NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,NUMIP,
+        532                          *     WRK01,WRK02,WRK03,WRK04,WRK05,WRK06,WRK07,WRK08,RX,RY,
+        533                          *     MWRK,WRKN,IUT0,IERR2,ATEST0,LFIX3D,
+        534                          *     JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS)
+        535                           CALL BCGS3X
+        536                          *   ( IBCGS,IPART,NMAX,EPSDYN,ME,N2,NE,NEX,NP,
+        537                          *     NPP,NCRS,IPCRS,ATESPC,NODE,FZ,SIJ(1,3),NITR(12),RES(12),
+        538                          *     NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,NUMIP,
+        539                          *     WRK01,WRK02,WRK03,WRK04,WRK05,WRK06,WRK07,WRK08,RX,RY,
+        540                          *     MWRK,WRKN,IUT0,IERR3,ATEST0,LFIX3D,
+        541                          *     JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS)
+        542                     C
+        543     1                     IF(IERR1.NE.0.OR.IERR2.NE.0.OR.IERR3.NE.0) THEN
+        544     1                         IERR=1
+        545     1                         WRITE(IUT0,*)
+        546     1                         WRITE(IUT0,*) ERMSGC
+        547     1                         RETURN
+        548     1                     ENDIF
+        549                     C
+        550                     C
+        551                     C  (2) OFF-DIAGONAL TERMS
+        552                     C
+        553                     C
+        554                           CALL NNLUMP
+        555                          &   ( "ONE",MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+        556                          &     ME,MP,NE,NP,NODE,N2,NEX,MELM,
+        557                          &     FX,FY,FZ,SIJN(1,4),SIJN(1,5),SIJN(1,6),DUMMY,DUMMY,DUMMY,
+        558                          &     EAP1,IENP,NEP,MEP )
+        559                           CALL DDCOMX(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        560                          &            FX,FY,FZ,NP,IUT0,IERR,
+        561                          &            RX,RY,MAXBUF)
+        562     1                     IF(IERR.NE.0) THEN
+        563     1                        WRITE(IUT0,*)
+        564     1                        WRITE(IUT0,*) ERMSGC
+        565     1                        RETURN
+        566     1                     ENDIF
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 422
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.62, ITR: 112, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FX, FY, SIJ, ATEST0, FZ
+                              <<< Loop-information  End >>>
+        567     1  pp    v            DO 730 IP = 1 , NP
+        568     1   p    v                SIJ(IP,4)=FX(IP)
+        569     1   p    v                SIJ(IP,5)=FY(IP)
+        570     1   p    v                SIJ(IP,6)=FZ(IP)
+        571     1   p    v                FX(IP)=FX(IP)*ATEST0(IP)
+        572     1   p    v                FY(IP)=FY(IP)*ATEST0(IP)
+        573     1   p    v                FZ(IP)=FZ(IP)*ATEST0(IP)
+        574     1   p    v        730 CONTINUE
+        575                     C
+        576                           CALL BCGS3X
+        577                          *   ( IBCGS,IPART,NMAX,EPSDYN,ME,N2,NE,NEX,NP,
+        578                          *     NPP,NCRS,IPCRS,ATESPC,NODE,FX,SIJ(1,4),NITR(13),RES(13),
+        579                          *     NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,NUMIP,
+        580                          *     WRK01,WRK02,WRK03,WRK04,WRK05,WRK06,WRK07,WRK08,RX,RY,
+        581                          *     MWRK,WRKN,IUT0,IERR1,ATEST0,LFIX3D,
+        582                          *     JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS)
+        583                           CALL BCGS3X
+        584                          *   ( IBCGS,IPART,NMAX,EPSDYN,ME,N2,NE,NEX,NP,
+        585                          *     NPP,NCRS,IPCRS,ATESPC,NODE,FY,SIJ(1,5),NITR(14),RES(14),
+        586                          *     NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,NUMIP,
+        587                          *     WRK01,WRK02,WRK03,WRK04,WRK05,WRK06,WRK07,WRK08,RX,RY,
+        588                          *     MWRK,WRKN,IUT0,IERR2,ATEST0,LFIX3D,
+        589                          *     JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS)
+        590                           CALL BCGS3X
+        591                          *   ( IBCGS,IPART,NMAX,EPSDYN,ME,N2,NE,NEX,NP,
+        592                          *     NPP,NCRS,IPCRS,ATESPC,NODE,FZ,SIJ(1,6),NITR(15),RES(15),
+        593                          *     NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,NUMIP,
+        594                          *     WRK01,WRK02,WRK03,WRK04,WRK05,WRK06,WRK07,WRK08,RX,RY,
+        595                          *     MWRK,WRKN,IUT0,IERR3,ATEST0,LFIX3D,
+        596                          *     JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS)
+        597                     C
+        598     1                     IF(IERR1.NE.0.OR.IERR2.NE.0.OR.IERR3.NE.0) THEN
+        599     1                         IERR=1
+        600     1                         WRITE(IUT0,*)
+        601     1                         WRITE(IUT0,*) ERMSGC
+        602     1                         RETURN
+        603     1                     ENDIF
+        604                     C
+        605                     C
+        606                     CCYY 6. TEST-FILTER STRAIN VELOCITY TENSOR MULTIPLIED BY ITS MAGNITUDE
+        607                     C
+        608                     C
+        609                     C  (1) DIAGONAL TERMS
+        610                     C
+        611                     C
+        612                           CALL NNLUMP
+        613                          &   ( "TWO",MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+        614                          &     ME,MP,NE,NP,NODE,N2,NEX,MELM,
+        615                          &     FX,FY,FZ,S,S,S,SIJN(1,1),SIJN(1,2),SIJN(1,3),
+        616                          &     EAP1,IENP,NEP,MEP )
+        617                           CALL DDCOMX(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        618                          &            FX,FY,FZ,NP,IUT0,IERR,
+        619                          &            RX,RY,MAXBUF)
+        620     1                     IF(IERR.NE.0) THEN
+        621     1                        WRITE(IUT0,*)
+        622     1                        WRITE(IUT0,*) ERMSGC
+        623     1                        RETURN
+        624     1                     ENDIF
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 422
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.62, ITR: 112, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FX, FY, SSIJ, ATEST0, FZ
+                              <<< Loop-information  End >>>
+        625     1  pp    v            DO 830 IP = 1 , NP
+        626     1   p    v                SSIJ(IP,1)=FX(IP)
+        627     1   p    v                SSIJ(IP,2)=FY(IP)
+        628     1   p    v                SSIJ(IP,3)=FZ(IP)
+        629     1   p    v                FX(IP)=FX(IP)*ATEST0(IP)
+        630     1   p    v                FY(IP)=FY(IP)*ATEST0(IP)
+        631     1   p    v                FZ(IP)=FZ(IP)*ATEST0(IP)
+        632     1   p    v        830 CONTINUE
+        633                     C
+        634                           CALL BCGS3X
+        635                          *   ( IBCGS,IPART,NMAX,EPSDYN,ME,N2,NE,NEX,NP,
+        636                          *     NPP,NCRS,IPCRS,ATESPC,NODE,FX,SSIJ(1,1),NITR(16),RES(16),
+        637                          *     NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,NUMIP,
+        638                          *     WRK01,WRK02,WRK03,WRK04,WRK05,WRK06,WRK07,WRK08,RX,RY,
+        639                          *     MWRK,WRKN,IUT0,IERR1,ATEST0,LFIX3D,
+        640                          *     JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS)
+        641                           CALL BCGS3X
+        642                          *   ( IBCGS,IPART,NMAX,EPSDYN,ME,N2,NE,NEX,NP,
+        643                          *     NPP,NCRS,IPCRS,ATESPC,NODE,FY,SSIJ(1,2),NITR(17),RES(17),
+        644                          *     NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,NUMIP,
+        645                          *     WRK01,WRK02,WRK03,WRK04,WRK05,WRK06,WRK07,WRK08,RX,RY,
+        646                          *     MWRK,WRKN,IUT0,IERR2,ATEST0,LFIX3D,
+        647                          *     JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS)
+        648                           CALL BCGS3X
+        649                          *   ( IBCGS,IPART,NMAX,EPSDYN,ME,N2,NE,NEX,NP,
+        650                          *     NPP,NCRS,IPCRS,ATESPC,NODE,FZ,SSIJ(1,3),NITR(18),RES(18),
+        651                          *     NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,NUMIP,
+        652                          *     WRK01,WRK02,WRK03,WRK04,WRK05,WRK06,WRK07,WRK08,RX,RY,
+        653                          *     MWRK,WRKN,IUT0,IERR3,ATEST0,LFIX3D,
+        654                          *     JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS)
+        655                     C
+        656     1                     IF(IERR1.NE.0.OR.IERR2.NE.0.OR.IERR3.NE.0) THEN
+        657     1                         IERR=1
+        658     1                         WRITE(IUT0,*)
+        659     1                         WRITE(IUT0,*) ERMSGC
+        660     1                         RETURN
+        661     1                     ENDIF
+        662                     C
+        663                     C
+        664                     C  (2) OFF-DIAGONAL TERMS
+        665                     C
+        666                     C
+        667                     C
+        668                           CALL NNLUMP
+        669                          &   ( "TWO",MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+        670                          &     ME,MP,NE,NP,NODE,N2,NEX,MELM,
+        671                          &     FX,FY,FZ,S,S,S,SIJN(1,4),SIJN(1,5),SIJN(1,6),
+        672                          &     EAP1,IENP,NEP,MEP )
+        673                           CALL DDCOMX(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        674                          &            FX,FY,FZ,NP,IUT0,IERR,
+        675                          &            RX,RY,MAXBUF)
+        676     1                     IF(IERR.NE.0) THEN
+        677     1                        WRITE(IUT0,*)
+        678     1                        WRITE(IUT0,*) ERMSGC
+        679     1                        RETURN
+        680     1                     ENDIF
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 422
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.62, ITR: 112, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FX, FY, SSIJ, ATEST0, FZ
+                              <<< Loop-information  End >>>
+        681     1  pp    v            DO 930 IP = 1 , NP
+        682     1   p    v                SSIJ(IP,4)=FX(IP)
+        683     1   p    v                SSIJ(IP,5)=FY(IP)
+        684     1   p    v                SSIJ(IP,6)=FZ(IP)
+        685     1   p    v                FX(IP)=FX(IP)*ATEST0(IP)
+        686     1   p    v                FY(IP)=FY(IP)*ATEST0(IP)
+        687     1   p    v                FZ(IP)=FZ(IP)*ATEST0(IP)
+        688     1   p    v        930 CONTINUE
+        689                     C
+        690                           CALL BCGS3X
+        691                          *   ( IBCGS,IPART,NMAX,EPSDYN,ME,N2,NE,NEX,NP,
+        692                          *     NPP,NCRS,IPCRS,ATESPC,NODE,FX,SSIJ(1,4),NITR(19),RES(19),
+        693                          *     NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,NUMIP,
+        694                          *     WRK01,WRK02,WRK03,WRK04,WRK05,WRK06,WRK07,WRK08,RX,RY,
+        695                          *     MWRK,WRKN,IUT0,IERR1,ATEST0,LFIX3D,
+        696                          *     JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS)
+        697                           CALL BCGS3X
+        698                          *   ( IBCGS,IPART,NMAX,EPSDYN,ME,N2,NE,NEX,NP,
+        699                          *     NPP,NCRS,IPCRS,ATESPC,NODE,FY,SSIJ(1,5),NITR(20),RES(20),
+        700                          *     NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,NUMIP,
+        701                          *     WRK01,WRK02,WRK03,WRK04,WRK05,WRK06,WRK07,WRK08,RX,RY,
+        702                          *     MWRK,WRKN,IUT0,IERR2,ATEST0,LFIX3D,
+        703                          *     JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS)
+        704                           CALL BCGS3X
+        705                          *   ( IBCGS,IPART,NMAX,EPSDYN,ME,N2,NE,NEX,NP,
+        706                          *     NPP,NCRS,IPCRS,ATESPC,NODE,FZ,SSIJ(1,6),NITR(21),RES(21),
+        707                          *     NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,NUMIP,
+        708                          *     WRK01,WRK02,WRK03,WRK04,WRK05,WRK06,WRK07,WRK08,RX,RY,
+        709                          *     MWRK,WRKN,IUT0,IERR3,ATEST0,LFIX3D,
+        710                          *     JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS)
+        711                     C
+        712     1                     IF(IERR1.NE.0.OR.IERR2.NE.0.OR.IERR3.NE.0) THEN
+        713     1                         IERR=1
+        714     1                         WRITE(IUT0,*)
+        715     1                         WRITE(IUT0,*) ERMSGC
+        716     1                         RETURN
+        717     1                     ENDIF
+        718                     C
+        719                     C
+        720                     CCYY 7. COMPUTE CONTRACTION OF TEST-FILTERED STRAIN VELOCITY TENSOR
+        721                     C
+        722                     C
+        723                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 96
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED(lines: 724,739)
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      SIJ, SSIJ, AMM, UI, UIJ
+                              <<<    PREFETCH(SOFT) : 16
+                              <<<     SEQUENTIAL : 16
+                              <<<      UIJ: 8, UI: 4, AML: 2, S: 2
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 1
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        724     1  pp    v            DO 1000 IP = 1 , NP
+        725     1   p    v                S(IP) = SQRT(2.E0*SIJ(IP,1)*SIJ(IP,1)
+        726     1                    &                +2.E0*SIJ(IP,2)*SIJ(IP,2)
+        727     1                    &                +2.E0*SIJ(IP,3)*SIJ(IP,3)
+        728     1                    &                +4.E0*SIJ(IP,4)*SIJ(IP,4)
+        729     1                    &                +4.E0*SIJ(IP,5)*SIJ(IP,5)
+        730     1                    &                +4.E0*SIJ(IP,6)*SIJ(IP,6))
+        731     1   p    v       1000 CONTINUE
+        732                     C
+        733                     C
+        734                     C
+        735                     CCYY 8. LEAST-SQUARE AVERAGE LEONARD STRESS TENSOR AND SGS STRESS TENSOR
+        736                     C
+        737                     C
+        738                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED
+                              <<< Loop-information  End >>>
+        739     1                     DO 1100 IP = 1 , NP
+        740     1                         UKK     = 0.333333E0*(UIJ(IP,1)-UI(IP,1)*UI(IP,1)
+        741     1                    &                         +UIJ(IP,2)-UI(IP,2)*UI(IP,2)
+        742     1                    &                         +UIJ(IP,3)-UI(IP,3)*UI(IP,3))
+        743     1               C
+        744     1                         AML(IP) = (SSIJ(IP,1)-ALF2*S(IP)*SIJ(IP,1))
+        745     1                    &             *( UIJ(IP,1)-UI(IP,1)*UI(IP,1)-UKK)
+        746     1                    &             +(SSIJ(IP,2)-ALF2*S(IP)*SIJ(IP,2))
+        747     1                    &             *( UIJ(IP,2)-UI(IP,2)*UI(IP,2)-UKK)
+        748     1                    &             +(SSIJ(IP,3)-ALF2*S(IP)*SIJ(IP,3))
+        749     1                    &             *( UIJ(IP,3)-UI(IP,3)*UI(IP,3)-UKK)
+        750     1                    &        +2.E0*(SSIJ(IP,4)-ALF2*S(IP)*SIJ(IP,4))
+        751     1                    &             *( UIJ(IP,4)-UI(IP,2)*UI(IP,3))
+        752     1                    &        +2.E0*(SSIJ(IP,5)-ALF2*S(IP)*SIJ(IP,5))
+        753     1                    &             *( UIJ(IP,5)-UI(IP,3)*UI(IP,1))
+        754     1                    &        +2.E0*(SSIJ(IP,6)-ALF2*S(IP)*SIJ(IP,6))
+        755     1                    &             *( UIJ(IP,6)-UI(IP,1)*UI(IP,2))
+        756     1               C
+        757     1                         AMM(IP) = (SSIJ(IP,1)-ALF2*S(IP)*SIJ(IP,1))**2
+        758     1                    &             +(SSIJ(IP,2)-ALF2*S(IP)*SIJ(IP,2))**2
+        759     1                    &             +(SSIJ(IP,3)-ALF2*S(IP)*SIJ(IP,3))**2
+        760     1                    &        +2.E0*(SSIJ(IP,4)-ALF2*S(IP)*SIJ(IP,4))**2
+        761     1                    &        +2.E0*(SSIJ(IP,5)-ALF2*S(IP)*SIJ(IP,5))**2
+        762     1                    &        +2.E0*(SSIJ(IP,6)-ALF2*S(IP)*SIJ(IP,6))**2
+        763     1                1100 CONTINUE
+        764                     C
+        765                     C
+        766                     CCYY 9.  RECURSIVELY TEST-FILTER LEAST-SQUARE AVERAGED LEONARD STRESS
+        767                     CCCYY    AND SGS STRESS FOR AVERAGING PURPOSE
+        768                     C
+        769                     C
+        770                           IDUM=2
+        771                           CALL NNLUMP
+        772                          &   ( "ONE",MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+        773                          &     ME,MP,NE,NP,NODE,N2,NEX,MELM,
+        774                          &     FX,FY,FZ,AML,AMM,AMM,DUMMY,DUMMY,DUMMY,
+        775                          &     EAP1,IENP,NEP,MEP )
+        776                           CALL DDCOMX(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        777                          &            FX,FY,FZ,NP,IUT0,IERR,
+        778                          &            RX,RY,MAXBUF)
+        779     1                     IF(IERR.NE.0) THEN
+        780     1                        WRITE(IUT0,*)
+        781     1                        WRITE(IUT0,*) ERMSGC
+        782     1                        RETURN
+        783     1                     ENDIF
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 572
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.50, ITR: 144, MVE: 5)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FY, AAVER0, FX, AMM, AML
+                              <<< Loop-information  End >>>
+        784     1  pp    v            DO 1230 IP = 1 , NP
+        785     1   p    v                AML(IP)=FX(IP)
+        786     1   p    v                AMM(IP)=FY(IP)
+        787     1   p    v                FX(IP)=FX(IP)*AAVER0(IP)
+        788     1   p    v                FY(IP)=FY(IP)*AAVER0(IP)
+        789     1   p    v       1230 CONTINUE
+        790                     C
+        791                           IF(JUNROL.EQ.1)
+        792                          *CALL CRSCVA(NP,NPPMAX,NCRS,NCRS2,NPP,AAVEPC,TACRS,ICRS_T)
+        793                     C
+        794                           CALL BCGS3X
+        795                          *   ( IBCGS,IPART,NMAX,EPSDYN,ME,N2,NE,NEX,NP,
+        796                          *     NPP,NCRS,IPCRS,AAVEPC,NODE,FX,AML,NITR(22),RES(22),
+        797                          *     NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,NUMIP,
+        798                          *     WRK01,WRK02,WRK03,WRK04,WRK05,WRK06,WRK07,WRK08,RX,RY,
+        799                          *     MWRK,WRKN,IUT0,IERR1,AAVER0,LFIX3D,
+        800                          *     JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS)
+        801                           CALL BCGS3X
+        802                          *   ( IBCGS,IPART,NMAX,EPSDYN,ME,N2,NE,NEX,NP,
+        803                          *     NPP,NCRS,IPCRS,AAVEPC,NODE,FY,AMM,NITR(23),RES(23),
+        804                          *     NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,NUMIP,
+        805                          *     WRK01,WRK02,WRK03,WRK04,WRK05,WRK06,WRK07,WRK08,RX,RY,
+        806                          *     MWRK,WRKN,IUT0,IERR2,AAVER0,LFIX3D,
+        807                          *     JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS)
+        808                     C
+        809     1                     IF(IERR1.NE.0.OR.IERR2.NE.0) THEN
+        810     1                         IERR=1
+        811     1                         WRITE(IUT0,*)
+        812     1                         WRITE(IUT0,*) ERMSGC
+        813     1                         RETURN
+        814     1                     ENDIF
+        815                     C
+        816                     C
+        817                     CCYY 10.  COMPUTE ELEMENT SMAGORINSKY CONSTANT
+        818                     C
+        819                     C
+        820                     C
+        821                     C     * TET *
+        822                           COEF=1.0E0/FLOAT(NTET)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 154
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.22, ITR: 80, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FILTER, CS
+                              <<< Loop-information  End >>>
+        823     1  pp    v            DO 3000 IE = IES1, IEE1
+        824     1   p    v                AMLE = COEF*(AML(NODE(1,IE))+AML(NODE(2,IE))
+        825     1                    &                +AML(NODE(3,IE))+AML(NODE(4,IE)))
+        826     1               C
+        827     1   p    v                AMME = COEF*(AMM(NODE(1,IE))+AMM(NODE(2,IE))
+        828     1                    &                +AMM(NODE(3,IE))+AMM(NODE(4,IE)))
+        829     1               C
+        830     2   p    v                IF(AMLE.GT.0.E0 .AND. AMME.GT.0.E0) THEN
+        831     2   p    v                    CS(IE) = SQRT(0.5E0*AMLE/AMME)/FILTER(IE)
+        832     2   p    v                ELSE
+        833     2   p    v                    CS(IE) = 0.E0
+        834     2   p    v                ENDIF
+        835     1   p    v       3000 CONTINUE
+        836                     C
+        837                     C     * PYRAMID *
+        838                           COEF=1.0E0/FLOAT(NPRD)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 136
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.37, ITR: 80, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FILTER, CS
+                              <<< Loop-information  End >>>
+        839     1  pp    v            DO 3001 IE = IES2, IEE2
+        840     1   p    v                AMLE = COEF*(AML(NODE(1,IE))+AML(NODE(2,IE))
+        841     1                    &                +AML(NODE(3,IE))+AML(NODE(4,IE))
+        842     1                    &                +AML(NODE(5,IE)))
+        843     1               C
+        844     1   p    v                AMME = COEF*(AMM(NODE(1,IE))+AMM(NODE(2,IE))
+        845     1                    &                +AMM(NODE(3,IE))+AMM(NODE(4,IE))
+        846     1                    &                +AMM(NODE(5,IE)))
+        847     1               C
+        848     2   p    v                IF(AMLE.GT.0.E0 .AND. AMME.GT.0.E0) THEN
+        849     2   p    v                    CS(IE) = SQRT(0.5E0*AMLE/AMME)/FILTER(IE)
+        850     2   p    v                ELSE
+        851     2   p    v                    CS(IE) = 0.E0
+        852     2   p    v                ENDIF
+        853     1   p    v       3001  CONTINUE
+        854                     C
+        855                     C     * WEDGE *
+        856                           COEF=1.0E0/FLOAT(NWED)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 122
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.32, ITR: 80, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FILTER, CS
+                              <<< Loop-information  End >>>
+        857     1  pp    v            DO 3002 IE = IES3, IEE3
+        858     1   p    v                AMLE = COEF*(AML(NODE(1,IE))+AML(NODE(2,IE))
+        859     1                    &                +AML(NODE(3,IE))+AML(NODE(4,IE))
+        860     1                    &                +AML(NODE(5,IE))+AML(NODE(6,IE)))
+        861     1               C
+        862     1   p    v                AMME = COEF*(AMM(NODE(1,IE))+AMM(NODE(2,IE))
+        863     1                    &                +AMM(NODE(3,IE))+AMM(NODE(4,IE))
+        864     1                    &                +AMM(NODE(5,IE))+AMM(NODE(6,IE)))
+        865     1               C
+        866     2   p    v                IF(AMLE.GT.0.E0 .AND. AMME.GT.0.E0) THEN
+        867     2   p    v                    CS(IE) = SQRT(0.5E0*AMLE/AMME)/FILTER(IE)
+        868     2   p    v                ELSE
+        869     2   p    v                    CS(IE) = 0.E0
+        870     2   p    v                ENDIF
+        871     1   p    v       3002  CONTINUE
+        872                     C
+        873                     C     * HEX *
+        874                           COEF=1.0E0/FLOAT(NHEX)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 100
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.26, ITR: 80, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FILTER, CS
+                              <<< Loop-information  End >>>
+        875     1  pp    v            DO 3003 IE = IES4, IEE4
+        876     1   p    v                AMLE = COEF*(AML(NODE(1,IE))+AML(NODE(2,IE))
+        877     1                    &                +AML(NODE(3,IE))+AML(NODE(4,IE))
+        878     1                    &                +AML(NODE(5,IE))+AML(NODE(6,IE))
+        879     1                    &                +AML(NODE(7,IE))+AML(NODE(8,IE)))
+        880     1               C
+        881     1   p    v                AMME = COEF*(AMM(NODE(1,IE))+AMM(NODE(2,IE))
+        882     1                    &                +AMM(NODE(3,IE))+AMM(NODE(4,IE))
+        883     1                    &                +AMM(NODE(5,IE))+AMM(NODE(6,IE))
+        884     1                    &                +AMM(NODE(7,IE))+AMM(NODE(8,IE)))
+        885     1               C
+        886     2   p    v                IF(AMLE.GT.0.E0 .AND. AMME.GT.0.E0) THEN
+        887     2   p    v                    CS(IE) = SQRT(0.5E0*AMLE/AMME)/FILTER(IE)
+        888     2   p    v                ELSE
+        889     2   p    v                    CS(IE) = 0.E0
+        890     2   p    v                ENDIF
+        891     1   p    v       3003  CONTINUE
+        892                     C
+        893                     C
+        894                     C
+        895                     CCCYY 11.  FINALLY, CLEAR ELEMENT SMAGORINSKY CONSTANT DOMINATED BY
+        896                     CCYY       THE ROUND-OFF ERRORS
+        897                     C
+        898                     C
+        899                     C     * TET*
+        900                           COEF=1.0E0/FLOAT(NTET)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 297
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.33, ITR: 192, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FILTER, CS
+                              <<< Loop-information  End >>>
+        901     1  pp    v            DO 4000 IE = IES1, IEE1
+        902     1   p    v                SE = COEF*(S(NODE(1,IE))+S(NODE(2,IE))
+        903     1                    &              +S(NODE(3,IE))+S(NODE(4,IE)))
+        904     1               C
+        905     1   p    v                SGS = CLEAR*CLEAR*FILTER(IE)*FILTER(IE)*SE
+        906     1   p    v                IF(SGS .LT. EPS*VISCM) CS(IE) = 0.E0
+        907     1   p    v       4000 CONTINUE
+        908                     C
+        909                     C     * PYRAMID *
+        910                           COEF=1.0E0/FLOAT(NPRD)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 250
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.53, ITR: 176, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FILTER, CS
+                              <<< Loop-information  End >>>
+        911     1  pp    v            DO 4001 IE = IES2, IEE2
+        912     1   p    v                SE = COEF*(S(NODE(1,IE))+S(NODE(2,IE))
+        913     1                    &              +S(NODE(3,IE))+S(NODE(4,IE))
+        914     1                    &              +S(NODE(5,IE)))
+        915     1               C
+        916     1   p    v                SGS = CLEAR*CLEAR*FILTER(IE)*FILTER(IE)*SE
+        917     1   p    v                IF(SGS .LT. EPS*VISCM) CS(IE) = 0.E0
+        918     1   p    v       4001  CONTINUE
+        919                     C
+        920                     C     * WEDGE *
+        921                           COEF=1.0E0/FLOAT(NWED)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 217
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.37, ITR: 192, MVE: 5)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FILTER, CS
+                              <<< Loop-information  End >>>
+        922     1  pp    v            DO 4002 IE = IES3, IEE3
+        923     1   p    v                SE = COEF*(S(NODE(1,IE))+S(NODE(2,IE))
+        924     1                    &              +S(NODE(3,IE))+S(NODE(4,IE))
+        925     1                    &              +S(NODE(5,IE))+S(NODE(6,IE)))
+        926     1               C
+        927     1   p    v                SGS = CLEAR*CLEAR*FILTER(IE)*FILTER(IE)*SE
+        928     1   p    v                IF(SGS .LT. EPS*VISCM) CS(IE) = 0.E0
+        929     1   p    v       4002  CONTINUE
+        930                     C
+        931                     C     * HEX *
+        932                           COEF=1.0E0/FLOAT(NHEX)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 160
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.12, ITR: 192, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      CS, FILTER
+                              <<< Loop-information  End >>>
+        933     1  pp    v            DO 4003 IE = IES4, IEE4
+        934     1   p    v                SE = COEF*(S(NODE(1,IE))+S(NODE(2,IE))
+        935     1                    &              +S(NODE(3,IE))+S(NODE(4,IE))
+        936     1                    &              +S(NODE(5,IE))+S(NODE(6,IE))
+        937     1                    &              +S(NODE(7,IE))+S(NODE(8,IE)))
+        938     1               C
+        939     1   p    v                SGS = CLEAR*CLEAR*FILTER(IE)*FILTER(IE)*SE
+        940     1   p    v                IF(SGS .LT. EPS*VISCM) CS(IE) = 0.E0
+        941     1   p    v                IF(CS(IE).GT.CSMAX)    CS(IE) = CSMAX
+        942     1   p    v       4003  CONTINUE
+        943                     C
+        944                           RETURN
+        945                           END
+
+ Diagnostic messages: program name(DYN3DX)
+   jwd2008i-i  "dyn3dx.f", line 15: この仮引数'IUT6'は、副プログラム中で使用されていません。
+   jwd8220o-i  "dyn3dx.f", line 15: 副作用の可能性のある最適化を行いました。
+   jwd2008i-i  "dyn3dx.f", line 69: この仮引数'NODP'は、副プログラム中で使用されていません。
+   jwd5001p-i  "dyn3dx.f", line 253: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "dyn3dx.f", line 253: このDOループをSIMD化しました。(名前:IP)
+   jwd8663o-i  "dyn3dx.f", line 253: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "dyn3dx.f", line 253: ループを展開数4回でアンローリングしました。
+   jwd5001p-i  "dyn3dx.f", line 277: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "dyn3dx.f", line 277: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "dyn3dx.f", line 277: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "dyn3dx.f", line 277: ループの繰返し数が144回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8210o-i  "dyn3dx.f", line 300: ループを融合しました。(行:310)
+   jwd5001p-i  "dyn3dx.f", line 300: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "dyn3dx.f", line 300: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "dyn3dx.f", line 300: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "dyn3dx.f", line 300: ループの繰返し数が128回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "dyn3dx.f", line 311: 多項式の演算順序を変更しました。
+   jwd5001p-i  "dyn3dx.f", line 338: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "dyn3dx.f", line 338: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "dyn3dx.f", line 338: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "dyn3dx.f", line 338: ループの繰返し数が112回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "dyn3dx.f", line 399: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "dyn3dx.f", line 399: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "dyn3dx.f", line 399: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "dyn3dx.f", line 399: ループの繰返し数が112回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "dyn3dx.f", line 454: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "dyn3dx.f", line 454: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "dyn3dx.f", line 454: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "dyn3dx.f", line 454: ループの繰返し数が112回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "dyn3dx.f", line 512: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "dyn3dx.f", line 512: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "dyn3dx.f", line 512: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "dyn3dx.f", line 512: ループの繰返し数が112回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "dyn3dx.f", line 567: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "dyn3dx.f", line 567: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "dyn3dx.f", line 567: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "dyn3dx.f", line 567: ループの繰返し数が112回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "dyn3dx.f", line 625: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "dyn3dx.f", line 625: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "dyn3dx.f", line 625: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "dyn3dx.f", line 625: ループの繰返し数が112回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "dyn3dx.f", line 681: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "dyn3dx.f", line 681: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "dyn3dx.f", line 681: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "dyn3dx.f", line 681: ループの繰返し数が112回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8210o-i  "dyn3dx.f", line 724: ループを融合しました。(行:739)
+   jwd5001p-i  "dyn3dx.f", line 724: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "dyn3dx.f", line 724: このDOループをSIMD化しました。(名前:IP)
+   jwd8222o-i  "dyn3dx.f", line 724: このループで必要なプリフェッチの数が、ハードウェアプリフェッチの許容数を超えたため、prefetch命令を出力しました。
+   jwd8666o-i  "dyn3dx.f", line 724: 浮動小数点レジスタが不足しているため、ソフトウェアパイプライニングを適用できません。
+   jwd8209o-i  "dyn3dx.f", line 725: 多項式の演算順序を変更しました。
+   jwd8209o-i  "dyn3dx.f", line 740: 多項式の演算順序を変更しました。
+   jwd8209o-i  "dyn3dx.f", line 744: 多項式の演算順序を変更しました。
+   jwd8209o-i  "dyn3dx.f", line 757: 多項式の演算順序を変更しました。
+   jwd5001p-i  "dyn3dx.f", line 784: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "dyn3dx.f", line 784: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "dyn3dx.f", line 784: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "dyn3dx.f", line 784: ループの繰返し数が144回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "dyn3dx.f", line 823: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "dyn3dx.f", line 823: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "dyn3dx.f", line 823: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "dyn3dx.f", line 823: ループの繰返し数が80回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "dyn3dx.f", line 827: 多項式の演算順序を変更しました。
+   jwd5001p-i  "dyn3dx.f", line 839: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "dyn3dx.f", line 839: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "dyn3dx.f", line 839: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "dyn3dx.f", line 839: ループの繰返し数が80回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "dyn3dx.f", line 844: 多項式の演算順序を変更しました。
+   jwd5001p-i  "dyn3dx.f", line 857: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "dyn3dx.f", line 857: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "dyn3dx.f", line 857: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "dyn3dx.f", line 857: ループの繰返し数が80回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "dyn3dx.f", line 862: 多項式の演算順序を変更しました。
+   jwd5001p-i  "dyn3dx.f", line 875: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "dyn3dx.f", line 875: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "dyn3dx.f", line 875: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "dyn3dx.f", line 875: ループの繰返し数が80回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "dyn3dx.f", line 881: 多項式の演算順序を変更しました。
+   jwd5001p-i  "dyn3dx.f", line 901: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "dyn3dx.f", line 901: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "dyn3dx.f", line 901: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "dyn3dx.f", line 901: ループの繰返し数が192回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "dyn3dx.f", line 905: 多項式の演算順序を変更しました。
+   jwd5001p-i  "dyn3dx.f", line 911: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "dyn3dx.f", line 911: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "dyn3dx.f", line 911: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "dyn3dx.f", line 911: ループの繰返し数が176回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "dyn3dx.f", line 916: 多項式の演算順序を変更しました。
+   jwd5001p-i  "dyn3dx.f", line 922: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "dyn3dx.f", line 922: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "dyn3dx.f", line 922: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "dyn3dx.f", line 922: ループの繰返し数が192回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "dyn3dx.f", line 927: 多項式の演算順序を変更しました。
+   jwd5001p-i  "dyn3dx.f", line 933: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "dyn3dx.f", line 933: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "dyn3dx.f", line 933: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "dyn3dx.f", line 933: ループの繰返し数が192回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "dyn3dx.f", line 939: 多項式の演算順序を変更しました。
+
+ Procedure information
+   Lines      : 945
+   Statements : 349
+   Stack(byte): 9744
+   Prefetch num: 16
+
+ Total information
+   Procedures       : 1
+   Total lines      : 945
+   Total statements : 349
+   Total stack(byte): 9744
+   Total prefetch num: 16
+

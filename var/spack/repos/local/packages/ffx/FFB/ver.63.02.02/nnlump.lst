@@ -1,0 +1,281 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:53:14 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : nnlump.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "NNLUMP"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE NNLUMP
+          2                          *   ( CTYPE,MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+          3                          *     ME,MP,NE,NP,NODE,N2,NEX,MELM,
+          4                          *     FX,FY,FZ,AX,AY,AZ,BX,BY,BZ,
+          5                          *     EAP1,IENP,NEP,MEP )
+          6                     C
+          7                           IMPLICIT NONE
+          8                     C
+          9                     CCCC  [INPUT:LOOP]
+         10                           INTEGER*4 MCOLOR,MCPART
+         11                           INTEGER*4 NCOLOR(4),NCPART(MCOLOR,4),LLOOP(MCPART,MCOLOR,4)
+         12                     C
+         13                           CHARACTER*3 CTYPE
+         14                           INTEGER*4 ME,MP,NE,NP,N2,MEP
+         15                           INTEGER*4 NODE(N2,NE),NEX(12)
+         16                           INTEGER*4 MELM
+         17                           REAL*4 EAP1(N2,MEP,NP)
+         18                           INTEGER*4 IENP(MEP,MP),NEP(MP)
+         19                           REAL*4 FX(NP),FY(NP),FZ(NP)
+         20                           REAL*4 AX(NP),AY(NP),AZ(NP),BX(NP),BY(NP),BZ(NP)
+         21                     C
+         22                           INTEGER*4 NETET,NEPRD,NEWED,NEHEX
+         23                           REAL*4 RLUMP,FX1,FY1,FZ1
+         24                     C
+         25                           INTEGER*4 I,J,IE,IP,IPE,IP1,K,NN
+         26                           INTEGER*4 IEE1,IEE2,IEE3,IEE4
+         27                     C
+         28                     C     * START *
+         29                     C
+         30                           NETET=NEX(1)
+         31                           NEPRD=NEX(2)
+         32                           NEWED=NEX(3)
+         33                           NEHEX=NEX(4)
+         34                           NE   =NETET+NEPRD+NEWED+NEHEX
+         35                     C
+         36                     C     * ZERO *
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1143
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FZ, FY, FX
+                              <<< Loop-information  End >>>
+         37     1  pp   2v            DO 10 IP=1,NP
+         38     1   p   2v                FX(IP)=0.0E0
+         39     1   p   2v                FY(IP)=0.0E0
+         40     1   p   2v                FZ(IP)=0.0E0
+         41     1   p   2v         10 CONTINUE
+         42                     C
+         43                     C
+         44                     C   == TET. ==
+         45                           IEE1=NETET
+         46                     C
+         47                     C   == PYRAMID ==
+         48                           IEE2=NETET+NEPRD
+         49                     C
+         50                     C   == WEDGE ==
+         51                           IEE3=NETET+NEPRD+NEWED
+         52                     C
+         53                     C   == HEX. ==
+         54                           IEE4=NETET+NEPRD+NEWED+NEHEX
+         55                     C
+         56     1                     IF(CTYPE(1:3).EQ."ONE") THEN
+         57     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<< Loop-information  End >>>
+         58     2  pp                     DO IP=1,NP
+         59     2   p                         FX1 = 0.0E0
+         60     2   p                         FY1 = 0.0E0
+         61     2   p                         FZ1 = 0.0E0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      EAP1
+                              <<< Loop-information  End >>>
+         62     3   p                         DO IPE=1,NEP(IP)
+         63     3   p                             IE =IENP(IPE,IP)
+         64     3               C
+         65     4   p                             IF(IE.LE.IEE1) THEN
+         66     4   p                                 NN=NEX(5)
+         67     4   p                             ELSE IF (IE.LE.IEE2) THEN
+         68     4   p                                 NN=NEX(6)
+         69     4   p                             ELSE IF (IE.LE.IEE3) THEN
+         70     4   p                                 NN=NEX(7)
+         71     4   p                             ELSE
+         72     4   p                                 NN=NEX(8)
+         73     4   p                             ENDIF
+         74     3               C
+         75     3   p                             RLUMP=0.0E0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.71, ITR: 512, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      EAP1
+                              <<< Loop-information  End >>>
+         76     4   p   8v                        DO K=1,NN
+         77     4   p   8v                            RLUMP = RLUMP + EAP1(K,IPE,IP)
+         78     4   p   8v                        ENDDO
+         79     3               C
+         80     3   p                             FX1 = FX1 + RLUMP*AX(IP)
+         81     3   p                             FY1 = FY1 + RLUMP*AY(IP)
+         82     3   p                             FZ1 = FZ1 + RLUMP*AZ(IP)
+         83     3   p                         ENDDO
+         84     2               C
+         85     2   p                         FX(IP) = FX1
+         86     2   p                         FY(IP) = FY1
+         87     2   p                         FZ(IP) = FZ1
+         88     2   p                     ENDDO
+         89     1               C
+         90     1                     ELSE IF(CTYPE(1:3).EQ."TWO") THEN
+         91     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<< Loop-information  End >>>
+         92     2  pp                     DO IP=1,NP
+         93     2   p                         FX1 = 0.0E0
+         94     2   p                         FY1 = 0.0E0
+         95     2   p                         FZ1 = 0.0E0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      EAP1
+                              <<< Loop-information  End >>>
+         96     3   p                         DO IPE=1,NEP(IP)
+         97     3   p                             IE =IENP(IPE,IP)
+         98     3               C
+         99     4   p                             IF(IE.LE.IEE1) THEN
+        100     4   p                                 NN=NEX(5)
+        101     4   p                             ELSE IF (IE.LE.IEE2) THEN
+        102     4   p                                 NN=NEX(6)
+        103     4   p                             ELSE IF (IE.LE.IEE3) THEN
+        104     4   p                                 NN=NEX(7)
+        105     4   p                             ELSE
+        106     4   p                                 NN=NEX(8)
+        107     4   p                             ENDIF
+        108     3               C
+        109     3   p                             RLUMP=0.0E0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.71, ITR: 512, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      EAP1
+                              <<< Loop-information  End >>>
+        110     4   p   8v                        DO K=1,NN
+        111     4   p   8v                            RLUMP = RLUMP + EAP1(K,IPE,IP)
+        112     4   p   8v                        ENDDO
+        113     3               C
+        114     3   p                             FX1 = FX1 + RLUMP*AX(IP)*BX(IP)
+        115     3   p                             FY1 = FY1 + RLUMP*AY(IP)*BY(IP)
+        116     3   p                             FZ1 = FZ1 + RLUMP*AZ(IP)*BZ(IP)
+        117     3   p                         ENDDO
+        118     2               C
+        119     2   p                         FX(IP) = FX1
+        120     2   p                         FY(IP) = FY1
+        121     2   p                         FZ(IP) = FZ1
+        122     2   p                     ENDDO
+        123     1               C
+        124     1                     ENDIF
+        125                     C
+        126                           RETURN
+        127                           END
+        128                     
+        129                     
+
+ Diagnostic messages: program name(NNLUMP)
+   jwd2008i-i  "nnlump.f", line 1: この仮引数'MELM'は、副プログラム中で使用されていません。
+   jwd2008i-i  "nnlump.f", line 1: この仮引数'ME'は、副プログラム中で使用されていません。
+   jwd8220o-i  "nnlump.f", line 1: 副作用の可能性のある最適化を行いました。
+   jwd2008i-i  "nnlump.f", line 11: この仮引数'LLOOP'は、副プログラム中で使用されていません。
+   jwd2008i-i  "nnlump.f", line 11: この仮引数'NCPART'は、副プログラム中で使用されていません。
+   jwd2008i-i  "nnlump.f", line 11: この仮引数'NCOLOR'は、副プログラム中で使用されていません。
+   jwd2008i-i  "nnlump.f", line 15: この仮引数'NODE'は、副プログラム中で使用されていません。
+   jwd2006i-i  "nnlump.f", line 25: この名前'IP1'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "nnlump.f", line 25: この名前'J'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "nnlump.f", line 25: この名前'I'は、宣言だけされていて引用されていません。
+   jwd5001p-i  "nnlump.f", line 37: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "nnlump.f", line 37: このDOループをSIMD化しました。(名前:IP)
+   jwd8663o-i  "nnlump.f", line 37: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "nnlump.f", line 37: ループを展開数2回でアンローリングしました。
+   jwd5001p-i  "nnlump.f", line 58: このDOループを並列化しました。(名前:IP)
+   jwd5202p-i  "nnlump.f", line 62: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:FZ1)
+   jwd5202p-i  "nnlump.f", line 62: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:FY1)
+   jwd5202p-i  "nnlump.f", line 62: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:FX1)
+   jwd6004s-i  "nnlump.f", line 76: リダクション演算を含むDOループをSIMD化しました。(名前:K)
+   jwd8204o-i  "nnlump.f", line 76: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "nnlump.f", line 76: ループの繰返し数が512回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "nnlump.f", line 77: 多項式の演算順序を変更しました。
+   jwd8208o-i  "nnlump.f", line 77: ループ内の総和または乗積演算の計算方法を変更しました。
+   jwd5001p-i  "nnlump.f", line 92: このDOループを並列化しました。(名前:IP)
+   jwd5202p-i  "nnlump.f", line 96: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:FZ1)
+   jwd5202p-i  "nnlump.f", line 96: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:FY1)
+   jwd5202p-i  "nnlump.f", line 96: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。(名前:FX1)
+   jwd6004s-i  "nnlump.f", line 110: リダクション演算を含むDOループをSIMD化しました。(名前:K)
+   jwd8204o-i  "nnlump.f", line 110: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "nnlump.f", line 110: ループの繰返し数が512回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "nnlump.f", line 111: 多項式の演算順序を変更しました。
+   jwd8208o-i  "nnlump.f", line 111: ループ内の総和または乗積演算の計算方法を変更しました。
+   jwd8209o-i  "nnlump.f", line 114: 多項式の演算順序を変更しました。
+   jwd8209o-i  "nnlump.f", line 115: 多項式の演算順序を変更しました。
+   jwd8209o-i  "nnlump.f", line 116: 多項式の演算順序を変更しました。
+
+ Procedure information
+   Lines      : 129
+   Statements : 89
+   Stack(byte): 1648
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 129
+   Total statements : 89
+   Total stack(byte): 1648
+   Total prefetch num: 0
+

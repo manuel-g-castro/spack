@@ -1,0 +1,401 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:54:26 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : scal2d.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "SCAL2D"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    SCAL2D                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE SCAL2D(IWEI,IMASS,DT,VKAP,T,Q,AU,AV,AT,SX,SY,
+         14                          *                  SN,DNX,DNY,EX,EY,EXX,EYY,EXY,
+         15                          *                  IENP,JENP,NEP,IPNP,NPP,
+         16                          *                  MAXE,MAXP,MAXEP,MAXPP,NE,NP,N,
+         17                          *                  AC,CM,LBT,NBT,
+         18                          *                  RT,FT,DF,S,IUT0,IERR)
+         19                           IMPLICIT REAL*8(A-H,O-Z)
+         20                           REAL*4   SN,DNX,DNY,EX,EY,EXX,EYY,EXY,AC,CM
+         21                           DIMENSION VKAP(NE),T(NP),Q(NE),AU(N,NE),AV(N,NE),AT(N,NE),
+         22                          1          SX(NE),SY(NE),SN(N,NE),DNX(N,NE),DNY(N,NE),
+         23                          2          EX (N,N,NE),EY(N,N,NE),
+         24                          3          EXX(N,N,NE),EYY(N,N,NE),EXY(N,N,NE),
+         25                          4          IENP(MAXEP,NP),JENP(MAXEP,NP),NEP(NP),
+         26                          5          IPNP(MAXPP,NP),NPP(NP),
+         27                          6          AC  (MAXPP,NP),CM (NP),LBT(NBT),
+         28                          7          RT(N,NE),FT(NP),DF(NP),S(NP)
+         29                     C
+         30                           CHARACTER*72 ERMSG
+         31                          & /' FATAL ERROR REPORTED !! SCAL2D TERMINATES ALL THE PROCESS '/
+         32                     C
+         33                           IDIM = 2
+         34                     C
+         35                     C
+         36                     C      INTEGRATE AN ADVECTION-DIFFUTION EQUATION FOR A PASSIVE SCALAR
+         37                     C         ( 2-D CALCULATION )
+         38                     C
+         39                     C
+         40                     C     ARGUMENT LISTINGS
+         41                     C       (1) INPUT
+         42                     C          IWEI        ; SPECIFIES THE TYPE OF WEIGHTING FUNCTION
+         43                     C                       FOR THE ADVECTION AND SOURCE TERMS AS FOLLOWS
+         44                     C                   1 --- GALERKIN             TYPE WEIGHTING FUNCTION
+         45                     C                   2 --- STREAMLINE UPWINDING TYPE WEIGHTING FUNCTION
+         46                     C          IMASS       ; SPECIFIES MASS MATRIX TREATMENT AS FOLLOWS
+         47                     C                   1 --- LUMPED MASS REPRESENTATION
+         48                     C                   2,3,- MULTI-PASS ALGORITHEM WILL BE TAKEN
+         49                     C          DT          ; TIME INCTREMENT
+         50                     C          VKAP    (IE); ELEMENT EFFECTIVE DIFFUSIVITY
+         51                     C          Q       (IE); ELEMENT SOURCE
+         52                     C          AU    (I,IE); ELEMENT VECTOR OF U(IP)
+         53                     C          AV    (I,IE); ELEMENT VECTOR OF V(IP)
+         54                     C          AT    (I,IE); ELEMENT VECTOR OF T(IP)
+         55                     C          SX      (IE); STREAMLINE UPWINDING SHIFT VECTOR ( X-DIR. )
+         56                     C          SY      (IE); STREAMLINE UPWINDING SHIFT VECTOR ( Y-DIR. )
+         57                     C
+         58                     C          SN    (I,IE); INTEGRATED ELEMENT VECTOR OF N
+         59                     C          DNX   (I,IE); INTEGRATED ELEMENT VECTOR OF NX
+         60                     C          DNY   (I,IE); INTEGRATED ELEMENT VECTOR OF NY
+         61                     C          EX  (J,I,IE); INTEGRATED ELEMENT MATRIX OF N*NXT
+         62                     C          EY  (J,I,IE); INTEGRATED ELEMENT MATRIX OF N*NYT
+         63                     C          EXX (J,I,IE); INTEGRATED ELEMENT MATRIX OF NX*NXT
+         64                     C          EYY (J,I,IE); INTEGRATED ELEMENT MATRIX OF NY*NYT
+         65                     C          EXY (J,I,IE); INTEGRATED ELEMENT MATRIX OF NX*NYT
+         66                     C
+         67                     C          IENP(IEP,IP); ADJACENT ELEMENT NUMBER TO NODE IP
+         68                     C                      ( IF NEP(IP).LT.MAXEP , THEN IENP(NEP(IP)+1,IP),
+         69                     C                       IENP(MAXEP,IP) MUST BE SET TO AN IMAGINARY
+         70                     C                       ELEMENT NO. BETWEEN NE+1,MAXE.)
+         71                     C          JENP(IEP,IP); LOCAL NODE NUMBER OF IP IN ELEMENT IENP(IEP,IP)
+         72                     C          NEP     (IP); NUMBER OF ADJACENT ELEMENTS TO NODE IP
+         73                     C          IPNP(IPP,IP); ADJACENT NODE    NUMBER TO NODE    IP
+         74                     C                      ( IF NPP(IP).LT.MAXPP , THEN IPNP(NPP(IP)+1,IP),
+         75                     C                       IPNP(MAXPP,IP) MUST BE SET TO AN IMAGINARY
+         76                     C                       NODE    NO. BETWEEN NP+1,MAXP.)
+         77                     C          NPP     (IP); NUMBER OF ADJACENT NODES    TO NODE    IP
+         78                     C          MAXE        ; THE MAXIMUM NUMBER  OF ELEMETS
+         79                     C          MAXP        ; THE MAXIMUM NUMBER  OF   NODES
+         80                     C          MAXEP       ; THE FIRST DIMENSION OF ARRAY IENP,JENP
+         81                     C          MAXPP       ; THE FIRST DIMENSION OF ARRAY IPNP
+         82                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+         83                     C          NP          ; NUMBER OF TOTAL    NODES
+         84                     C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT
+         85                     C
+         86                     C          AC  (IPP,IP); CONDENSED MASS MATRIX
+         87                     C          CM      (IP); LUMPED    MASS MATRIX
+         88                     C          LBT     (IB); T-PRESCRIBED NODE SPECIFYING LIST VECTOR
+         89                     C          NBT         ; NUMBER OF T-PRESCRIBED NODES
+         90                     C          IUT0        ; DEVICE NO. TO REPORT ERROR OCCURENCE
+         91                     C
+         92                     C       (2) OUTPUT
+         93                     C          IERR        ; RETURN CODE TO REPORT ERROR OCCURENCE
+         94                     C                   0 --- NORMAL TERMINATION
+         95                     C                   1 --- A FATAL ERROR HAS OCCURED
+         96                     C
+         97                     C       (3) INPUT-OUTPUT
+         98                     C          T   (IP)   ; PASSIVE SCALAR INTEGRATED
+         99                     C
+        100                     C       (4) WORK
+        101                     C          RT  (I,IE) ; ELEMENT ENERGY RESIDUAL
+        102                     C          FT  (IP)   ; GLOBAL  ENERGY RESIDUAL
+        103                     C          DF  (IP)   ; WORKING  VECTOR OF MULTI-PASS ALGORITHM
+        104                     C          S   (IP)   ; SOLUTION VECTOR OF MULTI-PASS ALGORITHM
+        105                     C
+        106                     C
+        107                     C      ADVECTION TERM CALCULATION
+        108                     C
+        109     1                     IF(IWEI.EQ.1) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.66, ITR: 56, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      RT
+                              <<< Loop-information  End >>>
+        110     2   p    v            DO 110 I = 1 , N
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      RT
+                              <<< Loop-information  End >>>
+        111     3  pp                     DO 100 IE = 1 , NE
+        112     3   p    v                   AX1 = EX(1,I,IE)
+        113     3   p    v                   AY1 = EY(1,I,IE)
+        114     3   p    v                   AX2 = EX(2,I,IE)
+        115     3   p    v                   AY2 = EY(2,I,IE)
+        116     3   p    v                   AX3 = EX(3,I,IE)
+        117     3   p    v                   AY3 = EY(3,I,IE)
+        118     3   p    v                   AX4 = EX(4,I,IE)
+        119     3   p    v                   AY4 = EY(4,I,IE)
+        120     3   p    v                   RT(I,IE) = -AX1*AU(1,IE)*AT(1,IE)-AY1*AV(1,IE)*AT(1,IE)
+        121     3                    &                  -AX2*AU(2,IE)*AT(2,IE)-AY2*AV(2,IE)*AT(2,IE)
+        122     3                    &                  -AX3*AU(3,IE)*AT(3,IE)-AY3*AV(3,IE)*AT(3,IE)
+        123     3                    &                  -AX4*AU(4,IE)*AT(4,IE)-AY4*AV(4,IE)*AT(4,IE)
+        124     3   p             100     CONTINUE
+        125     2   p             110 CONTINUE
+        126     1                     ELSE
+        127     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.23, ITR: 48, MVE: 2, POL: L)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      EXY, RT
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 0
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 16
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        128     2   p    v            DO 210 I = 1 , N
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      EXY, RT
+                              <<< Loop-information  End >>>
+        129     3  pp                     DO 200 IE = 1 , NE
+        130     3   p    v                   AX1 = EX(1,I,IE)+SX(IE)*EXX(1,I,IE)+SY(IE)*EXY(I,1,IE)
+        131     3   p    v                   AX2 = EX(2,I,IE)+SX(IE)*EXX(2,I,IE)+SY(IE)*EXY(I,2,IE)
+        132     3   p    v                   AX3 = EX(3,I,IE)+SX(IE)*EXX(3,I,IE)+SY(IE)*EXY(I,3,IE)
+        133     3   p    v                   AX4 = EX(4,I,IE)+SX(IE)*EXX(4,I,IE)+SY(IE)*EXY(I,4,IE)
+        134     3               C
+        135     3   p    v                   AY1 = EY(1,I,IE)+SX(IE)*EXY(1,I,IE)+SY(IE)*EYY(1,I,IE)
+        136     3   p    v                   AY2 = EY(2,I,IE)+SX(IE)*EXY(2,I,IE)+SY(IE)*EYY(2,I,IE)
+        137     3   p    v                   AY3 = EY(3,I,IE)+SX(IE)*EXY(3,I,IE)+SY(IE)*EYY(3,I,IE)
+        138     3   p    v                   AY4 = EY(4,I,IE)+SX(IE)*EXY(4,I,IE)+SY(IE)*EYY(4,I,IE)
+        139     3               C
+        140     3   p    v                   RT(I,IE) = -AX1*AU(1,IE)*AT(1,IE)-AY1*AV(1,IE)*AT(1,IE)
+        141     3                    &                  -AX2*AU(2,IE)*AT(2,IE)-AY2*AV(2,IE)*AT(2,IE)
+        142     3                    &                  -AX3*AU(3,IE)*AT(3,IE)-AY3*AV(3,IE)*AT(3,IE)
+        143     3                    &                  -AX4*AU(4,IE)*AT(4,IE)-AY4*AV(4,IE)*AT(4,IE)
+        144     3   p             200     CONTINUE
+        145     2   p             210 CONTINUE
+        146     1                     ENDIF
+        147                     C
+        148                     C      DIFFUSION TERM CALCULATION
+        149                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.20, ITR: 72, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      RT
+                              <<< Loop-information  End >>>
+        150     1   p    v            DO 310 I = 1 , N
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      RT
+                              <<< Loop-information  End >>>
+        151     2  pp                     DO 300 IE = 1 , NE
+        152     2   p    v                    RT(I,IE) = RT(I,IE)
+        153     2                    &             -VKAP(IE)*((EXX(1,I,IE)+EYY(1,I,IE))*AT(1,IE)
+        154     2                    &                       +(EXX(2,I,IE)+EYY(2,I,IE))*AT(2,IE)
+        155     2                    &                       +(EXX(3,I,IE)+EYY(3,I,IE))*AT(3,IE)
+        156     2                    &                       +(EXX(4,I,IE)+EYY(4,I,IE))*AT(4,IE))
+        157     2   p             300     CONTINUE
+        158     1   p             310 CONTINUE
+        159                     C
+        160                     C      SOURCE TERM CALCULATION
+        161                     C
+        162     1                     IF(IWEI.EQ.1) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 243
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 0.22, ITR: 32, MVE: 2, POL: L)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      Q
+                              <<< Loop-information  End >>>
+        163     2  pp    v            DO 400 IE = 1 , NE
+        164     2   p    v                RT(1,IE) = RT(1,IE)+Q(IE)*SN(1,IE)
+        165     2   p    v                RT(2,IE) = RT(2,IE)+Q(IE)*SN(2,IE)
+        166     2   p    v                RT(3,IE) = RT(3,IE)+Q(IE)*SN(3,IE)
+        167     2   p    v                RT(4,IE) = RT(4,IE)+Q(IE)*SN(4,IE)
+        168     2   p    v        400 CONTINUE
+        169     1                     ELSE
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 118
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 0.55, ITR: 32, MVE: 2, POL: L)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      SX, SY, Q
+                              <<< Loop-information  End >>>
+        170     2  pp    v            DO 500 IE = 1 , NE
+        171     2   p    v                W1 = SN(1,IE)+SX(IE)*DNX(1,IE)+SY(IE)*DNY(1,IE)
+        172     2   p    v                W2 = SN(2,IE)+SX(IE)*DNX(2,IE)+SY(IE)*DNY(2,IE)
+        173     2   p    v                W3 = SN(3,IE)+SX(IE)*DNX(3,IE)+SY(IE)*DNY(3,IE)
+        174     2   p    v                W4 = SN(4,IE)+SX(IE)*DNX(4,IE)+SY(IE)*DNY(4,IE)
+        175     2   p    v                RT(1,IE) = RT(1,IE)+W1*Q(IE)
+        176     2   p    v                RT(2,IE) = RT(2,IE)+W2*Q(IE)
+        177     2   p    v                RT(3,IE) = RT(3,IE)+W3*Q(IE)
+        178     2   p    v                RT(4,IE) = RT(4,IE)+W4*Q(IE)
+        179     2   p    v        500 CONTINUE
+        180     1                     ENDIF
+        181                     C
+        182                     C      SUPERPOSITION
+        183                     C
+        184                           CALL SUPER2(IDIM,RT,IENP,JENP,NEP,MAXE,MAXEP,NE,NP,N,
+        185                          *            FT,IUT0,IERR)
+        186                     C
+        187     1                     IF(IERR.EQ.1) THEN
+        188     1                         WRITE(IUT0,6300) ERMSG
+        189     1                         RETURN
+        190     1                     ENDIF
+        191                     C
+        192                     C      MATRIX SOLUTION
+        193                     C
+        194                           CALL SOLVEF(IDIM,IMASS,AC,CM,IPNP,NPP,MAXP,MAXPP,NP,
+        195                          *            FT,LBT,NBT,S,DF,IUT0,IERR)
+        196                     C
+        197     1                     IF(IERR.EQ.1) THEN
+        198     1                         WRITE(IUT0,6300) ERMSG
+        199     1                         RETURN
+        200     1                     ENDIF
+        201                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.00, ITR: 192, MVE: 7, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      S, T
+                              <<< Loop-information  End >>>
+        202     1  pp   2v            DO 600 IP = 1 , NP
+        203     1   p   2v                T(IP) = T(IP)+DT*S(IP)
+        204     1   p   2v        600 CONTINUE
+        205                     C
+        206                     C
+        207                           RETURN
+        208                      6300 FORMAT(A72)
+        209                           END
+
+ Diagnostic messages: program name(SCAL2D)
+   jwd8220o-i  "scal2d.f", line 13: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd8211o-i  "scal2d.f", line 110: Loops interchanged at line 111.
+   jwd6001s-i  "scal2d.f", line 110: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8204o-i  "scal2d.f", line 110: This loop is software pipelined.
+   jwd8205o-i  "scal2d.f", line 110: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 56.
+   jwd8211o-i  "scal2d.f", line 111: Loops interchanged at line 110.
+   jwd5001p-i  "scal2d.f", line 111: DO loop with DO variable 'IE' is parallelized.
+   jwd8209o-i  "scal2d.f", line 120: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8211o-i  "scal2d.f", line 128: Loops interchanged at line 129.
+   jwd6001s-i  "scal2d.f", line 128: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8204o-i  "scal2d.f", line 128: This loop is software pipelined.
+   jwd8205o-i  "scal2d.f", line 128: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 48.
+   jwd8211o-i  "scal2d.f", line 129: Loops interchanged at line 128.
+   jwd5001p-i  "scal2d.f", line 129: DO loop with DO variable 'IE' is parallelized.
+   jwd8209o-i  "scal2d.f", line 140: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8211o-i  "scal2d.f", line 150: Loops interchanged at line 151.
+   jwd6001s-i  "scal2d.f", line 150: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8204o-i  "scal2d.f", line 150: This loop is software pipelined.
+   jwd8205o-i  "scal2d.f", line 150: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 72.
+   jwd8211o-i  "scal2d.f", line 151: Loops interchanged at line 150.
+   jwd5001p-i  "scal2d.f", line 151: DO loop with DO variable 'IE' is parallelized.
+   jwd8209o-i  "scal2d.f", line 152: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5001p-i  "scal2d.f", line 163: DO loop with DO variable 'IE' is parallelized.
+   jwd6001s-i  "scal2d.f", line 163: SIMD conversion is applied to DO loop with DO variable 'IE'.
+   jwd8204o-i  "scal2d.f", line 163: This loop is software pipelined.
+   jwd8205o-i  "scal2d.f", line 163: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 32.
+   jwd5001p-i  "scal2d.f", line 170: DO loop with DO variable 'IE' is parallelized.
+   jwd6001s-i  "scal2d.f", line 170: SIMD conversion is applied to DO loop with DO variable 'IE'.
+   jwd8204o-i  "scal2d.f", line 170: This loop is software pipelined.
+   jwd8205o-i  "scal2d.f", line 170: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 32.
+   jwd5001p-i  "scal2d.f", line 202: DO loop with DO variable 'IP' is parallelized.
+   jwd6001s-i  "scal2d.f", line 202: SIMD conversion is applied to DO loop with DO variable 'IP'.
+   jwd8204o-i  "scal2d.f", line 202: This loop is software pipelined.
+   jwd8205o-i  "scal2d.f", line 202: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 192.
+
+ Procedure information
+   Lines      : 209
+   Statements : 75
+   Stack(byte): 3392
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 209
+   Total statements : 75
+   Total stack(byte): 3392
+   Total prefetch num: 0
+

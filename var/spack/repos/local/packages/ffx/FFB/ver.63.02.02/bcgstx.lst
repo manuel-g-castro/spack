@@ -1,0 +1,486 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:52:52 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : bcgstx.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "BCGSTX"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE BCGSTX(NPP,NCRS,IPCRS,APCRS,B,S,EPS,EPSRE,
+          2                          *                  NMAX,RES,NITR,NODE,NE,NEX,NP,ME,N2,
+          3                          *                  IPART,LDOM,NBPDOM,NDOM,
+          4                          *                  IPSLF,IPSND,MBPDOM,NUMIP,
+          5                          *                  RX,RY,WEIGHT,R0,RK,PK,APK,ATK,TK,
+          6                          *                  JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS,
+          7                          *                  IUT0,IERR)
+          8                           IMPLICIT NONE
+          9                     C
+         10                           INTEGER*4 NPP,NCRS,IPCRS,
+         11                          *          NMAX,NITR,NODE,NE,NEX,NP,ME,N2,
+         12                          *          IPART,LDOM,NBPDOM,NDOM,
+         13                          *          IPSLF,IPSND,MBPDOM,NUMIP,
+         14                          *          IUT0,IERR
+         15                     C
+         16                           REAL*4    APCRS,B,S,EPS,EPSRE,
+         17                          *          RES,RX,RY,WEIGHT,R0,RK,PK,APK,ATK,TK
+         18                     C
+         19                           DIMENSION NPP(NP),IPCRS(NCRS),APCRS(NCRS)
+         20                           DIMENSION B(NP),S(NP),NODE(N2,NE)
+         21                           DIMENSION NEX(8)
+         22                     C
+         23                           DIMENSION LDOM(NDOM),NBPDOM(NDOM),
+         24                          1          IPSLF(MBPDOM,NDOM),IPSND(MBPDOM,NDOM),
+         25                          2          NUMIP(NP)
+         26                     C
+         27                           DIMENSION RX(0:N2,ME),RY(0:N2,ME),WEIGHT(NP),
+         28                          1          R0(NP),RK(NP),PK(NP),APK(NP),ATK(NP),TK(NP)
+         29                     C
+         30                     C     [FULL UNROOL]
+         31                           INTEGER*4 JUNROL
+         32                           INTEGER*4 NPPMAX,NCRS2,ITPCRS(NCRS2)
+         33                           REAL*4    TS(0:NP),TACRS(NCRS2)
+         34                     C
+         35                           INTEGER*4 IP
+         36                           REAL*4    RKDOT,BDOT,RKDOTA,BDOTA,RESR,APDOT,APDOTA,ALFA,ATTDOT,
+         37                          *          ATTDTA,AT2DOT,AT2DTA,QK,RKDOTP,RSDOT,RSDOTA,BETA,EPS0
+         38                     C
+         39                           DATA EPS0 / 1.E-30 /
+         40                     C
+         41                           CHARACTER*60 ERMSGC
+         42                     CC   & /' ## SUBROUTINE BCGSTT: FATAL      ERROR REPORT   ; RETURNED' /
+         43                          & /' ## SUBROUTINE BCGSTX: FATAL      ERROR REPORT   ; RETURNED' /
+         44                     C
+         45                     C      SOLVE MATRIX EQUATION BY BI-CGSTAB METHOS
+         46                     C         ( 3-D CALCULATION : SINGLE WORD & MULTI ELEMENT VERSION )
+         47                     C                                           CODED BASED ON 'BCGSTB'
+         48                     C
+         49                     C          OPERATION COUNTS:   77 FLOP /ELEMENT/ITERATION
+         50                     C          DATA LOADINGS   :  101 WORDS/ELEMENT/ITERATION
+         51                     C                           (  69 WORDS CONTIGUOUSLY,
+         52                     C                               8 WORDS BY 4-WORD STRIDE, AND
+         53                     C                              24 WORDS BY LIST )
+         54                     C
+         55                     C
+         56                     C     ARGUMENT LISTINGS
+         57                     C
+         58                     C       (1) INPUT
+         59                     C          A   (I,J,IE); ELEMENT-WISE COEFFICIENT MATRIX
+         60                     C          NPP     (IP); NUMBER OF ADJACENT NODES    TO NODE    IP
+         61                     C          NCRS    ; NUMBER OF NONZERO ELEMENTS IN MATRIX OF CRS FORMAT
+         62                     C          IPCRS (ICRS); NODE NO. TABLE BASED ON CRS FORMAT
+         63                     C          APCRS (ICRS); NODE-BASE MATRIX COEFFICIENT
+         64                     C          B       (IP); GLOBAL FORCE VECTOR
+         65                     C
+         66                     C           NOTES ; THE BOUNDARY CONDITIONS MUST HAVE BEEN APPROPRIATELY
+         67                     C                  PRESET TO THE ELEMENT-WISE COEFFICIENT MATRIX AND
+         68                     C                  GLOBAL FORCE VECTOR BEFORE THIS SUBROUTINE IS CALLED.
+         69                     C
+         70                     C           NOTES ; FOR PARALLEL COMPUTATIONS, CONTRIBUTIONS FROM THE
+         71                     C                  NEIGHBORING DOMAINS MUST HAVE BEEN SUPERIMPOSED
+         72                     C                  TO THE GLOBAL FORCE VECTOR BEFORE THIS SUBROUTINE IS
+         73                     C                  CALLED.
+         74                     C
+         75                     C          EPS         ; CONVERGENCE CRITERIA (L2-NORM RESIDUAL)
+         76                     C          NMAX        ; MAXIMUM NUMBER OF ITERATIONS
+         77                     C
+         78                     C          NODE  (I,IE); NODE NO. TABLE BASED ON ELEMENT
+         79                     C          ME          ; MAX. NUMBER OF TOTAL ELEMENTS
+         80                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+         81                     C          NP          ; NUMBER OF TOTAL    NODES
+         82                     C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT
+         83                     C
+         84                     C          IPART       ; SUB-DOMAIN NUMBER THAT THIS TASK SHOULD TAKE/IS
+         85                     C                       TAKING CARE OF. IPART BEING SET ZERO MEANS THAT
+         86                     C                       THE PROGRAM SHOULD RUN/IS RUNNING IN SERIAL
+         87                     C                       MODE.
+         88                     C          LDOM  (IDOM); NEIBERING SUB-DOMAIN NUMBER
+         89                     C          NBPDOM(IDOM); NUMBER OF INTER-CONNECT BOUNDARY NODES
+         90                     C                       SHARING WITH THE IDOM'TH NEIBERING SUB-DOMAIN,
+         91                     C                       LDOM(IDOM)
+         92                     C          NDOM        ; NUMBER OF THE NERIBERING SUB-DOMAINS
+         93                     C          IPSLF (IBP,IDOM); INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+         94                     C                           CALLING TASK'S SUB-DOMAIN, FOR THE IDOM'TH
+         95                     C                           NEIBERING SUB-DOMAIN, LDOM(IDOM)
+         96                     C          IPSND (IBP,IDOM); INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+         97                     C                           SUB-DOMAIN THAT IS RECEIVING THE CALLING
+         98                     C                           TASK'S RESIDUALS.
+         99                     C          MBPDOM      ; THE MAXIMUM NUMBER OF THE INTER-CONNECT
+        100                     C                       BOUNDARY NODES FOR ONE NEIBERING SUB-DOMAIN
+        101                     C          NUMIP   (IP); NUMBER OF NEIGHBORING DOMAINS THAT NODE 'IP'
+        102                     C                       BELONGS TO
+        103                     C
+        104                     C          IUT0        ; FILE NUMBER TO REPORT ERROR OCCURRENCE
+        105                     C
+        106                     C
+        107                     C       (2) OUTPUT
+        108                     C          RES         ; L2-NORM RESIDUAL OF THE FINAL SOLUTION VECTOR
+        109                     C          NITR        ; NUMBER OF ITERATIONS DONE
+        110                     C          IERR        ; RETURN CODE TO REPORT ERROR OCCURRENCE
+        111                     C                   0 --- NORMAL TERMINATION
+        112                     C                   1 --- A FATAL ERROR HAS OCCURRED
+        113                     C
+        114                     C       (3) INPUT-OUTPUT
+        115                     C          S       (IP); GLOBAL SOLUTION VECTOR (PROVIDE INITIAL GUESS)
+        116                     C
+        117                     C
+        118                     C       (4) WORK
+        119                     C          RX    (I,IE); HOLDS ELEMENT RESIDUAL VECTOR,
+        120                     C                        USED IN DDCOMX AS WELL
+        121                     C          RY    (I,IE); USED IN DDCOMX
+        122                     C
+        123                     C          R0      (IP); HOLDS GLOBAL INITIAL RESIDUAL VECTOR
+        124                     C          RK      (IP); HOLDS GLOBAL RESIDUAL VECTOR
+        125                     C          PK      (IP); HOLDS GLOBAL SEARCH-DIRECTION VECTOR
+        126                     C          APK     (IP); HOLDS GLOBAL PRODUCTION OF MATRIX AND
+        127                     C                        SEARCH-DIRECTION VECTOR
+        128                     C          TK      (IP); HOLDS T(NITE)
+        129                     C          ATK     (IP); HOLDS GLOBAL PRODUCTION OF MATRIX AND 'TK'
+        130                     C          WEIGHT  (IP); HOLDS WEIGHT FUNCTION OF THE NODE OR ELEMENT
+        131                     C
+        132                           IF(NMAX.EQ.0) RETURN
+        133                     C
+        134                           NITR=0
+        135                     C
+        136                     C
+        137                     CCC   1. SET WEIGHTING FUNCTION FOR COMPUTING AN INNER PRODUCT
+        138                     C
+        139                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 552
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.50, ITR: 352, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NUMIP, WEIGHT
+                              <<< Loop-information  End >>>
+        140     1  pp   2v            DO 200 IP = 1 , NP
+        141     1   p   2v                WEIGHT(IP) = 1.E0/(FLOAT(NUMIP(IP))+1.E0)
+        142     1   p   2v       200  CONTINUE
+        143                     C
+        144                     C
+        145                     CCC   2. SET INITIAL RESIDUAL VECTOR AND SEARCH-DIRECTION VECTOR
+        146                     C
+        147                     C
+        148                     C          OPERATION COUNTS:   36 FLOP /ELEMENT
+        149                     C          DATA LOADINGS   :   48 WORDS/ELEMENT
+        150                     C                           (  32 WORDS CONTIGUOUSLY,
+        151                     C                               4 WORDS BY 4-WORD STRIDE, AND
+        152                     C                              12 WORDS BY LIST )
+        153                           CALL CALAX0(APCRS, S, RK, NP, NE, NCRS, IPCRS, NPP,
+        154                          *            N2,ME,IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        155                          *            RX,RY,JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS,
+        156                          *            IUT0,IERR)
+        157                     C
+        158     1                     IF(IERR.EQ.1) THEN
+        159     1                         WRITE(IUT0,*) ERMSGC
+        160     1                         RETURN
+        161     1                     ENDIF
+        162                     C
+        163                           RKDOT = 0.E0
+        164                           BDOT = 0.E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 485
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        165     1  pp    v            DO 300 IP = 1 , NP
+        166     1   p    v                RK (IP) = B (IP)-RK (IP)
+        167     1   p    v                R0 (IP) = RK(IP)
+        168     1   p    v                PK (IP) = RK(IP)
+        169     1   p    v                TK (IP) = 0.E0
+        170     1   p    v                RKDOT = RKDOT+WEIGHT(IP)*R0(IP)*RK(IP)
+        171     1   p    v                BDOT = BDOT+WEIGHT(IP)*B(IP)*B(IP)
+        172     1   p    v        300 CONTINUE
+        173                     C
+        174     1                     IF(IPART.GE.1) THEN
+        175     1                         CALL DDCOM2(RKDOT,RKDOTA)
+        176     1                         CALL DDCOM2(BDOT,BDOTA)
+        177     1                         RKDOT = RKDOTA
+        178     1                         BDOT = BDOTA
+        179     1                     ENDIF
+        180                     C
+        181                           IF(ABS(BDOT).LE.EPS0) BDOT = 1.0E0
+        182                     C
+        183                           RES  = SQRT(RKDOT)
+        184                           RESR = RES/SQRT(BDOT)
+        185                     C
+        186                     C     IF(RES.LE.EPS.OR.RESR.LE.EPS) RETURN
+        187                     C     USE RELATIVE RESIDUAL
+        188                           IF(RESR.LE.EPS) RETURN
+        189                     C
+        190                     C
+        191                     CCC   3. COMPUTE PRODUCT OF COEFFICIENT MATRIX AND SEARCH-DIRECTION VECTOR
+        192                     CCC      AND INNER PRODUCT OF COMPUTED PRODUCT AND SEARCH-DIRECTION VECTOR
+        193                     C
+        194                     C
+        195                      10   CONTINUE
+        196                     C
+        197                           NITR=NITR+1
+        198                     C
+        199                     C
+        200                     CCC   3.1 COMPUTE APK,ALFA
+        201                     C
+        202                     C
+        203                     C          OPERATION COUNTS:   36 FLOP /ELEMENT
+        204                     C          DATA LOADINGS   :   48 WORDS/ELEMENT
+        205                     C                           (  32 WORDS CONTIGUOUSLY,
+        206                     C                               4 WORDS BY 4-WORD STRIDE, AND
+        207                     C                              12 WORDS BY LIST )
+        208                           CALL CALAX0(APCRS, PK, APK, NP, NE, NCRS, IPCRS, NPP,
+        209                          *            N2,ME,IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        210                          *            RX,RY,JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS,
+        211                          *            IUT0,IERR)
+        212                     C
+        213     1                     IF(IERR.EQ.1) THEN
+        214     1                         WRITE(IUT0,*) ERMSGC
+        215     1                         RETURN
+        216     1                     ENDIF
+        217                     C
+        218                           APDOT = 0.E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 942
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        219     1  pp    v            DO 400 IP = 1 , NP
+        220     1   p    v                APDOT = APDOT+WEIGHT(IP)*R0(IP)*APK(IP)
+        221     1   p    v        400 CONTINUE
+        222                     C
+        223     1                     IF(IPART.GE.1) THEN
+        224     1                         CALL DDCOM2(APDOT,APDOTA)
+        225     1                         APDOT = APDOTA
+        226     1                     ENDIF
+        227                     C
+        228                           IF(APDOT .EQ. 0.0E0) RETURN
+        229                           ALFA = RKDOT/APDOT
+        230                     C
+        231                     C
+        232                     CCC   3.2 COMPUTE TK=RK-ALFA*APK
+        233                     C
+        234                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.25, ITR: 288, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      APK, RK, TK
+                              <<< Loop-information  End >>>
+        235     1  pp   2v            DO 500 IP = 1 , NP
+        236     1   p   2v                TK (IP) = RK(IP)-ALFA*APK(IP)
+        237     1   p   2v        500 CONTINUE
+        238                     C
+        239                     C
+        240                     CCC   3.3 COMPUTE ATK
+        241                     C
+        242                     C
+        243                     C          OPERATION COUNTS:   36 FLOP /ELEMENT
+        244                     C          DATA LOADINGS   :   48 WORDS/ELEMENT
+        245                     C                           (  32 WORDS CONTIGUOUSLY,
+        246                     C                               4 WORDS BY 4-WORD STRIDE, AND
+        247                     C                              12 WORDS BY LIST )
+        248                           CALL CALAX0(APCRS, TK, ATK, NP, NE, NCRS, IPCRS, NPP,
+        249                          *            N2,ME,IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        250                          *            RX,RY,JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS,
+        251                          *            IUT0,IERR)
+        252                     C
+        253     1                     IF(IERR.EQ.1) THEN
+        254     1                         WRITE(IUT0,*) ERMSGC
+        255     1                         RETURN
+        256     1                     ENDIF
+        257                     C
+        258                     C
+        259                     CCC   3.4 COMPUTE QK
+        260                     C
+        261                     C
+        262                           ATTDOT  = 0.E0
+        263                           AT2DOT  = 0.E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 843
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        264     1  pp    v            DO 600 IP = 1 , NP
+        265     1   p    v                ATTDOT = ATTDOT+WEIGHT(IP)*ATK(IP)* TK(IP)
+        266     1   p    v                AT2DOT = AT2DOT+WEIGHT(IP)*ATK(IP)*ATK(IP)
+        267     1   p    v        600 CONTINUE
+        268                     C
+        269     1                     IF(IPART.GE.1) THEN
+        270     1                         CALL DDCOM2(ATTDOT,ATTDTA)
+        271     1                         CALL DDCOM2(AT2DOT,AT2DTA)
+        272     1                         ATTDOT = ATTDTA
+        273     1                         AT2DOT = AT2DTA
+        274     1                     ENDIF
+        275                     C
+        276                           IF(AT2DOT .EQ. 0.E0) RETURN
+        277                           QK = ATTDOT/AT2DOT
+        278                     C
+        279                     C
+        280                     CCC   3.5 UPDATE SOLUTION VECTOR AND RESIDUAL VECTOR
+        281                     CCC   3.6 RETURN IF L2-NORM OF UPDATED SOLUTION VECTOR IS LESS THAN CRITERIA
+        282                     C
+        283                     C
+        284                           RKDOTP = RKDOT
+        285                           RKDOT  = 0.E0
+        286                           RSDOT  = 0.E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 391
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        287     1  pp    v            DO 700 IP = 1 , NP
+        288     1   p    v                S  (IP) = S (IP)+ ALFA*PK(IP) + QK*TK (IP)
+        289     1   p    v                RK (IP) = TK(IP)              - QK*ATK(IP)
+        290     1   p    v                RKDOT = RKDOT+WEIGHT(IP)*R0(IP)*RK(IP)
+        291     1   p    v                RSDOT = RSDOT+WEIGHT(IP)*RK(IP)*RK(IP)
+        292     1   p    v        700 CONTINUE
+        293                     C
+        294                     C
+        295     1                     IF(IPART.GE.1) THEN
+        296     1                         CALL DDCOM2(RKDOT,RKDOTA)
+        297     1                         CALL DDCOM2(RSDOT,RSDOTA)
+        298     1                         RKDOT = RKDOTA
+        299     1                         RSDOT = RSDOTA
+        300     1                     ENDIF
+        301                     C
+        302                           RES  = SQRT(RSDOT)
+        303                           RESR = RES/SQRT(BDOT)
+        304                     C
+        305                           IF(RES.LE.EPS.OR.RESR.LE.EPSRE) RETURN
+        306                     C
+        307                     C
+        308                     CCC   3.7 UPDATE SEARCH-DIRECTION VECTOR
+        309                     C
+        310                     C
+        311                           IF(QK     .EQ. 0.E0) RETURN
+        312                           IF(RKDOTP .EQ. 0.E0) RETURN
+        313                           BETA = (ALFA/QK)*(RKDOT/RKDOTP)
+        314                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 762
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.40, ITR: 416, MVE: 7)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      APK, PK, RK
+                              <<< Loop-information  End >>>
+        315     1  pp   2v            DO 800 IP = 1 , NP
+        316     1   p   2v                PK (IP) = RK(IP)+BETA*(PK(IP)-QK*APK(IP))
+        317     1   p   2v        800 CONTINUE
+        318                     C
+        319                     C
+        320                     CCC   3.7 RETURN IF ITERATION NUMBER HAS REACHED THE GIVEN MAXIMUM NUMBER,
+        321                     CCC       OTHERWISE CONTINUE ITERATIONS UNTIL SOLUTION IS CONVERGED
+        322                     C
+        323                     C
+        324     1                     IF(NITR.EQ.NMAX) THEN
+        325     1                         RETURN
+        326     1                     END IF
+        327                     C
+        328                           GO TO 10
+        329                     C
+        330                           END
+
+ Diagnostic messages: program name(BCGSTX)
+   jwd8220o-i  "bcgstx.f", line 1: 副作用の可能性のある最適化を行いました。
+   jwd2008i-i  "bcgstx.f", line 20: この仮引数'NODE'は、副プログラム中で使用されていません。
+   jwd2008i-i  "bcgstx.f", line 21: この仮引数'NEX'は、副プログラム中で使用されていません。
+   jwd5001p-i  "bcgstx.f", line 140: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "bcgstx.f", line 140: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "bcgstx.f", line 140: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "bcgstx.f", line 140: ループの繰返し数が352回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5004p-i  "bcgstx.f", line 165: リダクション演算を含むDOループを並列化しました。(名前:IP)
+   jwd6004s-i  "bcgstx.f", line 165: リダクション演算を含むDOループをSIMD化しました。(名前:IP)
+   jwd8206o-i  "bcgstx.f", line 184: 除算を逆数の乗算に変更しました。
+   jwd5132p-i  "bcgstx.f", line 195: DO WHILE文、DO UNTIL文、およびIF/GO TO文によるループは並列化できません。
+   jwd5004p-i  "bcgstx.f", line 219: リダクション演算を含むDOループを並列化しました。(名前:IP)
+   jwd6004s-i  "bcgstx.f", line 219: リダクション演算を含むDOループをSIMD化しました。(名前:IP)
+   jwd5001p-i  "bcgstx.f", line 235: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "bcgstx.f", line 235: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "bcgstx.f", line 235: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "bcgstx.f", line 235: ループの繰返し数が288回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5004p-i  "bcgstx.f", line 264: リダクション演算を含むDOループを並列化しました。(名前:IP)
+   jwd6004s-i  "bcgstx.f", line 264: リダクション演算を含むDOループをSIMD化しました。(名前:IP)
+   jwd5004p-i  "bcgstx.f", line 287: リダクション演算を含むDOループを並列化しました。(名前:IP)
+   jwd6004s-i  "bcgstx.f", line 287: リダクション演算を含むDOループをSIMD化しました。(名前:IP)
+   jwd8209o-i  "bcgstx.f", line 288: 多項式の演算順序を変更しました。
+   jwd8206o-i  "bcgstx.f", line 303: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "bcgstx.f", line 313: 多項式の演算順序を変更しました。
+   jwd5001p-i  "bcgstx.f", line 315: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "bcgstx.f", line 315: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "bcgstx.f", line 315: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "bcgstx.f", line 315: ループの繰返し数が416回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+
+ Procedure information
+   Lines      : 330
+   Statements : 114
+   Stack(byte): 96784
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 330
+   Total statements : 114
+   Total stack(byte): 96784
+   Total prefetch num: 0
+

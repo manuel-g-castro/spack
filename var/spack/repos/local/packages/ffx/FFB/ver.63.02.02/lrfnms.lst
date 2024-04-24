@@ -1,0 +1,1613 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:53:14 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : lrfnms.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "LRFNMS"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE LRFNMS(IRFNFF,IRFN,NGRID,IRFNFT,FILECD,FILECR,
+          2                          *                  NLAY1,NLAY2,IRFBOX,NPPRS,
+          3                          *                  ME,MP,MWRK,N2,NE,NP,
+          4                          *                  X,Y,Z,U,V,W,PN,P,NODE,LEACNV,
+          5                          *                  MPWALL,NPWALL,LPWALL,UWALL,VWALL,WWALL,
+          6                          *                  MPINLT,NPINLT,LPINLT,UINLT,VINLT,WINLT,
+          7                          *                  MPFREE,NPFREE,LPFREE,
+          8                          *                  MPSYMT,NPSYMT,LPSYMT,
+          9                          *                  MPSET ,NPSET ,LPSET1,LPSET4,
+         10                          *                  MPBODY,NPBODY,LPBODY,
+         11                          *                  MPINT ,NPINT ,LPINT1,LPINT2,LPINT3,
+         12                          *                  MPTGT,NPTGT,LPTGT,
+         13                          *                  IPART ,
+         14                          *                  MDOM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+         15                          *                  UFIX,VFIX,WFIX,LPFRM,
+         16                          *                  CRD,LWRK01,LWRK02,LWRK03,
+         17                          *                  WRK04,NDRFN,NDORG,NODEBK,
+         18                          *                  RX,RY,NPB0,
+         19                          *                  NPB1,LPB1,XPB1,YPB1,ZPB1,
+         20                          *                  NPB2,LPB2,XPB2,YPB2,ZPB2,
+         21                          *                  ITYPOR,ITYPRF,
+         22                          *                  XRFMIN,YRFMIN,ZRFMIN,XRFMAX,YRFMAX,ZRFMAX,
+         23                          *                  IUT6,IUT0,IERR)
+         24                     C
+         25                           IMPLICIT NONE
+         26                     C
+         27                           INCLUDE "rcapRefiner.inc"
+         28                     C
+         29                           INTEGER*4 IRFNFF,IRFN,NGRID,IRFNFT,NLAY1,NLAY2,IRFBOX,NPPRS
+         30                           INTEGER*4 ME,MP,MWRK,N2,NE,NP
+         31                           REAL*8    X(MP),Y(MP),Z(MP)
+         32                           REAL*4    U(MP),V(MP),W(MP),PN(MP),P(ME)
+         33                           INTEGER*4 NODE(N2,ME)
+         34                           INTEGER*4 IUT6,IUT0,IERR,IERRA
+         35                     C
+         36                           INTEGER*4 MPWALL,NPWALL,LPWALL(MPWALL),
+         37                          *          MPINLT,NPINLT,LPINLT(MPINLT),
+         38                          *          MPFREE,NPFREE,LPFREE(MPFREE),
+         39                          *          MPSYMT,NPSYMT,LPSYMT(MPSYMT),
+         40                          *          MPSET ,NPSET ,LPSET1(MPSET ),LPSET4(MPSET ),
+         41                          *          MPBODY,NPBODY,LPBODY(MPBODY)
+         42                           REAL*4    UWALL(MPWALL),VWALL(MPWALL),WWALL(MPWALL),
+         43                          *          UINLT(MPINLT),VINLT(MPINLT),WINLT(MPINLT)
+         44                     C
+         45                           INTEGER*4 IPART,MDOM,
+         46                          *          MPINT,NPINT,LPINT1(MPINT),LPINT2(MPINT),LPINT3(MPINT),
+         47                          *          NDOM,MBPDOM,LDOM(MDOM),NBPDOM(MDOM),
+         48                          *          IPSLF(MBPDOM,MDOM),IPSND(MBPDOM,MDOM)
+         49                     C
+         50                           INTEGER*4 NPB0(MDOM),NPB1(MDOM),NPB2(MDOM),
+         51                          *          LPB1(MBPDOM,MDOM),LPB2(MBPDOM,MDOM)
+         52                           REAL*4    XPB1(MBPDOM,MDOM),XPB2(MBPDOM,MDOM),
+         53                          *          YPB1(MBPDOM,MDOM),YPB2(MBPDOM,MDOM),
+         54                          *          ZPB1(MBPDOM,MDOM),ZPB2(MBPDOM,MDOM)
+         55                     C
+         56                           INTEGER*4 MPTGT,NPTGT,LPTGT(MPTGT)
+         57                           REAL*4    XRFMIN,YRFMIN,ZRFMIN,XRFMAX,YRFMAX,ZRFMAX
+         58                     C
+         59                           CHARACTER*60 FILECD,FILECR
+         60                     C
+         61                           INTEGER(KIND=1) :: IETYPE
+         62                     C
+         63                           INTEGER*4 KSEG,KQUD,KHEX
+         64                           DATA KSEG / 0/
+         65                           DATA KQUD / 4/
+         66                           DATA KHEX /12/
+         67                     C
+         68                           INTEGER*4 NBOUN
+         69                           PARAMETER(NBOUN=8)
+         70                           INTEGER*4 LBPRTY(NBOUN)
+         71                           DATA      LBPRTY( 1) /  4 /   ! INLET
+         72                           DATA      LBPRTY( 2) /  6 /   ! MOVING-WALL
+         73                           DATA      LBPRTY( 3) /  5 /   ! WALL
+         74                           DATA      LBPRTY( 4) /  2 /   ! SYMMETRIC
+         75                           DATA      LBPRTY( 5) /  3 /   ! FREE
+         76                           DATA      LBPRTY( 6) /  1 /   ! OVERSET
+         77                           DATA      LBPRTY( 7) /  7 /   ! BODY
+         78                           DATA      LBPRTY( 8) /  8 /   ! REFINE TARGET
+         79                           CHARACTER*20 BGNAME(4)
+         80                           DATA         BGNAME( 1) / "GROUP1" /
+         81                           DATA         BGNAME( 2) / "GROUP2" /
+         82                           DATA         BGNAME( 3) / "GROUP3" /
+         83                           DATA         BGNAME( 4) / "GROUP4" /
+         84                           CHARACTER*10 CDOM
+         85                           CHARACTER*50 CBUF
+         86                     C
+         87                     C     [WORK]
+         88                           REAL*4    UFIX(MP),VFIX(MP),WFIX(MP)
+         89                           INTEGER*4 LPFRM(MWRK)
+         90                           REAL*8    CRD(MP*3)
+         91                           REAL*4    RX(ME*8),RY(ME*8)
+         92                           INTEGER*4 NODED(8),LEACNV(ME)
+         93                           INTEGER*4 LWRK01(MWRK),LWRK02(MWRK),LWRK03(MWRK)
+         94                           INTEGER*4 WRK04(MP),NDRFN(ME*8),NDORG(ME*8),NODEBK(8,ME)
+         95                           INTEGER(KIND=1) ITYPOR(ME),ITYPRF(ME)
+         96                     C
+         97                     C     [PARAMETER]
+         98                           INTEGER*4 NOFSTP,NOFSTE
+         99                           DATA NOFSTP /1/
+        100                           DATA NOFSTE /1/
+        101                           REAL*4 EPS
+        102                           DATA EPS /1.0E-6/
+        103                     C
+        104                     C     [WORK]
+        105                           INTEGER*4 MAXBUF,IDIM,NPB
+        106                           REAL*4    X1,Y1,Z1,DX,DY,DZ,RR
+        107                     C
+        108                     C     [COUNTER]
+        109                           INTEGER*4 IE,IP,IB,IB1,IB2,NB,IDOM,I,J,NER,NPOLD,
+        110                          *          IP1,IP2,IP3,IP4,IP5,IP6,IP7,IP8,
+        111                          *          NE1,NE2
+        112                     C
+        113                           CHARACTER*60 ERMSGC
+        114                          & /' ## SUBROUTINE LRFNMS: ERROR OCCURED             ; RETURNED' /
+        115                     CC      CHARACTER*60 ERMSG1
+        116                     CC     & /' ## SUBROUTINE LRFNMS: LIST ERROR AT DDCOM0      ; RETURNED' /
+        117                     CC    CHARACTER*60 ERMSG2
+        118                     CC   & /' ## SUBROUTINE RFNMSH: CANNOT OBTAIN PARENT NODE ; RETURNED' /
+        119                           CHARACTER*60 ERMSG3
+        120                          & /' ## SUBROUTINE LRFNMS: INSUFFICIENT MEMORY       ; RETURNED' /
+        121                           CHARACTER*60 ERMSG4
+        122                          & /' ## SUBROUTINE LRFNMS: INVARIT NODE TABLE        ; RETURNED' /
+        123                           CHARACTER*60 ERMSG5
+        124                          & /' ## SUBROUTINE LRFNMS: INVARIT ELEMENT TYPE      ; RETURNED' /
+        125                           CHARACTER*60 ERMSG6
+        126                          & /' ## SUBROUTINE LRFNMS: INVARIT O.S. FRANE NUMBER ; RETURNED' /
+        127                           CHARACTER*60 ERMSG7
+        128                          & /' ## SUBROUTINE LRFNMS: CAN NOT READ CAD FILE     ; RETURNED' /
+        129                     C
+        130                     C
+        131                     C     ARGUMENT LISTINGS
+        132                     C     ME     (IN    ); MAX. NUMBER OF TOTAL ELEMENTS
+        133                     C     MP     (IN    ); MAX. NUMBER OF TOTAL    NODES
+        134                     C     NE     (IN/OUT);      NUMBER OF TOTAL ELEMENTS
+        135                     C     NP     (IN/OUT);      NUMBER OF TOTAL    NODES
+        136                     C     N2     (IN    ); DIMENSION OF 'NODE'
+        137                     C     NODE   (IN/OUT); NODE NO. TABLE BASED ON ELEMENT
+        138                     C     X      (IN/OUT); X-COORDINATES OF NODES
+        139                     C     Y      (IN/OUT); Y-COORDINATES OF NODES
+        140                     C     Z      (IN/OUT); Y-COORDINATES OF NODES
+        141                     C
+        142                     C   BOUNDARY CONDITIONS
+        143                     C
+        144                     C    B. WALL BOUNDARY
+        145                     C     MPWALL (IN    ); MAX. NUMBER OF WALL BOUNDARY NODES
+        146                     C     NPWALL (IN/OUT); NUMBER OF WALL BOUNDARY NODES
+        147                     C     LPWALL (IN/OUT); WALL BOUNDARY NODES
+        148                     C     UWALL  (IN/OUT); WALL BOUNDARY U-VELOCITIES
+        149                     C     VWALL  (IN/OUT); WALL BOUNDARY V-VELOCITIES
+        150                     C     WWALL  (IN/OUT); WALL BOUNDARY W-VELOCITIES
+        151                     C
+        152                     C    C. MOVING WALL BOUNDARY
+        153                     C     MPINLT (IN    ); MAX. NUMBER OF INLET BOUNDARY NODES
+        154                     C     NPINLT (IN/OUT); NUMBER OF INLET BOUNDARY NODES
+        155                     C     LPINLT (IN/OUT); INLET BOUNDARY NODES
+        156                     C     UINLT  (IN/OUT); INLET BOUNDARY U-VELOCITIES
+        157                     C     VINLT  (IN/OUT); INLET BOUNDARY V-VELOCITIES
+        158                     C     WINLT  (IN/OUT); INLET BOUNDARY W-VELOCITIES
+        159                     C
+        160                     C    D. FREE BOUNDARY
+        161                     C     MPFREE (IN    ); MAX. NUMBER OF FREE BOUNDARY NODES
+        162                     C     NPFREE (IN/OUT); NUMBER OF FREE BOUNDARY NODES
+        163                     C     LPFREE (IN/OUT); FREE BOUNDARY NODES
+        164                     C
+        165                     C    E. SYMMETRIC BOUNDARY
+        166                     C     MPSYMT (IN    ); MAX. NUMBER OF SYMMETRIC BOUNDARY NODES
+        167                     C     NPSYMT (IN/OUT); NUMBER OF SYMMETRIC BOUNDARY NODES
+        168                     C     LPSYMT (IN/OUT); SYMMETRIC BOUNDARY NODES
+        169                     C
+        170                     C    F. BODY BOUNDARY
+        171                     C     MPBODY (IN    ); MAX. NUMBER OF BODY BOUNDARY NODES
+        172                     C     NPBODY (IN/OUT); NUMBER OF BODY BOUNDARY NODES
+        173                     C     LPBODY (IN/OUT); BODY BOUNDARY NODES
+        174                     C
+        175                     C    G. INTER-CONNECT BOUNDARY
+        176                     C     IPART   (IN    ); SUB-DOMAIN NUMBER THAT THIS TASK SHOULD TAKE/IS
+        177                     C                       TAKING CARE OF. IPART BEING SET ZERO MEANS THAT
+        178                     C                       THE PROGRAM SHOULD RUN/IS RUNNING IN SERIAL
+        179                     C                       MODE.
+        180                     C      LDOM   (IN    ); NEIBERING SUB-DOMAIN NUMBER
+        181                     C      NBPDOM (IN/OUT); NUMBER OF INTER-CONNECT BOUNDARY NODES
+        182                     C                       SHARING WITH THE IDOM'TH NEIBERING SUB-DOMAIN,
+        183                     C                       LDOM(IDOM)
+        184                     C      NDOM   (IN    ); NUMBER OF THE NERIBERING SUB-DOMAINS
+        185                     C      IPSLF  (WORK  ); INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+        186                     C                       CALLING TASK'S SUB-DOMAIN, FOR THE IDOM'TH
+        187                     C                       NEIBERING SUB-DOMAIN, LDOM(IDOM)
+        188                     C      IPSND  (WORK  ); INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+        189                     C                       SUB-DOMAIN THAT IS RECEIVING THE CALLING
+        190                     C                       TASK'S RESIDUALS.
+        191                     C      MBPDOM (IN    ); THE MAXIMUM NUMBER OF THE INTER-CONNECT
+        192                     C                       BOUNDARY NODES FOR ONE NEIBERING SUB-DOMAIN
+        193                     C
+        194                     C
+        195                           IERR=0
+        196                           MAXBUF=N2*ME
+        197                     CC
+        198                     CCHY [1] MAKE NEIGHBORING DOMAIN LIST
+        199                     CC
+        200     1                     IF(IPART.GE.1)THEN
+        201     1                        WRITE(IUT6,*)
+        202     1                        WRITE(IUT6,*) ' **LRFNMS** : MAKE NEIGHBORING DOMAIN LIST'
+        203     1                        CALL DDCOM0(LPINT1,LPINT2,LPINT3,NPINT,MDOM,MBPDOM,
+        204     1                    *               LDOM,NBPDOM,NDOM,IPSLF,IPSND,IUT0,IERR)
+        205     1                        CALL ERRCHK(IUT6,IPART,1,IERR,IERRA)
+        206     2                        IF(IERRA.NE.0) THEN
+        207     2                           WRITE(IUT0,*)
+        208     2                           WRITE(IUT0,*) ERMSGC
+        209     2                           IERR=IERRA
+        210     2                           RETURN
+        211     2                        ENDIF
+        212     1               C
+        213     1                        IDIM = 0
+        214     1                        CALL DDCOMX(IPART,IDIM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        215     1                    *               WRK04,WRK04,WRK04,NP,IUT0,IERR,RX,RY,MAXBUF)
+        216     1                        CALL ERRCHK(IUT6,IPART,1,IERR,IERRA)
+        217     2                        IF(IERRA.NE.0) THEN
+        218     2                           WRITE(IUT0,*)
+        219     2                           WRITE(IUT0,*) ERMSGC
+        220     2                           IERR=IERRA
+        221     2                           RETURN
+        222     2                        ENDIF
+        223     1                     ENDIF
+        224                     C
+        225                     CC
+        226                     CCHY [*] ASSIGN ELEMENT PRESSURE TO EACH NODE
+        227                     CC
+        228     1                     IF (NPPRS.EQ.0) THEN
+        229     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1455
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      UFIX, WRK04
+                              <<< Loop-information  End >>>
+        230     2  pp   2v               DO 100 IP=1,NP
+        231     2   p   2v                  WRK04(IP)=0.0E0
+        232     2   p   2v                  UFIX (IP)=0.0E0
+        233     2   p   2v       100     CONTINUE
+        234     1               C
+        235     2                        DO 200 IE=1,NE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FULL UNROLLING
+                              <<< Loop-information  End >>>
+        236     3   s   fs                  DO 210 I=1,8
+        237     3   p   fv                     IP=NODE(I,IE)
+        238     3   p   fv                     IF(IP.EQ.0) GOTO 210
+        239     3   m   fm                     WRK04(IP)=WRK04(IP)+1.0E0
+        240     3   s   fs                     UFIX (IP)=UFIX (IP)+P(IE)
+        241     3   p   fv       210        CONTINUE
+        242     2                200     CONTINUE
+        243     1               C
+        244     1                        IDIM = 2
+        245     1                        CALL DDCOMX(IPART,IDIM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        246     1                    *               WRK04,UFIX,WRK04,NP,IUT0,IERR,RX,RY,MAXBUF)
+        247     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 517
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.87, ITR: 320, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      UFIX, WRK04, PN
+                              <<< Loop-information  End >>>
+        248     2  pp   2v               DO 220 IP=1,NP
+        249     2   p   2v                  PN(IP)=UFIX(IP)/WRK04(IP)
+        250     2   p   2v       220     CONTINUE
+        251     1               C
+        252     1                     ENDIF
+        253                     C
+        254                     CC
+        255                     CCHY [2] EXTRACT ELEMENTS TO BE REFINED
+        256                     CC
+        257                           WRITE(IUT6,*)
+        258                           WRITE(IUT6,*) ' **LRFNMS** : EXTRACT ELEMENTS TO BE REFINED'
+        259                           CALL EXTRFN(NGRID,NLAY1,NLAY2,IRFBOX,
+        260                          *            ME,N2,NE,NP,NODE,X,Y,Z,
+        261                          *            NPBODY,LPBODY,NPINLT,LPINLT,NPTGT,LPTGT,
+        262                          *            XRFMIN,YRFMIN,ZRFMIN,XRFMAX,YRFMAX,ZRFMAX,
+        263                          *            LWRK01,LWRK02,LWRK03,LEACNV,
+        264                          *            NE1,NE2,NDORG,NODEBK,
+        265                          *            WRK04,IPART,NDOM,MBPDOM,LDOM,NBPDOM,
+        266                          *            IPSLF,IPSND,RX,RY,MAXBUF,
+        267                          *            IUT0,IERR)
+        268                           CALL ERRCHK(IUT6,IPART,1,IERR,IERRA)
+        269     1                     IF(IERRA.NE.0) THEN
+        270     1                        WRITE(IUT0,*)
+        271     1                        WRITE(IUT0,*) ERMSGC
+        272     1                        IERR=IERRA
+        273     1                        RETURN
+        274     1                     ENDIF
+        275                           WRITE(IUT6,*) ' **LRFNMS** : NUM. OF ELEM.     TO BE REFINED',NE1
+        276                           WRITE(IUT6,*) ' **LRFNMS** : NUM. OF ELEM. NOT TO BE REFINED',NE2
+        277                     C
+        278                     CC
+        279                     CCHY [3] PRE-SET U,V,W,PN AT B.C. NODES
+        280                     CC
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 942
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPFRM, WFIX, VFIX, UFIX
+                              <<< Loop-information  End >>>
+        281     1  pp   2v            DO 1000 IP=1,NP
+        282     1   p   2v               UFIX(IP)=0.0
+        283     1   p   2v               VFIX(IP)=0.0
+        284     1   p   2v               WFIX(IP)=0.0
+        285     1   p   2v               LPFRM(IP)=0
+        286     1   p   2v       1000 CONTINUE
+        287                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.00, ITR: 128, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPINLT, VINLT, WINLT, UINLT
+                              <<< Loop-information  End >>>
+        288     1   s   2v            DO 1100 IB=1,NPINLT
+        289     1   p   2v               IP=LPINLT(IB)
+        290     1   m   2v               UFIX(IP)=UINLT(IB)
+        291     1   s   2v               VFIX(IP)=VINLT(IB)
+        292     1   s   2v               WFIX(IP)=WINLT(IB)
+        293     1   p   2v       1100 CONTINUE
+        294                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.00, ITR: 128, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPWALL, VWALL, WWALL, UWALL
+                              <<< Loop-information  End >>>
+        295     1   s   2v            DO 1200 IB=1,NPWALL
+        296     1   p   2v               IP=LPWALL(IB)
+        297     1   m   2v               UFIX(IP)=UWALL(IB)
+        298     1   s   2v               VFIX(IP)=VWALL(IB)
+        299     1   s   2v               WFIX(IP)=WWALL(IB)
+        300     1   p   2v       1200 CONTINUE
+        301                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.50, ITR: 224, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPSET1, LPSET4
+                              <<< Loop-information  End >>>
+        302     1   s   2v            DO 1300 IB=1,NPSET
+        303     1   p   2v               IP=LPSET1(IB)
+        304     1   m   2v               LPFRM(IP)=LPSET4(IB)
+        305     1   p   2v       1300 CONTINUE
+        306                     CC
+        307                     CCHY [4] INITIALIZE OF REFINER
+        308                     CC
+        309                           WRITE(IUT6,*)
+        310                           WRITE(IUT6,*) ' **LRFNMS** : REFINER INITIALIZATION'
+        311                           CALL RCAPINITREFINER(NOFSTP,NOFSTE)
+        312     1                     IF (IRFNFT.EQ.1) THEN
+        313     1                        WRITE(IUT6,*) ' **LRFNMS** : SHAPE FITTING : ON'
+        314     1                        CALL RCAPSETCADFILENAME(FILECD,IERR)
+        315     1                        CALL ERRCHK(IUT6,IPART,1,IERR,IERRA)
+        316     2                        IF(IERRA.NE.0) THEN
+        317     2                           WRITE(IUT0,*)
+        318     2                           WRITE(IUT0,*) ERMSG7
+        319     2                           IERR=IERRA
+        320     2                           RETURN
+        321     2                        ENDIF
+        322     1                     ENDIF
+        323                     C
+        324                     CC
+        325                     CCHY [5] SET COORDINATES TO REFINER
+        326                     CC
+        327                           WRITE(IUT6,*)
+        328                           WRITE(IUT6,*) ' **LRFNMS** : SET COORDINATES TO REFINER'
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 640
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.66, ITR: 64, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      CRD, Z, X, Y
+                              <<< Loop-information  End >>>
+        329     1  pp   2v            DO 2000 IP=1,NP
+        330     1   p   2v               CRD(IP*3-2)=X(IP)
+        331     1   p   2v               CRD(IP*3-1)=Y(IP)
+        332     1   p   2v               CRD(IP*3-0)=Z(IP)
+        333     1   p   2v       2000 CONTINUE
+        334                     C
+        335                           CALL RCAPSETNODE64(NP,CRD,-1,0)
+        336                     CC
+        337                     CCHY [6] SET B.C. NODES TO REFINER
+        338                     CC
+        339                     CC
+        340                     CCHY [6.1] B.C. GROUP-1
+        341                     CC
+        342                           WRITE(IUT6,*)
+        343                           WRITE(IUT6,*) ' **LRFNMS** : SET B.C. NODES TO REFINER'
+        344                     C
+        345                           NB=0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.40, ITR: 192, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LWRK01, LWRK02, LPINLT
+                              <<< Loop-information  End >>>
+        346     1  pp   2v            DO 3000 IB = 1 , NPINLT
+        347     1   p   2v               NB=NB+1
+        348     1   p   2v               LWRK01(NB) = LPINLT(IB)
+        349     1   p   2v               LWRK02(NB) = LBPRTY(1)
+        350     1   p   2v       3000 CONTINUE
+        351                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.40, ITR: 192, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LWRK01, LWRK02, LPWALL
+                              <<< Loop-information  End >>>
+        352     1  pp   2v            DO 3010 IB = 1 , NPWALL
+        353     1   p   2v               NB=NB+1
+        354     1   p   2v               LWRK01(NB) = LPWALL(IB)
+        355     1   p   2v               LWRK02(NB) = LBPRTY(3)
+        356     1   p   2v       3010 CONTINUE
+        357                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.40, ITR: 192, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LWRK01, LWRK02, LPSYMT
+                              <<< Loop-information  End >>>
+        358     1  pp   2v            DO 3020 IB = 1 , NPSYMT
+        359     1   p   2v               NB=NB+1
+        360     1   p   2v               LWRK01(NB) = LPSYMT(IB)
+        361     1   p   2v               LWRK02(NB) = LBPRTY(4)
+        362     1   p   2v       3020 CONTINUE
+        363                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.40, ITR: 192, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LWRK01, LWRK02, LPFREE
+                              <<< Loop-information  End >>>
+        364     1  pp   2v            DO 3040 IB = 1 , NPFREE
+        365     1   p   2v               NB=NB+1
+        366     1   p   2v               LWRK01(NB) = LPFREE(IB)
+        367     1   p   2v               LWRK02(NB) = LBPRTY(5)
+        368     1   p   2v       3040 CONTINUE
+        369                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.40, ITR: 192, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LWRK01, LWRK02, LPSET1
+                              <<< Loop-information  End >>>
+        370     1  pp   2v            DO 3050 IB = 1 , NPSET
+        371     1   p   2v               NB=NB+1
+        372     1   p   2v               LWRK01(NB) = LPSET1(IB)
+        373     1   p   2v               LWRK02(NB) = LBPRTY(6)
+        374     1   p   2v       3050 CONTINUE
+        375                     C
+        376                           CBUF = BGNAME(1)//CHAR(0)
+        377                           CALL RCAPAPPENDBNODEVARINT(CBUF,NB,LWRK01,LWRK02)
+        378                           WRITE(IUT6,*) ' **LRFNMS** : SET B.C. NODES (1)',NB
+        379                     CC
+        380                     CCHY [6.2] B.C. GROUP-2
+        381                     CC
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1143
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.20, ITR: 160, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPBODY, LWRK01, LWRK02
+                              <<< Loop-information  End >>>
+        382     1  pp   2v            DO 3100 IB = 1 , NPBODY
+        383     1   p   2v               LWRK01(IB) = LPBODY(IB)
+        384     1   p   2v               LWRK02(IB) = LBPRTY(7)
+        385     1   p   2v       3100 CONTINUE
+        386                     C
+        387                           CBUF = BGNAME(2)//CHAR(0)
+        388                           CALL RCAPAPPENDBNODEVARINT(CBUF,NPBODY,LWRK01,LWRK02)
+        389                           WRITE(IUT6,*) ' **LRFNMS** : SET B.C. NODES (2)',NPBODY
+        390                     CC
+        391                     CCHY [6.3] B.C. GROUP-3
+        392                     CC
+        393     1                     IF(IPART.GE.1)THEN
+        394     1                        NB=0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IPSLF, LWRK01
+                              <<< Loop-information  End >>>
+        395     2                        DO 3200 IDOM=1,NDOM
+        396     2                           WRITE(CDOM,'(I8.8)') IDOM
+        397     2                           CBUF = BGNAME(3)//CDOM//CHAR(0)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1231
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.00, ITR: 288, MVE: 5)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IPSLF, LWRK01
+                              <<< Loop-information  End >>>
+        398     3  pp   2v                  DO 3210 IB = 1 , NBPDOM(IDOM)
+        399     3   p   2v                     NB=NB+1
+        400     3   p   2v                     LWRK01(IB)  = IPSLF(IB,IDOM)
+        401     3   p   2v       3210       CONTINUE
+        402     2               C
+        403     2                           CALL RCAPAPPENDBNODEGROUP(CBUF,NBPDOM(IDOM),LWRK01)
+        404     2                3200    CONTINUE
+        405     1                        WRITE(IUT6,*) ' **LRFNMS** : SET B.C. NODES (3)',NB
+        406     1                     ENDIF
+        407                     C
+        408                     CCHY [6.4] B.C. GROUP-4
+        409                     CC
+        410     1                     IF (NGRID.EQ.-2) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1143
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.20, ITR: 160, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPTGT, LWRK01, LWRK02
+                              <<< Loop-information  End >>>
+        411     2  pp   2v               DO 3300 IB = 1 , NPTGT
+        412     2   p   2v                  LWRK01(IB) = LPTGT(IB)
+        413     2   p   2v                  LWRK02(IB) = LBPRTY(8)
+        414     2   p   2v       3300    CONTINUE
+        415     1               C
+        416     1                        CBUF = BGNAME(4)//CHAR(0)
+        417     1                        CALL RCAPAPPENDBNODEVARINT(CBUF,NPTGT,LWRK01,LWRK02)
+        418     1                        WRITE(IUT6,*) ' **LRFNMS** : SET B.C. NODES (4)', NPTGT
+        419     1                     ENDIF
+        420                     CC
+        421                     CCHY [7] SET NODE TABLE TO REFINER
+        422                     CC
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NDORG
+                              <<< Loop-information  End >>>
+        423     1       4             DO 4000 IE=1,NE
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1778
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<< Loop-information  End >>>
+        424     2   s   4v               DO 4010 I=1,8
+        425     2   p   4v                  NDORG((IE-1)*8+I)=0
+        426     2   p   4v       4010    CONTINUE
+        427     1       4        4000 CONTINUE
+        428                     C
+        429                           J=0
+        430     1                     DO 4100 IE=1,NE1
+        431     2                        IF(NODE(8,IE).NE.0) THEN
+        432     2                           IETYPE=RCAP_HEXAHEDRON
+        433     2                           NDORG(J+1)=NODE(1,IE)
+        434     2                           NDORG(J+2)=NODE(2,IE)
+        435     2                           NDORG(J+3)=NODE(3,IE)
+        436     2                           NDORG(J+4)=NODE(4,IE)
+        437     2                           NDORG(J+5)=NODE(5,IE)
+        438     2                           NDORG(J+6)=NODE(6,IE)
+        439     2                           NDORG(J+7)=NODE(7,IE)
+        440     2                           NDORG(J+8)=NODE(8,IE)
+        441     2                           J=J+8
+        442     2                        ELSE IF(NODE(6,IE).NE.0) THEN
+        443     2                           IETYPE=RCAP_WEDGE
+        444     2                           NDORG(J+1)=NODE(1,IE)
+        445     2                           NDORG(J+2)=NODE(2,IE)
+        446     2                           NDORG(J+3)=NODE(3,IE)
+        447     2                           NDORG(J+4)=NODE(4,IE)
+        448     2                           NDORG(J+5)=NODE(5,IE)
+        449     2                           NDORG(J+6)=NODE(6,IE)
+        450     2                           J=J+6
+        451     2                        ELSE IF(NODE(5,IE).NE.0) THEN
+        452     2                           IETYPE=RCAP_PYRAMID
+        453     2               CC
+        454     2               CC NOTE THAT DEFINITION OF PYRMID NODE TABLE IS DIFFERENT
+        455     2               CC IN FFB AND REVOCAP_REFINER
+        456     2               CC
+        457     2                           NDORG(J+1)=NODE(5,IE)
+        458     2                           NDORG(J+2)=NODE(1,IE)
+        459     2                           NDORG(J+3)=NODE(2,IE)
+        460     2                           NDORG(J+4)=NODE(3,IE)
+        461     2                           NDORG(J+5)=NODE(4,IE)
+        462     2                           J=J+5
+        463     2                        ELSE IF(NODE(4,IE).NE.0) THEN
+        464     2                           IETYPE=RCAP_TETRAHEDRON
+        465     2                           NDORG(J+1)=NODE(1,IE)
+        466     2                           NDORG(J+2)=NODE(2,IE)
+        467     2                           NDORG(J+3)=NODE(3,IE)
+        468     2                           NDORG(J+4)=NODE(4,IE)
+        469     2                           J=J+4
+        470     2                        ELSE
+        471     2                           WRITE(IUT0,*)
+        472     2                           WRITE(IUT0,*) ERMSG4
+        473     2                           IERR=1
+        474     2                           RETURN
+        475     2                        ENDIF
+        476     1               C
+        477     1                        ITYPOR(IE)=IETYPE
+        478     1                4100 CONTINUE
+        479                     CC
+        480                     CCHY [8] REFINE ELEMENTS
+        481                     CC
+        482                     CC    COUNT NUMBER OF ARRAY
+        483                           NER=0
+        484                           ITYPRF(1) = -1
+        485                           NDRFN (1) = -1
+        486                           IE=RCAPREFINEELEMENTMULTI(NE1,ITYPOR,NDORG,NER,ITYPRF,NDRFN)
+        487     1                     IF(NE2+NER.GT.ME) THEN
+        488     1                         WRITE(IUT0,*) ERMSG3
+        489     1                         WRITE(IUT0,*) "NE2+NER / ME", NE2+NER, ME
+        490     1                         IERR=1
+        491     1                     ENDIF
+        492                           CALL ERRCHK(IUT6,IPART,1,IERR,IERRA)
+        493     1                     IF(IERRA.NE.0) THEN
+        494     1                         WRITE(IUT0,*)
+        495     1                         WRITE(IUT0,*) ERMSGC
+        496     1                         RETURN
+        497     1                     ENDIF
+        498                           ITYPRF(1) = 0
+        499                           NDRFN (1) = 0
+        500                           IE= RCAPREFINEELEMENTMULTI(NE1,ITYPOR,NDORG,NER,ITYPRF,NDRFN)
+        501                           WRITE(IUT6,*)
+        502                           WRITE(IUT6,*) ' **LRFNMS** : NUMBER OF ELEM. AFTER REFINE',NER+NE2
+        503                     
+        504                     CC
+        505                     CCHY [9] COMMIT REFINEMENT
+        506                     CC
+        507                           CALL RCAPCOMMIT()
+        508                     CC
+        509                     CCHY [10] SET NEW NODE TABLE
+        510                     CC
+        511                           J=0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      ITYPRF
+                              <<< Loop-information  End >>>
+        512     1                     DO 5000 IE=1,NER
+        513     1                        IETYPE=ITYPRF(IE)
+        514     1               C
+        515     2                        IF(IETYPE.EQ.RCAP_HEXAHEDRON) THEN
+        516     2                           NODE(1,IE)=NDRFN(J+1)
+        517     2                           NODE(2,IE)=NDRFN(J+2)
+        518     2                           NODE(3,IE)=NDRFN(J+3)
+        519     2                           NODE(4,IE)=NDRFN(J+4)
+        520     2                           NODE(5,IE)=NDRFN(J+5)
+        521     2                           NODE(6,IE)=NDRFN(J+6)
+        522     2                           NODE(7,IE)=NDRFN(J+7)
+        523     2                           NODE(8,IE)=NDRFN(J+8)
+        524     2                           J=J+8
+        525     2                        ELSE IF(IETYPE.EQ.RCAP_WEDGE) THEN
+        526     2                           NODE(1,IE)=NDRFN(J+1)
+        527     2                           NODE(2,IE)=NDRFN(J+2)
+        528     2                           NODE(3,IE)=NDRFN(J+3)
+        529     2                           NODE(4,IE)=NDRFN(J+4)
+        530     2                           NODE(5,IE)=NDRFN(J+5)
+        531     2                           NODE(6,IE)=NDRFN(J+6)
+        532     2                           NODE(7,IE)=0
+        533     2                           NODE(8,IE)=0
+        534     2                           J=J+6
+        535     2                        ELSE IF(IETYPE.EQ.RCAP_PYRAMID) THEN
+        536     2               CC
+        537     2               CC NOTE THAT DEFINITION OF PYRMID NODE TABLE IS DIFFERENT
+        538     2               CC IN FFB AND REVOCAP_REFINER
+        539     2               CC
+        540     2                           NODE(1,IE)=NDRFN(J+2)
+        541     2                           NODE(2,IE)=NDRFN(J+3)
+        542     2                           NODE(3,IE)=NDRFN(J+4)
+        543     2                           NODE(4,IE)=NDRFN(J+5)
+        544     2                           NODE(5,IE)=NDRFN(J+1)
+        545     2                           NODE(6,IE)=0
+        546     2                           NODE(7,IE)=0
+        547     2                           NODE(8,IE)=0
+        548     2                           J=J+5
+        549     2                        ELSE IF(IETYPE.EQ.RCAP_TETRAHEDRON) THEN
+        550     2                           NODE(1,IE)=NDRFN(J+1)
+        551     2                           NODE(2,IE)=NDRFN(J+2)
+        552     2                           NODE(3,IE)=NDRFN(J+3)
+        553     2                           NODE(4,IE)=NDRFN(J+4)
+        554     2                           NODE(5,IE)=0
+        555     2                           NODE(6,IE)=0
+        556     2                           NODE(7,IE)=0
+        557     2                           NODE(8,IE)=0
+        558     2                           J=J+4
+        559     2                        ELSE
+        560     2                           WRITE(IUT0,*)
+        561     2                           WRITE(IUT0,*) ERMSG5
+        562     2                           IERR=1
+        563     2                           RETURN
+        564     2                        ENDIF
+        565     1               C
+        566     1                5000 CONTINUE
+        567                     CC
+        568                     CCHY [11] SET NEW COORDINATE
+        569                     CC
+        570                           NPOLD=NP
+        571                     CC    NP=0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 4
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE
+                              <<< Loop-information  End >>>
+        572     1  pp                 DO 5100 IE=1,NER
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SOFTWARE PIPELINING(IPC: 1.75, ITR: 16, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE
+                              <<< Loop-information  End >>>
+        573     2   p   4s               DO 5200 J=1,N2
+        574     2   p   4v                  IF (NODE(J,IE).GT.NP) NP=NODE(J,IE)
+        575     2   p   4s       5200    CONTINUE
+        576     1   p            5100 CONTINUE
+        577                           WRITE(IUT6,*) ' **LRFNMS** : NUMBER OF NODES AFTER REFINE',NP
+        578                     C
+        579     1                     IF(NP.GT.MP) THEN
+        580     1                        WRITE(IUT0,*) ERMSG3
+        581     1                        WRITE(IUT0,*) "NP / MP", NP, MP
+        582     1                        IERR=1
+        583     1                     ENDIF
+        584                           CALL ERRCHK(IUT6,IPART,1,IERR,IERRA)
+        585     1                     IF(IERRA.NE.0) THEN
+        586     1                        WRITE(IUT0,*)
+        587     1                        WRITE(IUT0,*) ERMSGC
+        588     1                        RETURN
+        589     1                     ENDIF
+        590                     C
+        591                           CALL RCAPGETNODESEQ64(NP, 1,CRD)
+        592                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 640
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.00, ITR: 80, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      CRD, Z, Y, X
+                              <<< Loop-information  End >>>
+        593     1  pp   2v            DO 5300 IP=1,NP
+        594     1   p   2v               X(IP)=CRD(IP*3-2)
+        595     1   p   2v               Y(IP)=CRD(IP*3-1)
+        596     1   p   2v               Z(IP)=CRD(IP*3-0)
+        597     1   p   2v       5300 CONTINUE
+        598                     CC
+        599                     CCHY [12] SET NEW B.C. NODE
+        600                     CC
+        601                     C
+        602                     CC
+        603                     CCHY [12.1] B.C. GROUP-1
+        604                     CC
+        605                           CBUF = BGNAME(1)//CHAR(0)
+        606                           NB   = RCAPGETBNODEVARINTCOUNT(CBUF)
+        607     1                     IF(NB.GT.MP) THEN
+        608     1                        WRITE(IUT0,*) ERMSG3
+        609     1                        WRITE(IUT0,*) "NB / MP", NB, MP
+        610     1                        IERR=1
+        611     1                     ENDIF
+        612                           CALL ERRCHK(IUT6,IPART,1,IERR,IERRA)
+        613     1                     IF(IERRA.NE.0) THEN
+        614     1                        WRITE(IUT0,*)
+        615     1                        WRITE(IUT0,*) ERMSGC
+        616     1                        IERR=IERRA
+        617     1                        RETURN
+        618     1                     ENDIF
+        619                     C
+        620                           CBUF = BGNAME(1)//CHAR(0)
+        621                           CALL RCAPGETBNODEVARINT(CBUF,NB,LWRK01,LWRK02)
+        622                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LWRK01, LWRK02
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 10
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        623     1                     DO 6000 IB=1,NB
+        624     1                        IP=LWRK01(IB)
+        625     1                        J =LWRK02(IB)
+        626     1                        IF (IP.LE.NPOLD) GOTO 6000
+        627     1               C
+        628     2                        IF(J.EQ.LBPRTY(1)) THEN
+        629     2                           NPINLT=NPINLT+1
+        630     3                           IF(NPINLT.GT.MPINLT) THEN
+        631     3                              WRITE(IUT0,*) ERMSG3
+        632     3                              IERR=1
+        633     3                              GOTO 6050
+        634     3                           ELSE
+        635     3                              LPINLT(NPINLT)=IP
+        636     3                           ENDIF
+        637     2                        ENDIF
+        638     1               C
+        639     2                        IF(J.EQ.LBPRTY(3)) THEN
+        640     2                           NPWALL=NPWALL+1
+        641     3                           IF(NPWALL.GT.MPWALL) THEN
+        642     3                              WRITE(IUT0,*) ERMSG3
+        643     3                              IERR=1
+        644     3                              GOTO 6050
+        645     3                           ELSE
+        646     3                              LPWALL(NPWALL)=IP
+        647     3                           ENDIF
+        648     2                        ENDIF
+        649     1               C
+        650     2                        IF(J.EQ.LBPRTY(4)) THEN
+        651     2                           NPSYMT=NPSYMT+1
+        652     3                           IF(NPSYMT.GT.MPSYMT) THEN
+        653     3                              WRITE(IUT0,*) ERMSG3
+        654     3                              IERR=1
+        655     3                              GOTO 6050
+        656     3                           ELSE
+        657     3                              LPSYMT(NPSYMT)=IP
+        658     3                           ENDIF
+        659     2                        ENDIF
+        660     1               C
+        661     2                        IF(J.EQ.LBPRTY(5)) THEN
+        662     2                           NPFREE=NPFREE+1
+        663     3                           IF(NPFREE.GT.MPFREE) THEN
+        664     3                              WRITE(IUT0,*) ERMSG3
+        665     3                              IERR=1
+        666     3                              GOTO 6050
+        667     3                           ELSE
+        668     3                              LPFREE(NPFREE)=IP
+        669     3                           ENDIF
+        670     2                        ENDIF
+        671     1               C
+        672     1               C
+        673     2                        IF(J.EQ.LBPRTY(6)) THEN
+        674     2                           NPSET=NPSET+1
+        675     3                           IF(NPSET.GT.MPSET) THEN
+        676     3                              WRITE(IUT0,*) ERMSG3
+        677     3                              IERR=1
+        678     3                              GOTO 6050
+        679     3                           ELSE
+        680     3                              LPSET1(NPSET)=IP
+        681     3                           ENDIF
+        682     2                        ENDIF
+        683     1               C
+        684     1                6000 CONTINUE
+        685                     C
+        686                      6050 CONTINUE
+        687                           CALL ERRCHK(IUT6,IPART,1,IERR,IERRA)
+        688     1                     IF(IERRA.NE.0) THEN
+        689     1                        WRITE(IUT0,*)
+        690     1                        WRITE(IUT0,*) ERMSGC
+        691     1                        IERR=IERRA
+        692     1                        RETURN
+        693     1                     ENDIF
+        694                     C
+        695                           WRITE(IUT6,*)
+        696                           IF(NB.GT.0)
+        697                          *WRITE(IUT6,*) ' **LRFNMS** : TOTAL NUMBER OF  B.C. NODES:',NB
+        698                           IF(NPINLT.GT.0)
+        699                          *WRITE(IUT6,*) ' **LRFNMS** : NUMBER OF INLET       NODES:',NPINLT
+        700                           IF(NPWALL.GT.0)
+        701                          *WRITE(IUT6,*) ' **LRFNMS** : NUMBER OF WALL        NODES:',NPWALL
+        702                           IF(NPSYMT.GT.0)
+        703                          *WRITE(IUT6,*) ' **LRFNMS** : NUMBER OF SYMMETRIC   NODES:',NPSYMT
+        704                           IF(NPFREE.GT.0)
+        705                          *WRITE(IUT6,*) ' **LRFNMS** : NUMBER OF FREE        NODES:',NPFREE
+        706                           IF(NPSET.GT.0)
+        707                          *WRITE(IUT6,*) ' **LRFNMS** : NUMBER OF OVERSET     NODES:',NPSET
+        708                     CC
+        709                     CCHY [12.2] B.C. GROUP-2
+        710                     CC
+        711                           CBUF = BGNAME(2)//CHAR(0)
+        712                           NB = RCAPGETBNODEVARINTCOUNT(CBUF)
+        713     1                     IF(NB.GT.MPBODY) THEN
+        714     1                        WRITE(IUT0,*) ERMSG3
+        715     1                        IERR=1
+        716     1                     ENDIF
+        717                           CALL ERRCHK(IUT6,IPART,1,IERR,IERRA)
+        718     1                     IF(IERRA.NE.0) THEN
+        719     1                        WRITE(IUT0,*)
+        720     1                        WRITE(IUT0,*) ERMSGC
+        721     1                        IERR=IERRA
+        722     1                        RETURN
+        723     1                     ENDIF
+        724                           CBUF = BGNAME(2)//CHAR(0)
+        725                           CALL RCAPGETBNODEVARINT(CBUF,NB,LWRK01,LWRK02)
+        726                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LWRK01
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 4
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        727     1                     DO 6100 IB=1,NB
+        728     1                        IP=LWRK01(IB)
+        729     1                        IF (IP.LE.NPOLD) GOTO 6100
+        730     1                        NPBODY=NPBODY+1
+        731     2                        IF (NPBODY.GT.MPBODY) THEN
+        732     2                           WRITE(IUT0,*) ERMSG3
+        733     2                           IERR=1
+        734     2                           GOTO 6150
+        735     2                        ENDIF
+        736     1                        LPBODY(NPBODY)=IP
+        737     1                6100 CONTINUE
+        738                     C
+        739                      6150 CONTINUE
+        740                           CALL ERRCHK(IUT6,IPART,1,IERR,IERRA)
+        741     1                     IF(IERRA.NE.0) THEN
+        742     1                        WRITE(IUT0,*)
+        743     1                        WRITE(IUT0,*) ERMSGC
+        744     1                        IERR=IERRA
+        745     1                        RETURN
+        746     1                     ENDIF
+        747                     C
+        748                           IF(NB.GT.0)
+        749                          *WRITE(IUT6,*)
+        750                          *' **LRFNMS** : NUMBER OF BODY        NODES:',NPBODY
+        751                     CC
+        752                     CCHY [12.3] B.C. GROUP-3
+        753                     CC
+        754     1                     IF(IPART.GE.1) THEN
+        755     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IPSLF, LPB1, XPB1, YPB1, ZPB1
+                              <<< Loop-information  End >>>
+        756     2                        DO 6200 IDOM=1,NDOM
+        757     2               C
+        758     3                           IF (IRFN.EQ.1) THEN
+        759     3                              NPB1(IDOM)=0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SOFTWARE PIPELINING(IPC: 2.71, ITR: 8, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      XPB1, YPB1, IPSLF, ZPB1, LPB1
+                              <<< Loop-information  End >>>
+        760     4   s    s                     DO 6300 IB=1,NBPDOM(IDOM)
+        761     4   s    m                        NPB1(IDOM)=NPB1(IDOM)+1
+        762     4   p    v                        IP=IPSLF(IB,IDOM)
+        763     4   m    v                        LPB1(NPB1(IDOM),IDOM)=IP
+        764     4   m    v                        XPB1(NPB1(IDOM),IDOM)=X(IP)
+        765     4   m    v                        YPB1(NPB1(IDOM),IDOM)=Y(IP)
+        766     4   m    v                        ZPB1(NPB1(IDOM),IDOM)=Z(IP)
+        767     4   p    v       6300          CONTINUE
+        768     3                           ENDIF
+        769     2               C
+        770     2                           WRITE(CDOM,'(I8.8)') IDOM
+        771     2                           CBUF = BGNAME(3)//CDOM//CHAR(0)
+        772     2                           NPB = RCAPGETBNODEGROUPCOUNT(CBUF)
+        773     3                           IF(NPB.GT.MBPDOM) THEN
+        774     3                              WRITE(IUT0,*) ERMSG3
+        775     3                              IERR=1
+        776     3                              GOTO 6500
+        777     3                           ENDIF
+        778     2               C
+        779     2                           CALL RCAPGETBNODEGROUP(CBUF,NPB,IPSLF(1,IDOM))
+        780     2               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IPSLF
+                              <<< Loop-information  End >>>
+        781     3   s    s                  DO 6400 IB=1,NPB
+        782     3   p    v                     IP=IPSLF(IB,IDOM)
+        783     3   p    v                     IF (IP.LE.NPOLD) GOTO 6400
+        784     3   s    s                     NPB1(IDOM)=NPB1(IDOM)+1
+        785     3   m    v                     LPB1(NPB1(IDOM),IDOM)=IP
+        786     3   m    v                     XPB1(NPB1(IDOM),IDOM)=REAL(X(IP))
+        787     3   m    v                     YPB1(NPB1(IDOM),IDOM)=REAL(Y(IP))
+        788     3   m    v                     ZPB1(NPB1(IDOM),IDOM)=REAL(Z(IP))
+        789     3   p    v       6400       CONTINUE
+        790     2                6200    CONTINUE
+        791     1               C
+        792     1                6500    CONTINUE
+        793     1                        CALL ERRCHK(IUT6,IPART,1,IERR,IERRA)
+        794     2                        IF(IERRA.NE.0) THEN
+        795     2                           WRITE(IUT0,*)
+        796     2                           WRITE(IUT0,*) ERMSGC
+        797     2                           IERR=IERRA
+        798     2                           RETURN
+        799     2                        ENDIF
+        800     1               C
+        801     1                        CALL DDCOM4(NDOM,LDOM,MBPDOM,
+        802     1                    *               NPB1,LPB1,XPB1,YPB1,ZPB1,
+        803     1                    *               NPB2,LPB2,XPB2,YPB2,ZPB2,
+        804     1                    *               MAXBUF,RX,RY,IUT0,IERR)
+        805     1               C
+        806     1               CC
+        807     1               CC    MAKE INTER-CONNECT NODES
+        808     1               CC
+        809     1                        NPINT=0
+        810     2                        DO 6600 IDOM=1,NDOM
+        811     2               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LWRK01
+                              <<< Loop-information  End >>>
+        812     3  pp   4v                  DO 6700 IB2=1,NPB2(IDOM)
+        813     3   p   4v                     LWRK01(IB2)=0
+        814     3   p   4v       6700       CONTINUE
+        815     2               C
+        816     2                           NPB0(IDOM)=0
+        817     3                           DO 6800 IB1=1,NPB1(IDOM)
+        818     3                              X1=XPB1(IB1,IDOM)
+        819     3                              Y1=YPB1(IB1,IDOM)
+        820     3                              Z1=ZPB1(IB1,IDOM)
+        821     3               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LWRK01
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 1  FILL 2
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        822     4                              DO 6850 IB2=1,NPB2(IDOM)
+        823     4               C
+        824     4                                 IF(LWRK01(IB2).EQ.1) GOTO 6850
+        825     4               C
+        826     4                                 DX=X1-XPB2(IB2,IDOM)
+        827     4                                 DY=Y1-YPB2(IB2,IDOM)
+        828     4                                 DZ=Z1-ZPB2(IB2,IDOM)
+        829     4                                 RR=DX*DX+DY*DY+DZ*DZ
+        830     4               C
+        831     5                                 IF(RR.LE.EPS*EPS) THEN
+        832     5                                    NPB0(IDOM)=NPB0(IDOM)+1
+        833     5                                    NPINT =NPINT +1
+        834     6                                    IF(NPINT.GT.MPINT) THEN
+        835     6                                       WRITE(IUT0,*) ERMSG3
+        836     6                                       IERR=1
+        837     6                                       GOTO 6900
+        838     6                                    ENDIF
+        839     5               C
+        840     5                                    LPINT1(NPINT)=LPB1(IB1,IDOM)
+        841     5                                    LPINT2(NPINT)=LDOM(IDOM)
+        842     5                                    LPINT3(NPINT)=LPB2(IB2,IDOM)
+        843     5                                    LWRK01(IB2)=1
+        844     5                                    GOTO 6800
+        845     5                                 ENDIF
+        846     4               C
+        847     4                6850          CONTINUE
+        848     3                6800       CONTINUE
+        849     2                6600    CONTINUE
+        850     1               C
+        851     1                6900    CONTINUE
+        852     1                        CALL ERRCHK(IUT6,IPART,1,IERR,IERRA)
+        853     2                        IF(IERRA.NE.0) THEN
+        854     2                           WRITE(IUT0,*)
+        855     2                           WRITE(IUT0,*) ERMSGC
+        856     2                           IERR=IERRA
+        857     2                           RETURN
+        858     2                        ENDIF
+        859     1               C
+        860     1                        WRITE(IUT6,*)
+        861     1                        WRITE(IUT6,*)
+        862     1                    *' **LRFNMS** : NUMBER OF INTER-CONNECT NODES:',NPINT
+        863     1               C
+        864     1                        CALL DDCOM4(NDOM,LDOM,MBPDOM,
+        865     1                    *               NPB0,LPB1,XPB1,YPB1,ZPB1,
+        866     1                    *               NPB2,LPB2,XPB2,YPB2,ZPB2,
+        867     1                    *               MAXBUF,RX,RY,IUT0,IERR)
+        868     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 800
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        869     2  pp    v               DO 6950 IDOM=1,NDOM
+        870     2   p                       IF(NPB0(IDOM).NE.NPB2(IDOM)) IERR=1
+        871     2   p    v       6950    CONTINUE
+        872     1                        CALL ERRCHK(IUT6,IPART,1,IERR,IERRA)
+        873     2                        IF(IERRA.NE.0) THEN
+        874     2                           WRITE(IUT0,*)
+        875     2                           WRITE(IUT0,*) ERMSGC
+        876     2                           IERR=IERRA
+        877     2                           RETURN
+        878     2                        ENDIF
+        879     1               C
+        880     1                     ENDIF
+        881                     CC
+        882                     CCHY [12.4] B.C. GROUP-4
+        883                     CC
+        884     1                     IF (NGRID.EQ.-2) THEN
+        885     1               C
+        886     1                        CBUF = BGNAME(4)//CHAR(0)
+        887     1                        NB = RCAPGETBNODEVARINTCOUNT(CBUF)
+        888     2                        IF(NB.GT.MPBODY) THEN
+        889     2                           WRITE(IUT0,*) ERMSG3
+        890     2                           IERR=1
+        891     2                        ENDIF
+        892     1                        CALL ERRCHK(IUT6,IPART,1,IERR,IERRA)
+        893     2                        IF(IERRA.NE.0) THEN
+        894     2                           WRITE(IUT0,*)
+        895     2                           WRITE(IUT0,*) ERMSGC
+        896     2                           IERR=IERRA
+        897     2                           RETURN
+        898     2                        ENDIF
+        899     1                        CBUF = BGNAME(4)//CHAR(0)
+        900     1                        CALL RCAPGETBNODEVARINT(CBUF,NB,LWRK01,LWRK02)
+        901     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LWRK01
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 3
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        902     2                        DO 6160 IB=1,NB
+        903     2                           IP=LWRK01(IB)
+        904     2                           IF (IP.LE.NPOLD) GOTO 6160
+        905     2                           NPTGT=NPTGT+1
+        906     3                           IF (NPTGT.GT.MPTGT) THEN
+        907     3                              WRITE(IUT0,*) ERMSG3
+        908     3                              IERR=1
+        909     3                              GOTO 6170
+        910     3                           ENDIF
+        911     2                           LPTGT(NPTGT)=IP
+        912     2                6160    CONTINUE
+        913     1               C
+        914     1                6170    CONTINUE
+        915     1                        CALL ERRCHK(IUT6,IPART,1,IERR,IERRA)
+        916     2                        IF(IERRA.NE.0) THEN
+        917     2                           WRITE(IUT0,*)
+        918     2                           WRITE(IUT0,*) ERMSGC
+        919     2                           IERR=IERRA
+        920     2                           RETURN
+        921     2                        ENDIF
+        922     1               C
+        923     2                        IF(NB.GT.0) THEN
+        924     2                           WRITE(IUT6,*)
+        925     2                    *      ' **LRFNMS** : NUMBER OF REFINE TARGET        NODES:',NPTGT
+        926     2                        ENDIF
+        927     1               C
+        928     1                     ENDIF
+        929                     CC
+        930                     CCHY [13] SET U,V,W,PN AT NEW NODES
+        931                     CC
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 17
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        932     1                     DO 7000 IP=NPOLD+1,NP
+        933     1                        J = RCAPGETORIGINAL(IP,NODED)
+        934     1               C
+        935     2                        IF(J.EQ.KSEG) THEN
+        936     2                           IP1=NODED(1)
+        937     2                           IP2=NODED(2)
+        938     2                           UFIX(IP)=0.5E0*(UFIX(IP1)+UFIX(IP2))
+        939     2                           VFIX(IP)=0.5E0*(VFIX(IP1)+VFIX(IP2))
+        940     2                           WFIX(IP)=0.5E0*(WFIX(IP1)+WFIX(IP2))
+        941     2                           LPFRM(IP)=LPFRM(IP1)
+        942     2                           IF(LPFRM(IP).LT.LPFRM(IP2)) LPFRM(IP)=LPFRM(IP2)
+        943     2                           IF(IRFNFF.NE.1) GOTO 7000
+        944     2                           U (IP)=0.5E0*(U (IP1)+U (IP2))
+        945     2                           V (IP)=0.5E0*(V (IP1)+V (IP2))
+        946     2                           W (IP)=0.5E0*(W (IP1)+W (IP2))
+        947     2                           PN(IP)=0.5E0*(PN(IP1)+PN(IP2))
+        948     2                        ELSE IF(J.EQ.KQUD) THEN
+        949     2                           IP1=NODED(1)
+        950     2                           IP2=NODED(2)
+        951     2                           IP3=NODED(3)
+        952     2                           IP4=NODED(4)
+        953     2                           UFIX(IP)=0.25E0*(UFIX(IP1)+UFIX(IP2)+UFIX(IP3)+UFIX(IP4))
+        954     2                           VFIX(IP)=0.25E0*(VFIX(IP1)+VFIX(IP2)+VFIX(IP3)+VFIX(IP4))
+        955     2                           WFIX(IP)=0.25E0*(WFIX(IP1)+WFIX(IP2)+WFIX(IP3)+WFIX(IP4))
+        956     2                           LPFRM(IP)=LPFRM(IP1)
+        957     2                           IF(LPFRM(IP).LT.LPFRM(IP2)) LPFRM(IP)=LPFRM(IP2)
+        958     2                           IF(LPFRM(IP).LT.LPFRM(IP3)) LPFRM(IP)=LPFRM(IP3)
+        959     2                           IF(LPFRM(IP).LT.LPFRM(IP4)) LPFRM(IP)=LPFRM(IP4)
+        960     2                           IF(IRFNFF.NE.1) GOTO 7000
+        961     2                           U (IP)=0.25E0*(U (IP1)+U (IP2)+U (IP3)+U (IP4))
+        962     2                           V (IP)=0.25E0*(V (IP1)+V (IP2)+V (IP3)+V (IP4))
+        963     2                           W (IP)=0.25E0*(W (IP1)+W (IP2)+W (IP3)+W (IP4))
+        964     2                           PN(IP)=0.25E0*(PN(IP1)+PN(IP2)+PN(IP3)+PN(IP4))
+        965     2                        ELSE IF(J.EQ.KHEX) THEN
+        966     2                           IP1=NODED(1)
+        967     2                           IP2=NODED(2)
+        968     2                           IP3=NODED(3)
+        969     2                           IP4=NODED(4)
+        970     2                           IP5=NODED(5)
+        971     2                           IP6=NODED(6)
+        972     2                           IP7=NODED(7)
+        973     2                           IP8=NODED(8)
+        974     2                           IF(IRFNFF.NE.1) GOTO 7000
+        975     2                           U (IP)=0.125E0*( U (IP1)+U (IP2)+U (IP3)+U (IP4)
+        976     2                    *            +U (IP5)+U (IP6)+U (IP7)+U (IP8))
+        977     2                           V (IP)=0.125E0*( V (IP1)+V (IP2)+V (IP3)+V (IP4)
+        978     2                    *            +V (IP5)+V (IP6)+V (IP7)+V (IP8))
+        979     2                           W (IP)=0.125E0*( W (IP1)+W (IP2)+W (IP3)+W (IP4)
+        980     2                    *            +W (IP5)+W (IP6)+W (IP7)+W (IP8))
+        981     2                           PN(IP)=0.125E0*( PN(IP1)+PN(IP2)+PN(IP3)+PN(IP4)
+        982     2                    *            +PN(IP5)+PN(IP6)+PN(IP7)+PN(IP8))
+        983     2               CC
+        984     2               CC            NOTE THAT
+        985     2               CC            NEW NODES FROM ELEMENT CENTER NEVER BECOME B.C. NODES
+        986     2               CC
+        987     2                        ELSE
+        988     2                           WRITE(IUT0,*) 'J=',J
+        989     2                           WRITE(IUT0,*) ERMSG5
+        990     2                           IERR=1
+        991     2                           RETURN
+        992     2                        ENDIF
+        993     1                7000 CONTINUE
+        994                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 552
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.66, ITR: 192, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPINLT, WINLT, VINLT, UINLT
+                              <<< Loop-information  End >>>
+        995     1  pp   2v            DO 7100 IB=1,NPINLT
+        996     1   p   2v               IP=LPINLT(IB)
+        997     1   p   2v               UINLT(IB)=UFIX(IP)
+        998     1   p   2v               VINLT(IB)=VFIX(IP)
+        999     1   p   2v               WINLT(IB)=WFIX(IP)
+       1000     1   p   2v       7100 CONTINUE
+       1001                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 552
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.66, ITR: 192, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPWALL, WWALL, VWALL, UWALL
+                              <<< Loop-information  End >>>
+       1002     1  pp   2v            DO 7200 IB=1,NPWALL
+       1003     1   p   2v               IP=LPWALL(IB)
+       1004     1   p   2v               UWALL(IB)=UFIX(IP)
+       1005     1   p   2v               VWALL(IB)=VFIX(IP)
+       1006     1   p   2v               WWALL(IB)=WFIX(IP)
+       1007     1   p   2v       7200 CONTINUE
+       1008                     C
+       1009                           IERR=0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 616
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+       1010     1  pp    v            DO 7300 IB=1,NPSET
+       1011     1   p    v               IP=LPSET1(IB)
+       1012     1   p    v               LPSET4(IB)=LPFRM(IP)
+       1013     1   p                    IF(LPFRM(IP).EQ.0) IERR=1
+       1014     1   p    v       7300 CONTINUE
+       1015                     C
+       1016     1                     IF(IERR.NE.0) THEN
+       1017     1                         WRITE(IUT0,*) ERMSG6
+       1018     1                         RETURN
+       1019     1                     ENDIF
+       1020                     C
+       1021                     CC
+       1022                     CCHY [14] CLEAR
+       1023                     CC
+       1024     1                     IF (IRFNFT.EQ.1) THEN
+       1025     1                        FILECD=FILECR
+       1026     1                        CALL RCAPWRITEFITTINGFILE(FILECD)
+       1027     1                     ENDIF
+       1028                     C
+       1029                           CALL rcapClearRefiner()
+       1030                     CC
+       1031                     CCHY [15] TERMINATE REFINER
+       1032                     CC
+       1033                           CALL rcapTermRefiner()
+       1034                     CC
+       1035                     CCHY [16] ADD NODE TABLE NOT REFINED
+       1036                     CCC
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 75
+                              <<<  [OPTIMIZATION]
+                              <<<    SOFTWARE PIPELINING(IPC: 2.75, ITR: 112, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODEBK
+                              <<< Loop-information  End >>>
+       1037     1  pp   2             DO 8000 IE=1,NE2
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<< Loop-information  End >>>
+       1038     2   p   2v               DO 8100 I=1,8
+       1039     2   p   2v                  NODE(I,NER+IE)=NODEBK(I,IE)
+       1040     2   p   2v       8100    CONTINUE
+       1041     1   p   2        8000 CONTINUE
+       1042                           NE=NER+NE2
+       1043                     C
+       1044                     CC
+       1045                     CCHY [17] INTERPORATE NODE PRESSURE TO ELEMENTS
+       1046                     CCC
+       1047                           IF (IRFNFF.EQ.0) RETURN
+       1048                     C
+       1049     1                     DO 8200 IE = 1 , NE
+       1050     1               C
+       1051     2                        IF(NODE(8,IE).NE.0) THEN
+       1052     2                           P(IE) = ( PN(NODE(1,IE))+ PN(NODE(2,IE))
+       1053     2                    *               +PN(NODE(3,IE))+ PN(NODE(4,IE))
+       1054     2                    *               +PN(NODE(5,IE))+ PN(NODE(6,IE))
+       1055     2                    *               +PN(NODE(7,IE))+ PN(NODE(8,IE)))/8.0E0
+       1056     2                        ELSE IF(NODE(6,IE).NE.0) THEN
+       1057     2                           P(IE) = ( PN(NODE(1,IE))+ PN(NODE(2,IE))
+       1058     2                    *               +PN(NODE(3,IE))+ PN(NODE(4,IE))
+       1059     2                    *               +PN(NODE(5,IE))+ PN(NODE(6,IE)))/6.0E0
+       1060     2                        ELSE IF(NODE(5,IE).NE.0) THEN
+       1061     2                           P(IE) = ( PN(NODE(1,IE))+ PN(NODE(2,IE))
+       1062     2                    *               +PN(NODE(3,IE))+ PN(NODE(4,IE))
+       1063     2                    *               +PN(NODE(5,IE))                )/5.0E0
+       1064     2                        ELSE IF(NODE(4,IE).NE.0) THEN
+       1065     2                           P(IE) = ( PN(NODE(1,IE))+ PN(NODE(2,IE))
+       1066     2                    *               +PN(NODE(3,IE))+ PN(NODE(4,IE)))/4.0E0
+       1067     2                        ELSE
+       1068     2                           IERR=1
+       1069     2                           RETURN
+       1070     2                        ENDIF
+       1071     1               C
+       1072     1                8200 CONTINUE
+       1073                     C
+       1074                           RETURN
+       1075                           END
+
+ Diagnostic messages: program name(LRFNMS)
+   jwd2003i-i  "/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include/rcapRefiner.inc", line 78: この名前'rcapGetNodeCount'は、INCLUDE内で宣言だけされていて引用されていません。
+   jwd2003i-i  "/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include/rcapRefiner.inc", line 79: この名前'rcapGetRefineElementCount'は、INCLUDE内で宣言だけされていて引用されていません。
+   jwd2003i-i  "/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include/rcapRefiner.inc", line 80: この名前'rcapRefineElement'は、INCLUDE内で宣言だけされていて引用されていません。
+   jwd2003i-i  "/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include/rcapRefiner.inc", line 81: この名前'rcapGetRefineElementMultiCount'は、INCLUDE内で宣言だけされていて引用されていません。
+   jwd2003i-i  "/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include/rcapRefiner.inc", line 85: この名前'rcapGetNodeGroupCount'は、INCLUDE内で宣言だけされていて引用されていません。
+   jwd2003i-i  "/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include/rcapRefiner.inc", line 97: この名前'rcapGetElementGroupCount'は、INCLUDE内で宣言だけされていて引用されていません。
+   jwd2003i-i  "/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include/rcapRefiner.inc", line 101: この名前'rcapGetFaceGroupCount'は、INCLUDE内で宣言だけされていて引用されていません。
+   jwd2003i-i  "/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include/rcapRefiner.inc", line 105: この名前'rcapGetMiddle'は、INCLUDE内で宣言だけされていて引用されていません。
+   jwd8220o-i  "lrfnms.f", line 1: 副作用の可能性のある最適化を行いました。
+   jwd5001p-i  "lrfnms.f", line 230: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "lrfnms.f", line 230: このDOループをSIMD化しました。(名前:IP)
+   jwd8663o-i  "lrfnms.f", line 230: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "lrfnms.f", line 230: ループを展開数2回でアンローリングしました。
+   jwd5208p-i  "lrfnms.f", line 235: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:WRK04)
+   jwd5208p-i  "lrfnms.f", line 235: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:UFIX)
+   jwd8670o-i  "lrfnms.f", line 235: ループ内に分岐命令があるため、ソフトウェアパイプライニングを適用できません。
+   jwd6229s-i  "lrfnms.f", line 236: IF文が存在するため、このDOループのSIMD化を抑止しました。
+   jwd8203o-i  "lrfnms.f", line 236: ループをフルアンローリングしました。
+   jwd5209p-i  "lrfnms.f", line 239: 配列'WRK04'の添字式中の変数'IP'をループ中で定義しているため、このDOループは並列化できません。
+   jwd6209s-i  "lrfnms.f", line 239: 配列'WRK04'の添字式中の変数'IP'をループ中で定義しているため、このDOループはSIMD化できません。
+   jwd5209p-i  "lrfnms.f", line 240: 配列'UFIX'の添字式中の変数'IP'をループ中で定義しているため、このDOループは並列化できません。
+   jwd6209s-i  "lrfnms.f", line 240: 配列'UFIX'の添字式中の変数'IP'をループ中で定義しているため、このDOループはSIMD化できません。
+   jwd5001p-i  "lrfnms.f", line 248: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "lrfnms.f", line 248: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "lrfnms.f", line 248: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "lrfnms.f", line 248: ループの繰返し数が320回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "lrfnms.f", line 281: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "lrfnms.f", line 281: このDOループをSIMD化しました。(名前:IP)
+   jwd8663o-i  "lrfnms.f", line 281: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "lrfnms.f", line 281: ループを展開数2回でアンローリングしました。
+   jwd6001s-i  "lrfnms.f", line 288: このDOループをSIMD化しました。(名前:IB)
+   jwd8204o-i  "lrfnms.f", line 288: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "lrfnms.f", line 288: ループの繰返し数が128回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5209p-i  "lrfnms.f", line 290: 配列'UFIX'の添字式中の変数'IP'をループ中で定義しているため、このDOループは並列化できません。
+   jwd5209p-i  "lrfnms.f", line 291: 配列'VFIX'の添字式中の変数'IP'をループ中で定義しているため、このDOループは並列化できません。
+   jwd5209p-i  "lrfnms.f", line 292: 配列'WFIX'の添字式中の変数'IP'をループ中で定義しているため、このDOループは並列化できません。
+   jwd6001s-i  "lrfnms.f", line 295: このDOループをSIMD化しました。(名前:IB)
+   jwd8204o-i  "lrfnms.f", line 295: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "lrfnms.f", line 295: ループの繰返し数が128回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5209p-i  "lrfnms.f", line 297: 配列'UFIX'の添字式中の変数'IP'をループ中で定義しているため、このDOループは並列化できません。
+   jwd5209p-i  "lrfnms.f", line 298: 配列'VFIX'の添字式中の変数'IP'をループ中で定義しているため、このDOループは並列化できません。
+   jwd5209p-i  "lrfnms.f", line 299: 配列'WFIX'の添字式中の変数'IP'をループ中で定義しているため、このDOループは並列化できません。
+   jwd6001s-i  "lrfnms.f", line 302: このDOループをSIMD化しました。(名前:IB)
+   jwd8204o-i  "lrfnms.f", line 302: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "lrfnms.f", line 302: ループの繰返し数が224回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5209p-i  "lrfnms.f", line 304: 配列'LPFRM'の添字式中の変数'IP'をループ中で定義しているため、このDOループは並列化できません。
+   jwd5001p-i  "lrfnms.f", line 329: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "lrfnms.f", line 329: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "lrfnms.f", line 329: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "lrfnms.f", line 329: ループの繰返し数が64回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "lrfnms.f", line 346: このDOループを並列化しました。(名前:IB)
+   jwd6001s-i  "lrfnms.f", line 346: このDOループをSIMD化しました。(名前:IB)
+   jwd8204o-i  "lrfnms.f", line 346: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "lrfnms.f", line 346: ループの繰返し数が192回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "lrfnms.f", line 352: このDOループを並列化しました。(名前:IB)
+   jwd6001s-i  "lrfnms.f", line 352: このDOループをSIMD化しました。(名前:IB)
+   jwd8204o-i  "lrfnms.f", line 352: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "lrfnms.f", line 352: ループの繰返し数が192回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "lrfnms.f", line 358: このDOループを並列化しました。(名前:IB)
+   jwd6001s-i  "lrfnms.f", line 358: このDOループをSIMD化しました。(名前:IB)
+   jwd8204o-i  "lrfnms.f", line 358: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "lrfnms.f", line 358: ループの繰返し数が192回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "lrfnms.f", line 364: このDOループを並列化しました。(名前:IB)
+   jwd6001s-i  "lrfnms.f", line 364: このDOループをSIMD化しました。(名前:IB)
+   jwd8204o-i  "lrfnms.f", line 364: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "lrfnms.f", line 364: ループの繰返し数が192回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "lrfnms.f", line 370: このDOループを並列化しました。(名前:IB)
+   jwd6001s-i  "lrfnms.f", line 370: このDOループをSIMD化しました。(名前:IB)
+   jwd8204o-i  "lrfnms.f", line 370: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "lrfnms.f", line 370: ループの繰返し数が192回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "lrfnms.f", line 382: このDOループを並列化しました。(名前:IB)
+   jwd6001s-i  "lrfnms.f", line 382: このDOループをSIMD化しました。(名前:IB)
+   jwd8204o-i  "lrfnms.f", line 382: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "lrfnms.f", line 382: ループの繰返し数が160回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5121p-i  "lrfnms.f", line 395: DOループ内に、自動並列化の制約となる入出力文が存在します。
+   jwd5001p-i  "lrfnms.f", line 398: このDOループを並列化しました。(名前:IB)
+   jwd6001s-i  "lrfnms.f", line 398: このDOループをSIMD化しました。(名前:IB)
+   jwd8204o-i  "lrfnms.f", line 398: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "lrfnms.f", line 398: ループの繰返し数が288回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "lrfnms.f", line 411: このDOループを並列化しました。(名前:IB)
+   jwd6001s-i  "lrfnms.f", line 411: このDOループをSIMD化しました。(名前:IB)
+   jwd8204o-i  "lrfnms.f", line 411: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "lrfnms.f", line 411: ループの繰返し数が160回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5208p-i  "lrfnms.f", line 423: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:NDORG)
+   jwd8663o-i  "lrfnms.f", line 423: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "lrfnms.f", line 423: ループを展開数4回でアンローリングしました。
+   jwd5143p-i  "lrfnms.f", line 424: DOループの繰返し数が少ないため、このDOループは並列化できません。
+   jwd6001s-i  "lrfnms.f", line 424: このDOループをSIMD化しました。(名前:I)
+   jwd5131p-i  "lrfnms.f", line 430: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd6131s-i  "lrfnms.f", line 430: ループ出口が2つ以上あるため、このDOループはSIMD化できません。
+   jwd8671o-i  "lrfnms.f", line 430: ループの形状が最適化の対象外であるため、ソフトウェアパイプライニングを適用できません。
+   jwd5131p-i  "lrfnms.f", line 512: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd6131s-i  "lrfnms.f", line 512: ループ出口が2つ以上あるため、このDOループはSIMD化できません。
+   jwd8671o-i  "lrfnms.f", line 512: ループの形状が最適化の対象外であるため、ソフトウェアパイプライニングを適用できません。
+   jwd5004p-i  "lrfnms.f", line 572: リダクション演算を含むDOループを並列化しました。(名前:IE)
+   jwd6229s-i  "lrfnms.f", line 573: IF文が存在するため、このDOループのSIMD化を抑止しました。
+   jwd8204o-i  "lrfnms.f", line 573: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "lrfnms.f", line 573: ループの繰返し数が16回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd6228s-i  "lrfnms.f", line 574: データの定義引用の順序が逐次実行と異なる可能性があるため、このDOループはSIMD化できません。
+   jwd5001p-i  "lrfnms.f", line 593: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "lrfnms.f", line 593: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "lrfnms.f", line 593: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "lrfnms.f", line 593: ループの繰返し数が80回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5131p-i  "lrfnms.f", line 623: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd6131s-i  "lrfnms.f", line 623: ループ出口が2つ以上あるため、このDOループはSIMD化できません。
+   jwd8671o-i  "lrfnms.f", line 623: ループの形状が最適化の対象外であるため、ソフトウェアパイプライニングを適用できません。
+   jwd5131p-i  "lrfnms.f", line 727: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd6131s-i  "lrfnms.f", line 727: ループ出口が2つ以上あるため、このDOループはSIMD化できません。
+   jwd8671o-i  "lrfnms.f", line 727: ループの形状が最適化の対象外であるため、ソフトウェアパイプライニングを適用できません。
+   jwd5131p-i  "lrfnms.f", line 756: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd8204o-i  "lrfnms.f", line 760: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "lrfnms.f", line 760: ループの繰返し数が8回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5208p-i  "lrfnms.f", line 761: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:NPB1)
+   jwd6208s-i  "lrfnms.f", line 761: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループはSIMD化できません。(名前:NPB1)
+   jwd5228p-i  "lrfnms.f", line 763: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd6229s-i  "lrfnms.f", line 781: IF文が存在するため、このDOループのSIMD化を抑止しました。
+   jwd8670o-i  "lrfnms.f", line 781: ループ内に分岐命令があるため、ソフトウェアパイプライニングを適用できません。
+   jwd5208p-i  "lrfnms.f", line 784: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:NPB1)
+   jwd6208s-i  "lrfnms.f", line 784: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループはSIMD化できません。(名前:NPB1)
+   jwd8209o-i  "lrfnms.f", line 785: 多項式の演算順序を変更しました。
+   jwd5228p-i  "lrfnms.f", line 785: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd5131p-i  "lrfnms.f", line 810: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd5001p-i  "lrfnms.f", line 812: このDOループを並列化しました。(名前:IB2)
+   jwd6001s-i  "lrfnms.f", line 812: このDOループをSIMD化しました。(名前:IB2)
+   jwd8663o-i  "lrfnms.f", line 812: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "lrfnms.f", line 812: ループを展開数4回でアンローリングしました。
+   jwd5131p-i  "lrfnms.f", line 817: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd5131p-i  "lrfnms.f", line 822: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd6131s-i  "lrfnms.f", line 822: ループ出口が2つ以上あるため、このDOループはSIMD化できません。
+   jwd8671o-i  "lrfnms.f", line 822: ループの形状が最適化の対象外であるため、ソフトウェアパイプライニングを適用できません。
+   jwd8209o-i  "lrfnms.f", line 829: 多項式の演算順序を変更しました。
+   jwd5001p-i  "lrfnms.f", line 869: このDOループを並列化しました。(名前:IDOM)
+   jwd6001s-i  "lrfnms.f", line 869: このDOループをSIMD化しました。(名前:IDOM)
+   jwd5131p-i  "lrfnms.f", line 902: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd6131s-i  "lrfnms.f", line 902: ループ出口が2つ以上あるため、このDOループはSIMD化できません。
+   jwd8671o-i  "lrfnms.f", line 902: ループの形状が最適化の対象外であるため、ソフトウェアパイプライニングを適用できません。
+   jwd5131p-i  "lrfnms.f", line 932: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd6131s-i  "lrfnms.f", line 932: ループ出口が2つ以上あるため、このDOループはSIMD化できません。
+   jwd8664o-i  "lrfnms.f", line 932: ループ内に関数呼出しなどの最適化対象外の命令があるため、ソフトウェアパイプライニングを適用できません。
+   jwd8209o-i  "lrfnms.f", line 953: 多項式の演算順序を変更しました。
+   jwd8209o-i  "lrfnms.f", line 954: 多項式の演算順序を変更しました。
+   jwd8209o-i  "lrfnms.f", line 955: 多項式の演算順序を変更しました。
+   jwd8209o-i  "lrfnms.f", line 961: 多項式の演算順序を変更しました。
+   jwd8209o-i  "lrfnms.f", line 962: 多項式の演算順序を変更しました。
+   jwd8209o-i  "lrfnms.f", line 963: 多項式の演算順序を変更しました。
+   jwd8209o-i  "lrfnms.f", line 964: 多項式の演算順序を変更しました。
+   jwd8209o-i  "lrfnms.f", line 975: 多項式の演算順序を変更しました。
+   jwd8209o-i  "lrfnms.f", line 977: 多項式の演算順序を変更しました。
+   jwd8209o-i  "lrfnms.f", line 979: 多項式の演算順序を変更しました。
+   jwd8209o-i  "lrfnms.f", line 981: 多項式の演算順序を変更しました。
+   jwd5001p-i  "lrfnms.f", line 995: このDOループを並列化しました。(名前:IB)
+   jwd6001s-i  "lrfnms.f", line 995: このDOループをSIMD化しました。(名前:IB)
+   jwd8204o-i  "lrfnms.f", line 995: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "lrfnms.f", line 995: ループの繰返し数が192回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "lrfnms.f", line 1002: このDOループを並列化しました。(名前:IB)
+   jwd6001s-i  "lrfnms.f", line 1002: このDOループをSIMD化しました。(名前:IB)
+   jwd8204o-i  "lrfnms.f", line 1002: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "lrfnms.f", line 1002: ループの繰返し数が192回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "lrfnms.f", line 1010: このDOループを並列化しました。(名前:IB)
+   jwd6001s-i  "lrfnms.f", line 1010: このDOループをSIMD化しました。(名前:IB)
+   jwd5001p-i  "lrfnms.f", line 1037: このDOループを並列化しました。(名前:IE)
+   jwd8204o-i  "lrfnms.f", line 1037: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "lrfnms.f", line 1037: ループの繰返し数が112回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd6001s-i  "lrfnms.f", line 1038: このDOループをSIMD化しました。(名前:I)
+   jwd5131p-i  "lrfnms.f", line 1049: ループ出口が2つ以上あるため、このDOループは並列化できません。
+   jwd6131s-i  "lrfnms.f", line 1049: ループ出口が2つ以上あるため、このDOループはSIMD化できません。
+   jwd8671o-i  "lrfnms.f", line 1049: ループの形状が最適化の対象外であるため、ソフトウェアパイプライニングを適用できません。
+   jwd8209o-i  "lrfnms.f", line 1052: 多項式の演算順序を変更しました。
+   jwd8206o-i  "lrfnms.f", line 1057: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "lrfnms.f", line 1057: 多項式の演算順序を変更しました。
+   jwd8206o-i  "lrfnms.f", line 1061: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "lrfnms.f", line 1061: 多項式の演算順序を変更しました。
+   jwd8209o-i  "lrfnms.f", line 1065: 多項式の演算順序を変更しました。
+
+ Procedure information
+   Lines      : 1184
+   Statements : 778
+   Stack(byte): 82288
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 1184
+   Total statements : 778
+   Total stack(byte): 82288
+   Total prefetch num: 0
+

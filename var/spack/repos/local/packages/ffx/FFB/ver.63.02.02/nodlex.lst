@@ -1,0 +1,297 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:53:14 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : nodlex.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "NODLEX"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE NODLEX
+          2                          *   (NODE,ME,MP,NE,NP,N1,N2,NEX,SN,
+          3                          *    IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+          4                          *    VALELM,VALNOD,CM,IUT0,IERR,BUFSND,BUFRCV,MAXBUF)
+          5                     C
+          6                           IMPLICIT NONE
+          7                     C
+          8                           INTEGER*4 ME,MP,NE,NP,N1,N2
+          9                           INTEGER*4 NODE(N2,NE),NEX(8)
+         10                           REAL*4 SN (N1,ME)
+         11                           INTEGER*4 IPART,NDOM,MBPDOM
+         12                           INTEGER*4 LDOM(NDOM),NBPDOM(NDOM)
+         13                           INTEGER*4 IPSLF(MBPDOM,NDOM),IPSND(MBPDOM,NDOM)
+         14                           REAL*4 VALELM(ME),VALNOD(NP),CM(NP)
+         15                           INTEGER*4 IUT0,IERR,MAXBUF
+         16                           REAL*4 BUFSND(MAXBUF),BUFRCV(MAXBUF)
+         17                     C
+         18                           CHARACTER*60 ERMSGC
+         19                          & /' ## SUBROUTINE NODLEX: FATAL      ERROR REPORT   ; RETURNED' /
+         20                     C
+         21                           INTEGER*4 NETET,NEPRD,NEWED,NEHEX
+         22                           INTEGER*4 NTET, NPRD, NWED, NHEX
+         23                           INTEGER*4 IES1,IES2,IES3,IES4,IEE1,IEE2,IEE3,IEE4
+         24                     C
+         25                           INTEGER*4 I,IE,IP,IDUM
+         26                     C
+         27                     C     * START *
+         28                     C
+         29                           CALL USTSTA(72)
+         30                     C
+         31                           NETET=NEX(1)
+         32                           NEPRD=NEX(2)
+         33                           NEWED=NEX(3)
+         34                           NEHEX=NEX(4)
+         35                           NE   =NETET+NEPRD+NEWED+NEHEX
+         36                     C
+         37                           NTET =NEX(5)
+         38                           NPRD =NEX(6)
+         39                           NWED =NEX(7)
+         40                           NHEX =NEX(8)
+         41                     C
+         42                     C     * TET *
+         43                           IES1=1
+         44                           IEE1=NETET
+         45                     C
+         46                     C     * PYRAMID *
+         47                           IES2=NETET+1
+         48                           IEE2=NETET+NEPRD
+         49                     C
+         50                     C     * WEDGE
+         51                           IES3=NETET+NEPRD+1
+         52                           IEE3=NETET+NEPRD+NEWED
+         53                     C
+         54                     C     * HEX *
+         55                           IES4=NETET+NEPRD+NEWED+1
+         56                           IEE4=NETET+NEPRD+NEWED+NEHEX
+         57                     C
+         58                     C
+         59                     C     *** ZERO ***
+         60                     C
+         61                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      VALNOD
+                              <<< Loop-information  End >>>
+         62     1  pp   4v            DO 300 IP=1,NP
+         63     1   p   4v               VALNOD(IP)=0.0E0
+         64     1   p   4v       300  CONTINUE
+         65                     C
+         66                     C
+         67                     C     *** VALNOD = N * VALELM ***
+         68                     C
+         69                     C     * TET *
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      VALELM
+                              <<< Loop-information  End >>>
+         70     1                     DO 101 I=1,NTET
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SOFTWARE PIPELINING(IPC: 0.54, ITR: 6, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      VALELM
+                              <<< Loop-information  End >>>
+         71     2   s   2s               DO 100 IE=IES1,IEE1
+         72     2   p   2v                  IP = NODE(I,IE)
+         73     2   m   2m                  VALNOD(IP) = VALNOD(IP) + SN(I,IE)*VALELM(IE)
+         74     2   p   2v       100     CONTINUE
+         75     1                101  CONTINUE
+         76                     C
+         77                     C     * PYRAMID *
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      VALELM
+                              <<< Loop-information  End >>>
+         78     1                     DO 103 I=1,NPRD
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SOFTWARE PIPELINING(IPC: 0.54, ITR: 6, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      VALELM
+                              <<< Loop-information  End >>>
+         79     2   s   2s               DO 102 IE=IES2,IEE2
+         80     2   p   2v                  IP = NODE(I,IE)
+         81     2   m   2m                  VALNOD(IP) = VALNOD(IP) + SN(I,IE)*VALELM(IE)
+         82     2   p   2v       102     CONTINUE
+         83     1                103  CONTINUE
+         84                     C
+         85                     C     * WEDGE *
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      VALELM
+                              <<< Loop-information  End >>>
+         86     1                     DO 105 I=1,NWED
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SOFTWARE PIPELINING(IPC: 0.54, ITR: 6, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      VALELM
+                              <<< Loop-information  End >>>
+         87     2   s   2s               DO 104 IE=IES3,IEE3
+         88     2   p   2v                  IP = NODE(I,IE)
+         89     2   m   2m                  VALNOD(IP) = VALNOD(IP) + SN(I,IE)*VALELM(IE)
+         90     2   p   2v       104     CONTINUE
+         91     1                105  CONTINUE
+         92                     C
+         93                     C     * HEX *
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      VALELM
+                              <<< Loop-information  End >>>
+         94     1                     DO 107 I=1,NHEX
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SOFTWARE PIPELINING(IPC: 0.54, ITR: 6, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      VALELM
+                              <<< Loop-information  End >>>
+         95     2   s   2s               DO 106 IE=IES4,IEE4
+         96     2   p   2v                  IP = NODE(I,IE)
+         97     2   m   2m                  VALNOD(IP) = VALNOD(IP) + SN(I,IE)*VALELM(IE)
+         98     2   p   2v       106     CONTINUE
+         99     1                107  CONTINUE
+        100                     C
+        101                     C
+        102                     C     *** DATA COMMUNICATION ***
+        103                     C
+        104                     C
+        105                           IDUM=1
+        106                           CALL DDCOMX(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        107                          &            VALNOD,VALNOD,VALNOD,NP,IUT0,IERR,
+        108                          &            BUFSND,BUFRCV,MAXBUF)
+        109     1                     IF(IERR.NE.0) THEN
+        110     1                        WRITE(IUT0,*)
+        111     1                        WRITE(IUT0,*) ERMSGC
+        112     1                        RETURN
+        113     1                     END IF
+        114                     C
+        115                     C
+        116                     C     *** INVERSE MASS MATRIX ***
+        117                     C
+        118                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1067
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.00, ITR: 384, MVE: 7)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      CM, VALNOD
+                              <<< Loop-information  End >>>
+        119     1  pp   2v            DO 200 IP=1,NP
+        120     1   p   2v               VALNOD(IP)=VALNOD(IP)*CM(IP)
+        121     1   p   2v       200  CONTINUE
+        122                     C
+        123                           CALL USTEND(72)
+        124                     C
+        125                           RETURN
+        126                           END
+
+ Diagnostic messages: program name(NODLEX)
+   jwd2008i-i  "nodlex.f", line 1: この仮引数'MP'は、副プログラム中で使用されていません。
+   jwd5001p-i  "nodlex.f", line 62: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "nodlex.f", line 62: このDOループをSIMD化しました。(名前:IP)
+   jwd8663o-i  "nodlex.f", line 62: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "nodlex.f", line 62: ループを展開数4回でアンローリングしました。
+   jwd5208p-i  "nodlex.f", line 70: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:VALNOD)
+   jwd6302s-i  "nodlex.f", line 71: 部分的なSIMD化による性能向上が得られない可能性があるため、このDOループのSIMD化を抑止しました。
+   jwd8204o-i  "nodlex.f", line 71: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "nodlex.f", line 71: ループの繰返し数が6回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5209p-i  "nodlex.f", line 73: 配列'VALNOD'の添字式中の変数'IP'をループ中で定義しているため、このDOループは並列化できません。
+   jwd6209s-i  "nodlex.f", line 73: 配列'VALNOD'の添字式中の変数'IP'をループ中で定義しているため、このDOループはSIMD化できません。
+   jwd5208p-i  "nodlex.f", line 78: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:VALNOD)
+   jwd6302s-i  "nodlex.f", line 79: 部分的なSIMD化による性能向上が得られない可能性があるため、このDOループのSIMD化を抑止しました。
+   jwd8204o-i  "nodlex.f", line 79: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "nodlex.f", line 79: ループの繰返し数が6回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5209p-i  "nodlex.f", line 81: 配列'VALNOD'の添字式中の変数'IP'をループ中で定義しているため、このDOループは並列化できません。
+   jwd6209s-i  "nodlex.f", line 81: 配列'VALNOD'の添字式中の変数'IP'をループ中で定義しているため、このDOループはSIMD化できません。
+   jwd5208p-i  "nodlex.f", line 86: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:VALNOD)
+   jwd6302s-i  "nodlex.f", line 87: 部分的なSIMD化による性能向上が得られない可能性があるため、このDOループのSIMD化を抑止しました。
+   jwd8204o-i  "nodlex.f", line 87: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "nodlex.f", line 87: ループの繰返し数が6回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5209p-i  "nodlex.f", line 89: 配列'VALNOD'の添字式中の変数'IP'をループ中で定義しているため、このDOループは並列化できません。
+   jwd6209s-i  "nodlex.f", line 89: 配列'VALNOD'の添字式中の変数'IP'をループ中で定義しているため、このDOループはSIMD化できません。
+   jwd5208p-i  "nodlex.f", line 94: 定義引用の順序が分からないため、定義引用順序が逐次実行と異なる可能性があり、このDOループは並列化できません。(名前:VALNOD)
+   jwd6302s-i  "nodlex.f", line 95: 部分的なSIMD化による性能向上が得られない可能性があるため、このDOループのSIMD化を抑止しました。
+   jwd8204o-i  "nodlex.f", line 95: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "nodlex.f", line 95: ループの繰返し数が6回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5209p-i  "nodlex.f", line 97: 配列'VALNOD'の添字式中の変数'IP'をループ中で定義しているため、このDOループは並列化できません。
+   jwd6209s-i  "nodlex.f", line 97: 配列'VALNOD'の添字式中の変数'IP'をループ中で定義しているため、このDOループはSIMD化できません。
+   jwd5001p-i  "nodlex.f", line 119: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "nodlex.f", line 119: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "nodlex.f", line 119: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "nodlex.f", line 119: ループの繰返し数が384回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+
+ Procedure information
+   Lines      : 126
+   Statements : 74
+   Stack(byte): 1424
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 126
+   Total statements : 74
+   Total stack(byte): 1424
+   Total prefetch num: 0
+

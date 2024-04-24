@@ -1,0 +1,379 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:53:59 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : find32.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "FIND32"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    FIND32                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE FIND32(ELM,NE,XM,YM,ZM,IEM,NM,NITER,GM,EM,TM,
+         14                          *                  JCHECK,DELTA,ERRMAX)
+         15                           IMPLICIT REAL*4(A-H,O-Z)
+         16                           DIMENSION ELM(24,NE),XM(NM),YM(NM),ZM(NM),IEM(NM),
+         17                          1          GM(NM),EM(NM),TM(NM),DELTA(NE)
+         18                     C
+         19                           DATA EPS    / 1.E-3  /
+         20                           DATA FINITE / 1.E-30 /
+         21                     C
+         22                     C
+         23                     C      CALCULATE LOCAL COORDINATES AT SPECIFIED POINTS AS TO SPECIFIED
+         24                     C     ELEMENTS. RETURN (-1)*ORIGINAL ELEMENT NUMBER FOR THOSE POINTS NOT
+         25                     C     INCLUDED IN THE SPECIFIED ELEMENT.
+         26                     C         ( 3-D CALCULATION )
+         27                     C
+         28                     C
+         29                     C     NOTE ; 1. LOCAL GZAI, EATA, AND THETA COORDINATES WILL BE
+         30                     C              CALCULATED ONLY FOR POINTS WITH POSITIVE ELEMENT NUMBER,
+         31                     C              BY THE NEWTON LAPSON METHODS.
+         32                     C
+         33                     C     NOTE ; 2. TOTAL OF 'NITER' ITERATIONS WILL BE DONE WITH THE
+         34                     C              NEWTON LAPSON METHOD, REGARDLESS TO ITS CONVERGENCE.
+         35                     C              BUT, TWO OR THREE ITERATIONS ARE, IN GENERAL, FOUND
+         36                     C              ENOUGH TO OBTAIN THE LOCAL COORDINATES WITH REASONABLE
+         37                     C              ACCURACY UNLESS THE ELEMENT IS STRONGLY SKEWED.
+         38                     C
+         39                     C     ARGUMENT LISTINGS
+         40                     C       (1) INPUT
+         41                     C          ELM( 1,IE)  ; 0.125*SUM OF X(NODE(I,IE))
+         42                     C          ELM( 2,IE)  ; 0.125*SUM OF Y(NODE(I,IE))
+         43                     C          ELM( 3,IE)  ; 0.125*SUM OF Z(NODE(I,IE))
+         44                     C
+         45                     C          ELM( 4,IE)  ; 0.125*SUM OF X(NODE(I,IE))*GI(I)
+         46                     C          ELM( 5,IE)  ; 0.125*SUM OF Y(NODE(I,IE))*GI(I)
+         47                     C          ELM( 6,IE)  ; 0.125*SUM OF Z(NODE(I,IE))*GI(I)
+         48                     C          ELM( 7,IE)  ; 0.125*SUM OF X(NODE(I,IE))*EI(I)
+         49                     C          ELM( 8,IE)  ; 0.125*SUM OF Y(NODE(I,IE))*EI(I)
+         50                     C          ELM( 9,IE)  ; 0.125*SUM OF Z(NODE(I,IE))*EI(I)
+         51                     C          ELM(10,IE)  ; 0.125*SUM OF X(NODE(I,IE))*TI(I)
+         52                     C          ELM(11,IE)  ; 0.125*SUM OF Y(NODE(I,IE))*TI(I)
+         53                     C          ELM(12,IE)  ; 0.125*SUM OF Z(NODE(I,IE))*TI(I)
+         54                     C
+         55                     C          ELM(13,IE)  ; 0.125*SUM OF X(NODE(I,IE))*GI(I)*EI(I)
+         56                     C          ELM(14,IE)  ; 0.125*SUM OF Y(NODE(I,IE))*GI(I)*EI(I)
+         57                     C          ELM(15,IE)  ; 0.125*SUM OF Z(NODE(I,IE))*GI(I)*EI(*)
+         58                     C          ELM(16,IE)  ; 0.125*SUM OF X(NODE(I,IE))*EI(I)*TI(I)
+         59                     C          ELM(17,IE)  ; 0.125*SUM OF Y(NODE(I,IE))*EI(I)*TI(I)
+         60                     C          ELM(18,IE)  ; 0.125*SUM OF Z(NODE(I,IE))*EI(I)*TI(*)
+         61                     C          ELM(19,IE)  ; 0.125*SUM OF X(NODE(I,IE))*TI(I)*GI(I)
+         62                     C          ELM(20,IE)  ; 0.125*SUM OF Y(NODE(I,IE))*TI(I)*GI(I)
+         63                     C          ELM(21,IE)  ; 0.125*SUM OF Z(NODE(I,IE))*TI(I)*GI(*)
+         64                     C
+         65                     C          ELM(22,IE)  ; 0.125*SUM OF X(NODE(I,IE))*GI(I)*EI(I)*TI(I)
+         66                     C          ELM(23,IE)  ; 0.125*SUM OF Y(NODE(I,IE))*GI(I)*EI(I)*TI(I)
+         67                     C          ELM(24,IE)  ; 0.125*SUM OF Z(NODE(I,IE))*GI(I)*EI(I)*TI(I)
+         68                     C
+         69                     C          NE          ; NUMBER OF TOTAL     ELEMENTS
+         70                     C
+         71                     C          XM    (IM)  ; X-DIR. COORDINATE OF THE POINTS
+         72                     C          YM    (IM)  ; Y-DIR. COORDINATE OF THE POINTS
+         73                     C          ZM    (IM)  ; Z-DIR. COORDINATE OF THE POINTS
+         74                     C          IEM   (IM)  ; ELEMENT NUMBER    OF THE POINTS
+         75                     C           NOTES ; IEM(IM) WILL BE RETURNED WITH THE SIGN CHANGED FOR
+         76                     C                  THOSE POINTS NOT INCLUDED IN THE SPECIFIED ELEMENT
+         77                     C          NM          ; NUMBER    OF THE POINTS
+         78                     C          NITER       ; NUMBER OF ITERATIVE CALCULATIONS TO BE DONE
+         79                     C          JCHECK      ; MAXIMUM RESIDUAL ERROR CHECK WILL BE DONE
+         80                     C                        IF THIS IS SET TO ONE
+         81                     C          DELTA (IE)  ; CHARACATERISTIC ELEMENT DIMENSION USED FOR
+         82                     C                        THE RESIDUAL ERROR CHECK
+         83                     C                        DUMMY ARGUMENT FOR JCHECK = 0
+         84                     C
+         85                     C       (2) OUTPUT
+         86                     C          GM    (IM)  ; GZAI  COORDINATE OF THE POINT FOR THE ELEMENT
+         87                     C          EM    (IM)  ; EATA  COORDINATE OF THE POINT FOR THE ELEMENT
+         88                     C          TM    (IM)  ; THETA COORDINATE OF THE POINT FOR THE ELEMENT
+         89                     C          ERRMAX      ; MAXIMUM RELATIVE RESIDUAL ERROR
+         90                     C                        IN GZAI, EATA, THETA CALCULATION FOR POINTS
+         91                     C                        INCLUDED IN THE SPECIFIED ELEMENT ( JCHECK=1 )
+         92                     C
+         93                     C
+         94     1                     DO 210 ITER = 1 , NITER
+         95     2                         IF(ITER.EQ.1) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 80
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IEM
+                              <<< Loop-information  End >>>
+         96     3  pp    s                DO 100 IM = 1 , NM
+         97     3   p    v                  IE = IEM(IM)
+         98     3   p    s                  IF(IE.LE.0) GO TO 100
+         99     3   p    s                  DFG=ELM( 4,IE)
+        100     3   p    s                  DGG=ELM( 5,IE)
+        101     3   p    s                  DHG=ELM( 6,IE)
+        102     3   p    s                  DFE=ELM( 7,IE)
+        103     3   p    s                  DGE=ELM( 8,IE)
+        104     3   p    s                  DHE=ELM( 9,IE)
+        105     3   p    s                  DFT=ELM(10,IE)
+        106     3   p    s                  DGT=ELM(11,IE)
+        107     3   p    s                  DHT=ELM(12,IE)
+        108     3               C
+        109     3   p    s                  FV =ELM( 1,IE)-XM(IM)
+        110     3   p    s                  GV =ELM( 2,IE)-YM(IM)
+        111     3   p    s                  HV =ELM( 3,IE)-ZM(IM)
+        112     3               C
+        113     3   p    s                  DET = DFG*(DGE*DHT-DGT*DHE)
+        114     3                    &           +DFE*(DGT*DHG-DGG*DHT)
+        115     3                    &           +DFT*(DGG*DHE-DGE*DHG)
+        116     3               C
+        117     3   p    s                  A11 = (DGE*DHT-DGT*DHE)/DET
+        118     3   p    s                  A21 = (DGT*DHG-DGG*DHT)/DET
+        119     3   p    s                  A31 = (DGG*DHE-DGE*DHG)/DET
+        120     3   p    s                  A12 = (DHE*DFT-DHT*DFE)/DET
+        121     3   p    s                  A22 = (DHT*DFG-DHG*DFT)/DET
+        122     3   p    s                  A32 = (DHG*DFE-DHE*DFG)/DET
+        123     3   p    s                  A13 = (DFE*DGT-DFT*DGE)/DET
+        124     3   p    s                  A23 = (DFT*DGG-DFG*DGT)/DET
+        125     3   p    s                  A33 = (DFG*DGE-DFE*DGG)/DET
+        126     3               C
+        127     3   p    s                  GM(IM) =      -A11*FV-A12*GV-A13*HV
+        128     3   p    s                  EM(IM) =      -A21*FV-A22*GV-A23*HV
+        129     3   p    s                  TM(IM) =      -A31*FV-A32*GV-A33*HV
+        130     3   p    v        100     CONTINUE
+        131     2               C
+        132     2                         ELSE
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 46
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IEM
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 0
+                              <<<      SIMD&FP   : SPILL 3  FILL 3
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        133     3  pp    s                DO 200 IM = 1 , NM
+        134     3   p    v                  IE = IEM(IM)
+        135     3   p    s                  IF(IE.LE.0) GO TO 200
+        136     3   p    s                  DFG=ELM( 4,IE)
+        137     3                    &     +ELM(13,IE)*EM(IM)+ELM(19,IE)*TM(IM)+ELM(22,IE)*EM(IM)*TM(IM)
+        138     3   p    s                  DGG=ELM( 5,IE)
+        139     3                    &     +ELM(14,IE)*EM(IM)+ELM(20,IE)*TM(IM)+ELM(23,IE)*EM(IM)*TM(IM)
+        140     3   p    s                  DHG=ELM( 6,IE)
+        141     3                    &     +ELM(15,IE)*EM(IM)+ELM(21,IE)*TM(IM)+ELM(24,IE)*EM(IM)*TM(IM)
+        142     3   p    s                  DFE=ELM( 7,IE)
+        143     3                    &     +ELM(16,IE)*TM(IM)+ELM(13,IE)*GM(IM)+ELM(22,IE)*TM(IM)*GM(IM)
+        144     3   p    s                  DGE=ELM( 8,IE)
+        145     3                    &     +ELM(17,IE)*TM(IM)+ELM(14,IE)*GM(IM)+ELM(23,IE)*TM(IM)*GM(IM)
+        146     3   p    s                  DHE=ELM( 9,IE)
+        147     3                    &     +ELM(18,IE)*TM(IM)+ELM(15,IE)*GM(IM)+ELM(24,IE)*TM(IM)*GM(IM)
+        148     3   p    s                  DFT=ELM(10,IE)
+        149     3                    &     +ELM(19,IE)*GM(IM)+ELM(16,IE)*EM(IM)+ELM(22,IE)*GM(IM)*EM(IM)
+        150     3   p    s                  DGT=ELM(11,IE)
+        151     3                    &     +ELM(20,IE)*GM(IM)+ELM(17,IE)*EM(IM)+ELM(23,IE)*GM(IM)*EM(IM)
+        152     3   p    s                  DHT=ELM(12,IE)
+        153     3                    &     +ELM(21,IE)*GM(IM)+ELM(18,IE)*EM(IM)+ELM(24,IE)*GM(IM)*EM(IM)
+        154     3               C
+        155     3   p    s                  FV =ELM( 1,IE)-XM(IM)
+        156     3                    &         +ELM( 4,IE)*GM(IM)+ELM( 7,IE)*EM(IM)+ELM(10,IE)*TM(IM)
+        157     3                    &         +ELM(13,IE)*GM(IM)*EM(IM)
+        158     3                    &         +ELM(16,IE)*EM(IM)*TM(IM)
+        159     3                    &         +ELM(19,IE)*TM(IM)*GM(IM)+ELM(22,IE)*GM(IM)*EM(IM)*TM(IM)
+        160     3   p    s                  GV =ELM( 2,IE)-YM(IM)
+        161     3                    &         +ELM( 5,IE)*GM(IM)+ELM( 8,IE)*EM(IM)+ELM(11,IE)*TM(IM)
+        162     3                    &         +ELM(14,IE)*GM(IM)*EM(IM)
+        163     3                    &         +ELM(17,IE)*EM(IM)*TM(IM)
+        164     3                    &         +ELM(20,IE)*TM(IM)*GM(IM)+ELM(23,IE)*GM(IM)*EM(IM)*TM(IM)
+        165     3   p    s                  HV =ELM( 3,IE)-ZM(IM)
+        166     3                    &         +ELM( 6,IE)*GM(IM)+ELM( 9,IE)*EM(IM)+ELM(12,IE)*TM(IM)
+        167     3                    &         +ELM(15,IE)*GM(IM)*EM(IM)
+        168     3                    &         +ELM(18,IE)*EM(IM)*TM(IM)
+        169     3                    &         +ELM(21,IE)*TM(IM)*GM(IM)+ELM(24,IE)*GM(IM)*EM(IM)*TM(IM)
+        170     3               C
+        171     3   p    s                  DET = DFG*(DGE*DHT-DGT*DHE)
+        172     3                    &           +DFE*(DGT*DHG-DGG*DHT)
+        173     3                    &           +DFT*(DGG*DHE-DGE*DHG)
+        174     3               C
+        175     3   p    s                  DET = DET+SIGN(FINITE,DET)
+        176     3               C
+        177     3   p    s                  A11 = (DGE*DHT-DGT*DHE)/DET
+        178     3   p    s                  A21 = (DGT*DHG-DGG*DHT)/DET
+        179     3   p    s                  A31 = (DGG*DHE-DGE*DHG)/DET
+        180     3   p    s                  A12 = (DHE*DFT-DHT*DFE)/DET
+        181     3   p    s                  A22 = (DHT*DFG-DHG*DFT)/DET
+        182     3   p    s                  A32 = (DHG*DFE-DHE*DFG)/DET
+        183     3   p    s                  A13 = (DFE*DGT-DFT*DGE)/DET
+        184     3   p    s                  A23 = (DFT*DGG-DFG*DGT)/DET
+        185     3   p    s                  A33 = (DFG*DGE-DFE*DGG)/DET
+        186     3               C
+        187     3   p    s                  GM(IM) = GM(IM)-A11*FV-A12*GV-A13*HV
+        188     3   p    s                  EM(IM) = EM(IM)-A21*FV-A22*GV-A23*HV
+        189     3   p    s                  TM(IM) = TM(IM)-A31*FV-A32*GV-A33*HV
+        190     3   p    v        200     CONTINUE
+        191     2                         ENDIF
+        192     1                 210 CONTINUE
+        193                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 572
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 0.39, ITR: 48, MVE: 2, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      EM, TM, IEM, GM
+                              <<< Loop-information  End >>>
+        194     1  pp    v            DO 300 IM = 1 , NM
+        195     1   p    v                IF(IEM(IM).LE.0             .OR.
+        196     1                    &       ABS(GM(IM)) .LE. 1.0+EPS .AND.
+        197     1                    &       ABS(EM(IM)) .LE. 1.0+EPS .AND.
+        198     1                    &       ABS(TM(IM)) .LE. 1.0+EPS) GO TO 300
+        199     1   p    v                IEM(IM) = -IEM(IM)
+        200     1   p    v        300 CONTINUE
+        201                     C
+        202                           IF(JCHECK.EQ.0) RETURN
+        203                           ERRMAX = 0.E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 80
+                              <<< Loop-information  End >>>
+        204     1  pp    s            DO 400 IM = 1 , NM
+        205     1   p    v                IE = IEM(IM)
+        206     1   p    v                IF(IE.LE.0) GO TO 400
+        207     1   p    v                  FV =ELM( 1,IE)-XM(IM)
+        208     1                    &         +ELM( 4,IE)*GM(IM)+ELM( 7,IE)*EM(IM)+ELM(10,IE)*TM(IM)
+        209     1                    &         +ELM(13,IE)*GM(IM)*EM(IM)
+        210     1                    &         +ELM(16,IE)*EM(IM)*TM(IM)
+        211     1                    &         +ELM(19,IE)*TM(IM)*GM(IM)+ELM(22,IE)*GM(IM)*EM(IM)*TM(IM)
+        212     1   p    v                  GV =ELM( 2,IE)-YM(IM)
+        213     1                    &         +ELM( 5,IE)*GM(IM)+ELM( 8,IE)*EM(IM)+ELM(11,IE)*TM(IM)
+        214     1                    &         +ELM(14,IE)*GM(IM)*EM(IM)
+        215     1                    &         +ELM(17,IE)*EM(IM)*TM(IM)
+        216     1                    &         +ELM(20,IE)*TM(IM)*GM(IM)+ELM(23,IE)*GM(IM)*EM(IM)*TM(IM)
+        217     1   p    v                  HV =ELM( 3,IE)-ZM(IM)
+        218     1                    &         +ELM( 6,IE)*GM(IM)+ELM( 9,IE)*EM(IM)+ELM(12,IE)*TM(IM)
+        219     1                    &         +ELM(15,IE)*GM(IM)*EM(IM)
+        220     1                    &         +ELM(18,IE)*EM(IM)*TM(IM)
+        221     1                    &         +ELM(21,IE)*TM(IM)*GM(IM)+ELM(24,IE)*GM(IM)*EM(IM)*TM(IM)
+        222     1               C
+        223     1   p    v                ERR =  SQRT(FV*FV+GV*GV+HV*HV)/DELTA(IE)
+        224     1   p    v                ERRMAX = AMAX1(ERR,ERRMAX)
+        225     1   p    v        400 CONTINUE
+        226                     C
+        227                     C
+        228                           RETURN
+        229                           END
+
+ Diagnostic messages: program name(FIND32)
+   jwd8220o-i  "find32.f", line 13: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd5208p-i  "find32.f", line 94: DO loop is not parallelized: the assign-refer order of 'TM' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find32.f", line 94: DO loop is not parallelized: the assign-refer order of 'EM' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "find32.f", line 94: DO loop is not parallelized: the assign-refer order of 'GM' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5001p-i  "find32.f", line 96: DO loop with DO variable 'IM' is parallelized.
+   jwd6229s-i  "find32.f", line 96: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8670o-i  "find32.f", line 96: This loop cannot be software pipelined because the loop contains a branch instruction.
+   jwd8209o-i  "find32.f", line 113: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find32.f", line 127: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find32.f", line 128: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find32.f", line 129: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5001p-i  "find32.f", line 133: DO loop with DO variable 'IM' is parallelized.
+   jwd6229s-i  "find32.f", line 133: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8670o-i  "find32.f", line 133: This loop cannot be software pipelined because the loop contains a branch instruction.
+   jwd8209o-i  "find32.f", line 136: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find32.f", line 138: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find32.f", line 140: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find32.f", line 142: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find32.f", line 144: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find32.f", line 146: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find32.f", line 148: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find32.f", line 150: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find32.f", line 152: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find32.f", line 155: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find32.f", line 160: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find32.f", line 165: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find32.f", line 171: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find32.f", line 187: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find32.f", line 188: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find32.f", line 189: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5001p-i  "find32.f", line 194: DO loop with DO variable 'IM' is parallelized.
+   jwd6001s-i  "find32.f", line 194: SIMD conversion is applied to DO loop with DO variable 'IM'.
+   jwd8204o-i  "find32.f", line 194: This loop is software pipelined.
+   jwd8205o-i  "find32.f", line 194: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 48.
+   jwd5004p-i  "find32.f", line 204: DO loop with DO variable 'IM' is parallelized. The DO loop contains the reduction operation.
+   jwd6229s-i  "find32.f", line 204: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8209o-i  "find32.f", line 207: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find32.f", line 212: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find32.f", line 217: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find32.f", line 223: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+
+ Procedure information
+   Lines      : 229
+   Statements : 86
+   Stack(byte): 15328
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 229
+   Total statements : 86
+   Total stack(byte): 15328
+   Total prefetch num: 0
+

@@ -1,0 +1,194 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:53:43 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : allelm.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "ALLELM"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    ALLELM                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE ALLELM(ISTART,IENE,NEE,NE,MEE,IEFLAG,IUT0,IERR)
+         14                           IMPLICIT REAL*4(A-H,O-Z)
+         15                           DIMENSION IENE(MEE,NE),NEE(NE),IEFLAG(NE)
+         16                     C
+         17                           CHARACTER*60 ERMSGB
+         18                          & / ' ## SUBROUTINE ALLELM: FATAL      ERROR OCCURENCE; RETURNED' /
+         19                           CHARACTER*60 EREXP1
+         20                          & / ' AN ILLEGAL STARTGING ELEMENT NUMBER WAS SPECIFIED         ' /
+         21                     C
+         22                     C
+         23                     C      RECURSIVELY SEARCH NEIBERING ELEMENTS FROM A SPECIFIED ELEMENT
+         24                     C     UNTIL NO MORE NEIBERING ELEMENT CAN BE FOUND
+         25                     C         ( 2-D , 3-D CALCULATION & GRAPHICS )
+         26                     C
+         27                     C
+         28                     C     ARGUMENT LISTINGS
+         29                     C       (1) INPUT
+         30                     C          ISTART      ; ELEMENT NUMBER TO START NEIBERING SEARCH WITH
+         31                     C          IENE(IEE,IE); ADJACENT ELEMENT NUMBER TO ELEMENT IE
+         32                     C          NEE     (IE); NUMBER OF ADJACENT ELEMENTS TO ELEMENT IE
+         33                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+         34                     C          MEE         ; THE FIRST DIMENSION OF ARRAY IENE
+         35                     C          IUT0        ; FILE NUMBER TO REPORT ERROR OCCURENCE
+         36                     C
+         37                     C       (2) OUTPUT
+         38                     C          IEFLAG  (IE); ELEMENT FLAG WHICH INDICATES WHETHER OR NOT
+         39                     C                       TO BELONG TO THE SAME ELEMENT GROUP AS THE
+         40                     C                       STARTING ELEMENT DOES
+         41                     C                   0 --- DOES NOT BELONG TO THE SAME ELEMENT GROUP
+         42                     C                   1 ---          BELONG TO THE SAME ELEMENT GROUP
+         43                     C          IERR        ; RETURN CODE TO REPORT ERROR OCCURENCE
+         44                     C                   0 --- NORMAL TERMINATION
+         45                     C                   1 --- A FATAL ERROR HAS OCCURED
+         46                     C
+         47                     C
+         48                           IERR = 0
+         49                     C
+         50                     C
+         51     1                     IF(ISTART.LT.1 .OR. ISTART.GT.NE) THEN
+         52     1                         WRITE(IUT0,*) ERMSGB
+         53     1                         WRITE(IUT0,*) EREXP1
+         54     1                         IERR = 1
+         55     1                         RETURN
+         56     1                     ENDIF
+         57                     C
+         58                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IEFLAG
+                              <<< Loop-information  End >>>
+         59     1  pp   4v            DO 100 IE = 1 , NE
+         60     1   p   4v                IEFLAG(IE) = 0
+         61     1   p   4v        100 CONTINUE
+         62                           IEFLAG(ISTART) = -1
+         63                     C
+         64                     C
+         65                       110 CONTINUE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IEFLAG
+                              <<< Loop-information  End >>>
+         66     1                         DO 120 IE = 1 , NE
+         67     2                             IF(IEFLAG(IE).EQ.-1) THEN
+         68     2                                 IESRCH = IE
+         69     2                                 GO TO 130
+         70     2                             ENDIF
+         71     1                 120     CONTINUE
+         72                     C
+         73                               RETURN
+         74                     C
+         75                       130     CONTINUE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IENE
+                              <<< Loop-information  End >>>
+         76     1   s   2s                DO 140 IEE = 1 , NEE(IESRCH)
+         77     1   p   2v                    IENEIB = IENE(IEE,IESRCH)
+         78     1   m   2m                    IF(IEFLAG(IENEIB).EQ.0) IEFLAG(IENEIB) = -1
+         79     1   p   2v        140     CONTINUE
+         80                               IEFLAG(IESRCH) = 1
+         81                           GO TO 110
+         82                     C
+         83                     C
+         84                           END
+
+ Diagnostic messages: program name(ALLELM)
+   jwd5001p-i  "allelm.f", line 59: DO loop with DO variable 'IE' is parallelized.
+   jwd6001s-i  "allelm.f", line 59: SIMD conversion is applied to DO loop with DO variable 'IE'.
+   jwd8663o-i  "allelm.f", line 59: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "allelm.f", line 59: Loop unrolled 4 times.
+   jwd5132p-i  "allelm.f", line 65: Loop is not parallelized: cannot parallelize DO WHILE constructs, DO UNTIL constructs, or loops by IF/GO TO statements.
+   jwd5131p-i  "allelm.f", line 66: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "allelm.f", line 66: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "allelm.f", line 66: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+   jwd6302s-i  "allelm.f", line 76: SIMD conversion is not applied to DO loop: the performance of a partial SIMD execution may not be improved.
+   jwd6229s-i  "allelm.f", line 76: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8670o-i  "allelm.f", line 76: This loop cannot be software pipelined because the loop contains a branch instruction.
+   jwd8202o-i  "allelm.f", line 76: Loop unrolled 2 times.
+   jwd5209p-i  "allelm.f", line 78: DO loop is not parallelized: the variable 'IENEIB' referenced in the subscript expression of array 'IEFLAG' is assigned to in DO loop.
+   jwd6209s-i  "allelm.f", line 78: SIMD conversion cannot be applied to DO loop: the variable 'IENEIB' referenced in the subscript expression of array 'IEFLAG' is assigned to in DO loop.
+
+ Procedure information
+   Lines      : 84
+   Statements : 32
+   Stack(byte): 928
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 84
+   Total statements : 32
+   Total stack(byte): 928
+   Total prefetch num: 0
+

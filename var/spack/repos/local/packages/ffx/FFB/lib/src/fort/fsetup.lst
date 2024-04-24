@@ -1,0 +1,490 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:54:04 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : fsetup.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "FSETUP"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    FSETUP                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE FSETUP(DT,U,V,W,NODE,IENP,NEP,MAXEP,NE,NP,N,GI,EI,TI,
+         14                          *                  MEPFR,NPFREE,LPFREE,IEUP,XPFREE,YPFREE,ZPFREE,
+         15                          *                  INDXFR,NEFREE,ELMFR,NITRFR,
+         16                          *                  GPFREE,EPFREE,TPFREE,UPFREE,VPFREE,WPFREE,IWRK,
+         17                          *                  IUT0,IWRN)
+         18                           IMPLICIT REAL*4(A-H,O-Z)
+         19                           DIMENSION U(NP),V(NP),W(NP),
+         20                          1          NODE(N,NE),IENP(MAXEP,NP),NEP(NP),GI(N),EI(N),TI(N),
+         21                          2          LPFREE(NPFREE),IEUP  (NPFREE),
+         22                          3          XPFREE(NPFREE),YPFREE(NPFREE),ZPFREE(NPFREE),
+         23                          4          INDXFR(MEPFR,NPFREE),ELMFR(24,NEFREE),
+         24                          5          GPFREE(NPFREE),EPFREE(NPFREE),TPFREE(NPFREE),
+         25                          6          UPFREE(NPFREE),VPFREE(NPFREE),WPFREE(NPFREE),
+         26                          7          IWRK  (NPFREE)
+         27                     C
+         28                           DATA EPS     / 1.0E-3 /
+         29                     C
+         30                           CHARACTER*60 WRNMSG
+         31                          & / ' ## SUBROUTINE FSETUP: NO UPWIND ELEMENT FOUND FOR NODE IP=' /
+         32                     C
+         33                     C
+         34                     C      SET FREE BOUNDARY VELOCITY COMPONENT
+         35                     C         ( 3-D CALCULATION )
+         36                     C
+         37                     C
+         38                     C     ARGUMENT LISTINGS
+         39                     C       (1) INPUT
+         40                     C          DT          ; TIME INCTREMENT
+         41                     C          U       (IP); X-DIR. VELOCITY COMPONENT
+         42                     C          V       (IP); Y-DIR. VELOCITY COMPONENT
+         43                     C          W       (IP); Z-DIR. VELOCITY COMPONENT
+         44                     C          NODE  (I,IE); NODE NO. TABLE BASED ON ELEMENT
+         45                     C          IENP(IEP,IP); ADJACENT ELEMENT NUMBER TO NODE IP
+         46                     C          NEP     (IP); NUMBER OF ADJACENT ELEMENTS TO NODE IP
+         47                     C          MAXEP       ; THE FIRST DIMENSION OF ARRAY IENP
+         48                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+         49                     C          NP          ; NUMBER OF TOTAL    NODES
+         50                     C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT
+         51                     C          GI       (I); LOCAL GZAI  COORDINATES OF ELEMENT'S NODES
+         52                     C          EI       (I); LOCAL EATA  COORDINATES OF ELEMENT'S NODES
+         53                     C          TI       (I); LOCAL THETA COORDINATES OF ELEMENT'S NODES
+         54                     C
+         55                     C          MEPFR       ; MAX. NUMBER OF ADJACENT FREE BOUNDARY ELEMENTS
+         56                     C          NPFREE      ; NUMBER OF FREE BOUNDARY NODES
+         57                     C          LPFREE (IBP); FREE BOUNDARY NODES
+         58                     C          IEUP   (IBP); UPWIND REFERENCE ELEMENT OF FREE BOUNDARY NODES
+         59                     C           NOTES; IEUP(IBP) IS AN INPUT-OUTPUT ARGUMENT WHICH KEEPS
+         60                     C                 CURRENT UPWINDING REFERENCE ELEMENTS FOR FREE BOUNDARY
+         61                     C                 NODES. WHEN THIS ARGUMENT HAS ZERO VALUE, NO UPWIND
+         62                     C                 REFERENCE ELEMENT IS SET FOR THAT PARTICULAR FREE
+         63                     C                 BOUNDARY NODE.
+         64                     C          XPFREE (IBP); GLOBAL X-COORDINATES     OF FREE BOUNDARY NODES
+         65                     C          YPFREE (IBP); GLOBAL Y-COORDINATES     OF FREE BOUNDARY NODES
+         66                     C          ZPFREE (IBP); GLOBAL Z-COORDINATES     OF FREE BOUNDARY NODES
+         67                     C          INDXFR      ; INDICATES REGIONAL ELEMENT NUMBER 'IBE' OF THE
+         68                     C           (IEPFR,IBP) 'IEPFR' TH ADJACENT ELEMENT OF FREE BOUNDARY
+         69                     C                        NODE 'IBP'
+         70                     C          NEFREE      ; NUMBER OF FREE BOUNDARY ELEMENTS
+         71                     C          ELMFR(K,IBE); ELEMENT POSION AND SHAPE DEPENDENT CONSTANTS
+         72                     C                       FOR ELEMENTS ADJACENT TO FREE BOUNDARY NODES
+         73                     C          NITRFR      ; ITERATIONS MADE FOR UPWIND ELEMENT SEARCH
+         74                     C                       FOR FREE BOUNDARY NODES
+         75                     C
+         76                     C          IUT0        ; FILE NUMBER TO REPORT ERROR OCCURENCE
+         77                     C
+         78                     C       (2) OUTPUT
+         79                     C          UPFREE (IBP); X-DIR. FREE BOUNDARY VELOCITY COMPONENT
+         80                     C          VPFREE (IBP); Y-DIR. FREE BOUNDARY VELOCITY COMPONENT
+         81                     C          WPFREE (IBP); Z-DIR. FREE BOUNDARY VELOCITY COMPONENT
+         82                     C
+         83                     C          IWRN        ; A WARNING FLAG WHICH WILL BE SET (TO ONE),
+         84                     C                       IF NO UPWIND REFERENCE ELEMENT IS FOUND FOR A
+         85                     C                       FREE BOUNDARY NODE
+         86                     C
+         87                     C       (4) WORK
+         88                     C          GPFREE (IBP); STORES LOCAL GZAI   COORDINATES OF FREE NODES
+         89                     C          EPFREE (IBP); STORES LOCAL EATA   COORDINATES OF FREE NODES
+         90                     C          TPFREE (IBP); STORES LOCAL THEATA COORDINATES OF FREE NODES
+         91                     C          IWRK   (IBP); STORES REGIONAL ELEMENT NUMBER  OF FREE NODES
+         92                     C
+         93                     C
+         94                           IWRN = 0
+         95                     C
+         96                     C
+         97                     C SEARCH FOR UPWIND REFERENCE ELEMENTS
+         98                     C
+         99                     C
+        100                     C*$*ASSERT PERMUTATION ( LPFREE )
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED(lines: 101,109)
+                              <<< Loop-information  End >>>
+        101     1                     DO 100 IPFREE = 1 , NPFREE
+        102     1   p                     UPFREE(IPFREE) = XPFREE(IPFREE)-DT*U(LPFREE(IPFREE))
+        103     1   p                     VPFREE(IPFREE) = YPFREE(IPFREE)-DT*V(LPFREE(IPFREE))
+        104     1   p                     WPFREE(IPFREE) = ZPFREE(IPFREE)-DT*W(LPFREE(IPFREE))
+        105     1                 100 CONTINUE
+        106                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IENP, INDXFR
+                              <<< Loop-information  End >>>
+        107     1   p    v            DO 210 IEP = 1 , MEPFR
+        108     1               C*$*ASSERT PERMUTATION ( LPFREE )
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<<    FUSED
+                              <<< Loop-information  End >>>
+        109     2  pp                     DO 200 IPFREE = 1 , NPFREE
+        110     2   p    v                    IP = LPFREE(IPFREE)
+        111     2   p    v                    IE = IEUP  (IPFREE)
+        112     2   p    v                    IF(IEP.GT.NEP     (IP)) GO TO 200
+        113     2   p    v                    IF(IE .EQ.IENP(IEP,IP)) IWRK(IPFREE) = INDXFR(IEP,IPFREE)
+        114     2   p             200     CONTINUE
+        115     1   p             210 CONTINUE
+        116                     C
+        117     1                     DO 510 IEP = 0 , MEPFR
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1143
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      TPFREE, EPFREE, GPFREE
+                              <<< Loop-information  End >>>
+        118     2  pp   2v                DO 300 IPFREE = 1 , NPFREE
+        119     2   p   2v                    GPFREE(IPFREE) = 0.E0
+        120     2   p   2v                    EPFREE(IPFREE) = 0.E0
+        121     2   p   2v                    TPFREE(IPFREE) = 0.E0
+        122     2   p   2v        300     CONTINUE
+        123     1               C
+        124     2                         DO 410 ITER = 1 , NITRFR
+        125     2               C*$*ASSERT PERMUTATION ( LPFREE )
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPFREE
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 2
+                              <<<      SIMD&FP   : SPILL 5  FILL 5
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        126     3   s    s                    DO 400 IPFREE = 1 , NPFREE
+        127     3   p    v                        IP = LPFREE(IPFREE)
+        128     3               C
+        129     3   p    s                        IF(IEP.EQ.0       .AND. IEUP(IPFREE).EQ.0) GO TO 400
+        130     3   p    s                        IF(IEP.GE.1       .AND. IEUP(IPFREE).GE.1) GO TO 400
+        131     3   p    m                        IF(IEP.GT.NEP(IP)                        ) GO TO 400
+        132     3               C
+        133     3   p    s                        IF(IEP.EQ.0) IEFREE = IWRK      (IPFREE)
+        134     3   p    s                        IF(IEP.GE.1) IEFREE = INDXFR(IEP,IPFREE)
+        135     3               C
+        136     3   m    s                        DFG=ELMFR( 4,IEFREE)+ELMFR(13,IEFREE)*EPFREE(IPFREE)
+        137     3                    &                                +ELMFR(19,IEFREE)*TPFREE(IPFREE)
+        138     3                    &                 +ELMFR(22,IEFREE)*EPFREE(IPFREE)*TPFREE(IPFREE)
+        139     3               C
+        140     3   p    s                        DGG=ELMFR( 5,IEFREE)+ELMFR(14,IEFREE)*EPFREE(IPFREE)
+        141     3                    &                                +ELMFR(20,IEFREE)*TPFREE(IPFREE)
+        142     3                    &                 +ELMFR(23,IEFREE)*EPFREE(IPFREE)*TPFREE(IPFREE)
+        143     3               C
+        144     3   p    s                        DHG=ELMFR( 6,IEFREE)+ELMFR(15,IEFREE)*EPFREE(IPFREE)
+        145     3                    &                                +ELMFR(21,IEFREE)*TPFREE(IPFREE)
+        146     3                    &                 +ELMFR(24,IEFREE)*EPFREE(IPFREE)*TPFREE(IPFREE)
+        147     3               C
+        148     3   p    s                        DFE=ELMFR( 7,IEFREE)+ELMFR(16,IEFREE)*TPFREE(IPFREE)
+        149     3                    &                                +ELMFR(13,IEFREE)*GPFREE(IPFREE)
+        150     3                    &                 +ELMFR(22,IEFREE)*TPFREE(IPFREE)*GPFREE(IPFREE)
+        151     3               C
+        152     3   p    s                        DGE=ELMFR( 8,IEFREE)+ELMFR(17,IEFREE)*TPFREE(IPFREE)
+        153     3                    &                                +ELMFR(14,IEFREE)*GPFREE(IPFREE)
+        154     3                    &                 +ELMFR(23,IEFREE)*TPFREE(IPFREE)*GPFREE(IPFREE)
+        155     3               C
+        156     3   p    s                        DHE=ELMFR( 9,IEFREE)+ELMFR(18,IEFREE)*TPFREE(IPFREE)
+        157     3                    &                                +ELMFR(15,IEFREE)*GPFREE(IPFREE)
+        158     3                    &                 +ELMFR(24,IEFREE)*TPFREE(IPFREE)*GPFREE(IPFREE)
+        159     3               C
+        160     3   p    s                        DFT=ELMFR(10,IEFREE)+ELMFR(19,IEFREE)*GPFREE(IPFREE)
+        161     3                    &                                +ELMFR(16,IEFREE)*EPFREE(IPFREE)
+        162     3                    &                 +ELMFR(22,IEFREE)*GPFREE(IPFREE)*EPFREE(IPFREE)
+        163     3               C
+        164     3   p    s                        DGT=ELMFR(11,IEFREE)+ELMFR(20,IEFREE)*GPFREE(IPFREE)
+        165     3                    &                                +ELMFR(17,IEFREE)*EPFREE(IPFREE)
+        166     3                    &                 +ELMFR(23,IEFREE)*GPFREE(IPFREE)*EPFREE(IPFREE)
+        167     3               C
+        168     3   p    s                        DHT=ELMFR(12,IEFREE)+ELMFR(21,IEFREE)*GPFREE(IPFREE)
+        169     3                    &                                +ELMFR(18,IEFREE)*EPFREE(IPFREE)
+        170     3                    &                 +ELMFR(24,IEFREE)*GPFREE(IPFREE)*EPFREE(IPFREE)
+        171     3               C
+        172     3   p    s                        FV =ELMFR( 1,IEFREE)-UPFREE(IPFREE)
+        173     3                    &               +ELMFR( 4,IEFREE)*GPFREE(IPFREE)
+        174     3                    &               +ELMFR( 7,IEFREE)*EPFREE(IPFREE)
+        175     3                    &               +ELMFR(10,IEFREE)*TPFREE(IPFREE)
+        176     3                    &               +ELMFR(13,IEFREE)*GPFREE(IPFREE)*EPFREE(IPFREE)
+        177     3                    &               +ELMFR(16,IEFREE)*EPFREE(IPFREE)*TPFREE(IPFREE)
+        178     3                    &               +ELMFR(19,IEFREE)*TPFREE(IPFREE)*GPFREE(IPFREE)
+        179     3                    &               +ELMFR(22,IEFREE)*GPFREE(IPFREE)*EPFREE(IPFREE)
+        180     3                    &               *TPFREE(IPFREE)
+        181     3               C
+        182     3   p    s                        GV =ELMFR( 2,IEFREE)-VPFREE(IPFREE)
+        183     3                    &               +ELMFR( 5,IEFREE)*GPFREE(IPFREE)
+        184     3                    &               +ELMFR( 8,IEFREE)*EPFREE(IPFREE)
+        185     3                    &               +ELMFR(11,IEFREE)*TPFREE(IPFREE)
+        186     3                    &               +ELMFR(14,IEFREE)*GPFREE(IPFREE)*EPFREE(IPFREE)
+        187     3                    &               +ELMFR(17,IEFREE)*EPFREE(IPFREE)*TPFREE(IPFREE)
+        188     3                    &               +ELMFR(20,IEFREE)*TPFREE(IPFREE)*GPFREE(IPFREE)
+        189     3                    &               +ELMFR(23,IEFREE)*GPFREE(IPFREE)*EPFREE(IPFREE)
+        190     3                    &               *TPFREE(IPFREE)
+        191     3               C
+        192     3   p    s                        HV =ELMFR( 3,IEFREE)-WPFREE(IPFREE)
+        193     3                    &               +ELMFR( 6,IEFREE)*GPFREE(IPFREE)
+        194     3                    &               +ELMFR( 9,IEFREE)*EPFREE(IPFREE)
+        195     3                    &               +ELMFR(12,IEFREE)*TPFREE(IPFREE)
+        196     3                    &               +ELMFR(15,IEFREE)*GPFREE(IPFREE)*EPFREE(IPFREE)
+        197     3                    &               +ELMFR(18,IEFREE)*EPFREE(IPFREE)*TPFREE(IPFREE)
+        198     3                    &               +ELMFR(21,IEFREE)*TPFREE(IPFREE)*GPFREE(IPFREE)
+        199     3                    &               +ELMFR(24,IEFREE)*GPFREE(IPFREE)*EPFREE(IPFREE)
+        200     3                    &               *TPFREE(IPFREE)
+        201     3               C
+        202     3   p    s                        DET = DFG*(DGE*DHT-DGT*DHE)
+        203     3                    &                 +DFE*(DGT*DHG-DGG*DHT)
+        204     3                    &                 +DFT*(DGG*DHE-DGE*DHG)
+        205     3               C
+        206     3   p    s                        A11 = (DGE*DHT-DGT*DHE)/DET
+        207     3   p    s                        A21 = (DGT*DHG-DGG*DHT)/DET
+        208     3   p    s                        A31 = (DGG*DHE-DGE*DHG)/DET
+        209     3   p    s                        A12 = (DHE*DFT-DHT*DFE)/DET
+        210     3   p    s                        A22 = (DHT*DFG-DHG*DFT)/DET
+        211     3   p    s                        A32 = (DHG*DFE-DHE*DFG)/DET
+        212     3   p    s                        A13 = (DFE*DGT-DFT*DGE)/DET
+        213     3   p    s                        A23 = (DFT*DGG-DFG*DGT)/DET
+        214     3   p    s                        A33 = (DFG*DGE-DFE*DGG)/DET
+        215     3               C
+        216     3   p    s                        GPFREE(IPFREE) = GPFREE(IPFREE)-A11*FV-A12*GV-A13*HV
+        217     3   p    s                        EPFREE(IPFREE) = EPFREE(IPFREE)-A21*FV-A22*GV-A23*HV
+        218     3   p    s                        TPFREE(IPFREE) = TPFREE(IPFREE)-A31*FV-A32*GV-A33*HV
+        219     3   p    v        400         CONTINUE
+        220     2                 410     CONTINUE
+        221     1               C
+        222     1               C*$*ASSERT PERMUTATION ( LPFREE )
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 291
+                              <<<  [OPTIMIZATION]
+                              <<<    UNSWITCHING
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IEUP
+                              <<< Loop-information  End >>>
+        223     2  pp    s                DO 500 IPFREE = 1 , NPFREE
+        224     2   p    m                    IF(IEP.EQ.0 .AND. IEUP(IPFREE).EQ.0) GO TO 500
+        225     2   p    s                    IF(IEP.GE.1 .AND. IEUP(IPFREE).GE.1) GO TO 500
+        226     2               C
+        227     2   p    s                    IF(IEP.EQ.0 .AND. (      ABS(GPFREE(IPFREE)).GT.1.0+EPS
+        228     2                    &                           .OR.  ABS(EPFREE(IPFREE)).GT.1.0+EPS
+        229     2                    &                           .OR.  ABS(TPFREE(IPFREE)).GT.1.0+EPS))
+        230     2                    &        IEUP(IPFREE) = 0
+        231     2               C
+        232     2   p    m                    IF(IEP.GE.1 .AND. (      ABS(GPFREE(IPFREE)).LE.1.0+EPS
+        233     2                    &                           .AND. ABS(EPFREE(IPFREE)).LE.1.0+EPS
+        234     2                    &                           .AND. ABS(TPFREE(IPFREE)).LE.1.0+EPS))
+        235     2                    &        IEUP(IPFREE) = IENP(IEP,LPFREE(IPFREE))
+        236     2   p    v        500     CONTINUE
+        237     1                 510 CONTINUE
+        238                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IEUP, (unknown)
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 3
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        239     1   s   2m            DO 520 IPFREE = 1 , NPFREE
+        240     2   p   2v                IF(IEUP(IPFREE).EQ.0) THEN
+        241     2   m   2m                    WRITE(IUT0,*) WRNMSG, LPFREE(IPFREE)
+        242     2   p   2v                    IWRN = 1
+        243     2   p   2v                ENDIF
+        244     1   p   2v        520 CONTINUE
+        245                     C
+        246                     C
+        247                     C INTERPOLATE VELOCITY COMPONENTS
+        248                     C
+        249                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 47
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IEUP
+                              <<< Loop-information  End >>>
+        250     1  pp    s            DO 600 IPFREE = 1 , NPFREE
+        251     1   p    m                IF(IEUP(IPFREE).EQ.0) GO TO 600
+        252     1   p    s                G = GPFREE(IPFREE)
+        253     1   p    s                E = EPFREE(IPFREE)
+        254     1   p    s                T = TPFREE(IPFREE)
+        255     1               C
+        256     1   p    s                IP1 = NODE(1,IEUP(IPFREE))
+        257     1   p    s                IP2 = NODE(2,IEUP(IPFREE))
+        258     1   p    s                IP3 = NODE(3,IEUP(IPFREE))
+        259     1   p    s                IP4 = NODE(4,IEUP(IPFREE))
+        260     1   p    s                IP5 = NODE(5,IEUP(IPFREE))
+        261     1   p    s                IP6 = NODE(6,IEUP(IPFREE))
+        262     1   p    s                IP7 = NODE(7,IEUP(IPFREE))
+        263     1   p    s                IP8 = NODE(8,IEUP(IPFREE))
+        264     1               C
+        265     1   p    s                S1  =  0.125E0*(1.E0+GI(1)*G)*(1.E0+EI(1)*E)*(1.E0+TI(1)*T)
+        266     1   p    s                S2  =  0.125E0*(1.E0+GI(2)*G)*(1.E0+EI(2)*E)*(1.E0+TI(2)*T)
+        267     1   p    s                S3  =  0.125E0*(1.E0+GI(3)*G)*(1.E0+EI(3)*E)*(1.E0+TI(3)*T)
+        268     1   p    s                S4  =  0.125E0*(1.E0+GI(4)*G)*(1.E0+EI(4)*E)*(1.E0+TI(4)*T)
+        269     1   p    s                S5  =  0.125E0*(1.E0+GI(5)*G)*(1.E0+EI(5)*E)*(1.E0+TI(5)*T)
+        270     1   p    s                S6  =  0.125E0*(1.E0+GI(6)*G)*(1.E0+EI(6)*E)*(1.E0+TI(6)*T)
+        271     1   p    s                S7  =  0.125E0*(1.E0+GI(7)*G)*(1.E0+EI(7)*E)*(1.E0+TI(7)*T)
+        272     1   p    s                S8  =  0.125E0*(1.E0+GI(8)*G)*(1.E0+EI(8)*E)*(1.E0+TI(8)*T)
+        273     1               C
+        274     1   p    s                UPFREE(IPFREE)= S1*U(IP1)+S2*U(IP2)+S3*U(IP3)+S4*U(IP4)
+        275     1                    &                   +S5*U(IP5)+S6*U(IP6)+S7*U(IP7)+S8*U(IP8)
+        276     1               C
+        277     1   p    s                VPFREE(IPFREE)= S1*V(IP1)+S2*V(IP2)+S3*V(IP3)+S4*V(IP4)
+        278     1                    &                   +S5*V(IP5)+S6*V(IP6)+S7*V(IP7)+S8*V(IP8)
+        279     1               C
+        280     1   p    s                WPFREE(IPFREE)= S1*W(IP1)+S2*W(IP2)+S3*W(IP3)+S4*W(IP4)
+        281     1                    &                   +S5*W(IP5)+S6*W(IP6)+S7*W(IP7)+S8*W(IP8)
+        282     1   p    v        600 CONTINUE
+        283                     C
+        284                     C
+        285                           RETURN
+        286                           END
+
+ Diagnostic messages: program name(FSETUP)
+   jwd8220o-i  "fsetup.f", line 13: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd8210o-i  "fsetup.f", line 101: Loops fused at line 109.
+   jwd8211o-i  "fsetup.f", line 107: Loops interchanged at line 109.
+   jwd6001s-i  "fsetup.f", line 107: SIMD conversion is applied to DO loop with DO variable 'IEP'.
+   jwd8670o-i  "fsetup.f", line 107: This loop cannot be software pipelined because the loop contains a branch instruction.
+   jwd8211o-i  "fsetup.f", line 109: Loops interchanged at line 107.
+   jwd5001p-i  "fsetup.f", line 109: DO loop with DO variable 'IPFREE' is parallelized.
+   jwd5202p-i  "fsetup.f", line 117: DO loop is not parallelized: data dependency of variable 'IEFREE' may cause different results from serial execution for loop.
+   jwd5208p-i  "fsetup.f", line 117: DO loop is not parallelized: the assign-refer order of 'IEUP' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "fsetup.f", line 117: DO loop is not parallelized: the assign-refer order of 'TPFREE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "fsetup.f", line 117: DO loop is not parallelized: the assign-refer order of 'EPFREE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "fsetup.f", line 117: DO loop is not parallelized: the assign-refer order of 'GPFREE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5001p-i  "fsetup.f", line 118: DO loop with DO variable 'IPFREE' is parallelized.
+   jwd6001s-i  "fsetup.f", line 118: SIMD conversion is applied to DO loop with DO variable 'IPFREE'.
+   jwd8663o-i  "fsetup.f", line 118: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "fsetup.f", line 118: Loop unrolled 2 times.
+   jwd5202p-i  "fsetup.f", line 124: DO loop is not parallelized: data dependency of variable 'IEFREE' may cause different results from serial execution for loop.
+   jwd5208p-i  "fsetup.f", line 124: DO loop is not parallelized: the assign-refer order of 'TPFREE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "fsetup.f", line 124: DO loop is not parallelized: the assign-refer order of 'EPFREE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "fsetup.f", line 124: DO loop is not parallelized: the assign-refer order of 'GPFREE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6229s-i  "fsetup.f", line 126: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8670o-i  "fsetup.f", line 126: This loop cannot be software pipelined because the loop contains a branch instruction.
+   jwd5202p-i  "fsetup.f", line 133: DO loop is not parallelized: data dependency of variable 'IEFREE' may cause different results from serial execution for loop.
+   jwd6202s-i  "fsetup.f", line 133: SIMD conversion cannot be applied to DO loop: data dependency of variable 'IEFREE' may cause different results from serial execution for loop.
+   jwd8209o-i  "fsetup.f", line 136: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "fsetup.f", line 140: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "fsetup.f", line 144: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "fsetup.f", line 148: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "fsetup.f", line 152: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "fsetup.f", line 156: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "fsetup.f", line 160: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "fsetup.f", line 164: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "fsetup.f", line 168: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "fsetup.f", line 172: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "fsetup.f", line 182: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "fsetup.f", line 192: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "fsetup.f", line 202: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "fsetup.f", line 216: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "fsetup.f", line 217: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "fsetup.f", line 218: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8321o-i  "fsetup.f", line 223: Loop unswitched.
+   jwd5001p-i  "fsetup.f", line 223: DO loop with DO variable 'IPFREE' is parallelized.
+   jwd6229s-i  "fsetup.f", line 223: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8670o-i  "fsetup.f", line 223: This loop cannot be software pipelined because the loop contains a branch instruction.
+   jwd6005s-i  "fsetup.f", line 239: SIMD conversion is applied partially to DO loop with DO variable 'IPFREE'.
+   jwd8663o-i  "fsetup.f", line 239: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "fsetup.f", line 239: Loop unrolled 2 times.
+   jwd8664o-i  "fsetup.f", line 239: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5121p-i  "fsetup.f", line 241: DO loop is not parallelized: an input/output statement was found in the loop.
+   jwd6121s-i  "fsetup.f", line 241: SIMD conversion cannot be applied to DO loop: an input/output statement was found in the loop.
+   jwd5001p-i  "fsetup.f", line 250: DO loop with DO variable 'IPFREE' is parallelized.
+   jwd6229s-i  "fsetup.f", line 250: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8670o-i  "fsetup.f", line 250: This loop cannot be software pipelined because the loop contains a branch instruction.
+   jwd8209o-i  "fsetup.f", line 265: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "fsetup.f", line 266: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "fsetup.f", line 267: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "fsetup.f", line 268: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "fsetup.f", line 269: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "fsetup.f", line 270: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "fsetup.f", line 271: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "fsetup.f", line 272: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "fsetup.f", line 274: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "fsetup.f", line 277: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "fsetup.f", line 280: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+
+ Procedure information
+   Lines      : 286
+   Statements : 100
+   Stack(byte): 3536
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 286
+   Total statements : 100
+   Total stack(byte): 3536
+   Total prefetch num: 0
+

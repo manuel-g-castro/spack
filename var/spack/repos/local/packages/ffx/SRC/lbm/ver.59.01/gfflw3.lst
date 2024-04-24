@@ -1,0 +1,425 @@
+
+ Fujitsu Fortran Version 4.8.1  Thu Nov 24 16:46:10 2022
+
+ Compilation information
+   Current directory : /vol0005/mdt2/home/u10588/SRC/lbm/ver.59.01
+   Source file       : gfflw3.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -Nlst=t -Cpp -Cfpp -c -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Knointentopt
+   Cpp options          : -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Dcputime -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=8 -D__FRT_patchlevel__=1 -D__FRT_version__="4.8.1" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Knoarray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nlibomp -Nline -Nlst -Nlst=p -Nlst=t
+                          -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "GFFLW3"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE GFFLW3(IMODE,FILEFF,
+          2                          *                  NG,NC,NP,NTIME,CVEL,VSCALE,TIME,V3D,
+          3                          *                  MPBOUN,NPBOUN,LPBOUN,
+          4                          *                  MCOM,NCOMFL,NCOMST,COMFLE,COMSET,
+          5                          *                  IUT6,IUT0,IUTFF,IERR,
+          6                          *                  NG3,WRK1,WRK2,WRK3,WRK4)
+          7                           IMPLICIT NONE
+          8                           INTEGER*4    IMODE,NG,NC,NP,NTIME
+          9                           REAL*8       TIME,CVEL(9,NP),VSCALE,
+         10                          *             V3D(4,0:NG+2,0:NG+2,0:NG+2)
+         11                           INTEGER*4    MPBOUN,NPBOUN(NC),LPBOUN(5,MPBOUN,NC)
+         12                           INTEGER*4    IUT6,IUT0,IUTFF,IERR
+         13                     C
+         14                           INTEGER*4    MCOM,NCOMFL,NCOMST
+         15                           CHARACTER*60 FILEFF,COMFLE(MCOM),COMSET(MCOM)
+         16                     C
+         17                           INTEGER*4    NG3
+         18                           REAL*4       TBUF,WRK1(NG3),WRK2(NG3),WRK3(NG3),WRK4(NG3)
+         19                     C
+         20                           INTEGER*4 IACT,ITARGT,IRESV,IWRITE,INAME,
+         21                          *          ICAST,ICAST1,IDATA0,IALL,ISKIP,ISKIP1,ICHECK
+         22                           INTEGER*4 MAXPRN
+         23                           CHARACTER*30 NAME
+         24                           DATA IWRITE / 2 /
+         25                           DATA INAME  / 1 /
+         26                           DATA MAXPRN / 200 /
+         27                           DATA ICAST  /0/
+         28                           DATA ICAST1 /1/
+         29                           DATA IDATA0 /0/
+         30                           DATA IALL   /0/
+         31                           DATA ISKIP  /0/
+         32                           DATA ISKIP1 /1/
+         33                           DATA ICHECK /999999/
+         34                     C
+         35                           INTEGER*4 N4,NDUM
+         36                           DATA N4   /4/
+         37                     C
+         38                           INTEGER*4 I,J,K,IG,IC,MG,IPB,NDUM1,NDUM2
+         39                     C
+         40                     C[INPUT]
+         41                     C     IMODE : SPECIFY ACTION MODE (0:CHECK SIZE, 1:READ, 2:WRITE)
+         42                     C     MC    : MAX. NUMBER OF B.C GROUPS IN CUBES (=152)
+         43                     C     IUT6  : UNIT NUMBER OF STANDARD OUTPUT
+         44                     C     IUT0  : UNIT NUMBER OF ERROR OUTPUT
+         45                     C     IUTFF : UNIT NUMBER OF GF-FLOW FILE
+         46                     C
+         47                     C[INPUT&OUTPUT]
+         48                     C
+         49                     C[OUTPUT]
+         50                     C     IERR   : ERROR FLAG
+         51                     C
+         52                           IERR=0
+         53                           MG=(NG+3)*(NG+3)*(NG+3)
+         54                     C
+         55     1                     IF(IMODE.EQ.1) THEN
+         56     1                         WRITE(IUT6,*)
+         57     1                         WRITE(IUT6,*) '  GFFLW3 :: READ GF-FLOW FILE   '
+         58     1                         GOTO 1000
+         59     1                     ELSE IF(IMODE.EQ.2) THEN
+         60     1                         WRITE(IUT6,*)
+         61     1                         WRITE(IUT6,*) '  GFFLW3 :: WRITE GF-FLOW FILE   '
+         62     1                         GOTO 2000
+         63     1                     ELSE IF(IMODE.EQ.3) THEN
+         64     1                         WRITE(IUT6,*)
+         65     1                         WRITE(IUT6,*) '  GFFLW3 :: OPEN GF-FLOW FILE   '
+         66     1                         GOTO 1000
+         67     1                     ELSE IF(IMODE.EQ.4) THEN
+         68     1                         WRITE(IUT6,*)
+         69     1                         WRITE(IUT6,*) '  GFFLW3 :: OPEN GF-FLOW FILE   '
+         70     1                         GOTO 2000
+         71     1                     ELSE IF(IMODE.EQ.5) THEN
+         72     1                         WRITE(IUT6,*)
+         73     1                         WRITE(IUT6,*) '  GFFLW3 :: READ GF-FLOW FILE   '
+         74     1                         GOTO 5000
+         75     1                     ELSE IF(IMODE.EQ.6) THEN
+         76     1                         WRITE(IUT6,*)
+         77     1                         WRITE(IUT6,*) '  GFFLW3 :: APPEND GF-FLOW FILE   '
+         78     1                         GOTO 6000
+         79     1                     ELSE IF(IMODE.EQ.7) THEN
+         80     1                         WRITE(IUT6,*)
+         81     1                         WRITE(IUT6,*) '  GFFLW3 :: CLOSE GF-FLOW FILE   '
+         82     1                         GOTO 7000
+         83     1                     ELSE IF(IMODE.EQ.8) THEN
+         84     1                         WRITE(IUT6,*)
+         85     1                         WRITE(IUT6,*) '  GFFLW3 :: CLOSE GF-FLOW FILE   '
+         86     1                         GOTO 8000
+         87     1                     ELSE
+         88     1                         IERR=1
+         89     1                         RETURN
+         90     1                     ENDIF
+         91                     C
+         92                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+         93                     C                                                      C
+         94                     C    IMODE=1: READ MODE                                C
+         95                     C                                                      C
+         96                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+         97                     C
+         98                      1000 CONTINUE
+         99                     C
+        100                     C
+        101                     CCC OPEN GF-FLOW FILE TO BE READ
+        102                     C
+        103                           IACT = 3
+        104                           CALL GFALL(IUT0,IUT6,IUTFF,FILEFF,
+        105                          *           MCOM,NCOMFL,COMFLE,
+        106                          *           MCOM,NCOMST,COMSET,
+        107                          *           IACT,IWRITE,INAME,IRESV,
+        108                          *           ICAST,IDATA0,IALL,ISKIP,IERR,
+        109                          *           ' !',ICHECK)
+        110                     C
+        111                           IF(IMODE.EQ.3) RETURN
+        112                     C
+        113                      5000 CONTINUE
+        114                     C
+        115                     CCC OPEN GF-FLOW FILE TO BE READ
+        116                     C
+        117     1                     DO 1100 IC=1,NC
+        118     1                         IACT = 5
+        119     1                         TBUF=REAL(TIME)
+        120     1                         CALL GFALL(IUT0,IUT6,IUTFF,FILEFF,
+        121     1                    *               MCOM,NCOMFL,COMFLE,
+        122     1                    *               MCOM,NCOMST,COMSET,
+        123     1                    *               IACT,IWRITE,INAME,IRESV,
+        124     1                    *               ICAST,IDATA0,IALL,ISKIP,IERR,
+        125     1                    *               ' *TIME_PS *STEP_PS *LBM_RHO *LBM_VEL !',
+        126     1                    *               NAME,TBUF,
+        127     1                    *               NAME,NTIME,
+        128     1                    *               NAME,NG3,NDUM1,WRK1,
+        129     1                    *               NAME,NG3,NDUM2,WRK2,WRK3,WRK4,
+        130     1                    *               ICHECK)
+        131     1               C
+        132     1                         IG=0
+        133     2   s                     DO 1110 K=0,NG+2
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WRK3, WRK4, WRK2, WRK1, V3D
+                              <<< Loop-information  End >>>
+        134     3   s                     DO 1120 J=0,NG+2
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 250
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.00, ITR: 64, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WRK3, WRK2, V3D, WRK1, WRK4
+                              <<< Loop-information  End >>>
+        135     4  pp    v                DO 1130 I=0,NG+2
+        136     4   p    v                    IG=IG+1
+        137     4   p    v                    V3D(1,I,J,K)=DBLE(WRK1(IG))
+        138     4   p    v                    V3D(2,I,J,K)=DBLE(WRK2(IG)*VSCALE)
+        139     4   p    v                    V3D(3,I,J,K)=DBLE(WRK3(IG)*VSCALE)
+        140     4   p    v                    V3D(4,I,J,K)=DBLE(WRK4(IG)*VSCALE)
+        141     4   p    v       1130     CONTINUE
+        142     3   p            1120     CONTINUE
+        143     2   p            1110     CONTINUE
+        144     1               C
+        145     1                1100 CONTINUE
+        146                     C
+        147                           IF(IMODE.EQ.5) RETURN
+        148                     C
+        149                     CCC CLOSE GF-FLOW FILE
+        150                     C
+        151                      7000 CONTINUE
+        152                     C
+        153                           IACT = 7
+        154                           CALL GFALL(IUT0,IUT6,IUTFF,FILEFF,
+        155                          *           MCOM,NCOMFL,COMFLE,
+        156                          *           MCOM,NCOMST,COMSET,
+        157                          *           IACT,IWRITE,INAME,IRESV,
+        158                          *           ICAST,IDATA0,IALL,ISKIP,IERR,
+        159                          *           ' !',ICHECK)
+        160                     C
+        161                           RETURN
+        162                     C
+        163                     C
+        164                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+        165                     C                                                      C
+        166                     C    IMODE=2: WRITE MODE                               C
+        167                     C                                                      C
+        168                     CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+        169                     C
+        170                     C
+        171                      2000 CONTINUE
+        172                     C
+        173                     CCC OPEN GF-FLOW FILE TO BE WRITTEN
+        174                     C
+        175                           IACT = 4
+        176                           CALL GFALL(IUT0,IUT6,IUTFF,FILEFF,
+        177                          *           MCOM,NCOMFL,COMFLE,
+        178                          *           MCOM,NCOMST,COMSET,
+        179                          *           IACT,IWRITE,INAME,IRESV,
+        180                          *           ICAST,IDATA0,IALL,ISKIP,IERR,
+        181                          *           ' !',ICHECK)
+        182                     C
+        183                           IF(IMODE.EQ.4) RETURN
+        184                     C
+        185                      6000 CONTINUE
+        186                     C
+        187                     CCC WRITE CUBE DATA
+        188                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPBOUN, (unknown)
+                              <<< Loop-information  End >>>
+        189     1                     DO 2100 IC=1,NC
+        190     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<< Loop-information  End >>>
+        191     2  pp                     DO 2200 K=0,NG+2
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      V3D
+                              <<< Loop-information  End >>>
+        192     3   p                     DO 2300 J=0,NG+2
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.25, ITR: 48, MVE: 2, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      V3D
+                              <<< Loop-information  End >>>
+        193     4   p   2v                DO 2400 I=0,NG+2
+        194     4   p   2v                    V3D(1,I,J,K)=0.0D0
+        195     4   p   2v                    V3D(2,I,J,K)=0.0D0
+        196     4   p   2v                    V3D(3,I,J,K)=0.0D0
+        197     4   p   2v                    V3D(4,I,J,K)=0.0D0
+        198     4   p   2v       2400     CONTINUE
+        199     3   p            2300     CONTINUE
+        200     2   p            2200     CONTINUE
+        201     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 500
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.71, ITR: 112, MVE: 5, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPBOUN, (unknown)
+                              <<< Loop-information  End >>>
+        202     2   m    v                DO 2500 IPB=1,NPBOUN(IC)
+        203     2   p    v                    I=LPBOUN(1,IPB,IC)
+        204     2   p    v                    J=LPBOUN(2,IPB,IC)
+        205     2   p    v                    K=LPBOUN(3,IPB,IC)
+        206     2   m    v                    V3D(1,I,J,K)=1.0D0
+        207     2   p    v       2500     CONTINUE
+        208     1               C
+        209     1                         IG=0
+        210     2                         DO 3100 K=0,NG+2
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      V3D, WRK3, WRK1, WRK4, WRK2
+                              <<< Loop-information  End >>>
+        211     3                         DO 3200 J=0,NG+2
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 348
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.00, ITR: 80, MVE: 4, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      V3D, WRK2, WRK3, WRK4, WRK1
+                              <<< Loop-information  End >>>
+        212     4  pp    v                DO 3300 I=0,NG+2
+        213     4   p    v                    IG=IG+1
+        214     4   p    v                    WRK1(IG)=REAL(V3D(1,I,J,K))
+        215     4   p    v                    WRK2(IG)=REAL(V3D(2,I,J,K)/VSCALE)
+        216     4   p    v                    WRK3(IG)=REAL(V3D(3,I,J,K)/VSCALE)
+        217     4   p    v                    WRK4(IG)=REAL(V3D(4,I,J,K)/VSCALE)
+        218     4   p    v       3300     CONTINUE
+        219     3                3200     CONTINUE
+        220     2                3100     CONTINUE
+        221     1               C
+        222     1                         IACT = 6
+        223     1                         TBUF=REAL(TIME)
+        224     1                         CALL GFALL(IUT0,IUT6,IUTFF,FILEFF,
+        225     1                    *               MCOM,NCOMFL,COMFLE,
+        226     1                    *               MCOM,NCOMST,COMSET,
+        227     1                    *               IACT,IWRITE,INAME,IRESV,
+        228     1                    *               ICAST,IDATA0,IALL,ISKIP,IERR,
+        229     1                    *               ' *TIME_PS *STEP_PS *LBM_RHO *LBM_VEL !',
+        230     1                    *               NAME,TBUF,
+        231     1                    *               NAME,NTIME,
+        232     1                    *               NAME,NG3,NG3,WRK1,
+        233     1                    *               NAME,NG3,NG3,WRK2,WRK3,WRK4,
+        234     1                    *               ICHECK)
+        235     1                2100 CONTINUE
+        236                     C
+        237                           IF(IMODE.EQ.6) RETURN
+        238                     C
+        239                      8000 CONTINUE
+        240                     C
+        241                     CCC CLOSE GF-FLOW FILE
+        242                     C
+        243                           IACT=8
+        244                           CALL GFALL(IUT0,IUT6,IUTFF,FILEFF,
+        245                          *           MCOM,NCOMFL,COMFLE,
+        246                          *           MCOM,NCOMST,COMSET,
+        247                          *           IACT,IWRITE,INAME,IRESV,
+        248                          *           ICAST,IDATA0,IALL,ISKIP,IERR,
+        249                          *           ' !',ICHECK)
+        250                     C
+        251                           RETURN
+        252                           END
+
+ Diagnostic messages: program name(GFFLW3)
+   jwd8220o-i  "gfflw3.f", line 1: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd2008i-i  "gfflw3.f", line 9: Dummy argument 'CVEL' not used in this subprogram.
+   jwd2006i-i  "gfflw3.f", line 20: 'ITARGT' is declared but never referenced.
+   jwd2006i-i  "gfflw3.f", line 35: 'NDUM' is declared but never referenced.
+   jwd5123p-i  "gfflw3.f", line 117: DO loop is not parallelized: a character or structure type data was found in the loop.
+   jwd5133p-i  "gfflw3.f", line 133: DO loop is not parallelized: its structure is too complicated.
+   jwd5133p-i  "gfflw3.f", line 134: DO loop is not parallelized: its structure is too complicated.
+   jwd5001p-i  "gfflw3.f", line 135: DO loop with DO variable 'I' is parallelized.
+   jwd6001s-i  "gfflw3.f", line 135: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8204o-i  "gfflw3.f", line 135: This loop is software pipelined.
+   jwd8205o-i  "gfflw3.f", line 135: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 64.
+   jwd5001p-i  "gfflw3.f", line 191: DO loop with DO variable 'K' is parallelized.
+   jwd6001s-i  "gfflw3.f", line 193: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8204o-i  "gfflw3.f", line 193: This loop is software pipelined.
+   jwd8205o-i  "gfflw3.f", line 193: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 48.
+   jwd5005p-i  "gfflw3.f", line 202: DO loop with DO variable 'IPB' is partially parallelized.
+   jwd6001s-i  "gfflw3.f", line 202: SIMD conversion is applied to DO loop with DO variable 'IPB'.
+   jwd8204o-i  "gfflw3.f", line 202: This loop is software pipelined.
+   jwd8205o-i  "gfflw3.f", line 202: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 112.
+   jwd5209p-i  "gfflw3.f", line 206: DO loop is not parallelized: the variable 'K' referenced in the subscript expression of array 'V3D' is assigned to in DO loop.
+   jwd5202p-i  "gfflw3.f", line 210: DO loop is not parallelized: data dependency of variable 'IG' may cause different results from serial execution for loop.
+   jwd5208p-i  "gfflw3.f", line 210: DO loop is not parallelized: the assign-refer order of 'WRK4' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "gfflw3.f", line 210: DO loop is not parallelized: the assign-refer order of 'WRK3' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "gfflw3.f", line 210: DO loop is not parallelized: the assign-refer order of 'WRK2' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "gfflw3.f", line 210: DO loop is not parallelized: the assign-refer order of 'WRK1' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5202p-i  "gfflw3.f", line 211: DO loop is not parallelized: data dependency of variable 'IG' may cause different results from serial execution for loop.
+   jwd5208p-i  "gfflw3.f", line 211: DO loop is not parallelized: the assign-refer order of 'WRK4' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "gfflw3.f", line 211: DO loop is not parallelized: the assign-refer order of 'WRK3' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "gfflw3.f", line 211: DO loop is not parallelized: the assign-refer order of 'WRK2' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "gfflw3.f", line 211: DO loop is not parallelized: the assign-refer order of 'WRK1' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5001p-i  "gfflw3.f", line 212: DO loop with DO variable 'I' is parallelized.
+   jwd6001s-i  "gfflw3.f", line 212: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8204o-i  "gfflw3.f", line 212: This loop is software pipelined.
+   jwd8205o-i  "gfflw3.f", line 212: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 80.
+   jwd8206o-i  "gfflw3.f", line 215: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "gfflw3.f", line 216: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "gfflw3.f", line 217: Division is changed to multiplication by reciprocal.
+
+ Procedure information
+   Lines      : 252
+   Statements : 135
+   Stack(byte): 3488
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 252
+   Total statements : 135
+   Total stack(byte): 3488
+   Total prefetch num: 0
+

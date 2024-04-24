@@ -1,0 +1,83 @@
+      SUBROUTINE CHKDDD(FILE,IUTDDD,IUT0,IUT6,
+     *                  MPART,MPPT,MEPT,MBPT,IERR)
+      IMPLICIT NONE
+      INCLUDE 'gf2.h'
+C
+C[INPUT]
+      INTEGER*4 IUTDDD
+      INTEGER*4 IUT0,IUT6
+      CHARACTER*60 FILE
+C
+C[OUTPUT]
+      INTEGER*4 MP,MPPT,MEPT,MBPT,IERR
+C
+C[LOCAL]
+      INTEGER*4 LDUM
+      INTEGER*4 MPART,NPPT,NEPT,NBPT
+C
+      MPART=0
+      MPPT=0
+      MEPT=0
+      MBPT=0
+C
+CC[OPEN]
+      IACT = 3
+      CALL GFALL(IUT0,IUT6,IUTDDD,FILE,
+     *           MCOM,NCOMFL,COMFLE,
+     *           MCOM,NCOMST,COMSET,
+     *           IACT,IWRITE,INAME,IRESV,  
+     *           ICAST,IDATA0,IALL,ISKIP1,IERR,
+     *           '*PT_NODE *PT_ELEM *BC_INTR !',
+     *           NAME,MPPT,NPPT,LDUM,
+     *           NAME,MEPT,NEPT,LDUM,
+     *           NAME,MBPT,NBPT,LDUM,LDUM,LDUM,
+     *           ICHECK)
+      IF (IERR.NE.0) RETURN
+C
+ 1000 CONTINUE
+CC[CHECK DATA SIZE]
+      IACT = 5
+      CALL GFALL(IUT0,IUT6,IUTDDD,FILE,
+     *           MCOM,NCOMFL,COMFLE,
+     *           MCOM,NCOMST,COMSET,
+     *           IACT,IWRITE,INAME,IRESV,  
+     *           ICAST,IDATA0,IALL,ISKIP1,IERR,
+     *           '*PT_NODE *PT_ELEM *BC_INTR !',
+     *           NAME,MPPT,NPPT,LDUM,
+     *           NAME,MEPT,NEPT,LDUM,
+     *           NAME,MBPT,NBPT,LDUM,LDUM,LDUM,
+     *           ICHECK)
+      IF (IERR.NE.0) RETURN
+      MPART=MPART+1
+C
+      IF(NPPT.GT.MPPT) MPPT=NPPT
+      IF(NEPT.GT.MEPT) MEPT=NEPT
+      IF(NBPT.GT.MBPT) MBPT=NBPT
+C
+      IF(IACT.NE.7) GOTO 1000
+C
+CC[CLOSE]
+      CALL GFALL(IUT0,IUT6,IUTDDD,FILE,
+     *           MCOM,NCOMFL,COMFLE,
+     *           MCOM,NCOMST,COMSET,
+     *           IACT,IWRITE,INAME,IRESV,  
+     *           ICAST,IDATA0,IALL,ISKIP1,IERR,
+     *           '*PT_NODE *PT_ELEM *BC_INTR !',
+     *           NAME,MPPT,NPPT,LDUM,
+     *           NAME,MEPT,NEPT,LDUM,
+     *           NAME,MBPT,NBPT,LDUM,LDUM,LDUM,
+     *           ICHECK)
+      IF (IERR.NE.0) RETURN
+C
+      MPART=MPART-1
+C
+      WRITE(IUT6,*)
+      WRITE(IUT6,*) 'CHKDDD: MPART',MPART
+      WRITE(IUT6,*) 'CHKDDD: MPPT ',MPPT
+      WRITE(IUT6,*) 'CHKDDD: MEPT ',MEPT
+      WRITE(IUT6,*) 'CHKDDD: MBPT ',MBPT
+C
+      RETURN 
+      END
+C
+  

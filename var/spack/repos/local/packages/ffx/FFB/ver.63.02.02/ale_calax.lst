@@ -1,0 +1,221 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:53:36 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : ale_calax.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "ALE_CALAX"
+  (line-no.)(nest)(optimize)
+          1                     C=======================================================================
+          2                           SUBROUTINE ALE_CALAX(A, S, AS, NP, NE, NCRS, IPCRS, NPP,
+          3                          *                   N,ME,IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+          4                          *                   RX,RY,IUT0,IERR)
+          5                     C=======================================================================
+          6                           IMPLICIT NONE
+          7                           INTEGER NP, NE, NCRS
+          8                           REAL*4  A(NCRS*9), S(NP*3), AS(NP*3)
+          9                           INTEGER IPCRS(NCRS), NPP(NP)
+         10                           INTEGER IP, K, ICRS, IP2
+         11                     C
+         12                           INTEGER MAXBUF,IDUM
+         13                           INTEGER N,ME,IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,IUT0,IERR
+         14                           REAL*4  RX,RY
+         15                     C
+         16                           DIMENSION LDOM(NDOM),NBPDOM(NDOM)
+         17                           DIMENSION IPSLF(MBPDOM,NDOM),IPSND(MBPDOM,NDOM)
+         18                           DIMENSION RX(0:N,ME),RY(0:N,ME)
+         19                     C
+         20                           REAL*4  UBUF,VBUF,WBUF,AUBUF,AVBUF,AWBUF,
+         21                          *        A11,A12,A13,A21,A22,A23,A31,A32,A33
+         22                     C
+         23                           CHARACTER*60 ERMSGC
+         24                          & /' ## SUBROUTINE CALAXC: FATAL      ERROR REPORT   ; RETURNED'/
+         25                     C
+         26                     C
+         27                     C     CALCULATE THE PRODUCT OF MATRIX A AND VECTOR X IN PRESSURE EQUATION
+         28                     C         ( 3-D CALCULATION : SINGLE WORD & MULTI ELEMENT VERSION )
+         29                     C                                              2009.12.01 RIST
+         30                     C
+         31                     C          OPERATION COUNTS:   FLOP /ELEMENT
+         32                     C          DATA LOADINGS   :   WORDS/ELEMENT
+         33                     C                           (  WORDS CONTIGUOUSLY,
+         34                     C                              WORDS BY 4-WORD STRIDE, AND
+         35                     C                              WORDS BY LIST )
+         36                     C
+         37                     C     ARGUMENT LISTINGS
+         38                     C
+         39                     C       (1) INPUT
+         40                     C          ME          ; MAX. NUMBER OF TOTAL ELEMENTS
+         41                     C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT
+         42                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+         43                     C          NP          ; NUMBER OF TOTAL    NODES
+         44                     C
+         45                     C          NCRS        ; NUMBER OF NONZERO ELEMENTS IN MATRIX
+         46                     C                        OF CRS FORMAT
+         47                     C          A     (ICRS); NODE-WISE COEFFICIENT MATRIX IN CRS FORMAT
+         48                     C          S       (IP); GLOBAL FORCE VECTOR
+         49                     C          IPCRS (ICRS); NODE NO. TABLE BASED ON CRS FORMAT
+         50                     C          NPP     (IP); NUMBER OF ADJACENT NODES    TO NODE    IP
+         51                     C
+         52                     C          IPART       ; SUB-DOMAIN NUMBER THAT THIS TASK SHOULD TAKE/IS
+         53                     C                       TAKING CARE OF. IPART BEING SET ZERO MEANS THAT
+         54                     C                       THE PROGRAM SHOULD RUN/IS RUNNING IN SERIAL
+         55                     C                       MODE.
+         56                     C          LDOM  (IDOM); NEIBERING SUB-DOMAIN NUMBER
+         57                     C          NBPDOM(IDOM); NUMBER OF INTER-CONNECT BOUNDARY NODES
+         58                     C                       SHARING WITH THE IDOM'TH NEIBERING SUB-DOMAIN,
+         59                     C                       LDOM(IDOM)
+         60                     C          NDOM        ; NUMBER OF THE NERIBERING SUB-DOMAINS
+         61                     C          IPSLF (IBP,IDOM); INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+         62                     C                           CALLING TASK'S SUB-DOMAIN, FOR THE IDOM'TH
+         63                     C                           NEIBERING SUB-DOMAIN, LDOM(IDOM)
+         64                     C          IPSND (IBP,IDOM); INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+         65                     C                           SUB-DOMAIN THAT IS RECEIVING THE CALLING
+         66                     C                           TASK'S RESIDUALS.
+         67                     C          MBPDOM      ; THE MAXIMUM NUMBER OF THE INTER-CONNECT
+         68                     C                       BOUNDARY NODES FOR ONE NEIBERING SUB-DOMAIN
+         69                     C
+         70                     C          IUT0        ; FILE NUMBER TO REPORT ERROR OCCURRENCE
+         71                     C
+         72                     C       (2) OUTPUT
+         73                     C          AS      (IP); GLOBAL SOLUTION VECTOR (PROVIDE INITIAL GUESS)
+         74                     C          IERR        ; RETURN CODE TO REPORT ERROR OCCURENCE
+         75                     C
+         76                     C       (3) WORK
+         77                     C          RX    (I,IE); USED IN DDCOMX
+         78                     C          RY    (I,IE); USED IN DDCOMX
+         79                     C
+         80                     C
+         81                           IERR=0
+         82                     C
+         83                           MAXBUF = NE*(N+1)
+         84                     C
+         85                           ICRS=0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IPCRS, A
+                              <<< Loop-information  End >>>
+         86     1   s                 DO 110 IP=1,NP
+         87     1   p                     AUBUF=0.0E0
+         88     1   p                     AVBUF=0.0E0
+         89     1   p                     AWBUF=0.0E0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.22, ITR: 80, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      A, IPCRS
+                              <<< Loop-information  End >>>
+         90     2   s    v                DO 100 K=1,NPP(IP)
+         91     2   p    v                    ICRS=ICRS+1
+         92     2   p    v                    IP2=IPCRS(ICRS)
+         93     2   p    v                    UBUF=S(IP2+NP*0)
+         94     2   p    v                    VBUF=S(IP2+NP*1)
+         95     2   p    v                    WBUF=S(IP2+NP*2)
+         96     2   p    v                    A11=A((ICRS-1)*9+1)
+         97     2   p    v                    A12=A((ICRS-1)*9+2)
+         98     2   p    v                    A13=A((ICRS-1)*9+3)
+         99     2   p    v                    A21=A((ICRS-1)*9+4)
+        100     2   p    v                    A22=A((ICRS-1)*9+5)
+        101     2   p    v                    A23=A((ICRS-1)*9+6)
+        102     2   p    v                    A31=A((ICRS-1)*9+7)
+        103     2   p    v                    A32=A((ICRS-1)*9+8)
+        104     2   p    v                    A33=A((ICRS-1)*9+9)
+        105     2   p    v                    AUBUF=AUBUF+A11*UBUF+A12*VBUF+A13*WBUF
+        106     2   p    v                    AVBUF=AVBUF+A21*UBUF+A22*VBUF+A23*WBUF
+        107     2   p    v                    AWBUF=AWBUF+A31*UBUF+A32*VBUF+A33*WBUF
+        108     2   p    v        100     CONTINUE
+        109     1   p                     AS(IP+NP*0)=AUBUF
+        110     1   p                     AS(IP+NP*1)=AVBUF
+        111     1   p                     AS(IP+NP*2)=AWBUF
+        112     1   p             110 CONTINUE
+        113                     C
+        114                           IDUM = 3
+        115                           CALL DDCOMX(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        116                          *            AS,AS(NP+1),AS(2*NP+1),NP,IUT0,IERR,RX,RY,MAXBUF)
+        117     1                     IF(IERR.NE.0) THEN
+        118     1                         WRITE(IUT0,*)
+        119     1                         WRITE(IUT0,*) ERMSGC
+        120     1                         RETURN
+        121     1                     ENDIF
+        122                     C
+        123                           RETURN
+        124                           END
+
+ Diagnostic messages: program name(ALE_CALAX)
+   jwd8220o-i  "ale_calax.f", line 2: 副作用の可能性のある最適化を行いました。
+   jwd5133p-i  "ale_calax.f", line 86: このDOループは構造が複雑なため、並列化できません。
+   jwd6004s-i  "ale_calax.f", line 90: リダクション演算を含むDOループをSIMD化しました。(名前:K)
+   jwd8204o-i  "ale_calax.f", line 90: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "ale_calax.f", line 90: ループの繰返し数が80回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "ale_calax.f", line 105: 多項式の演算順序を変更しました。
+   jwd8209o-i  "ale_calax.f", line 106: 多項式の演算順序を変更しました。
+   jwd8209o-i  "ale_calax.f", line 107: 多項式の演算順序を変更しました。
+
+ Procedure information
+   Lines      : 124
+   Statements : 53
+   Stack(byte): 608
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 124
+   Total statements : 53
+   Total stack(byte): 608
+   Total prefetch num: 0
+

@@ -1,0 +1,150 @@
+
+ Fujitsu Fortran Version 4.8.1  Thu Nov 24 16:46:08 2022
+
+ Compilation information
+   Current directory : /vol0005/mdt2/home/u10588/SRC/lbm/ver.59.01
+   Source file       : itlist.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -Nlst=t -Cpp -Cfpp -c -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Knointentopt
+   Cpp options          : -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Dcputime -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=8 -D__FRT_patchlevel__=1 -D__FRT_version__="4.8.1" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Knoarray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nlibomp -Nline -Nlst -Nlst=p -Nlst=t
+                          -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "ITLIST"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE ITLIST(NG,LLEVEL,LPOSI,DSCALE,
+          2                          *                  XTRIG,YTRIG,ZTRIG,MPBOUN,NBLIST,LBLIST)
+          3                           IMPLICIT NONE
+          4                     C
+          5                     C[INPUT]
+          6                           INTEGER*4 NG,LLEVEL,LPOSI(3)
+          7                           REAL*8    DSCALE
+          8                           INTEGER*4 MPBOUN
+          9                           REAL*4    XTRIG(3),YTRIG(3),ZTRIG(3)
+         10                     C
+         11                     C[OUTPUT]
+         12                           INTEGER*4 NBLIST,LBLIST(3,MPBOUN)
+         13                     C
+         14                     C[LOCAL]
+         15                           INTEGER*4 I,J,K,IERR,N1,N2
+         16                           REAL*4    DD,DG,XX,YY,ZZ,XMIN,XMAX,YMIN,YMAX,ZMIN,ZMAX
+         17                           REAL*4    COORD(3,2)
+         18                           DATA N1 /1/
+         19                           DATA N2 /2/
+         20                     C
+         21                           DD=REAL(DSCALE)*2.0E0**(LLEVEL-1)
+         22                           DG=DD/FLOAT(NG)
+         23                     C
+         24                           XMIN=MIN(XTRIG(1),XTRIG(2),XTRIG(3))-DG*2.0
+         25                           XMAX=MAX(XTRIG(1),XTRIG(2),XTRIG(3))+DG*2.0
+         26                           YMIN=MIN(YTRIG(1),YTRIG(2),YTRIG(3))-DG*2.0
+         27                           YMAX=MAX(YTRIG(1),YTRIG(2),YTRIG(3))+DG*2.0
+         28                           ZMIN=MIN(ZTRIG(1),ZTRIG(2),ZTRIG(3))-DG*2.0
+         29                           ZMAX=MAX(ZTRIG(1),ZTRIG(2),ZTRIG(3))+DG*2.0
+         30                     C
+         31                           NBLIST=0
+         32     1                     DO 1000 K =0,NG+1
+         33     1                         ZZ=REAL(DSCALE)*LPOSI(3)+DG*(FLOAT(K)-0.5)
+         34     1                         IF(ZZ.LT.ZMIN) GOTO 1000
+         35     1                         IF(ZZ.GT.ZMAX) GOTO 1000
+         36     1               C
+         37     2                         DO 1100 J =0,NG+1
+         38     2                             YY=REAL(DSCALE)*LPOSI(2)+DG*(FLOAT(J)+0.5)
+         39     2                             IF(YY.LT.YMIN) GOTO 1100
+         40     2                             IF(YY.GT.YMAX) GOTO 1100
+         41     2               C
+         42     3   s    s                    DO 1200 I =0,NG+1
+         43     3   p    v                        XX=REAL(DSCALE)*LPOSI(1)+DG*(FLOAT(I)+0.5)
+         44     3   p    v                        IF(XX.LT.XMIN) GOTO 1200
+         45     3   p    v                        IF(XX.GT.XMAX) GOTO 1200
+         46     3               C
+         47     3   s    s                        NBLIST=NBLIST+1
+         48     4   p    v                        IF(NBLIST.LE.MPBOUN) THEN
+         49     4   m    v                            LBLIST(1,NBLIST)=I
+         50     4   s    v                            LBLIST(2,NBLIST)=J
+         51     4   s    v                            LBLIST(3,NBLIST)=K
+         52     4   p    v                        ENDIF
+         53     3               C
+         54     3   p    v       1200         CONTINUE
+         55     2                1100     CONTINUE
+         56     1                1000 CONTINUE
+         57                     C
+         58                           RETURN
+         59                           END
+
+ Diagnostic messages: program name(ITLIST)
+   jwd8220o-i  "itlist.f", line 1: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd2006i-i  "itlist.f", line 15: 'IERR' is declared but never referenced.
+   jwd2006i-i  "itlist.f", line 17: 'COORD' is declared but never referenced.
+   jwd8209o-i  "itlist.f", line 22: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5202p-i  "itlist.f", line 32: DO loop is not parallelized: data dependency of variable 'NBLIST' may cause different results from serial execution for loop.
+   jwd5208p-i  "itlist.f", line 32: DO loop is not parallelized: the assign-refer order of 'LBLIST' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5202p-i  "itlist.f", line 37: DO loop is not parallelized: data dependency of variable 'NBLIST' may cause different results from serial execution for loop.
+   jwd5208p-i  "itlist.f", line 37: DO loop is not parallelized: the assign-refer order of 'LBLIST' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6229s-i  "itlist.f", line 42: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8670o-i  "itlist.f", line 42: This loop cannot be software pipelined because the loop contains a branch instruction.
+   jwd5202p-i  "itlist.f", line 47: DO loop is not parallelized: data dependency of variable 'NBLIST' may cause different results from serial execution for loop.
+   jwd6202s-i  "itlist.f", line 47: SIMD conversion cannot be applied to DO loop: data dependency of variable 'NBLIST' may cause different results from serial execution for loop.
+   jwd5209p-i  "itlist.f", line 49: DO loop is not parallelized: the variable 'NBLIST' referenced in the subscript expression of array 'LBLIST' is assigned to in DO loop.
+
+ Procedure information
+   Lines      : 59
+   Statements : 44
+   Stack(byte): 368
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 59
+   Total statements : 44
+   Total stack(byte): 368
+   Total prefetch num: 0
+

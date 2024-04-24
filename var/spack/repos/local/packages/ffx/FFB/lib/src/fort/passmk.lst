@@ -1,0 +1,348 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:54:14 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : passmk.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "PASSMK"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    PASSMK                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE PASSMK(JPSOUT,IUTPS,IMODE,IOPT,X,Y,VR1,VR2,
+         14                          *                  NODE,NE,NP,N,IENE,NEE,MAXEE,
+         15                          *                  XMR,YMR,IEMR,NMR,DT,NTIME,CU,CV,
+         16                          *                  XMINTS,XMAXTS,YMINTS,YMAXTS,JVALID,
+         17                          *                  XMIN,YMIN,SFC,ICLMRK,ICDMRK,CSZMRK,
+         18                          *                  SR,SRMIN,SRMAX,LCL,NCL,NMAX,EPS)
+         19                           IMPLICIT REAL*4(A-H,O-Z)
+         20                           DIMENSION X(NP),Y(NP),VR1(NP),VR2(NP),
+         21                          1          NODE(N,NE),IENE(MAXEE,NE),NEE(NE),
+         22                          2          XMR(NMR),YMR(NMR),IEMR(NMR),SR(NP),LCL(NCL)
+         23                     C
+         24                           DIMENSION XP1(2),YP1(2)
+         25                     C
+         26                     #ifdef VOS
+         27                           INCLUDE (GN)
+         28                     #else
+         29                           INCLUDE 'gn.h'
+         30                     #endif
+         31                     C
+         32                           DIMENSION XBUF(1),YBUF(1)
+         33                     C
+         34                           MTWRN  = 0
+         35                     C
+         36                     C
+         37                     C      DRAW PASS LINES OF RELEASED MARKERS
+         38                     C         ( 2-D GRAPHICS )
+         39                     C
+         40                     C
+         41                     C     NOTE 1 ; CALLING GENERIC GRAPHIC AND POSTSCRIPT INTERFACES.
+         42                     C     NOTE 2 ; WARNING MESSAGE FROM SUBROUTINE INTERP WILL BE (IF ANY)
+         43                     C             SURPRESSED, BECAUSE GRAPHIC SYSTEM IS CURRENTLY OPEN.
+         44                     C
+         45                     C
+         46                     C     ARGUMENT LISTINGS
+         47                     C       (1) INPUT
+         48                     C          JPSOUT      ; POSTSCRIPT FILE WILL BE OUTPUT IF SET TO 1 OR 2
+         49                     C          IUTPS       ; FILE NUMBER TO ACCESS POSTSCRIPT FILE
+         50                     C          IMODE       ; SPECIFIES PASS LINE DISPLAY MODE
+         51                     C                   1 --- BY MARK
+         52                     C                   2 --- BY LINE
+         53                     C                   3 --- BY MARK WITH CORRESPONDING COLOR TO SR
+         54                     C          IOPT        ; MARKER TRACING OPTION
+         55                     C                   1 --- NORMAL TRACING
+         56                     C                   2 --- IF A MARKER CANNOT BE FOUND AFTER THE NORMAL
+         57                     C                        ADJACENT ELEMENT SEARCH, ALL ELEMENT SEARCH
+         58                     C                        WILL BE DONE BEFORE TRUNCATING THE TRACE
+         59                     C          VR1     (IP); X-DIR. VELOCITY COMPONENT
+         60                     C          VR2     (IP); Y-DIR. VELOCITY COMPONENT
+         61                     C          NODE  (I,IE); NODE TABLE
+         62                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+         63                     C          NP          ; NUMBER OF TOTAL NODES
+         64                     C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT
+         65                     C          IENE(IEE,IE); ADJACENT ELEMENT NUMBER TO ELEMENT IE
+         66                     C          NEE     (IE); NUMBER OF ADJACENT ELEMENTS TO ELEMENT IE
+         67                     C          MAXEE       ; THE FIRST DIMENSION OF ARRAY IENE
+         68                     C          XMR (IMR)   ; LOCATION    WHERE MARKERS RELEASED
+         69                     C          YMR (IMR)   ; LOCATION    WHERE MARKERS RELEASED
+         70                     C          IEMR(IMR)   ; ELEMENT NO. WHERE MARKERS RELEASED
+         71                     C          NMR         ; NUMBER OF MARKERS RELEASED SIMALTANEOUSLY
+         72                     C          DT          ; TIME INCREMENT
+         73                     C          NTIME       ; TIME STEP WHEN MARKER TRACING TRUNCATED
+         74                     C          CU          ; X-DIR. VELOCITY COMPONENT OF OBSERVER
+         75                     C          CV          ; Y-DIR. VELOCITY COMPONENT OF OBSERVER
+         76                     C          XMINTS      ; MIN. X-COOR. OF THE TRACING   ZONE   (JVALID=1)
+         77                     C          XMAXTS      ; MAX. X-COOR. OF THE TRACING   ZONE   (JVALID=1)
+         78                     C          YMINTS      ; MIN. Y-COOR. OF THE TRACING   ZONE   (JVALID=1)
+         79                     C          YMAXTS      ; MAX. Y-COOR. OF THE TRACING   ZONE   (JVALID=1)
+         80                     C          JVALID      ; SPECIFIES THE EFFECTIVITY OF THE TRACING ZONE
+         81                     C                   0 --- INEFFECTIVE
+         82                     C                   1 ---   EFFECTIVE
+         83                     C          XMIN        ; MIN. X OF GRAPHIC RANGE SPECIFIED
+         84                     C          YMIN        ; MIN. Y OF GRAPHIC RANGE SPECIFIED
+         85                     C          SFC         ; GRAPHIC SCALING FACTOR
+         86                     C          ICLMRK      ; COLOR INDEX   USED TO DRAW PASS LINES
+         87                     C          ICDMRK      ; CHARACTER CODE OF MARK
+         88                     C          CSZMRK      ; CHARACTER SIZE OF MARK
+         89                     C          SR      (IP); SCALAR
+         90                     C          SRMIN       ; MIN. SCALAR VALUE SPECIFIED
+         91                     C          SRMAX       ; MAX. SCALAR VALUE SPECIFIED
+         92                     C          LCL    (ICL); COLOR INDECES
+         93                     C          NCL         ; NUMBER OF COLOR INDECES DEFINED
+         94                     C          NMAX        ; MAXIMUM ITERATION NUMBER FOR SUBROUTINE INTERP
+         95                     C          EPS         ; CONVERGENCE CRITERIA     FOR SUBROUTINE INTERP
+         96                     C
+         97                     C       (2) OUTPUT
+         98                     C          NONE
+         99                     C
+        100                     C
+        101                     C MARK
+        102                           MKTYPE = ICDMRK
+        103                           PMTYPE = ICDMRK
+        104                     C
+        105                           MKSIZE = CSZMRK
+        106                           PKSIZE = CSZMRK
+        107                     C LINE
+        108                           LNTYPE = GLSOLD
+        109                           PLTYPE = GLSOLD
+        110                     C
+        111                           LNWDTH = GLNORM
+        112                           PLWDTH = GLNORM
+        113                     C
+        114                           CALL GNCSET(ICLMRK)
+        115                           IF(JPSOUT.EQ.1) CALL PSGRAY(IUTPS,ICLMRK)
+        116                           IF(JPSOUT.EQ.2) CALL PSCSET(IUTPS,ICLMRK)
+        117                     C
+        118     1                     DO 200 IMR = 1 , NMR
+        119     1                         IEM = IEMR(IMR)
+        120     1                         XM  = XMR(IMR)
+        121     1                         YM  = YMR(IMR)
+        122     1                         IF(JVALID.EQ.1 .AND.
+        123     1                    &       (XM.LT.XMINTS .OR. XM.GT.XMAXTS .OR.
+        124     1                    &        YM.LT.YMINTS .OR. YM.GT.YMAXTS))   GO TO 200
+        125     1               C
+        126     1                         CALL INTERP(VR1,X,Y,NODE,NE,NP,N,IEM,XM,YM,UM,
+        127     1                    *                GDUM,EDUM,NMAX,EPS,MTWRN,IWRN,IRN)
+        128     1                         CALL INTERP(VR2,X,Y,NODE,NE,NP,N,IEM,XM,YM,VM,
+        129     1                    *                GDUM,EDUM,NMAX,EPS,MTWRN,IWRN,IRN)
+        130     2                         IF(IMODE.EQ.3) THEN
+        131     2                             CALL INTERP(SR ,X,Y,NODE,NE,NP,N,IEM,XM,YM,SM,
+        132     2                    *                    GDUM,EDUM,NMAX,EPS,MTWRN,IWRN,IRN)
+        133     2                         ENDIF
+        134     1               C
+        135     1                         XP = SFC*(XM-XMIN)
+        136     1                         YP = SFC*(YM-YMIN)
+        137     2                         IF(IMODE.EQ.1) THEN
+        138     2                             XBUF(1) = XP
+        139     2                             YBUF(1) = YP
+        140     2                             CALL GNMARK(XBUF,YBUF,1)
+        141     2                             IF(JPSOUT.GE.1) CALL PSMARK(IUTPS,XBUF,YBUF,1)
+        142     2                         ENDIF
+        143     2                         IF(IMODE.EQ.2) THEN
+        144     2                             XP1(1) = XP
+        145     2                             YP1(1) = YP
+        146     2                         ENDIF
+        147     2                         IF(IMODE.EQ.3) THEN
+        148     2                             RATIO = (SM-SRMIN)/(SRMAX-SRMIN)
+        149     2                             ICL   = RATIO*NCL+1
+        150     3                             IF(ICL.LT.1  ) THEN
+        151     3                                 ICL = 1
+        152     3                             ENDIF
+        153     3                             IF(ICL.GT.NCL) THEN
+        154     3                                 ICL = NCL
+        155     3                             ENDIF
+        156     2                             CALL  GNCSET(LCL(ICL))
+        157     2                             IF(JPSOUT.EQ.1) CALL  PSGRAY(IUTPS,LCL(ICL))
+        158     2                             IF(JPSOUT.EQ.2) CALL  PSCSET(IUTPS,LCL(ICL))
+        159     2                             XBUF(1) = XP
+        160     2                             YBUF(1) = YP
+        161     2                             CALL GNMARK(XBUF,YBUF,1)
+        162     2                             IF(JPSOUT.GE.1) CALL PSMARK(IUTPS,XBUF,YBUF,1)
+        163     2                         ENDIF
+        164     1               C
+        165     2                         DO 100 ITIME = 1 , NTIME
+        166     2                             XM = XM+DT*(UM-CU)
+        167     2                             YM = YM+DT*(VM-CV)
+        168     2                             IF(JVALID.EQ.1 .AND.
+        169     2                    &           (XM.LT.XMINTS .OR. XM.GT.XMAXTS .OR.
+        170     2                    &            YM.LT.YMINTS .OR. YM.GT.YMAXTS))   GO TO 200
+        171     2               C
+        172     2                             CALL INCLUD(IEM,X,Y,NODE,NE,NP,N,XM,YM,IRN)
+        173     3                             IF(IRN.EQ.1) THEN
+        174     3                                 GO TO 50
+        175     3                             ENDIF
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 1  FILL 1
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        176     3                             DO 10 IEE = 1 , NEE(IEM)
+        177     3                                 CALL INCLUD(IENE(IEE,IEM),X,Y,NODE,NE,NP,N,XM,YM,IRN)
+        178     4                                 IF(IRN.EQ.1) THEN
+        179     4                                     IEM = IENE(IEE,IEM)
+        180     4                                     GO TO 50
+        181     4                                 ENDIF
+        182     3                  10         CONTINUE
+        183     3                             IF(IOPT.EQ.2) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 1
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        184     4                                 DO 20 IE = 1 , NE
+        185     4                                     CALL INCLUD(IE,X,Y,NODE,NE,NP,N,XM,YM,IRN)
+        186     5                                     IF(IRN.EQ.1) THEN
+        187     5                                         IEM = IE
+        188     5                                         GO TO 50
+        189     5                                     ENDIF
+        190     4                  20             CONTINUE
+        191     3                             ENDIF
+        192     2                             GO TO 200
+        193     2               C
+        194     2                  50         CONTINUE
+        195     2                             CALL INTERP(VR1,X,Y,NODE,NE,NP,N,IEM,XM,YM,UM,
+        196     2                    *                    GDUM,EDUM,NMAX,EPS,MTWRN,IWRN,IRN)
+        197     2                             CALL INTERP(VR2,X,Y,NODE,NE,NP,N,IEM,XM,YM,VM,
+        198     2                    *                    GDUM,EDUM,NMAX,EPS,MTWRN,IWRN,IRN)
+        199     3                             IF(IMODE.EQ.3) THEN
+        200     3                                 CALL INTERP(SR ,X,Y,NODE,NE,NP,N,IEM,XM,YM,SM,
+        201     3                    *                        GDUM,EDUM,NMAX,EPS,MTWRN,IWRN,IRN)
+        202     3                             ENDIF
+        203     2               C
+        204     2                             XP = SFC*(XM-XMIN)
+        205     2                             YP = SFC*(YM-YMIN)
+        206     3                             IF(IMODE.EQ.1) THEN
+        207     3                             XBUF(1) = XP
+        208     3                             YBUF(1) = YP
+        209     3                             CALL GNMARK(XBUF,YBUF,1)
+        210     3                             IF(JPSOUT.GE.1) CALL PSMARK(IUTPS,XBUF,YBUF,1)
+        211     3                             ENDIF
+        212     3                             IF(IMODE.EQ.2) THEN
+        213     3                                XP1(2) = XP
+        214     3                                YP1(2) = YP
+        215     3                                CALL GNLINE(XP1,YP1,2)
+        216     3                                IF(JPSOUT.GE.1) CALL PSLINE(IUTPS,XP1,YP1,2)
+        217     3                                XP1(1) = XP
+        218     3                                YP1(1) = YP
+        219     3                             ENDIF
+        220     3                             IF(IMODE.EQ.3) THEN
+        221     3                                 RATIO = (SM-SRMIN)/(SRMAX-SRMIN)
+        222     3                                 ICL   = RATIO*NCL+1
+        223     4                                 IF(ICL.LT.1  ) THEN
+        224     4                                     ICL = 1
+        225     4                                 ENDIF
+        226     4                                 IF(ICL.GT.NCL) THEN
+        227     4                                     ICL = NCL
+        228     4                                 ENDIF
+        229     3                                 CALL  GNCSET(LCL(ICL))
+        230     3                                 IF(JPSOUT.EQ.1) CALL  PSGRAY(IUTPS,LCL(ICL))
+        231     3                                 IF(JPSOUT.EQ.2) CALL  PSCSET(IUTPS,LCL(ICL))
+        232     3                                 XBUF(1) = XP
+        233     3                                 YBUF(1) = YP
+        234     3                                 CALL GNMARK(XBUF,YBUF,1)
+        235     3                                 IF(JPSOUT.GE.1) CALL PSMARK(IUTPS,XBUF,YBUF,1)
+        236     3                             ENDIF
+        237     2                 100     CONTINUE
+        238     1                 200 CONTINUE
+        239                     C
+        240                     C
+        241                           RETURN
+        242                           END
+
+ Diagnostic messages: program name(PASSMK)
+   jwd8220o-i  "passmk.f", line 13: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd5122p-i  "passmk.f", line 118: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd5133p-i  "passmk.f", line 118: DO loop is not parallelized: its structure is too complicated.
+   jwd8209o-i  "passmk.f", line 149: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5131p-i  "passmk.f", line 165: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "passmk.f", line 176: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "passmk.f", line 176: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8664o-i  "passmk.f", line 176: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5131p-i  "passmk.f", line 184: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "passmk.f", line 184: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8664o-i  "passmk.f", line 184: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd8209o-i  "passmk.f", line 222: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+
+ Procedure information
+   Lines      : 430
+   Statements : 194
+   Stack(byte): 784
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 430
+   Total statements : 194
+   Total stack(byte): 784
+   Total prefetch num: 0
+

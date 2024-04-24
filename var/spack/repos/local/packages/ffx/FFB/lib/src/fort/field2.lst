@@ -1,0 +1,170 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:53:57 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : field2.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "FIELD2"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    FIELD2                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE FIELD2(IMODE,U,V,DNXI,DNYI,NODE,NE,N,FE)
+         14                           IMPLICIT REAL*8(A-H,O-Z)
+         15                           DIMENSION U(*),V(*),DNXI(N,NE),DNYI(N,NE),NODE(N,NE),FE(NE)
+         16                     C
+         17                     C
+         18                     C      CALCULATE VELOCITY FIELD CHARACTERISTICS
+         19                     C         ( 2-D CALCULATION )
+         20                     C
+         21                     C
+         22                     C     ARGUMENT LISTINGS
+         23                     C       (1) INPUT
+         24                     C          IMODE       ; SPECIFIES THE TYPE OF FIELD DATA AS FOLLOWS
+         25                     C                   1 --- ELEMENT DIVERGENT
+         26                     C                   2 --- ELEMENT VORTICITY ( ROTATION )
+         27                     C          U     (IP)  ; X-DIR. VELOCITY COMPONENT
+         28                     C          V     (IP)  ; Y-DIR. VELOCITY COMPONENT
+         29                     C          DNXI(I,IE)  ; ELEMENT CENTER VALUE OF     NX
+         30                     C          DNYI(I,IE)  ; ELEMENT CENTER VALUE OF     NY
+         31                     C          NODE(I,IE)  ; NODE NO. TABLE BASED ON ELEMENT
+         32                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+         33                     C          N           ; NUMBER OF NODE ASSIGNED TO ONE ELEMENT
+         34                     C
+         35                     C      (2) OUTPUT
+         36                     C          FE    (IE)  ; FIELD DATA
+         37                     C
+         38                     C
+         39                     C      (1) CALCULATE DIVERGENT
+         40                     C
+         41     1                     IF(IMODE.EQ.1) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 165
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.76, ITR: 48, MVE: 2, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FE
+                              <<< Loop-information  End >>>
+         42     2  pp    v                DO 100 IE = 1 , NE
+         43     2   p    v                    FE(IE) = DNXI(1,IE)*U(NODE(1,IE))+DNYI(1,IE)*V(NODE(1,IE))
+         44     2                    &                +DNXI(2,IE)*U(NODE(2,IE))+DNYI(2,IE)*V(NODE(2,IE))
+         45     2                    &                +DNXI(3,IE)*U(NODE(3,IE))+DNYI(3,IE)*V(NODE(3,IE))
+         46     2                    &                +DNXI(4,IE)*U(NODE(4,IE))+DNYI(4,IE)*V(NODE(4,IE))
+         47     2   p    v        100     CONTINUE
+         48     1                     ENDIF
+         49                     C
+         50                     C      (2) CALCULATE ROTATION
+         51                     C
+         52     1                     IF(IMODE.EQ.2) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 165
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.76, ITR: 48, MVE: 2, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FE
+                              <<< Loop-information  End >>>
+         53     2  pp    v                DO 200 IE = 1 , NE
+         54     2   p    v                    FE(IE) = DNXI(1,IE)*V(NODE(1,IE))-DNYI(1,IE)*U(NODE(1,IE))
+         55     2                    &                +DNXI(2,IE)*V(NODE(2,IE))-DNYI(2,IE)*U(NODE(2,IE))
+         56     2                    &                +DNXI(3,IE)*V(NODE(3,IE))-DNYI(3,IE)*U(NODE(3,IE))
+         57     2                    &                +DNXI(4,IE)*V(NODE(4,IE))-DNYI(4,IE)*U(NODE(4,IE))
+         58     2   p    v        200     CONTINUE
+         59     1                     ENDIF
+         60                     C
+         61                     C
+         62                           RETURN
+         63                           END
+
+ Diagnostic messages: program name(FIELD2)
+   jwd8220o-i  "field2.f", line 13: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd5001p-i  "field2.f", line 42: DO loop with DO variable 'IE' is parallelized.
+   jwd6001s-i  "field2.f", line 42: SIMD conversion is applied to DO loop with DO variable 'IE'.
+   jwd8204o-i  "field2.f", line 42: This loop is software pipelined.
+   jwd8205o-i  "field2.f", line 42: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 48.
+   jwd8209o-i  "field2.f", line 43: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5001p-i  "field2.f", line 53: DO loop with DO variable 'IE' is parallelized.
+   jwd6001s-i  "field2.f", line 53: SIMD conversion is applied to DO loop with DO variable 'IE'.
+   jwd8204o-i  "field2.f", line 53: This loop is software pipelined.
+   jwd8205o-i  "field2.f", line 53: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 48.
+   jwd8209o-i  "field2.f", line 54: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+
+ Procedure information
+   Lines      : 63
+   Statements : 15
+   Stack(byte): 1248
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 63
+   Total statements : 15
+   Total stack(byte): 1248
+   Total prefetch num: 0
+

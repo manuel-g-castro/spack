@@ -1,0 +1,184 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:54:12 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : nodalg.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "NODALG"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    NODALG                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE NODALG(VALE,NODE,NE,NP,N,VALN,IWORK,WORK)
+         14                           IMPLICIT REAL*4(A-H,O-Z)
+         15                           DIMENSION VALE(NE),NODE(N,NE),VALN(NP),IWORK(NP),WORK(NP)
+         16                     C
+         17                     C
+         18                     C      ASSIGN ELEMENT VARIABLE TO EACH NODE
+         19                     C         ( 2-D , 3-D GRAPHICS )
+         20                     C
+         21                     C
+         22                     C     NOTE 1; VARIABLE VALUE AT EACH NODE WILL BE CALCULATED AS THE
+         23                     C            SIMPLE AVERAGE OF VALUES AT THOSE ELEMENTS ADJACENT TO
+         24                     C            THAT NODE.
+         25                     C
+         26                     C     NOTE 2; VALN(IP) IS PERMITTED TO BE THE SAME ARRAY AS VALE(IE).
+         27                     C
+         28                     C     NOTE 3; THIS SUBROUTINE IS APPLICABLE TO MIXED-ELEMENT MESH.
+         29                     C
+         30                     C
+         31                     C     ARGUMENT LISTINGS
+         32                     C       (1) INPUT
+         33                     C          VALE(IE)    ; ELEMENT VALUE
+         34                     C          NODE  (I,IE); NODE NO. TABLE BASED ON ELEMENT
+         35                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+         36                     C          NP          ; NUMBER OF TOTAL    NODES
+         37                     C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT
+         38                     C
+         39                     C       (2) OUTPUT
+         40                     C          VALN(IP)    ; NODE ASSIGNED VALUE
+         41                     C
+         42                     C       (3) WORK
+         43                     C          IWORK(IP)   ; REQUIRED SIZE = NUMBER OF TOTAL NODES
+         44                     C           WORK(IP)   ; REQUIRED SIZE = NUMBER OF TOTAL NODES
+         45                     C
+         46                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1455
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WORK, IWORK
+                              <<< Loop-information  End >>>
+         47     1  pp   2v            DO 100 IP = 1 , NP
+         48     1   p   2v                IWORK(IP) = 0
+         49     1   p   2v                 WORK(IP) = 0.E0
+         50     1   p   2v        100 CONTINUE
+         51                     C
+         52     1                     DO 210 IE = 1 , NE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE
+                              <<< Loop-information  End >>>
+         53     2   s   2s                DO 200 I = 1 , N
+         54     2   p   2v                    IP = NODE(I,IE)
+         55     2   p   2s                    IF(IP.EQ.0) GO TO 200
+         56     2   m   2s                    IWORK(IP) = IWORK(IP)+1
+         57     2   s   2s                     WORK(IP) =  WORK(IP)+VALE(IE)
+         58     2   p   2v        200     CONTINUE
+         59     1                 210 CONTINUE
+         60                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 517
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.87, ITR: 320, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WORK, IWORK, VALN
+                              <<< Loop-information  End >>>
+         61     1  pp   2v            DO 300 IP = 1 , NP
+         62     1   p   2v                VALN(IP) = WORK(IP)/IWORK(IP)
+         63     1   p   2v        300 CONTINUE
+         64                     C
+         65                     C
+         66                           RETURN
+         67                           END
+
+ Diagnostic messages: program name(NODALG)
+   jwd5001p-i  "nodalg.f", line 47: DO loop with DO variable 'IP' is parallelized.
+   jwd6001s-i  "nodalg.f", line 47: SIMD conversion is applied to DO loop with DO variable 'IP'.
+   jwd8663o-i  "nodalg.f", line 47: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "nodalg.f", line 47: Loop unrolled 2 times.
+   jwd5208p-i  "nodalg.f", line 52: DO loop is not parallelized: the assign-refer order of 'WORK' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "nodalg.f", line 52: DO loop is not parallelized: the assign-refer order of 'IWORK' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6229s-i  "nodalg.f", line 53: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8670o-i  "nodalg.f", line 53: This loop cannot be software pipelined because the loop contains a branch instruction.
+   jwd8202o-i  "nodalg.f", line 53: Loop unrolled 2 times.
+   jwd5209p-i  "nodalg.f", line 56: DO loop is not parallelized: the variable 'IP' referenced in the subscript expression of array 'IWORK' is assigned to in DO loop.
+   jwd6209s-i  "nodalg.f", line 56: SIMD conversion cannot be applied to DO loop: the variable 'IP' referenced in the subscript expression of array 'IWORK' is assigned to in DO loop.
+   jwd5209p-i  "nodalg.f", line 57: DO loop is not parallelized: the variable 'IP' referenced in the subscript expression of array 'WORK' is assigned to in DO loop.
+   jwd6209s-i  "nodalg.f", line 57: SIMD conversion cannot be applied to DO loop: the variable 'IP' referenced in the subscript expression of array 'WORK' is assigned to in DO loop.
+   jwd5001p-i  "nodalg.f", line 61: DO loop with DO variable 'IP' is parallelized.
+   jwd6001s-i  "nodalg.f", line 61: SIMD conversion is applied to DO loop with DO variable 'IP'.
+   jwd8204o-i  "nodalg.f", line 61: This loop is software pipelined.
+   jwd8205o-i  "nodalg.f", line 61: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 320.
+
+ Procedure information
+   Lines      : 67
+   Statements : 20
+   Stack(byte): 1136
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 67
+   Total statements : 20
+   Total stack(byte): 1136
+   Total prefetch num: 0
+

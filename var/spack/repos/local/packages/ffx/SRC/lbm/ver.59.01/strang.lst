@@ -1,0 +1,190 @@
+
+ Fujitsu Fortran Version 4.8.1  Thu Nov 24 16:46:08 2022
+
+ Compilation information
+   Current directory : /vol0005/mdt2/home/u10588/SRC/lbm/ver.59.01
+   Source file       : strang.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -Nlst=t -Cpp -Cfpp -c -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Knointentopt
+   Cpp options          : -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Dcputime -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=8 -D__FRT_patchlevel__=1 -D__FRT_version__="4.8.1" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Knoarray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nlibomp -Nline -Nlst -Nlst=p -Nlst=t
+                          -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "STRANG"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE STRANG(COORD,DD,YY,NN,X1,X2,IERR)
+          2                           IMPLICIT NONE
+          3                     C
+          4                     C     FUNCTION: CAL INTERSECT BETWEEN LINE(Y=YY)
+          5                     C               AND TRIANGLE IN X-Y PLAIN
+          6                     C
+          7                     C
+          8                     C
+          9                     C[INPUT]
+         10                           REAL*4    COORD(3,2),DD,YY
+         11                           INTEGER*4 NN
+         12                     C[OUTPUT]
+         13                           INTEGER*4 IERR
+         14                           REAL*4    X1,X2
+         15                     C[LOCAL]
+         16                           INTEGER*4 IMAX,I1,I2
+         17                           REAL*4    XA,XB,XC,YA,YB,YC,XD,XE,XF
+         18                           REAL*4    DXAB,DXAC,DXBC,DYAB,DYAC,DYBC,DMAX
+         19                           REAL*4    C1,C2,C3
+         20                           REAL*4    EPS0,EPS
+         21                           DATA EPS0 /1.0E-4/
+         22                     C
+         23                           EPS=DD/1.0E2
+         24                     CC
+         25                     CCYY [1]
+         26                     CC
+         27                           XA=COORD(1,1)
+         28                           YA=COORD(1,2)
+         29                           XB=COORD(2,1)
+         30                           YB=COORD(2,2)
+         31                           XC=COORD(3,1)
+         32                           YC=COORD(3,2)
+         33                     C
+         34                           DXAB=XA-XB
+         35                           DXAC=XA-XC
+         36                           DXBC=XB-XC
+         37                           DYAB=YA-YB
+         38                           DYAC=YA-YC
+         39                           DYBC=YB-YC
+         40                           DMAX=MAX(DXAB,DXAC,DXBC,DYAB,DYAC,DYBC)
+         41     1                     IF(DMAX.LE.DD*FLOAT(NN)) THEN
+         42     2                         IF(ABS(YY-YA).LE.DD*FLOAT(NN)) THEN
+         43     2                             X1=MIN(XA,XB,XC)
+         44     2                             X2=MAX(XA,XB,XC)
+         45     2                         ELSE
+         46     2                             X1= 1.0E2
+         47     2                             X2=-1.0E2
+         48     2                         ENDIF
+         49     1                         GOTO 1000
+         50     1                     ENDIF
+         51                     C
+         52     1                     IF(    (ABS(DYAB).LE.EPS0 .AND. ABS(DYAC).LE.EPS0)
+         53     1                    *   .OR.(ABS(DYAB).LE.EPS0 .AND. ABS(DYBC).LE.EPS0)
+         54     1                    *   .OR.(ABS(DYAC).LE.EPS0 .AND. ABS(DYBC).LE.EPS0)
+         55     1                    *   ) THEN
+         56     2                         IF(ABS(YY-YA).LE.DD*FLOAT(NN)) THEN
+         57     2                             X1=MIN(XA,XB,XC)
+         58     2                             X2=MAX(XA,XB,XC)
+         59     2                         ELSE
+         60     2                             X1= 1.0E2
+         61     2                             X2=-1.0E2
+         62     2                         ENDIF
+         63     1                         GOTO 1000
+         64     1                     ENDIF
+         65                     C
+         66                           C1=1.0E2
+         67                           C2=1.0E2
+         68                           C3=1.0E2
+         69                     C
+         70                           IF(ABS(YA-YB).GE.EPS) C1=(YA-YY)/(YA-YB)
+         71                           IF(ABS(YA-YC).GE.EPS) C2=(YA-YY)/(YA-YC)
+         72                           IF(ABS(YB-YC).GE.EPS) C3=(YB-YY)/(YB-YC)
+         73                     C
+         74                           XD=XA+C1*(XB-XA)
+         75                           XE=XA+C2*(XC-XA)
+         76                           XF=XB+C3*(XC-XB)
+         77                     CC
+         78                     CCYY [2]CAL. XAB, XAC
+         79                     CC
+         80     1                     IF(       -EPS.LE.C1 .AND. C1.LE.1.0+EPS
+         81     1                    *    .AND. -EPS.LE.C2 .AND. C2.LE.1.0+EPS ) THEN
+         82     1                         X1=MIN(XD,XE)
+         83     1                         X2=MAX(XD,XE)
+         84     1               C
+         85     1                     ELSE IF(  -EPS.LE.C1 .AND. C1.LE.1.0+EPS
+         86     1                    *    .AND. -EPS.LE.C3 .AND. C3.LE.1.0+EPS ) THEN
+         87     1                         X1=MIN(XD,XF)
+         88     1                         X2=MAX(XD,XF)
+         89     1               C
+         90     1                     ELSE IF(  -EPS.LE.C2 .AND. C2.LE.1.0E0+EPS
+         91     1                    *    .AND. -EPS.LE.C3 .AND. C3.LE.1.0E0+EPS ) THEN
+         92     1                         X1=MIN(XE,XF)
+         93     1                         X2=MAX(XE,XF)
+         94     1               C
+         95     1                     ELSE
+         96     1                         X1= 1.0E2
+         97     1                         X2=-1.0E2
+         98     1                     ENDIF
+         99                     C
+        100                      1000 CONTINUE
+        101                           X1=X1-DD*FLOAT(NN)
+        102                           X2=X2+DD*FLOAT(NN)
+        103                     C
+        104                           RETURN
+        105                           END
+
+ Diagnostic messages: program name(STRANG)
+   jwd2008i-i  "strang.f", line 1: Dummy argument 'IERR' not used in this subprogram.
+   jwd8220o-i  "strang.f", line 1: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd2006i-i  "strang.f", line 16: 'I2' is declared but never referenced.
+   jwd2006i-i  "strang.f", line 16: 'I1' is declared but never referenced.
+   jwd2006i-i  "strang.f", line 16: 'IMAX' is declared but never referenced.
+   jwd8206o-i  "strang.f", line 23: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "strang.f", line 40: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+
+ Procedure information
+   Lines      : 105
+   Statements : 73
+   Stack(byte): 368
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 105
+   Total statements : 73
+   Total stack(byte): 368
+   Total prefetch num: 0
+

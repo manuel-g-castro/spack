@@ -1,0 +1,243 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:54:32 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : supue1.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "SUPUE1"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    SUPUE1                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE SUPUE1(IDIM,VELM,SN,IENP,JENP,NEP,ME,MEP,NE,NP,N,
+         14                          *                  F,IUT0,IERR)
+         15                           IMPLICIT REAL*4(A-H,O-Z)
+         16                           DIMENSION VELM(ME),SN(N,ME),
+         17                          1          IENP(MEP,NP),JENP(MEP,NP),NEP(NP),F(NP)
+         18                     C
+         19                           CHARACTER*60 ERMSGB
+         20                          & /' ## SUBROUTINE SUPUE1: FATAL      ERROR OCCURENCE; RETURNED' /
+         21                           CHARACTER*60 EREXP1
+         22                          & /' NO ROOM LEFT IN VELM(ME) FOR DOING SUPUE1 OPERATIONS      ' /
+         23                           CHARACTER*60 EREXP2
+         24                          & /' MEP IS TOO SMALL TO DO SUPUE1 OPERATIONS                  ' /
+         25                     C
+         26                     C
+         27                     C      SUPERPOSE ELEMENT'S ASSIGNED VALUES TO THE GLOBAL FORCE VECTOR
+         28                     C         ( 3-D CALCULATION : SINGLE WORD VERSION )
+         29                     C
+         30                     C
+         31                     C     ARGUMENT LISTINGS
+         32                     C       (1) INPUT
+         33                     C          IDIM        ; SPECIFIES THE SPACE DIMENSION AS FOLLOWS
+         34                     C                   2 --- TWO   DIMENSIONAL PROBLEM
+         35                     C                   3 --- THREE DIMENSIONAL PROBLEM
+         36                     C          VELM    (IE); ELEMENT ASSIGNED VARIABLE
+         37                     C          SN    (I,IE); INTEGRATED ELEMENT VECTOR
+         38                     C          IENP(IEP,IP); ADJACENT ELEMENT NUMBER TO NODE IP
+         39                     C                      ( IF NEP(IP).LT.MINEP , THEN IENP(NEP(IP)+1,IP),
+         40                     C                       IENP(MINEP,IP) MUST BE SET TO AN IMAGINARY
+         41                     C                       ELEMENT NO. BETWEEN NE+1,ME.)
+         42                     C          JENP(IEP,IP); LOCAL NODE NUMBER OF IP IN ELEMENT IENP(IEP,IP)
+         43                     C          NEP     (IP); NUMBER OF ADJACENT ELEMENTS TO NODE IP
+         44                     C          ME          ; THE       DIMENSION OF ARRAY VELM
+         45                     C          MEP         ; THE FIRST DIMENSION OF ARRAY IENP,JENP
+         46                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+         47                     C          NP          ; NUMBER OF TOTAL    NODES
+         48                     C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT
+         49                     C          IUT0        ; FILE NUMBER TO REPORT ERROR OCCURENCE
+         50                     C
+         51                     C       (2) OUTPUT
+         52                     C          F       (IP); GLOBAL FORCE VECTOR
+         53                     C          IERR        ; RETURN CODE TO REPORT ERROR OCCURENCE
+         54                     C                   0 --- NORMAL TERMINATION
+         55                     C                   1 --- A FATAL ERROR HAS OCCURED
+         56                     C
+         57                     C
+         58     1                     IF(IDIM.EQ.2) THEN
+         59     1                         MINEP = 4
+         60     1                     ELSE
+         61     1                         MINEP = 8
+         62     1                     ENDIF
+         63                     C
+         64                           IERR = 0
+         65                     C
+         66     1                     IF(ME.LE.NE) THEN
+         67     1                         WRITE(IUT0,*) ERMSGB
+         68     1                         WRITE(IUT0,*) EREXP1
+         69     1                         IERR = 1
+         70     1                         RETURN
+         71     1                     ENDIF
+         72                     C
+         73     1                     IF(MEP.LT.MINEP) THEN
+         74     1                         WRITE(IUT0,*) ERMSGB
+         75     1                         WRITE(IUT0,*) EREXP2
+         76     1                         IERR = 1
+         77     1                         RETURN
+         78     1                     ENDIF
+         79                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      VELM
+                              <<< Loop-information  End >>>
+         80     1  pp   4v            DO 100 IE = NE+1 , ME
+         81     1   p   4v                VELM (IE) = 0.E0
+         82     1   p   4v        100 CONTINUE
+         83                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 154
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.13, ITR: 112, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      F
+                              <<< Loop-information  End >>>
+         84     1  pp    v            DO 200 IP = 1 , NP
+         85     1   p    v                F(IP) = VELM(IENP(1,IP))*SN(JENP(1,IP),IENP(1,IP))
+         86     1                    &           +VELM(IENP(2,IP))*SN(JENP(2,IP),IENP(2,IP))
+         87     1                    &           +VELM(IENP(3,IP))*SN(JENP(3,IP),IENP(3,IP))
+         88     1                    &           +VELM(IENP(4,IP))*SN(JENP(4,IP),IENP(4,IP))
+         89     1   p    v        200 CONTINUE
+         90                     C
+         91     1                     IF(IDIM.EQ.3) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 149
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.04, ITR: 112, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      F
+                              <<< Loop-information  End >>>
+         92     2  pp    v                DO 300 IP = 1 , NP
+         93     2   p    v                    F(IP) = F(IP)
+         94     2                    &           +VELM(IENP(5,IP))*SN(JENP(5,IP),IENP(5,IP))
+         95     2                    &           +VELM(IENP(6,IP))*SN(JENP(6,IP),IENP(6,IP))
+         96     2                    &           +VELM(IENP(7,IP))*SN(JENP(7,IP),IENP(7,IP))
+         97     2                    &           +VELM(IENP(8,IP))*SN(JENP(8,IP),IENP(8,IP))
+         98     2   p    v        300     CONTINUE
+         99     1                     ENDIF
+        100                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<< Loop-information  End >>>
+        101     1   p    s            DO 410 IEP = MINEP+1 , MEP
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<< Loop-information  End >>>
+        102     2  pp                     DO 400 IP = 1 , NP
+        103     3   p    m                    IF(IEP.LE.NEP(IP)) THEN
+        104     3   p    s                        F(IP) = F(IP)+VELM(IENP(IEP,IP))
+        105     3                    &                         *SN(JENP(IEP,IP),IENP(IEP,IP))
+        106     3   p    v                    ENDIF
+        107     2   p             400     CONTINUE
+        108     1   p             410 CONTINUE
+        109                     C
+        110                     C
+        111                           RETURN
+        112                           END
+
+ Diagnostic messages: program name(SUPUE1)
+   jwd5001p-i  "supue1.f", line 80: DO loop with DO variable 'IE' is parallelized.
+   jwd6001s-i  "supue1.f", line 80: SIMD conversion is applied to DO loop with DO variable 'IE'.
+   jwd8663o-i  "supue1.f", line 80: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "supue1.f", line 80: Loop unrolled 4 times.
+   jwd5001p-i  "supue1.f", line 84: DO loop with DO variable 'IP' is parallelized.
+   jwd6001s-i  "supue1.f", line 84: SIMD conversion is applied to DO loop with DO variable 'IP'.
+   jwd8204o-i  "supue1.f", line 84: This loop is software pipelined.
+   jwd8205o-i  "supue1.f", line 84: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 112.
+   jwd5001p-i  "supue1.f", line 92: DO loop with DO variable 'IP' is parallelized.
+   jwd6001s-i  "supue1.f", line 92: SIMD conversion is applied to DO loop with DO variable 'IP'.
+   jwd8204o-i  "supue1.f", line 92: This loop is software pipelined.
+   jwd8205o-i  "supue1.f", line 92: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 112.
+   jwd8211o-i  "supue1.f", line 101: Loops interchanged at line 102.
+   jwd6229s-i  "supue1.f", line 101: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8670o-i  "supue1.f", line 101: This loop cannot be software pipelined because the loop contains a branch instruction.
+   jwd8211o-i  "supue1.f", line 102: Loops interchanged at line 101.
+   jwd5001p-i  "supue1.f", line 102: DO loop with DO variable 'IP' is parallelized.
+
+ Procedure information
+   Lines      : 112
+   Statements : 44
+   Stack(byte): 1968
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 112
+   Total statements : 44
+   Total stack(byte): 1968
+   Total prefetch num: 0
+

@@ -1,0 +1,520 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:53:54 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : elem3b.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "ELEM3B"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    ELEM3B                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE ELEM3B(X,Y,Z,NODE,NE,NP,N,LEB,NB,
+         14                          *                  SNB ,DNXB,DNYB,DNZB,H,DET,
+         15                          *                  DXG,DYG,DZG,
+         16                          *                  DXE,DYE,DZE,
+         17                          *                  DXT,DYT,DZT,DGET)
+         18                           IMPLICIT REAL*4(A-H,O-Z)
+         19                           PARAMETER ( P1 = -0.577350E0 , U1 = -1.E0 )
+         20                           PARAMETER ( P2 =  0.577350E0 , U2 =  1.E0 )
+         21                           DIMENSION X(NP),Y(NP),Z(NP),NODE(N,NE),LEB(2,NB),
+         22                          1          SNB(N,NB),DNXB(N,NB),DNYB(N,NB),DNZB(N,NB),H(NB),
+         23                          2          DET(NB),DXG(NB),DYG(NB),DZG(NB),DXE(NB),DYE(NB),DZE(NB),
+         24                          3          DXT(NB),DYT(NB),DZT(NB),DGET(N,NB)
+         25                     C
+         26                           DIMENSION DN(8,4,6),DNG(8,4,6),DNE(8,4,6),DNT(8,4,6)
+         27                           DIMENSION GP(3,4,6),FL(3,6)
+         28                     C
+         29                           DATA GP /U1, P1, P1,    U1, P1, P2,    U1, P2, P1,    U1, P2, P2,
+         30                          &         U2, P1, P1,    U2, P1, P2,    U2, P2, P1,    U2, P2, P2,
+         31                          &         P1, U1, P1,    P2, U1, P1,    P1, U1, P2,    P2, U1, P2,
+         32                          &         P1, U2, P1,    P2, U2, P1,    P1, U2, P2,    P2, U2, P2,
+         33                          &         P1, P1, U1,    P1, P2, U1,    P2, P1, U1,    P2, P2, U1,
+         34                          &         P1, P1, U2,    P1, P2, U2,    P2, P1, U2,    P2, P2, U2/
+         35                           DATA FL /1.E0, 0.E0, 0.E0, 1.E0, 0.E0, 0.E0,
+         36                          &         0.E0, 1.E0, 0.E0, 0.E0, 1.E0, 0.E0,
+         37                          &         0.E0, 0.E0, 1.E0, 0.E0, 0.E0, 1.E0/
+         38                           DATA W / 1.E0 /
+         39                     C
+         40                     C
+         41                     C      INTEGRAL SHAPE FUNCTION AND ITS X, Y, Z DERIVATIVES ON SPECIFIED
+         42                     C     SURFACE OF SPECIFIED ELEMENTS
+         43                     C         ( 3-D CALCULATION : SINGLE WORD & SAME ELEMENT VERSION )
+         44                     C
+         45                     C
+         46                     C     NOTES ; SURFACE INTEGRATION WILL BE DONE USING 4 GAUSS POINTS.
+         47                     C
+         48                     C     ARGUMENT LISTINGS
+         49                     C       (1) INPUT
+         50                     C          X      (IP) ; X-DIR. COORDINATE         OF NODE
+         51                     C          Y      (IP) ; Y-DIR. COORDINATE         OF NODE
+         52                     C          Z      (IP) ; Y-DIR. COORDINATE         OF NODE
+         53                     C          NODE (I,IE) ; NODE TABLE
+         54                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+         55                     C          NP          ; NUMBER OF TOTAL    NODES
+         56                     C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT
+         57                     C          LEB  (I,IB) ; ELEMENT(1, & SURFACE(2, NUMBER SPECIFYING LIST
+         58                     C          NB          ; NUMBER OF SURFACES
+         59                     C
+         60                     C       (2) OUTPUT
+         61                     C          SNB  (I,IB) ; INTEGRATED SHAPE FUNCTION
+         62                     C          DNXB (I,IB) ; INTEGRATED X DERIVATIVE OF SHAPE FUNCTION
+         63                     C          DNYB (I,IB) ; INTEGRATED Y DERIVATIVE OF SHAPE FUNCTION
+         64                     C          DNZB (I,IB) ; INTEGRATED Z DERIVATIVE OF SHAPE FUNCTION
+         65                     C
+         66                     C       (3) WORK
+         67                     C          H      (IB) ; SURFACE INTEGRAL FACTOR
+         68                     C          DET    (IB) ; DETERMINANT OF JACOBIAN MATRIX
+         69                     C          DXG    (IB) ; G-DIR. DERIVERTIVE OF X
+         70                     C          DYG    (IB) ; G-DIR. DERIVERTIVE OF Y
+         71                     C          DZG    (IB) ; G-DIR. DERIVERTIVE OF Z
+         72                     C          DXE    (IB) ; E-DIR. DERIVERTIVE OF X
+         73                     C          DYE    (IB) ; E-DIR. DERIVERTIVE OF Y
+         74                     C          DZE    (IB) ; E-DIR. DERIVERTIVE OF Z
+         75                     C          DXT    (IB) ; T-DIR. DERIVERTIVE OF X
+         76                     C          DYT    (IB) ; T-DIR. DERIVERTIVE OF Y
+         77                     C          DZT    (IB) ; T-DIR. DERIVERTIVE OF Z
+         78                     C          DGET (K,IB) ; D(G,E,T)/D(X,Y,Z) OF ELEMENT
+         79                     C
+         80                     C
+         81                     C      (1) PREPARE GZAI, EATA, ZEATA DERIVATIVES AT ALL THE GAUSS POINTS
+         82                     C
+         83     1                     DO 30 IS = 1 , 6
+         84     2                         DO 20 IG = 1 , 4
+         85     2                             GG = GP(1,IG,IS)
+         86     2                             EE = GP(2,IG,IS)
+         87     2                             TT = GP(3,IG,IS)
+         88     3                             DO 10 I = 1 , N
+         89     3                                 DN (I,IG,IS) = SHAPE3(I,GG,EE,TT,1)
+         90     3                                 DNG(I,IG,IS) = SHAPE3(I,GG,EE,TT,2)
+         91     3                                 DNE(I,IG,IS) = SHAPE3(I,GG,EE,TT,3)
+         92     3                                 DNT(I,IG,IS) = SHAPE3(I,GG,EE,TT,4)
+         93     3                  10         CONTINUE
+         94     2                  20     CONTINUE
+         95     1                  30 CONTINUE
+         96                     C
+         97                     C      (2) CLEAR ARRAYS
+         98                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED
+                              <<<    COLLAPSED
+                              <<< Loop-information  End >>>
+         99     1   p                 DO 110 I = 1 , N
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 800
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 1)
+                              <<<    COLLAPSED
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      DNZB, DNYB, DNXB, SNB
+                              <<< Loop-information  End >>>
+        100     2  pp   2v                DO 100 IB = 1 , NB
+        101     2   p   2v                    SNB (I,IB) = 0.E0
+        102     2   p   2v                    DNXB(I,IB) = 0.E0
+        103     2   p   2v                    DNYB(I,IB) = 0.E0
+        104     2   p   2v                    DNZB(I,IB) = 0.E0
+        105     2   p   2v        100     CONTINUE
+        106     1   p   2v        110 CONTINUE
+        107                     C
+        108                     C      (3) INTEGRAL USING GAUSS POINTS
+        109                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FULL UNROLLING
+                              <<< Loop-information  End >>>
+        110     1       f             DO 1220 IG = 1 , 4
+        111     1               C
+        112     1               C CALCULATE GZAI, EATA, ZEATA DERIVATIVES OF X, Y, Z
+        113     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 500
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      DZT, DYT, DXT, DZE, DYE, DXE, DZG, DYG
+                              <<<      DXG
+                              <<< Loop-information  End >>>
+        114     2  pp   fv                DO 200 IB = 1 , NB
+        115     2   p   fv                    DXG(IB) = 0.E0
+        116     2   p   fv                    DYG(IB) = 0.E0
+        117     2   p   fv                    DZG(IB) = 0.E0
+        118     2   p   fv                    DXE(IB) = 0.E0
+        119     2   p   fv                    DYE(IB) = 0.E0
+        120     2   p   fv                    DZE(IB) = 0.E0
+        121     2   p   fv                    DXT(IB) = 0.E0
+        122     2   p   fv                    DYT(IB) = 0.E0
+        123     2   p   fv                    DZT(IB) = 0.E0
+        124     2   p   fv        200     CONTINUE
+        125     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 3)
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        126     2   p   fv                DO 310 I = 1 , N
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<< Loop-information  End >>>
+        127     3  pp   f                     DO 300 IB = 1 , NB
+        128     3   p   fv                        IE = LEB(1,IB)
+        129     3   p   fv                        IS = LEB(2,IB)
+        130     3   p   fv                        DXG(IB) = DXG(IB)+DNG(I,IG,IS)*X(NODE(I,IE))
+        131     3   p   fv                        DYG(IB) = DYG(IB)+DNG(I,IG,IS)*Y(NODE(I,IE))
+        132     3   p   fv                        DZG(IB) = DZG(IB)+DNG(I,IG,IS)*Z(NODE(I,IE))
+        133     3   p   fv                        DXE(IB) = DXE(IB)+DNE(I,IG,IS)*X(NODE(I,IE))
+        134     3   p   fv                        DYE(IB) = DYE(IB)+DNE(I,IG,IS)*Y(NODE(I,IE))
+        135     3   p   fv                        DZE(IB) = DZE(IB)+DNE(I,IG,IS)*Z(NODE(I,IE))
+        136     3   p   fv                        DXT(IB) = DXT(IB)+DNT(I,IG,IS)*X(NODE(I,IE))
+        137     3   p   fv                        DYT(IB) = DYT(IB)+DNT(I,IG,IS)*Y(NODE(I,IE))
+        138     3   p   fv                        DZT(IB) = DZT(IB)+DNT(I,IG,IS)*Z(NODE(I,IE))
+        139     3   p   f         300         CONTINUE
+        140     2   p   fv        310     CONTINUE
+        141     1               C
+        142     1               C SURFACE INTEGRAL FACTOR H
+        143     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 125
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED(lines: 144,160)
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.95, ITR: 128, MVE: 4, POL: L)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LEB, DET, DXT, DXE, H, DXG, DYT, DYE
+                              <<<      DYG, DZT, DZE, DZG
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 0
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 8
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        144     2  pp   fv                DO 400 IB = 1 , NB
+        145     2   p   fv                    IS = LEB(2,IB)
+        146     2   p   fv                  E=FL(1,IS)*(DXE(IB)*DXE(IB)+DYE(IB)*DYE(IB)+DZE(IB)*DZE(IB))
+        147     2                    &       +FL(2,IS)*(DXT(IB)*DXT(IB)+DYT(IB)*DYT(IB)+DZT(IB)*DZT(IB))
+        148     2                    &       +FL(3,IS)*(DXG(IB)*DXG(IB)+DYG(IB)*DYG(IB)+DZG(IB)*DZG(IB))
+        149     2   p   fv                  F=FL(1,IS)*(DXT(IB)*DXT(IB)+DYT(IB)*DYT(IB)+DZT(IB)*DZT(IB))
+        150     2                    &       +FL(2,IS)*(DXG(IB)*DXG(IB)+DYG(IB)*DYG(IB)+DZG(IB)*DZG(IB))
+        151     2                    &       +FL(3,IS)*(DXE(IB)*DXE(IB)+DYE(IB)*DYE(IB)+DZE(IB)*DZE(IB))
+        152     2   p   fv                  G=FL(1,IS)*(DXE(IB)*DXT(IB)+DYE(IB)*DYT(IB)+DZE(IB)*DZT(IB))
+        153     2                    &       +FL(2,IS)*(DXT(IB)*DXG(IB)+DYT(IB)*DYG(IB)+DZT(IB)*DZG(IB))
+        154     2                    &       +FL(3,IS)*(DXG(IB)*DXE(IB)+DYG(IB)*DYE(IB)+DZG(IB)*DZE(IB))
+        155     2   p   fv                    H(IB) = SQRT(E*F-G*G)
+        156     2   p   fv        400     CONTINUE
+        157     1               C
+        158     1               C DETERMINANT
+        159     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED
+                              <<< Loop-information  End >>>
+        160     2       f                 DO 500 IB = 1 , NB
+        161     2       f                     DET(IB) = DXG(IB)*(DYE(IB)*DZT(IB)-DZE(IB)*DYT(IB))
+        162     2                    &                 +DYG(IB)*(DZE(IB)*DXT(IB)-DXE(IB)*DZT(IB))
+        163     2                    &                 +DZG(IB)*(DXE(IB)*DYT(IB)-DYE(IB)*DXT(IB))
+        164     2       f         500     CONTINUE
+        165     1               C
+        166     1               C SHAPE FUNCTION
+        167     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 3)
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        168     2   p   fv                DO 610 I = 1 , N
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    FUSED(lines: 169,178)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      DET, DYT, DYE, DZG, DZT, DZE, DYG
+                              <<< Loop-information  End >>>
+        169     3  pp   f                     DO 600 IB = 1 , NB
+        170     3   p   fv                        IE = LEB(1,IB)
+        171     3   p   fv                        IS = LEB(2,IB)
+        172     3   p   fv                        SNB(I,IB) = SNB(I,IB)+W*H(IB)*DN(I,IG,IS)
+        173     3   p   f         600         CONTINUE
+        174     2   p   f         610     CONTINUE
+        175     1               C
+        176     1               C X-DERIVERTIVE OF SHAPE FUNCTION
+        177     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED
+                              <<< Loop-information  End >>>
+        178     2       f                 DO 700 IB = 1 , NB
+        179     2   p   f                     DGET(1,IB) = (DYE(IB)*DZT(IB)-DYT(IB)*DZE(IB))/DET(IB)
+        180     2   p   f                     DGET(2,IB) = (DYT(IB)*DZG(IB)-DYG(IB)*DZT(IB))/DET(IB)
+        181     2   p   f                     DGET(3,IB) = (DYG(IB)*DZE(IB)-DYE(IB)*DZG(IB))/DET(IB)
+        182     2       f         700     CONTINUE
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 3)
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        183     2   p   fv                DO 810 I = 1 , N
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    FUSED(lines: 184,195)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      DZE, DET, DXT, DZT, DXE, DXG, DZG
+                              <<< Loop-information  End >>>
+        184     3  pp   f                     DO 800 IB = 1 , NB
+        185     3   p   fv                        IS = LEB(2,IB)
+        186     3   p   fv                        DNXB(I,IB) = DNXB(I,IB)
+        187     3                    &                        +W*H(IB)*(DGET(1,IB)*DNG(I,IG,IS)
+        188     3                    &                                 +DGET(2,IB)*DNE(I,IG,IS)
+        189     3                    &                                 +DGET(3,IB)*DNT(I,IG,IS))
+        190     3   p   f         800         CONTINUE
+        191     2   p   f         810     CONTINUE
+        192     1               C
+        193     1               C Y-DERIVERTIVE OF SHAPE FUNCTION
+        194     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED
+                              <<< Loop-information  End >>>
+        195     2       f                 DO 900 IB = 1 , NB
+        196     2   p   f                     DGET(1,IB) = (DZE(IB)*DXT(IB)-DZT(IB)*DXE(IB))/DET(IB)
+        197     2   p   f                     DGET(2,IB) = (DZT(IB)*DXG(IB)-DZG(IB)*DXT(IB))/DET(IB)
+        198     2   p   f                     DGET(3,IB) = (DZG(IB)*DXE(IB)-DZE(IB)*DXG(IB))/DET(IB)
+        199     2       f         900     CONTINUE
+        200     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 3)
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        201     2   p   fv                DO 1010 I = 1 , N
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<<    FUSED(lines: 202,213)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      DXE, DET, DYT, DXT, DYE, DYG, DXG
+                              <<< Loop-information  End >>>
+        202     3  pp   f                     DO 1000 IB = 1 , NB
+        203     3   p   fv                        IS = LEB(2,IB)
+        204     3   p   fv                        DNYB(I,IB) = DNYB(I,IB)
+        205     3                    &                        +W*H(IB)*(DGET(1,IB)*DNG(I,IG,IS)
+        206     3                    &                                 +DGET(2,IB)*DNE(I,IG,IS)
+        207     3                    &                                 +DGET(3,IB)*DNT(I,IG,IS))
+        208     3   p   f        1000         CONTINUE
+        209     2   p   f        1010     CONTINUE
+        210     1               C
+        211     1               C Z-DERIVERTIVE OF SHAPE FUNCTION
+        212     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED
+                              <<< Loop-information  End >>>
+        213     2       f                 DO 1100 IB = 1 , NB
+        214     2   p   f                     DGET(1,IB) = (DXE(IB)*DYT(IB)-DXT(IB)*DYE(IB))/DET(IB)
+        215     2   p   f                     DGET(2,IB) = (DXT(IB)*DYG(IB)-DXG(IB)*DYT(IB))/DET(IB)
+        216     2   p   f                     DGET(3,IB) = (DXG(IB)*DYE(IB)-DXE(IB)*DYG(IB))/DET(IB)
+        217     2       f        1100     CONTINUE
+        218     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 3)
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        219     2   p   fv                DO 1210 I = 1 , N
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    INTERCHANGED(nest: 2)
+                              <<< Loop-information  End >>>
+        220     3  pp   f                     DO 1200 IB = 1 , NB
+        221     3   p   fv                        IS = LEB(2,IB)
+        222     3   p   fv                        DNZB(I,IB) = DNZB(I,IB)
+        223     3                    &                        +W*H(IB)*(DGET(1,IB)*DNG(I,IG,IS)
+        224     3                    &                                 +DGET(2,IB)*DNE(I,IG,IS)
+        225     3                    &                                 +DGET(3,IB)*DNT(I,IG,IS))
+        226     3   p   f        1200         CONTINUE
+        227     2   p   f        1210     CONTINUE
+        228     1       f        1220 CONTINUE
+        229                     C
+        230                     C
+        231                           RETURN
+        232                           END
+
+ Diagnostic messages: program name(ELEM3B)
+   jwd8220o-i  "elem3b.f", line 13: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd5122p-i  "elem3b.f", line 83: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd5122p-i  "elem3b.f", line 84: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd5138p-i  "elem3b.f", line 88: DO loop is not parallelized: the DO variable might be redefined in the loop.
+   jwd6138s-i  "elem3b.f", line 88: SIMD conversion cannot be applied to DO loop: the DO variable might be redefined in the loop.
+   jwd8664o-i  "elem3b.f", line 88: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5002p-i  "elem3b.f", line 99: DO loop is parallelized.
+   jwd6002s-i  "elem3b.f", line 100: SIMD conversion is applied to DO loop.
+   jwd8663o-i  "elem3b.f", line 100: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "elem3b.f", line 100: Loop unrolled 2 times.
+   jwd8330o-i  "elem3b.f", line 101: Nested DO loops were coalesced into a single loop by DO variables IB,...,I.
+   jwd5208p-i  "elem3b.f", line 110: DO loop is not parallelized: the assign-refer order of 'DNZB' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "elem3b.f", line 110: DO loop is not parallelized: the assign-refer order of 'DNYB' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "elem3b.f", line 110: DO loop is not parallelized: the assign-refer order of 'DNXB' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "elem3b.f", line 110: DO loop is not parallelized: the assign-refer order of 'SNB' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "elem3b.f", line 110: DO loop is not parallelized: the assign-refer order of 'H' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "elem3b.f", line 110: DO loop is not parallelized: the assign-refer order of 'DET' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "elem3b.f", line 110: DO loop is not parallelized: the assign-refer order of 'DZG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "elem3b.f", line 110: DO loop is not parallelized: the assign-refer order of 'DYG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "elem3b.f", line 110: DO loop is not parallelized: the assign-refer order of 'DXG' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "elem3b.f", line 110: DO loop is not parallelized: the assign-refer order of 'DZT' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "elem3b.f", line 110: DO loop is not parallelized: the assign-refer order of 'DYT' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "elem3b.f", line 110: DO loop is not parallelized: the assign-refer order of 'DXT' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "elem3b.f", line 110: DO loop is not parallelized: the assign-refer order of 'DZE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "elem3b.f", line 110: DO loop is not parallelized: the assign-refer order of 'DYE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "elem3b.f", line 110: DO loop is not parallelized: the assign-refer order of 'DXE' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "elem3b.f", line 110: DO loop is not parallelized: the assign-refer order of 'DGET' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6138s-i  "elem3b.f", line 110: SIMD conversion cannot be applied to DO loop: the DO variable might be redefined in the loop.
+   jwd8203o-i  "elem3b.f", line 110: Loop unrolled fully.
+   jwd8211o-i  "elem3b.f", line 114: Loops interchanged at line 100.
+   jwd5001p-i  "elem3b.f", line 114: DO loop with DO variable 'IB' is parallelized.
+   jwd6001s-i  "elem3b.f", line 114: SIMD conversion is applied to DO loop with DO variable 'IB'.
+   jwd8663o-i  "elem3b.f", line 114: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8211o-i  "elem3b.f", line 126: Loops interchanged at line 127.
+   jwd8325o-i  "elem3b.f", line 126: Assume that the maximum number of iterations for this loop is 8 from the array declaration.
+   jwd6004s-i  "elem3b.f", line 126: SIMD conversion is applied to DO loop with DO variable 'I'. The DO loop contains a reduction operation.
+   jwd8211o-i  "elem3b.f", line 127: Loops interchanged at line 126.
+   jwd5001p-i  "elem3b.f", line 127: DO loop with DO variable 'IB' is parallelized.
+   jwd8670o-i  "elem3b.f", line 127: This loop cannot be software pipelined because the loop contains a branch instruction.
+   jwd8210o-i  "elem3b.f", line 144: Loops fused at line 160.
+   jwd5001p-i  "elem3b.f", line 144: DO loop with DO variable 'IB' is parallelized.
+   jwd6001s-i  "elem3b.f", line 144: SIMD conversion is applied to DO loop with DO variable 'IB'.
+   jwd8204o-i  "elem3b.f", line 144: This loop is software pipelined.
+   jwd8205o-i  "elem3b.f", line 144: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 128.
+   jwd8209o-i  "elem3b.f", line 146: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "elem3b.f", line 149: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "elem3b.f", line 161: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8211o-i  "elem3b.f", line 168: Loops interchanged at line 169.
+   jwd8325o-i  "elem3b.f", line 168: Assume that the maximum number of iterations for this loop is 8 from the array declaration.
+   jwd6001s-i  "elem3b.f", line 168: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8210o-i  "elem3b.f", line 169: Loops fused at line 178.
+   jwd8211o-i  "elem3b.f", line 169: Loops interchanged at line 168.
+   jwd5001p-i  "elem3b.f", line 169: DO loop with DO variable 'IB' is parallelized.
+   jwd8670o-i  "elem3b.f", line 169: This loop cannot be software pipelined because the loop contains a branch instruction.
+   jwd8206o-i  "elem3b.f", line 179: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "elem3b.f", line 180: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "elem3b.f", line 181: Division is changed to multiplication by reciprocal.
+   jwd8211o-i  "elem3b.f", line 183: Loops interchanged at line 184.
+   jwd8325o-i  "elem3b.f", line 183: Assume that the maximum number of iterations for this loop is 8 from the array declaration.
+   jwd6001s-i  "elem3b.f", line 183: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8210o-i  "elem3b.f", line 184: Loops fused at line 195.
+   jwd8211o-i  "elem3b.f", line 184: Loops interchanged at line 183.
+   jwd5001p-i  "elem3b.f", line 184: DO loop with DO variable 'IB' is parallelized.
+   jwd8670o-i  "elem3b.f", line 184: This loop cannot be software pipelined because the loop contains a branch instruction.
+   jwd8209o-i  "elem3b.f", line 186: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "elem3b.f", line 196: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "elem3b.f", line 197: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "elem3b.f", line 198: Division is changed to multiplication by reciprocal.
+   jwd8211o-i  "elem3b.f", line 201: Loops interchanged at line 202.
+   jwd8325o-i  "elem3b.f", line 201: Assume that the maximum number of iterations for this loop is 8 from the array declaration.
+   jwd6001s-i  "elem3b.f", line 201: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8210o-i  "elem3b.f", line 202: Loops fused at line 213.
+   jwd8211o-i  "elem3b.f", line 202: Loops interchanged at line 201.
+   jwd5001p-i  "elem3b.f", line 202: DO loop with DO variable 'IB' is parallelized.
+   jwd8670o-i  "elem3b.f", line 202: This loop cannot be software pipelined because the loop contains a branch instruction.
+   jwd8209o-i  "elem3b.f", line 204: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "elem3b.f", line 214: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "elem3b.f", line 215: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "elem3b.f", line 216: Division is changed to multiplication by reciprocal.
+   jwd8211o-i  "elem3b.f", line 219: Loops interchanged at line 220.
+   jwd8325o-i  "elem3b.f", line 219: Assume that the maximum number of iterations for this loop is 8 from the array declaration.
+   jwd6001s-i  "elem3b.f", line 219: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd8211o-i  "elem3b.f", line 220: Loops interchanged at line 219.
+   jwd5001p-i  "elem3b.f", line 220: DO loop with DO variable 'IB' is parallelized.
+   jwd8670o-i  "elem3b.f", line 220: This loop cannot be software pipelined because the loop contains a branch instruction.
+   jwd8209o-i  "elem3b.f", line 222: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+
+ Procedure information
+   Lines      : 232
+   Statements : 111
+   Stack(byte): 4512
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 232
+   Total statements : 111
+   Total stack(byte): 4512
+   Total prefetch num: 0
+

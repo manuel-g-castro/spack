@@ -1,0 +1,233 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:53:35 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : caldlu.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "CALDLU"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE CALDLU(IPART,NE,NP,NFACE,N2,NSP,NS,NODE,
+          2                          *                  LOCAL,LFACE,NFINLT,NFFREE,LFINLT,LFFREE,
+          3                          *                  U,V,W,AVEC,FFA,DU,IERR)
+          4                     C
+          5                           IMPLICIT NONE
+          6                     C
+          7                     C     [INPUT]
+          8                           INTEGER*4 IPART,NE,NP,NFACE,N2,NSP,NS
+          9                           INTEGER*4 NODE(N2,NE),LOCAL(NSP,NS,4),LFACE(5,NFACE)
+         10                           INTEGER*4 NFINLT,NFFREE,LFINLT(NFINLT),LFFREE(NFFREE)
+         11                           REAL*4    U(NP),V(NP),W(NP),AVEC(4,NFACE),FFA(NFACE)
+         12                     C
+         13                     C     [IN-OUTPUT]
+         14                           REAL*4    DU
+         15                           INTEGER*4 IERR
+         16                     
+         17                     C
+         18                     C     [LOCAL]
+         19                           INTEGER*4 IFACE,IE,IS,IBF,IETYPE,IP1,IP2,IP3,IP4
+         20                           REAL*4    QINLT,QFREE,AFREE,UF,VF,WF,AX,AY,AZ,DA,VAL1,VAL2,VAL3
+         21                     C
+         22                           IERR=0
+         23                     C
+         24                           QINLT=0.0E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 50
+                              <<< Loop-information  End >>>
+         25     1  pp    s            DO 1000 IBF=1,NFINLT
+         26     1   p    m               IFACE=LFINLT(IBF)
+         27     1   p    v               IE=LFACE(1,IFACE)
+         28     1   p    v               IS=LFACE(3,IFACE)
+         29     1               C
+         30     2   p    v               IF(     NODE(8,IE).GE.1) THEN ! HEX
+         31     2   p    m                  IETYPE=4
+         32     2   p    m               ELSE IF(NODE(6,IE).GE.1) THEN ! PRS
+         33     2   p    s                  IETYPE=3
+         34     2   p    m               ELSE IF(NODE(5,IE).GE.1) THEN ! PYR
+         35     2   p    m                  IETYPE=2
+         36     2   p                    ELSE                          ! TET
+         37     2   p    m                  IETYPE=1
+         38     2   p    s               ENDIF
+         39     1               C
+         40     1   p    v               IP1=NODE(LOCAL(1,IS,IETYPE),IE)
+         41     1   p    m               IP2=NODE(LOCAL(2,IS,IETYPE),IE)
+         42     1   p    v               IP3=NODE(LOCAL(3,IS,IETYPE),IE)
+         43     1               C
+         44     2   p    m               IF ((IETYPE.EQ.1            ).OR. ! TRI
+         45     2                    *       (IETYPE.EQ.2.AND.IS.LE.4).OR.
+         46     2                    *       (IETYPE.EQ.3.AND.IS.LE.2)) THEN
+         47     2   p    m                  UF=(U(IP1)+U(IP2)+U(IP3))/3.0E0
+         48     2   p    s                  VF=(V(IP1)+V(IP2)+V(IP3))/3.0E0
+         49     2   p    m                  WF=(W(IP1)+W(IP2)+W(IP3))/3.0E0
+         50     2   p    m               ELSE                              ! QUAD
+         51     2   p    m                  IP4=NODE(LOCAL(4,IS,IETYPE),IE)
+         52     2   p    s                  UF=(U(IP1)+U(IP2)+U(IP3)+U(IP4))/4.0E0
+         53     2   p    s                  VF=(V(IP1)+V(IP2)+V(IP3)+V(IP4))/4.0E0
+         54     2   p    s                  WF=(W(IP1)+W(IP2)+W(IP3)+W(IP4))/4.0E0
+         55     2   p    v               ENDIF
+         56     1               C
+         57     1   p    v               AX = AVEC(1,IFACE)
+         58     1   p    m               AY = AVEC(2,IFACE)
+         59     1   p    m               AZ = AVEC(3,IFACE)
+         60     1   p    v               DA = AVEC(4,IFACE)
+         61     1   p    m               QINLT=QINLT+DA*(AX*UF+AY*VF+AZ*WF)*FFA(IFACE)
+         62     1               C
+         63     1   p    v       1000 CONTINUE
+         64                     C
+         65                           QFREE=0.0E0
+         66                           AFREE=0.0E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 50
+                              <<< Loop-information  End >>>
+         67     1  pp    s            DO 2000 IBF=1,NFFREE
+         68     1   p    m               IFACE=LFFREE(IBF)
+         69     1   p    v               IE=LFACE(1,IFACE)
+         70     1   p    v               IS=LFACE(3,IFACE)
+         71     1               C
+         72     2   p    v               IF(     NODE(8,IE).GE.1) THEN ! HEX
+         73     2   p    m                  IETYPE=4
+         74     2   p    m               ELSE IF(NODE(6,IE).GE.1) THEN ! PRS
+         75     2   p    s                  IETYPE=3
+         76     2   p    m               ELSE IF(NODE(5,IE).GE.1) THEN ! PYR
+         77     2   p    m                  IETYPE=2
+         78     2   p                    ELSE                          ! TET
+         79     2   p    m                  IETYPE=1
+         80     2   p    s               ENDIF
+         81     1               C
+         82     1   p    v               IP1=NODE(LOCAL(1,IS,IETYPE),IE)
+         83     1   p    m               IP2=NODE(LOCAL(2,IS,IETYPE),IE)
+         84     1   p    v               IP3=NODE(LOCAL(3,IS,IETYPE),IE)
+         85     1               C
+         86     2   p    m               IF ((IETYPE.EQ.1            ).OR. ! TRI
+         87     2                    *       (IETYPE.EQ.2.AND.IS.LE.4).OR.
+         88     2                    *       (IETYPE.EQ.3.AND.IS.LE.2)) THEN
+         89     2   p    m                  UF=(U(IP1)+U(IP2)+U(IP3))/3.0E0
+         90     2   p    s                  VF=(V(IP1)+V(IP2)+V(IP3))/3.0E0
+         91     2   p    m                  WF=(W(IP1)+W(IP2)+W(IP3))/3.0E0
+         92     2   p    m               ELSE                              ! QUAD
+         93     2   p    m                  IP4=NODE(LOCAL(4,IS,IETYPE),IE)
+         94     2   p    s                  UF=(U(IP1)+U(IP2)+U(IP3)+U(IP4))/4.0E0
+         95     2   p    s                  VF=(V(IP1)+V(IP2)+V(IP3)+V(IP4))/4.0E0
+         96     2   p    s                  WF=(W(IP1)+W(IP2)+W(IP3)+W(IP4))/4.0E0
+         97     2   p    v               ENDIF
+         98     1               C
+         99     1   p    m               AX = AVEC(1,IFACE)
+        100     1   p    s               AY = AVEC(2,IFACE)
+        101     1   p    m               AZ = AVEC(3,IFACE)
+        102     1   p    v               DA = AVEC(4,IFACE)
+        103     1   p    v               QFREE=QFREE+DA*(AX*UF+AY*VF+AZ*WF)*FFA(IFACE)
+        104     1   p    v               AFREE=AFREE+DA*FFA(IFACE)
+        105     1               C
+        106     1   p    v       2000 CONTINUE
+        107                     C
+        108     1                     IF(IPART.GE.1) THEN
+        109     1                        CALL DDCOM2(QINLT, VAL1)
+        110     1                        CALL DDCOM2(QFREE, VAL2)
+        111     1                        CALL DDCOM2(AFREE, VAL3)
+        112     1                        QINLT=VAL1
+        113     1                        QFREE=VAL2
+        114     1                        AFREE=VAL3
+        115     1                     ENDIF
+        116                     C
+        117                           DU=(QINLT+QFREE)/AFREE
+        118                     C
+        119                           RETURN
+        120                           END
+
+ Diagnostic messages: program name(CALDLU)
+   jwd8220o-i  "caldlu.f", line 1: 副作用の可能性のある最適化を行いました。
+   jwd5004p-i  "caldlu.f", line 25: リダクション演算を含むDOループを並列化しました。(名前:IBF)
+   jwd6229s-i  "caldlu.f", line 25: IF文が存在するため、このDOループのSIMD化を抑止しました。
+   jwd6202s-i  "caldlu.f", line 31: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:IETYPE)
+   jwd8206o-i  "caldlu.f", line 47: 除算を逆数の乗算に変更しました。
+   jwd6202s-i  "caldlu.f", line 47: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:UF)
+   jwd8206o-i  "caldlu.f", line 48: 除算を逆数の乗算に変更しました。
+   jwd6202s-i  "caldlu.f", line 48: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:VF)
+   jwd8206o-i  "caldlu.f", line 49: 除算を逆数の乗算に変更しました。
+   jwd6202s-i  "caldlu.f", line 49: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:WF)
+   jwd8209o-i  "caldlu.f", line 52: 多項式の演算順序を変更しました。
+   jwd8209o-i  "caldlu.f", line 53: 多項式の演算順序を変更しました。
+   jwd8209o-i  "caldlu.f", line 54: 多項式の演算順序を変更しました。
+   jwd8209o-i  "caldlu.f", line 61: 多項式の演算順序を変更しました。
+   jwd5004p-i  "caldlu.f", line 67: リダクション演算を含むDOループを並列化しました。(名前:IBF)
+   jwd6229s-i  "caldlu.f", line 67: IF文が存在するため、このDOループのSIMD化を抑止しました。
+   jwd6202s-i  "caldlu.f", line 73: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:IETYPE)
+   jwd8206o-i  "caldlu.f", line 89: 除算を逆数の乗算に変更しました。
+   jwd6202s-i  "caldlu.f", line 89: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:UF)
+   jwd8206o-i  "caldlu.f", line 90: 除算を逆数の乗算に変更しました。
+   jwd6202s-i  "caldlu.f", line 90: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:VF)
+   jwd8206o-i  "caldlu.f", line 91: 除算を逆数の乗算に変更しました。
+   jwd6202s-i  "caldlu.f", line 91: データの定義引用の順序が逐次実行と異なるため、このDOループはSIMD化できません。(名前:WF)
+   jwd8209o-i  "caldlu.f", line 94: 多項式の演算順序を変更しました。
+   jwd8209o-i  "caldlu.f", line 95: 多項式の演算順序を変更しました。
+   jwd8209o-i  "caldlu.f", line 96: 多項式の演算順序を変更しました。
+   jwd8209o-i  "caldlu.f", line 101: 多項式の演算順序を変更しました。
+   jwd8209o-i  "caldlu.f", line 103: 多項式の演算順序を変更しました。
+
+ Procedure information
+   Lines      : 120
+   Statements : 90
+   Stack(byte): 40816
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 120
+   Total statements : 90
+   Total stack(byte): 40816
+   Total prefetch num: 0
+

@@ -1,0 +1,237 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:54:14 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : plot1d.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "PLOT1D"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    PLOT1D                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE PLOT1D(JPSOUT,IUTPS,JPLOUT,FILEPL,IUTPL,
+         14                          *                  IMODE,XPLT,YPLT,JPLT,NPLT,
+         15                          *                  ORGX,ORGY,SCLX,SCLY,SXMIN,SYMIN,ICLPLT,
+         16                          *                  ICDPLT,CSZPLT)
+         17                           IMPLICIT REAL*4(A-H,O-Z)
+         18                           DIMENSION XPLT(NPLT),YPLT(NPLT),JPLT(NPLT)
+         19                     C
+         20                           CHARACTER*(*) FILEPL
+         21                     C
+         22                     #ifdef VOS
+         23                           INCLUDE (GN)
+         24                     #else
+         25                           INCLUDE 'gn.h'
+         26                     #endif
+         27                     C
+         28                           DIMENSION XBUF (10),YBUF (10)
+         29                           DIMENSION XBUF2(10),YBUF2(10)
+         30                     C
+         31                     C
+         32                     C      PLOT GIVEN X-Y PAIRS ON A X-Y GRAPH
+         33                     C         ( 2-D GRAPHICS )
+         34                     C
+         35                     C
+         36                     C     NOTE 1 ; CALLING GENERIC GRAPHIC AND POSTSCRIPT INTERFACES.
+         37                     C
+         38                     C
+         39                     C     ARGUMENT LISTINGS
+         40                     C       (1) INPUT
+         41                     C          JPSOUT      ; POSTSCRIPT FILE WILL BE OUTPUT IF SET TO 1 OE 2
+         42                     C          IUTPS       ; FILE NUMBER TO ACCESS POSTSCRIPT FILE
+         43                     C          JPLOUT      ; PLOT DATA  FILE WILL BE OUTPUT IF SET TO 1
+         44                     C          FILEPL      ; FILE NAME   FOR PLOT DATA FILE
+         45                     C          IUTPL       ; FILE NUMBER TO ACCESS PLOT DATA  FILE
+         46                     C          IMODE       ; SPECIFIES THE PLOTTING MODE AS FOLLOWS
+         47                     C                   1 --- PLOT THE PAIRS BY MARKS
+         48                     C                   2 --- PLOT THE PAIRS BY MARKS CONNECTED BY LINES
+         49                     C          XPLT  (IPLT); X-COORDINATES OF THE PAIRS
+         50                     C          YPLT  (IPLT); Y-COORDINATES OF THE PAIRS
+         51                     C          JPLT  (IPLT); THE VALIDITY FLAGS
+         52                     C                    (IF JPLT(IPLT) IS 0, THE PAIR WILL NOT BE PLOTTED.)
+         53                     C          NPLT        ; THE NUMBER OF GIVEN PAIRS
+         54                     C
+         55                     C          ORGX        ; X-DIR. GRAPHIC ORIGIN
+         56                     C          ORGY        ; Y-DIR. GRAPHIC ORIGIN
+         57                     C          SCLX        ; X-DIR. SCALING FACTOR
+         58                     C          SCLY        ; Y-DIR. SCALING FACTOR
+         59                     C          SXMIN       ; X-DIR. MIN. SCALE
+         60                     C          SYMIN       ; Y-DIR. MIN. SCALE
+         61                     C
+         62                     C          ICLPLT      ; COLOR INDEX    FOR PLOTTING THE PAIRS
+         63                     C          ICDPLT      ; SYMBOL CODE    FOR PLOTTING THE PAIRS
+         64                     C          CSZPLT      ; CHARACTER SIZE FOR PLOTTING THE PAIRS
+         65                     C          THEPLT      ; TILTED ANGLE   FOR PLOTTING THE PAIRS
+         66                     C
+         67                     C       (2) OUTPUT
+         68                     C          NONE
+         69                     C
+         70                     C
+         71                           CALL GNCSET(ICLPLT)
+         72                           IF(JPSOUT.EQ.1) CALL PSGRAY(IUTPS,ICLPLT)
+         73                           IF(JPSOUT.EQ.2) CALL PSCSET(IUTPS,ICLPLT)
+         74                     C
+         75                           LNTYPE = GLSOLD
+         76                           PLTYPE = GLSOLD
+         77                     C
+         78                           LNWDTH = GLNORM
+         79                           PLWDTH = GLNORM
+         80                     C
+         81                           MKTYPE = ICDPLT
+         82                           PMTYPE = ICDPLT
+         83                     C
+         84                           MKSIZE = CSZPLT
+         85                           PKSIZE = CSZPLT
+         86                     C
+         87                     #ifdef VOS
+         88                           IF(JPLOUT.EQ.1) OPEN(IUTPL,FILE=FILEPL,FORM='FORMATTED',
+         89                          &                     ACTION='WRITE')
+         90                     #else
+         91                           IF(JPLOUT.EQ.1) OPEN(IUTPL,FILE=FILEPL,FORM='FORMATTED')
+         92                     #endif
+         93                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    UNSWITCHING
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      JPLT
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 3
+                              <<<      SIMD&FP   : SPILL 0  FILL 2
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+         94     1   s    s            DO 10 IPLT = 1 , NPLT
+         95     2   s    s                IF(JPLT(IPLT).NE.0) THEN
+         96     2   s    s                    POINTX = ORGX+SCLX*(XPLT(IPLT)-SXMIN)
+         97     2   s    s                    POINTY = ORGY+SCLY*(YPLT(IPLT)-SYMIN)
+         98     3   s    s                    IF(IMODE.EQ.2 .AND. IPLT.GE.2 .AND. JPLT(IPLT-1).NE.0)THEN
+         99     3   s    s                        XBUF(2) = POINTX
+        100     3   s    s                        YBUF(2) = POINTY
+        101     3   s    s                        CALL GNLINE(XBUF,YBUF,2)
+        102     3   s    s                        IF(JPSOUT.GE.1) CALL PSLINE(IUTPS,XBUF,YBUF,2)
+        103     3   s    s                    ENDIF
+        104     2   s    s                    XBUF (1) = POINTX
+        105     2   s    s                    YBUF (1) = POINTY
+        106     2   s    s                    XBUF2(1) = POINTX
+        107     2   s    s                    YBUF2(1) = POINTY
+        108     2   s    s                    CALL GNMARK(XBUF2,YBUF2,1)
+        109     2   s    s                    IF(JPSOUT.GE.1) CALL PSMARK(IUTPS,XBUF2,YBUF2,1)
+        110     2   s    s                    IF(JPLOUT.EQ.1) WRITE(IUTPL,*) XPLT(IPLT),YPLT(IPLT)
+        111     2   s    s                ENDIF
+        112     1   s    s         10 CONTINUE
+        113                           IF(JPLOUT.EQ.1) CLOSE(IUTPL)
+        114                     C
+        115                     C
+        116                           RETURN
+        117                           END
+
+ Diagnostic messages: program name(PLOT1D)
+   jwd8321o-i  "plot1d.f", line 94: Loop unswitched.
+   jwd6229s-i  "plot1d.f", line 94: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8664o-i  "plot1d.f", line 94: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5208p-i  "plot1d.f", line 95: DO loop is not parallelized: the assign-refer order of 'JPLT' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "plot1d.f", line 95: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'JPLT' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "plot1d.f", line 98: DO loop is not parallelized: the assign-refer order of 'JPLT' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "plot1d.f", line 98: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'JPLT' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "plot1d.f", line 99: DO loop is not parallelized: the assign-refer order of 'XBUF' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "plot1d.f", line 99: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'XBUF' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "plot1d.f", line 100: DO loop is not parallelized: the assign-refer order of 'YBUF' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "plot1d.f", line 100: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'YBUF' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "plot1d.f", line 101: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6122s-i  "plot1d.f", line 101: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "plot1d.f", line 102: DO loop is not parallelized: the assign-refer order of 'IUTPS' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "plot1d.f", line 102: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "plot1d.f", line 102: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'IUTPS' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "plot1d.f", line 102: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "plot1d.f", line 104: DO loop is not parallelized: the assign-refer order of 'XBUF' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "plot1d.f", line 105: DO loop is not parallelized: the assign-refer order of 'YBUF' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "plot1d.f", line 106: DO loop is not parallelized: the assign-refer order of 'XBUF2' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "plot1d.f", line 106: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'XBUF2' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "plot1d.f", line 107: DO loop is not parallelized: the assign-refer order of 'YBUF2' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "plot1d.f", line 107: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'YBUF2' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "plot1d.f", line 108: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6122s-i  "plot1d.f", line 108: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "plot1d.f", line 109: DO loop is not parallelized: the assign-refer order of 'IUTPS' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "plot1d.f", line 109: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "plot1d.f", line 109: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'IUTPS' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "plot1d.f", line 109: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5121p-i  "plot1d.f", line 110: DO loop is not parallelized: an input/output statement was found in the loop.
+   jwd6121s-i  "plot1d.f", line 110: SIMD conversion cannot be applied to DO loop: an input/output statement was found in the loop.
+
+ Procedure information
+   Lines      : 305
+   Statements : 110
+   Stack(byte): 1744
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 305
+   Total statements : 110
+   Total stack(byte): 1744
+   Total prefetch num: 0
+

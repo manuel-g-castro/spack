@@ -1,0 +1,32 @@
+      SUBROUTINE MATCHX(LIST1,LIST2,IMATCH)
+C
+      IMPLICIT NONE
+C
+C     [INPUT]
+      INTEGER*4 LIST1(4), LIST2(4)
+C
+C     [OUTPUT]
+      INTEGER*4 IMATCH
+C
+C     [LOCAL]
+      INTEGER*4 I,J,IBUF
+C
+C     [INPUT]  LIST1,LIST2 :VECTORS TO BE CHECK 
+C     [OUTPUT] IMATCH      :0 NOT MATCH ,1 MATCH     
+C 
+       IMATCH=0
+       DO 100 I=1,4
+          IF (LIST1(I).EQ.0) GOTO 100
+          IBUF=1
+          DO 200 J=1,4
+             IF (LIST2(J).EQ.0) GOTO 200
+             IBUF=IBUF*(LIST1(I)-LIST2(J))
+ 200      CONTINUE
+          IF(IBUF.NE.0)RETURN
+ 100   CONTINUE
+C
+       IMATCH=1
+       RETURN
+       END
+
+

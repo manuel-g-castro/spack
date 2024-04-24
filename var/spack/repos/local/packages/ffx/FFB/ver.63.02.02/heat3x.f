@@ -1,0 +1,263 @@
+      SUBROUTINE HEAT3X(MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+     *                  ISOLT,NS,NL,ITIME,JSET,IDIAGV,
+     *                  EPS,EPSRE,NITR,NMAX,RES,TSUM,
+     *                  N1,N2,ME,MELM,NE,NP,MEP,NEX,
+     *                  NODE,UG,VG,WG,DT,VISC,
+     *                  EAP1,EAP2,EAP3,EBP,AP,MP,IENP,JENP,NEP,
+     *                  SN,CM,DELTA,
+     *                  A,T,RHS,A0,AR,ALPHAT,
+     *                  NPTEMP,LPTEMP,TEMP,DTDT,
+     *                  NEHEAT,LEHEAT,HEATE,SHEAT,
+     *                  LPSET1,LPSET2,LPSET3,
+     *                  COVER1,COVER2,COVER3,NPSET,
+     *                  NPSND ,LPSND ,NPTSND,IPSET,IPSRC,
+     *                  NPRCV ,LPRCV ,NPTRCV,
+     *                  IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+     *                  NUMIP,LFIX3D,RX,RY,ACRS,MWRK,WRKN,
+     *                  WRK01,WRK02,WRK03,WRK04,WRK05,WRK06,WRK07,
+     *                  LPFIX,NCRS,NPP,IPCRS,LTAB,
+     *                  JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS,
+     *                  IUT6,IUT0,IERR,RHOCP,ICRS_T)
+      IMPLICIT NONE
+C
+      INTEGER*4 MWRK
+      REAL*4    WRKN(MWRK,4)
+C
+      INTEGER*4 ISOLT,ITIME,JSET,
+     *          N1,N2,ME,MELM,NE,NP,MEP,MP,NEX(12),NCRS,NITR,NMAX,
+     *          IDIAGV,IOP
+      REAL*4    EPS,EPSRE,RES,TSUM ,ALPHAT,DRELAX
+      INTEGER*4 NODE(N2,NE)
+      REAL*4    UG(NE),VG(NE),WG(NE),DT,VISC(NE)
+      REAL*4    CM(NP),SN(N1,NE),DELTA(NE),
+     *          A(N1,N2,NE),T(NP),RHS(NP),A0(NP),AR(NP),ARMIN,ARMINA
+      REAL*4    EAP1(N2,MEP,NP),EAP2(3,N2,MEP,NP),EAP3(6,N2,MEP,NP)
+      REAL*4    EBP(3,N2,MEP,NP),AP(N2,MEP,NP)
+      INTEGER*4 IENP(MEP,MP),JENP(MEP,MP),NEP(MP)
+      INTEGER*4 NPTEMP,LPTEMP(NPTEMP),
+     *          NEHEAT,LEHEAT(2,NEHEAT)
+      REAL*4    TEMP(NPTEMP),DTDT(NE),HEATE(NEHEAT),SHEAT(N1,NEHEAT)
+      INTEGER*4 IPART,NDOM,MBPDOM,
+     *          LDOM(NDOM),NBPDOM(NDOM),
+     *          IPSLF(MBPDOM,NDOM),IPSND(MBPDOM,NDOM),NUMIP(NP)
+      INTEGER*4 NPSND,NPRCV
+      INTEGER*4 NPSET,LPSET1(NPSET),LPSET2(NPSET),LPSET3(NPSET),
+     *          LPSND (NDOM),NPTSND(NDOM) ,LPRCV (NDOM) ,NPTRCV(NDOM),
+     *          IPSET (MBPDOM,NDOM),IPSRC (MBPDOM,NDOM)
+      REAL*4    COVER1(NPSET),COVER2(NPSET),COVER3(NPSET)
+      INTEGER*4 NPP(NP),IPCRS(NCRS),LTAB(N1,N2,NE)
+C
+C     [FULL UNROOL]
+      INTEGER*4 JUNROL
+      INTEGER*4 NPPMAX,NCRS2,ITPCRS(NCRS2)
+      REAL*4    TS(0:NP),TACRS(NCRS2)
+C      
+      INTEGER*4 LFIX3D(NP),LPFIX(NP)
+      REAL*4    RX(0:N2,ME),RY(0:N2,ME),ACRS(NCRS),
+     *          WRK01(NP),WRK02(NP),WRK03(NP),WRK04(NP),
+     *          WRK05(NP),WRK06(NP),WRK07(NP),WRK08(NP)
+      REAL*4    RHOCP(NE)
+      INTEGER*4 IUT6,IUT0,IERR,IERRA
+C
+      INTEGER*4 MAXBUF,IDUM,I,IE,IP,IB,ISEND,IDIM,NB,NPFIX
+      REAL*4    COEF
+C
+      INTEGER*4 MCOLOR,MCPART
+      INTEGER*4 NCOLOR(4),NCPART(MCOLOR,4),LLOOP(MCPART,MCOLOR,4)
+      REAL*4 CEB
+      DATA CEB /0.0/
+C
+      INTEGER*4 IBCGS
+      DATA IBCGS  / 0 /
+C
+      CHARACTER*60 ERMSGC
+     & / ' ## SUBROUTINE HEAT3X: FATAL      ERROR REPORT   ; RETURNED' /
+C
+      REAL*4 EPSE,RESR
+C
+      INTEGER*4 NS,NL
+      INTEGER*4 ICRS_T(NP)
+CC
+C
+      IERR=0
+      IF(ITIME.EQ.0) RETURN
+C
+      CEB = 1.0E0
+C
+CC  [1] PREPARE FIX B.C. LIST
+CC
+      DO 100 IP = 1 , NP
+          LFIX3D(IP) = 0
+          LPFIX(IP) = 0
+  100 CONTINUE
+C
+      DO 110 IB = 1 , NPTEMP
+          LFIX3D(LPTEMP(IB))=1
+  110 CONTINUE
+C
+      DO 120 IB = 1 , NPSET
+          ISEND = LPSET3(IB)
+          IF(ISEND.GT.0) GO TO 120
+          LFIX3D(LPSET1(IB))=1
+  120 CONTINUE
+C
+      NPFIX=0
+      DO 200 IP = 1 , NP
+          IF(LFIX3D(IP).EQ.0) GO TO 200
+          NPFIX=NPFIX+1
+          LPFIX(NPFIX) = IP
+  200 CONTINUE
+C
+      IERR=0
+      MAXBUF = ME*N2
+CC
+CC  [2] CAL TIME, ADV., AND DIFF. TERM 
+CC
+      CALL ADVDIF(N1,N2,NE,NP,MEP,MELM,NEX,NODE,IDIAGV,
+     *            UG,VG,WG,DT,VISC,CEB,
+     *            EAP1,EAP2,EAP3,EBP,MP,IENP,JENP,NEP,
+     *            A,T,RHS,A0,AR,RHOCP,DELTA,IERR)
+      IF(IERR.NE.0) THEN
+          WRITE(IUT0,*)'ERROR CODE REPORTED FROM ADVDIFF'
+          WRITE(IUT0,*)ERMSGC
+          RETURN
+      ENDIF
+CC
+CC  [3] CAL HEAT SOURCE TERM
+CC
+      CALL HSRC3X(N1,N2,NE,NP,NEX,NODE,DT,DTDT,RHS,SN,
+     *            NEHEAT,LEHEAT,HEATE,SHEAT)
+CC
+C
+CC  [4] MATIRIX CONVET FROM ELEMENT-WIZE TO CRS
+CC
+      CALL E2PMAT(MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+     *            N2,N1,NE,NEX,NCRS,A,ACRS,LTAB,IUT0,IERR)
+      IF(IERR.NE.0) THEN
+          WRITE(IUT0,*)'ERROR CODE REPORTED FROM E2PMAT'
+          WRITE(IUT0,*)ERMSGC
+          RETURN
+      ENDIF
+C
+CC  [5] DIAGONAL SCALING
+CC
+      IDUM=1
+      CALL DDCOMX(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+     *            AR,AR,AR,NP,IUT0,IERR,RX,RY,MAXBUF)
+      IF(IERR.NE.0) THEN
+          WRITE(IUT0,*)'ERROR CODE REPORTED FROM DDCOMX'
+          WRITE(IUT0,*)ERMSGC
+          RETURN
+      ENDIF
+C
+C
+      CALL DGNSCL(ACRS,AR,NP,NE,NCRS,IPCRS,NPP,ME)
+C
+      DO 380 IP=1, NP
+          RHS(IP) = RHS(IP)/AR(IP)
+ 380  CONTINUE
+C
+C
+      IDUM = 1
+      CALL DDCOMX(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+     *            RHS,RHS,RHS,NP,IUT0,IERR,RX,RY,MAXBUF)
+      IF(IERR.NE.0) THEN
+          WRITE(IUT0,*)
+          WRITE(IUT0,*) ERMSGC
+          RETURN
+      ENDIF
+C
+CC  [6] CLEAR CRS MATRIX FOR DIRICHLET B.C.
+C
+      CALL CLRCRS(IPART,ACRS,NP,NCRS,IPCRS,NPP,
+     *            AR,LFIX3D,NUMIP,WRK01)
+CC
+CC  [7] SET B.C. (1)TEMP-FIX, (2)OVERSET
+CC
+      DO 1000 IB = 1 , NPTEMP
+            IP=LPTEMP(IB)
+            T(IP) = TEMP(IB)
+ 1000 CONTINUE
+C
+      IF (JSET.GE.1) THEN
+          CALL OVRST1(IPART,NPSET,N1,N2,ME,NE,NP,NEX,NODE,T,
+     *                LPSET1,LPSET2,LPSET3,COVER1,COVER2,COVER3,
+     *                NDOM,MBPDOM,NPSND,NPRCV,
+     *                LPSND,NPTSND,LPRCV,NPTRCV,IPSET,IPSRC,
+     *                WRK01,WRK02,RX,RY,IUT0,IERR)
+          IF(IERR.NE.0) THEN
+              WRITE(IUT0,*)'ERROR CODE REPORTED FROM OVRST1'
+              WRITE(IUT0,*)ERMSGC
+              RETURN
+          ENDIF
+      ENDIF
+C
+      DO 2000 IB = 1 , NPFIX
+            IP=LPFIX(IB)
+            COEF=1.0E0/CM(IP)
+CC            RHS(IP) = T(IP)*COEF
+            RHS(IP) = T(IP)
+ 2000 CONTINUE
+CC
+CC  [8] SOLVE EQUATION
+CC
+C
+      IF(JUNROL.EQ.1)
+     *CALL CRSCVA(NP,NPPMAX,NCRS,NCRS2,NPP,ACRS,TACRS,ICRS_T)
+C
+      IF(ISOLT.EQ.1) THEN
+          CALL BCGSTX(
+     *         NPP,NCRS,IPCRS,ACRS,
+     *         RHS,T,EPS,EPSRE,
+     *         NMAX,RES,NITR,NODE,NE,NEX,NP,ME,N2,
+     *         IPART,LDOM,NBPDOM,NDOM,
+     *         IPSLF,IPSND,MBPDOM,NUMIP,
+     *         RX,RY,WRK01,WRK02,WRK03,WRK04,WRK05,WRK06,WRK07,
+     *         JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS,
+     *         IUT0,IERR)
+C
+      ELSE IF(ISOLT.EQ.3) THEN
+          CALL IDRBCG(ME,N2,NE,NP,NS,NL,NMAX,EPS,RES,RESR,NITR,
+     *                NCRS,NPP,ACRS,IPCRS,RHS,T,NUMIP,
+     *                IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+     *                JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS,
+     *                IUT0,IUT6,IERR)
+      ELSE
+              WRITE(IUT0,*) 'INVALID VALUE FOR ISOLT'  ,ISOLT
+              IERR=1
+              RETURN 
+      ENDIF
+C
+      IF(IERR.NE.0) THEN
+          WRITE(IUT0,*)'ERROR CODE REPORTED FROM BCGSTX'
+          WRITE(IUT0,*)ERMSGC
+          RETURN
+      ENDIF
+C
+      TSUM=0.0E0
+      DO 3000 IE=1,NE
+          IF(NODE(5,IE).EQ.0) THEN
+              TSUM=TSUM+(DELTA(IE)/4.0E0)*
+     *        ( T(NODE(1,IE))+T(NODE(2,IE))
+     *         +T(NODE(3,IE))+T(NODE(4,IE)))
+          ELSE IF(NODE(6,IE).EQ.0) THEN
+              TSUM=TSUM+(DELTA(IE)/5.0E0)*
+     *        ( T(NODE(1,IE))+T(NODE(2,IE))
+     *         +T(NODE(3,IE))+T(NODE(4,IE))
+     *         +T(NODE(5,IE))              )
+          ELSE IF(NODE(7,IE).EQ.0) THEN
+              TSUM=TSUM+(DELTA(IE)/6.0E0)*
+     *        ( T(NODE(1,IE))+T(NODE(2,IE))
+     *         +T(NODE(3,IE))+T(NODE(4,IE))
+     *         +T(NODE(5,IE))+T(NODE(6,IE)))
+          ELSE 
+              TSUM=TSUM+(DELTA(IE)/8.0E0)*
+     *        ( T(NODE(1,IE))+T(NODE(2,IE))
+     *         +T(NODE(3,IE))+T(NODE(4,IE))
+     *         +T(NODE(5,IE))+T(NODE(6,IE))
+     *         +T(NODE(7,IE))+T(NODE(8,IE)))
+          ENDIF
+ 3000 CONTINUE
+C
+      RETURN
+      END

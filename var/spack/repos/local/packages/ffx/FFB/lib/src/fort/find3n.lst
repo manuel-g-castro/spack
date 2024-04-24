@@ -1,0 +1,446 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:54:02 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : find3n.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "FIND3N"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    FIND3N                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE FIND3N(X,Y,Z,NODE,NES,NE,NP,IENE,NEE,MEE,N,
+         14                          *                  LAPEX,NAPEX,NPOLY,E,ELM,NDIM,GI,EI,TI,
+         15                          *                  XP,YP,ZP,IES,EPS,MAXITR,
+         16                          *                  GP,EP,TP,IEF,NITR,IUTWRN,IWRN)
+         17                           IMPLICIT REAL*4(A-H,O-Z)
+         18                           DIMENSION X(NP),Y(NP),Z(NP),NODE(N,NE),IENE(MEE,NE),NEE(NE),
+         19                          1          LAPEX(NAPEX,NPOLY),E(NDIM,NDIM,NPOLY,NE),ELM(24,NE),
+         20                          2          GI(N),EI(N),TI(N)
+         21                     C
+         22                           CHARACTER*60 WRMSGA
+         23                          & / ' ## SUBROUTINE FIND3N: WARNING          ISSUING  ; CONTINUE' /
+         24                           CHARACTER*60 WREXP1
+         25                          & / ' THE INITIAL ELEMENT NUMBER IS INVALID. IT WILL BE INGORED.' /
+         26                     C
+         27                     C
+         28                     C
+         29                     C      LOCATE AN ELEMENT WHICH INCLUDES SPECIFIED POINT
+         30                     C
+         31                     C
+         32                     C     ARGUMENT LISTINGS
+         33                     C       (1) INPUT
+         34                     C          X       (IP); X-DIR. COORDINATE OF NODE
+         35                     C          Y       (IP); Y-DIR. COORDINATE OF NODE
+         36                     C          Z       (IP); Z-DIR. COORDINATE OF NODE
+         37                     C          NODE  (I,IE); NODE TABLE
+         38                     C          NES         ; FIRST ELEMENT NUMBER
+         39                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+         40                     C          NP          ; NUMBER OF TOTAL    NODES
+         41                     C          IENE(IEE,IE); ADJACENT ELEMENT NUMBER TO ELEMENT IE
+         42                     C          NEE     (IE); NUMBER OF ADJACENT ELEMENTS TO ELEMENT IE
+         43                     C          MEE         ; THE FIRST DIMENSION OF ARRAY IENE
+         44                     C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT
+         45                     C          LAPEX(IA,IG); APEX NO. OF POLYGONS CONSTITUTING AN ELEMENT
+         46                     C          NAPEX       ; NUMBER OF APEXES CONSTITUTING A POLYGON
+         47                     C          NPOLY       ; NUMBER OF POLYGONS CONSTITUTING AN ELEMENT
+         48                     C          E(J,I,IG,IE); INVERSE MATRICES OF ELEMENT BASE VECTOR
+         49                     C          ELM   (K,IE); ELEMENT POSITION AND SHAPE DEPENDENT CONSTANTS,
+         50                     C                       DEFINED IN ELEM3E AND USED IN FIND3E FOR
+         51                     C                       CALCULATING LOCAL COORDINATES OF A GIVEN POINT.
+         52                     C                        THIS ARRAY IS NEEDED FOR TEMPORARILY ONLY, AND
+         53                     C                       DECLARED AS EQUIVALENCE TO WORK ARRAYS RX(N,ME),
+         54                     C                       RY(N,ME), AND RZ(N,ME)
+         55                     C           (SEE ELEM3E FOR THE MEANING OF EACH COMPONENT IN ELM(K,IE))
+         56                     C          NDIM        ; THE FIRST AND SECOND DIMENSION OF ARRAY E
+         57                     C          GI       (I); LOCAL GZAI  COORDINATES OF ELEMENT'S NODES
+         58                     C          EI       (I); LOCAL EATA  COORDINATES OF ELEMENT'S NODES
+         59                     C          TI       (I); LOCAL THETA COORDINATES OF ELEMENT'S NODES
+         60                     C          XP          ; X-COORDINATE OF THE SPECIFIED POINT
+         61                     C          YP          ; Y-COORDINATE OF THE SPECIFIED POINT
+         62                     C          ZP          ; Z-COORDINATE OF THE SPECIFIED POINT
+         63                     C          IES         ; INITIAL ELEMENT NUMBER FOR ELEMENT SEARCH
+         64                     C           NOTES ; IF NO GUESS CAN BE MADE FOR THE INITIAL ELEMENT
+         65                     C                  NUMBER, SET 'IES' TO ZERO.
+         66                     C          EPS         ; CONGERGENCE CRITERIA  FOR LOCAL COORDINATES CAL
+         67                     C          MAXITR      ; MAX. ITERATION NUMBER FOR LOCAL COORDINATES CAL
+         68                     C          IUTWRN      ; FILE NUMBER TO ISSUE A WARNING MESSAGE
+         69                     C           NOTES ; SET 'IUTWRN' TO A NEGATIVE INTEGER TO SUPPRESS
+         70                     C                  THE WARNING MESSAGE.
+         71                     C
+         72                     C       (2) OUTPUT
+         73                     C          GP          ; LOCAL GZAI -COORDINATE OF THE SPECIFIED POINT
+         74                     C          EP          ; LOCAL EATA -COORDINATE OF THE SPECIFIED POINT
+         75                     C          TP          ; LOCAL THETA-COORDINATE OF THE SPECIFIED POINT
+         76                     C          IEF         ; ELEMENT WHICH INCLUDES THE SPECIFIED POINT
+         77                     C           NOTES ; 'IEF' OF ZERO(0) MEANS THAT NO ELEMENT WAS FOUND
+         78                     C                  THAT INCLUDES THE SPECIFIED POINT. NEGATIVE VALUE
+         79                     C                  OF 'IEF' MEANS THAT ELEMENT -'IEF' WAS FOUND BUT
+         80                     C                  THE COORDINATE CALCULATIONS DID NOT CONVERGE TO THE
+         81                     C                  SPECIFIED CRITERIA WITHIN THE SPECIFIED ITERATIONS.
+         82                     C          NITR        ; NUMBER OF ITERATIONS MADE
+         83                     C          IWRN        ; RETURN CODE TO REPORT A WARNING
+         84                     C                   0 --- NORMAL TERMINATION
+         85                     C                   1 --- A WARNING ISSUED
+         86                     C
+         87                     C
+         88                     C
+         89                           IWRN = 0
+         90                           D    = 0.5E0*EPS
+         91                     C
+         92                     C
+         93                     C
+         94                     C LOCATE AN ELEMENT
+         95                     C
+         96                     C
+         97                     C
+         98                           IEF = 0
+         99                     C
+        100     1                     IF(IES.NE.0 .AND. (IES.LT.NES .OR. IES.GT.NE)) THEN
+        101     2                         IF(IUTWRN.GE.0) THEN
+        102     2                             WRITE(IUTWRN,*) WRMSGA
+        103     2                             WRITE(IUTWRN,*) WREXP1
+        104     2                         ENDIF
+        105     1                         IES  = 0
+        106     1                         IWRN = 1
+        107     1                     ENDIF
+        108                     C
+        109                           IF(IES.EQ.0) GO TO 35
+        110                     C
+        111                     C
+        112                     C     SEARCH INITIAL ELEMENT
+        113                     C
+        114                     C
+        115                           IE  = IES
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 142
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<< Loop-information  End >>>
+        116     1  pp    v            DO 10 IG = 1 , NPOLY
+        117     1   p    v                IP = NODE(LAPEX(1,IG),IE)
+        118     1               C
+        119     1   p    v                XF = XP-X(IP)
+        120     1   p    v                YF = YP-Y(IP)
+        121     1   p    v                ZF = ZP-Z(IP)
+        122     1   p    v                A = E(1,1,IG,IE)*XF+E(2,1,IG,IE)*YF+E(3,1,IG,IE)*ZF
+        123     1   p    v                B = E(1,2,IG,IE)*XF+E(2,2,IG,IE)*YF+E(3,2,IG,IE)*ZF
+        124     1   p    v                C = E(1,3,IG,IE)*XF+E(2,3,IG,IE)*YF+E(3,3,IG,IE)*ZF
+        125     1               C
+        126     1   p                     IF(A.GE.-D .AND. B.GE.-D .AND. C.GE.-D .AND.
+        127     1                    &       A+B+C.LE.1.D0+D) IEF = IE
+        128     1   p    v         10 CONTINUE
+        129                     C
+        130                     C
+        131                     C     SEARCH ADJACENT ELEMENTS TO THE INITIAL ELEMENT
+        132                     C
+        133                     C
+        134     1                     IF(IEF.EQ.0) THEN
+        135     2                         DO 30 IEE = 1 , NEE(IES)
+        136     2                             IE = IENE(IEE,IES)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 142
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<< Loop-information  End >>>
+        137     3  pp    v                    DO 20 IG = 1 , NPOLY
+        138     3   p    v                        IP = NODE(LAPEX(1,IG),IE)
+        139     3               C
+        140     3   p    v                        XF = XP-X(IP)
+        141     3   p    v                        YF = YP-Y(IP)
+        142     3   p    v                        ZF = ZP-Z(IP)
+        143     3   p    v                        A = E(1,1,IG,IE)*XF+E(2,1,IG,IE)*YF+E(3,1,IG,IE)*ZF
+        144     3   p    v                        B = E(1,2,IG,IE)*XF+E(2,2,IG,IE)*YF+E(3,2,IG,IE)*ZF
+        145     3   p    v                        C = E(1,3,IG,IE)*XF+E(2,3,IG,IE)*YF+E(3,3,IG,IE)*ZF
+        146     3               C
+        147     3   p                             IF(A.GE.-D .AND. B.GE.-D .AND. C.GE.-D .AND.
+        148     3                    &               A+B+C.LE.1.D0+D) IEF = IE
+        149     3   p    v         20         CONTINUE
+        150     2                  30     CONTINUE
+        151     1                     ENDIF
+        152                     C
+        153                     C
+        154                     C     SEARCH ALL ELEMENTS
+        155                     C
+        156                     C
+        157                        35 CONTINUE
+        158     1                     IF(IEF.EQ.0) THEN
+        159     2                         DO 50 IE = NES , NE
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 142
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<< Loop-information  End >>>
+        160     3  pp    v                    DO 40 IG = 1 , NPOLY
+        161     3   p    v                        IP = NODE(LAPEX(1,IG),IE)
+        162     3               C
+        163     3   p    v                        XF = XP-X(IP)
+        164     3   p    v                        YF = YP-Y(IP)
+        165     3   p    v                        ZF = ZP-Z(IP)
+        166     3   p    v                        A = E(1,1,IG,IE)*XF+E(2,1,IG,IE)*YF+E(3,1,IG,IE)*ZF
+        167     3   p    v                        B = E(1,2,IG,IE)*XF+E(2,2,IG,IE)*YF+E(3,2,IG,IE)*ZF
+        168     3   p    v                        C = E(1,3,IG,IE)*XF+E(2,3,IG,IE)*YF+E(3,3,IG,IE)*ZF
+        169     3               C
+        170     3   p                             IF(A.GE.-D .AND. B.GE.-D .AND. C.GE.-D .AND.
+        171     3                    &               A+B+C.LE.1.D0+D) IEF = IE
+        172     3   p    v         40         CONTINUE
+        173     2                  50     CONTINUE
+        174     1                     ENDIF
+        175                           IF(IEF.EQ.0) RETURN
+        176                     C
+        177                           IE = IEF
+        178                     C
+        179                     C
+        180                     C
+        181                     C CALCULATE LOCAL COORDINATES
+        182                     C
+        183                     C
+        184                     C
+        185                           IP1 = NODE(1,IE)
+        186                           IP2 = NODE(2,IE)
+        187                           IP3 = NODE(3,IE)
+        188                           IP4 = NODE(4,IE)
+        189                           IP5 = NODE(5,IE)
+        190                           IP6 = NODE(6,IE)
+        191                           IP7 = NODE(7,IE)
+        192                           IP8 = NODE(8,IE)
+        193                     C
+        194                           EA= SQRT((X(IP1)-X(IP7))**2+(Y(IP1)-Y(IP7))**2+(Z(IP1)-Z(IP7))**2)
+        195                           EB= SQRT((X(IP2)-X(IP8))**2+(Y(IP2)-Y(IP8))**2+(Z(IP2)-Z(IP8))**2)
+        196                           EC= SQRT((X(IP3)-X(IP5))**2+(Y(IP3)-Y(IP5))**2+(Z(IP3)-Z(IP5))**2)
+        197                           ED= SQRT((X(IP4)-X(IP6))**2+(Y(IP4)-Y(IP6))**2+(Z(IP4)-Z(IP6))**2)
+        198                     C
+        199                           DSCRIT = EPS*AMIN1(EA,EB,EC,ED)
+        200                     C
+        201                           NITR = 0
+        202                       110 CONTINUE
+        203     1                         IF(NITR.EQ.0) THEN
+        204     1                             DFG=ELM( 4,IE)
+        205     1                             DGG=ELM( 5,IE)
+        206     1                             DHG=ELM( 6,IE)
+        207     1                             DFE=ELM( 7,IE)
+        208     1                             DGE=ELM( 8,IE)
+        209     1                             DHE=ELM( 9,IE)
+        210     1                             DFT=ELM(10,IE)
+        211     1                             DGT=ELM(11,IE)
+        212     1                             DHT=ELM(12,IE)
+        213     1               C
+        214     1                             FV =ELM( 1,IE)-XP
+        215     1                             GV =ELM( 2,IE)-YP
+        216     1                             HV =ELM( 3,IE)-ZP
+        217     1               C
+        218     1                             DET = DFG*(DGE*DHT-DGT*DHE)
+        219     1                    &             +DFE*(DGT*DHG-DGG*DHT)
+        220     1                    &             +DFT*(DGG*DHE-DGE*DHG)
+        221     1               C
+        222     1                             A11 = (DGE*DHT-DGT*DHE)/DET
+        223     1                             A21 = (DGT*DHG-DGG*DHT)/DET
+        224     1                             A31 = (DGG*DHE-DGE*DHG)/DET
+        225     1                             A12 = (DHE*DFT-DHT*DFE)/DET
+        226     1                             A22 = (DHT*DFG-DHG*DFT)/DET
+        227     1                             A32 = (DHG*DFE-DHE*DFG)/DET
+        228     1                             A13 = (DFE*DGT-DFT*DGE)/DET
+        229     1                             A23 = (DFT*DGG-DFG*DGT)/DET
+        230     1                             A33 = (DFG*DGE-DFE*DGG)/DET
+        231     1               C
+        232     1                             GP = -A11*FV-A12*GV-A13*HV
+        233     1                             EP = -A21*FV-A22*GV-A23*HV
+        234     1                             TP = -A31*FV-A32*GV-A33*HV
+        235     1                         ELSE
+        236     1                            DFG=ELM( 4,IE)+ELM(13,IE)*EP+ELM(19,IE)*TP+ELM(22,IE)*EP*TP
+        237     1                            DGG=ELM( 5,IE)+ELM(14,IE)*EP+ELM(20,IE)*TP+ELM(23,IE)*EP*TP
+        238     1                            DHG=ELM( 6,IE)+ELM(15,IE)*EP+ELM(21,IE)*TP+ELM(24,IE)*EP*TP
+        239     1                            DFE=ELM( 7,IE)+ELM(16,IE)*TP+ELM(13,IE)*GP+ELM(22,IE)*TP*GP
+        240     1                            DGE=ELM( 8,IE)+ELM(17,IE)*TP+ELM(14,IE)*GP+ELM(23,IE)*TP*GP
+        241     1                            DHE=ELM( 9,IE)+ELM(18,IE)*TP+ELM(15,IE)*GP+ELM(24,IE)*TP*GP
+        242     1                            DFT=ELM(10,IE)+ELM(19,IE)*GP+ELM(16,IE)*EP+ELM(22,IE)*GP*EP
+        243     1                            DGT=ELM(11,IE)+ELM(20,IE)*GP+ELM(17,IE)*EP+ELM(23,IE)*GP*EP
+        244     1                            DHT=ELM(12,IE)+ELM(21,IE)*GP+ELM(18,IE)*EP+ELM(24,IE)*GP*EP
+        245     1               C
+        246     1                            FV =ELM( 1,IE)-XP+ELM( 4,IE)*GP+ELM( 7,IE)*EP+ELM(10,IE)*TP
+        247     1                    &          +ELM(13,IE)*GP*EP+ELM(16,IE)*EP*TP+ELM(19,IE)*TP*GP
+        248     1                    &          +ELM(22,IE)*GP*EP*TP
+        249     1                            GV =ELM( 2,IE)-YP+ELM( 5,IE)*GP+ELM( 8,IE)*EP+ELM(11,IE)*TP
+        250     1                    &          +ELM(14,IE)*GP*EP+ELM(17,IE)*EP*TP+ELM(20,IE)*TP*GP
+        251     1                    &          +ELM(23,IE)*GP*EP*TP
+        252     1                            HV =ELM( 3,IE)-ZP+ELM( 6,IE)*GP+ELM( 9,IE)*EP+ELM(12,IE)*TP
+        253     1                    &          +ELM(15,IE)*GP*EP+ELM(18,IE)*EP*TP+ELM(21,IE)*TP*GP
+        254     1                    &          +ELM(24,IE)*GP*EP*TP
+        255     1               C
+        256     1                            DET = DFG*(DGE*DHT-DGT*DHE)
+        257     1                    &            +DFE*(DGT*DHG-DGG*DHT)
+        258     1                    &            +DFT*(DGG*DHE-DGE*DHG)
+        259     1               C
+        260     1                            A11 = (DGE*DHT-DGT*DHE)/DET
+        261     1                            A21 = (DGT*DHG-DGG*DHT)/DET
+        262     1                            A31 = (DGG*DHE-DGE*DHG)/DET
+        263     1                            A12 = (DHE*DFT-DHT*DFE)/DET
+        264     1                            A22 = (DHT*DFG-DHG*DFT)/DET
+        265     1                            A32 = (DHG*DFE-DHE*DFG)/DET
+        266     1                            A13 = (DFE*DGT-DFT*DGE)/DET
+        267     1                            A23 = (DFT*DGG-DFG*DGT)/DET
+        268     1                            A33 = (DFG*DGE-DFE*DGG)/DET
+        269     1               C
+        270     1                            GP = GP-A11*FV-A12*GV-A13*HV
+        271     1                            EP = EP-A21*FV-A22*GV-A23*HV
+        272     1                            TP = TP-A31*FV-A32*GV-A33*HV
+        273     1                         ENDIF
+        274                     C
+        275                               XS = 0.E0
+        276                               YS = 0.E0
+        277                               ZS = 0.E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 356
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        278     1  pp    v                DO 120 I = 1 , N
+        279     1   p    v                    S  = 0.125*(1.E0+GI(I)*GP)*(1.E0+EI(I)*EP)*(1.E0+TI(I)*TP)
+        280     1   p    v                    XS = XS+S*X(NODE(I,IE))
+        281     1   p    v                    YS = YS+S*Y(NODE(I,IE))
+        282     1   p    v                    ZS = ZS+S*Z(NODE(I,IE))
+        283     1   p    v        120     CONTINUE
+        284                               DS = SQRT((XS-XP)**2+(YS-YP)**2+(YS-YP)**2)
+        285     1                     IF(DS.GT.DSCRIT) THEN
+        286     1                         NITR = NITR+1
+        287     2                         IF(NITR.LE.MAXITR) THEN
+        288     2                             GO TO 110
+        289     2                         ELSE
+        290     2                             IEF = -IEF
+        291     2                         ENDIF
+        292     1                     ENDIF
+        293                     C
+        294                     C
+        295                           RETURN
+        296                           END
+
+ Diagnostic messages: program name(FIND3N)
+   jwd8220o-i  "find3n.f", line 13: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd5001p-i  "find3n.f", line 116: DO loop with DO variable 'IG' is parallelized.
+   jwd6001s-i  "find3n.f", line 116: SIMD conversion is applied to DO loop with DO variable 'IG'.
+   jwd8209o-i  "find3n.f", line 121: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find3n.f", line 122: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find3n.f", line 123: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find3n.f", line 124: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5202p-i  "find3n.f", line 135: DO loop is not parallelized: data dependency of variable 'IEF' may cause different results from serial execution for loop.
+   jwd5001p-i  "find3n.f", line 137: DO loop with DO variable 'IG' is parallelized.
+   jwd6001s-i  "find3n.f", line 137: SIMD conversion is applied to DO loop with DO variable 'IG'.
+   jwd8209o-i  "find3n.f", line 142: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find3n.f", line 143: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find3n.f", line 144: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find3n.f", line 145: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5202p-i  "find3n.f", line 159: DO loop is not parallelized: data dependency of variable 'IEF' may cause different results from serial execution for loop.
+   jwd5001p-i  "find3n.f", line 160: DO loop with DO variable 'IG' is parallelized.
+   jwd6001s-i  "find3n.f", line 160: SIMD conversion is applied to DO loop with DO variable 'IG'.
+   jwd8209o-i  "find3n.f", line 165: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find3n.f", line 166: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find3n.f", line 167: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find3n.f", line 168: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find3n.f", line 194: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find3n.f", line 195: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find3n.f", line 196: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find3n.f", line 197: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find3n.f", line 199: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5132p-i  "find3n.f", line 202: Loop is not parallelized: cannot parallelize DO WHILE constructs, DO UNTIL constructs, or loops by IF/GO TO statements.
+   jwd8209o-i  "find3n.f", line 218: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find3n.f", line 236: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find3n.f", line 237: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find3n.f", line 238: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find3n.f", line 239: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find3n.f", line 240: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find3n.f", line 241: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find3n.f", line 242: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find3n.f", line 243: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find3n.f", line 244: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find3n.f", line 246: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find3n.f", line 249: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find3n.f", line 252: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find3n.f", line 256: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find3n.f", line 270: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find3n.f", line 271: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find3n.f", line 272: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5004p-i  "find3n.f", line 278: DO loop with DO variable 'I' is parallelized. The DO loop contains the reduction operation.
+   jwd6004s-i  "find3n.f", line 278: SIMD conversion is applied to DO loop with DO variable 'I'. The DO loop contains a reduction operation.
+   jwd8209o-i  "find3n.f", line 279: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find3n.f", line 284: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+
+ Procedure information
+   Lines      : 296
+   Statements : 148
+   Stack(byte): 109056
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 296
+   Total statements : 148
+   Total stack(byte): 109056
+   Total prefetch num: 0
+

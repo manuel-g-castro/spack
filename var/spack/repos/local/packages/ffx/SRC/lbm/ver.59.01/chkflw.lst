@@ -1,0 +1,279 @@
+
+ Fujitsu Fortran Version 4.8.1  Thu Nov 24 16:46:03 2022
+
+ Compilation information
+   Current directory : /vol0005/mdt2/home/u10588/SRC/lbm/ver.59.01
+   Source file       : chkflw.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -Nlst=t -Cpp -Cfpp -c -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Knointentopt
+   Cpp options          : -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Dcputime -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=8 -D__FRT_patchlevel__=1 -D__FRT_version__="4.8.1" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Knoarray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nlibomp -Nline -Nlst -Nlst=p -Nlst=t
+                          -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "CHKFLW"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE CHKFLW(NG,NG3,NP,CVEL,F,RHOMAX,VELMAX)
+          2                           IMPLICIT NONE
+          3                           INTEGER*4 NG,NG3,NP
+          4                     C
+          5                           REAL*8 CVEL(3,NP),F(NG3,NP),
+          6                          *       RHOMAX,VELMAX
+          7                     C
+          8                           INTEGER*4 IG,IP
+          9                           REAL*8    RHO,U0,V0,W0,UU,FBUF
+         10                     CCCC
+         11                     CCCC
+         12                           CALL USTSTA(21)
+         13                     C
+         14                           RHOMAX=0.0D0
+         15                           VELMAX=0.0D0
+         16                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 75
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    UNSWITCHING
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 20
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 11  FILL 11
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+         17     1  pp    v            DO 1000 IG=1,NG3
+         18     1   p    v                RHO=0.0E0
+         19     1   p    v                U0 =0.0E0
+         20     1   p    v                V0 =0.0E0
+         21     1   p    v                W0 =0.0E0
+         22     1               C
+         23     1   p    v                FBUF=F(IG,1)
+         24     1   p    v                RHO=RHO+FBUF
+         25     1               C
+         26     1   p    v                FBUF=F(IG,2)
+         27     1   p    v                RHO=RHO+FBUF
+         28     1   p    v                U0 =U0 +FBUF
+         29     1               C
+         30     1   p    v                FBUF=F(IG,3)
+         31     1   p    v                RHO=RHO+FBUF
+         32     1   p    v                V0 =V0 +FBUF
+         33     1               C
+         34     1   p    v                FBUF=F(IG,4)
+         35     1   p    v                RHO=RHO+FBUF
+         36     1   p    v                U0 =U0 -FBUF
+         37     1               C
+         38     1   p    v                FBUF=F(IG,5)
+         39     1   p    v                RHO=RHO+FBUF
+         40     1   p    v                V0 =V0 -FBUF
+         41     1               C
+         42     1   p    v                FBUF=F(IG,6)
+         43     1   p    v                RHO=RHO+FBUF
+         44     1   p    v                W0 =W0 +FBUF
+         45     1               C
+         46     1   p    v                FBUF=F(IG,7)
+         47     1   p    v                RHO=RHO+FBUF
+         48     1   p    v                W0 =W0 -FBUF
+         49     1               C
+         50     1   p    v                FBUF=F(IG,8)
+         51     1   p    v                RHO=RHO+FBUF
+         52     1   p    v                U0 =U0 +FBUF
+         53     1   p    v                V0 =V0 +FBUF
+         54     1   p    v                W0 =W0 +FBUF
+         55     1               C
+         56     1   p    v                FBUF=F(IG,9)
+         57     1   p    v                RHO=RHO+FBUF
+         58     1   p    v                U0 =U0 -FBUF
+         59     1   p    v                V0 =V0 +FBUF
+         60     1   p    v                W0 =W0 +FBUF
+         61     1               C
+         62     1   p    v                FBUF=F(IG,10)
+         63     1   p    v                RHO=RHO+FBUF
+         64     1   p    v                U0 =U0 -FBUF
+         65     1   p    v                V0 =V0 -FBUF
+         66     1   p    v                W0 =W0 +FBUF
+         67     1               C
+         68     1   p    v                FBUF=F(IG,11)
+         69     1   p    v                RHO=RHO+FBUF
+         70     1   p    v                U0 =U0 +FBUF
+         71     1   p    v                V0 =V0 -FBUF
+         72     1   p    v                W0 =W0 +FBUF
+         73     1               C
+         74     1   p    v                FBUF=F(IG,12)
+         75     1   p    v                RHO=RHO+FBUF
+         76     1   p    v                U0 =U0 +FBUF
+         77     1   p    v                V0 =V0 +FBUF
+         78     1   p    v                W0 =W0 -FBUF
+         79     1               C
+         80     1   p    v                FBUF=F(IG,13)
+         81     1   p    v                RHO=RHO+FBUF
+         82     1   p    v                U0 =U0 -FBUF
+         83     1   p    v                V0 =V0 +FBUF
+         84     1   p    v                W0 =W0 -FBUF
+         85     1               C
+         86     1   p    v                FBUF=F(IG,14)
+         87     1   p    v                RHO=RHO+FBUF
+         88     1   p    v                U0 =U0 -FBUF
+         89     1   p    v                V0 =V0 -FBUF
+         90     1   p    v                W0 =W0 -FBUF
+         91     1               C
+         92     1   p    v                FBUF=F(IG,15)
+         93     1   p    v                RHO=RHO+FBUF
+         94     1   p    v                U0 =U0 +FBUF
+         95     1   p    v                V0 =V0 -FBUF
+         96     1   p    v                W0 =W0 -FBUF
+         97     1               C
+         98     1   p    v                IF(NP.EQ.15) GOTO 1100
+         99     1               C
+        100     1   p    v                FBUF=F(IG,16)
+        101     1   p    v                RHO=RHO+FBUF
+        102     1   p    v                U0 =U0 +FBUF
+        103     1   p    v                V0 =V0 +FBUF
+        104     1               C
+        105     1   p    v                FBUF=F(IG,17)
+        106     1   p    v                RHO=RHO+FBUF
+        107     1   p    v                U0 =U0 -FBUF
+        108     1   p    v                V0 =V0 +FBUF
+        109     1               C
+        110     1   p    v                FBUF=F(IG,18)
+        111     1   p    v                RHO=RHO+FBUF
+        112     1   p    v                U0 =U0 -FBUF
+        113     1   p    v                V0 =V0 -FBUF
+        114     1               C
+        115     1   p    v                FBUF=F(IG,19)
+        116     1   p    v                RHO=RHO+FBUF
+        117     1   p    v                U0 =U0 +FBUF
+        118     1   p    v                V0 =V0 -FBUF
+        119     1               C
+        120     1   p    v                FBUF=F(IG,20)
+        121     1   p    v                RHO=RHO+FBUF
+        122     1   p    v                U0 =U0 +FBUF
+        123     1   p    v                W0 =W0 +FBUF
+        124     1               C
+        125     1   p    v                FBUF=F(IG,21)
+        126     1   p    v                RHO=RHO+FBUF
+        127     1   p    v                U0 =U0 -FBUF
+        128     1   p    v                W0 =W0 +FBUF
+        129     1               C
+        130     1   p    v                FBUF=F(IG,22)
+        131     1   p    v                RHO=RHO+FBUF
+        132     1   p    v                U0 =U0 -FBUF
+        133     1   p    v                W0 =W0 -FBUF
+        134     1               C
+        135     1   p    v                FBUF=F(IG,23)
+        136     1   p    v                RHO=RHO+FBUF
+        137     1   p    v                U0 =U0 +FBUF
+        138     1   p    v                W0 =W0 -FBUF
+        139     1               C
+        140     1   p    v                FBUF=F(IG,24)
+        141     1   p    v                RHO=RHO+FBUF
+        142     1   p    v                V0 =V0 +FBUF
+        143     1   p    v                W0 =W0 +FBUF
+        144     1               C
+        145     1   p    v                FBUF=F(IG,25)
+        146     1   p    v                RHO=RHO+FBUF
+        147     1   p    v                V0 =V0 -FBUF
+        148     1   p    v                W0 =W0 +FBUF
+        149     1               C
+        150     1   p    v                FBUF=F(IG,26)
+        151     1   p    v                RHO=RHO+FBUF
+        152     1   p    v                V0 =V0 -FBUF
+        153     1   p    v                W0 =W0 -FBUF
+        154     1               C
+        155     1   p    v                FBUF=F(IG,27)
+        156     1   p    v                RHO=RHO+FBUF
+        157     1   p    v                V0 =V0 +FBUF
+        158     1   p    v                W0 =W0 -FBUF
+        159     1               C
+        160     1   p    v       1100     CONTINUE
+        161     1               C
+        162     1   p    v                U0 =U0/RHO
+        163     1   p    v                V0 =V0/RHO
+        164     1   p    v                W0 =W0/RHO
+        165     1   p    v                UU =U0*U0+V0*V0+W0*W0
+        166     1   p    v                RHOMAX=MAX(RHOMAX,RHO)
+        167     1   p    v                VELMAX=MAX(VELMAX,UU )
+        168     1   p    v       1000 CONTINUE
+        169                           IF(VELMAX.NE.0.0D0) VELMAX=SQRT(VELMAX)
+        170                           CALL USTEND(21)
+        171                     C
+        172                           RETURN
+        173                           END
+
+ Diagnostic messages: program name(CHKFLW)
+   jwd2008i-i  "chkflw.f", line 1: Dummy argument 'NG' not used in this subprogram.
+   jwd8220o-i  "chkflw.f", line 1: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd2008i-i  "chkflw.f", line 5: Dummy argument 'CVEL' not used in this subprogram.
+   jwd2006i-i  "chkflw.f", line 8: 'IP' is declared but never referenced.
+   jwd8321o-i  "chkflw.f", line 17: Loop unswitched.
+   jwd5004p-i  "chkflw.f", line 17: DO loop with DO variable 'IG' is parallelized. The DO loop contains the reduction operation.
+   jwd6004s-i  "chkflw.f", line 17: SIMD conversion is applied to DO loop with DO variable 'IG'. The DO loop contains a reduction operation.
+   jwd8209o-i  "chkflw.f", line 93: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "chkflw.f", line 94: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "chkflw.f", line 95: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "chkflw.f", line 96: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "chkflw.f", line 137: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "chkflw.f", line 156: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "chkflw.f", line 157: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "chkflw.f", line 158: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "chkflw.f", line 165: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+
+ Procedure information
+   Lines      : 173
+   Statements : 135
+   Stack(byte): 54800
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 173
+   Total statements : 135
+   Total stack(byte): 54800
+   Total prefetch num: 0
+

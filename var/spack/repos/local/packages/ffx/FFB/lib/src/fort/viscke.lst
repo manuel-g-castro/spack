@@ -1,0 +1,214 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:54:37 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : viscke.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "VISCKE"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    VISCKE                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE VISCKE(IDIM,CNUE,CLMTK,CLMTE,TK,TE,NODE,NE,NP,N,
+         14                          *                  NEAR,DSNEAR,UTAU,NEWALL,AP,VISCM,VISC,VISCAV)
+         15                          *
+         16                           IMPLICIT REAL*4(A-H,O-Z)
+         17                           DIMENSION TK(NP),TE(NP),NODE(N,NE),
+         18                          1          NEAR(NE),DSNEAR(NE),UTAU(NEWALL),VISC(NE)
+         19                     C
+         20                           DATA EPS / 1.0E-20 /
+         21                     C
+         22                     C
+         23                     C      CALCULATE ELEMENT VISCOSITY BY K-EPSILON MODEL WITH VAN-DRIEST
+         24                     C     DAMPING FUNCTION
+         25                     C
+         26                     C
+         27                     C     ARGUMENT LISTINGS
+         28                     C       (1) INPUT
+         29                     C          IDIM        ; SPATIAL DIMENSION ( 2 OR 3 )
+         30                     C          CNUE        ; CONSTANT FOR TURBULENT KINEMATIC VISCOSITY
+         31                     C          CLMTK       ; LOWER BOUND OF TURBULENT ENERGY
+         32                     C          CLMTE       ; LOWER BOUND OF DISSIPATION RATE OF TURBULENT E.
+         33                     C          TK      (IP); TURBULENT KINETIC ENERGY
+         34                     C          TE      (IP); DISSIPATION RATE OF TURBULENT KINETIC ENERGY
+         35                     C          NODE  (I,IE); NODE NO. TABLE BASED ON ELEMENT
+         36                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+         37                     C          NP          ; NUMBER OF TOTAL     NODES
+         38                     C          N           ; NUMBER OF NODE ASSIGNED TO ONE ELEMENT
+         39                     C
+         40                     C          NEAR    (IE); NEAREST WALL SURFACE
+         41                     C          DSNEAR  (IE); DISTANCE TO THE NEAREST WALL SURFACE
+         42                     C          UTAU   (IBE); FRICTION VELOCITY AT WALL SURFACES
+         43                     C          NEWALL      ; NUMBER OF WALL BOUNDARY SURFACES
+         44                     C          AP          ; VAN-DRIEST DAMPING CONSTANT
+         45                     C          VISCM       ; MOLECULAR VISCOSITY
+         46                     C
+         47                     C       (2) OUTPUT
+         48                     C          VISC    (IE); ELEMENT VISCOSITY ( MOLECULAR+TURBULENT )
+         49                     C          VISCAV      ; SPATIALLY AVERAGED TURBULENT EDDY VISCOSITY
+         50                     C
+         51                     C
+         52                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 120
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.35, ITR: 64, MVE: 2, POL: S)
+                              <<<    UNSWITCHING
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      VISC
+                              <<< Loop-information  End >>>
+         53     1  pp    v            DO 100 IE = 1 , NE
+         54     1   p    v                TKG = TK(NODE(1,IE))+TK(NODE(2,IE))
+         55     1                    &         +TK(NODE(3,IE))+TK(NODE(4,IE))
+         56     1   p    v                TEG = TE(NODE(1,IE))+TE(NODE(2,IE))
+         57     1                    &         +TE(NODE(3,IE))+TE(NODE(4,IE))
+         58     2   p    v                IF(IDIM.EQ.3) THEN
+         59     2   p    v                    TKG = TKG+TK(NODE(5,IE))+TK(NODE(6,IE))
+         60     2                    &                 +TK(NODE(7,IE))+TK(NODE(8,IE))
+         61     2   p    v                    TEG = TEG+TE(NODE(5,IE))+TE(NODE(6,IE))
+         62     2                    &                 +TE(NODE(7,IE))+TE(NODE(8,IE))
+         63     2   p    v                ENDIF
+         64     1   p    v                TKG = TKG/FLOAT(N)
+         65     1   p    v                TEG = TEG/FLOAT(N)
+         66     1               C
+         67     2   p    v                IF(TKG.LE.CLMTK+EPS .OR. TEG.LE.CLMTE+EPS) THEN
+         68     2   p    v                    VISC(IE) = 0.E0
+         69     2   p    v                ELSE
+         70     2   p    v                    VISC(IE) = CNUE*TKG**2/(TEG+EPS)
+         71     2   p    v                ENDIF
+         72     1   p    v        100 CONTINUE
+         73                     C
+         74                     C
+         75     1                     IF(NEWALL.GE.1) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 43
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.11, ITR: 160, MVE: 4, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      VISC, NEAR, DSNEAR
+                              <<< Loop-information  End >>>
+         76     2  pp    v                DO 200 IE = 1 , NE
+         77     2   p    v                    YP = UTAU(NEAR(IE))*DSNEAR(IE)/VISCM
+         78     2   p    v                    VISC(IE) = VISC(IE)*(1.E0-EXP(-YP/AP))**2
+         79     2   p    v        200     CONTINUE
+         80     1                     ENDIF
+         81                     C
+         82                     C
+         83                           VISCAV = 0.E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 800
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+         84     1  pp    v            DO 300 IE = 1 , NE
+         85     1   p    v                VISCAV   = VISCAV+VISC(IE)/NE
+         86     1   p    v                VISC(IE) = VISCM +VISC(IE)
+         87     1   p    v        300 CONTINUE
+         88                     C
+         89                     C
+         90                           RETURN
+         91                           END
+
+ Diagnostic messages: program name(VISCKE)
+   jwd8220o-i  "viscke.f", line 13: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd8321o-i  "viscke.f", line 53: Loop unswitched.
+   jwd5001p-i  "viscke.f", line 53: DO loop with DO variable 'IE' is parallelized.
+   jwd6001s-i  "viscke.f", line 53: SIMD conversion is applied to DO loop with DO variable 'IE'.
+   jwd8204o-i  "viscke.f", line 53: This loop is software pipelined.
+   jwd8205o-i  "viscke.f", line 53: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 64.
+   jwd8209o-i  "viscke.f", line 56: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "viscke.f", line 61: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "viscke.f", line 64: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "viscke.f", line 65: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "viscke.f", line 70: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5001p-i  "viscke.f", line 76: DO loop with DO variable 'IE' is parallelized.
+   jwd6001s-i  "viscke.f", line 76: SIMD conversion is applied to DO loop with DO variable 'IE'.
+   jwd8204o-i  "viscke.f", line 76: This loop is software pipelined.
+   jwd8205o-i  "viscke.f", line 76: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 160.
+   jwd8209o-i  "viscke.f", line 78: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "viscke.f", line 78: Division is changed to multiplication by reciprocal.
+   jwd5004p-i  "viscke.f", line 84: DO loop with DO variable 'IE' is parallelized. The DO loop contains the reduction operation.
+   jwd6004s-i  "viscke.f", line 84: SIMD conversion is applied to DO loop with DO variable 'IE'. The DO loop contains a reduction operation.
+   jwd8206o-i  "viscke.f", line 85: Division is changed to multiplication by reciprocal.
+
+ Procedure information
+   Lines      : 91
+   Statements : 32
+   Stack(byte): 15344
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 91
+   Total statements : 32
+   Total stack(byte): 15344
+   Total prefetch num: 0
+

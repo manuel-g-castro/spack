@@ -1,0 +1,125 @@
+      SUBROUTINE SETRGN(JDUMP,NG,NP,LPOSI,LEVEL,DSCALE,PARDMP,CDUMP)
+      IMPLICIT NONE
+      INTEGER*4 JDUMP,NG,NP,LPOSI(3),LEVEL
+      REAL*8    DSCALE,PARDMP(8),
+     *          CDUMP(0:NG+2,0:NG+2,0:NG+2)
+C
+C JDUMP       : TYPE OF DUMPING REGION
+C             : 0: NO DUMPING REGION
+C             : 1: SPHERE
+C             : 2: CYLINDER ALONG X-DIRECTION
+C             : 3: CYLINDER ALONG X-DIRECTION
+C             : 4: CYLINDER ALONG X-DIRECTION
+C             :11: ELLIPSOID  
+C
+C IF JDUMP = 1,2,3 OR 4
+C PARDMP( 1)  : X CORDINATE OF CENTER OF DUMPING REGION 
+C PARDMP( 2)  : Y CORDINATE OF CENTER OF DUMPING REGION 
+C PARDMP( 3)  : Z CORDINATE OF CENTER OF DUMPING REGION 
+C PARDMP( 4)  : R1 OF DOUMPING REGION
+C PARDMP( 5)  : R2 OF DOUMPING REGION
+C PARDMP( 6)  : COEFICIENT OF DUMPING TERM (=ALPHA)
+C PARDMP( 7)  : TARGET DENSITY  
+C PARDMP( 8)  : TARGET VELOCITY-U
+C PARDMP( 9)  : TARGET VELOCITY-V 
+C PARDMP(10)  : TARGET VELOCITY-W
+C
+C IF JDUMP = 11
+C PARDMP( 1)  : X CORDINATE OF CENTER OF DUMPING REGION 
+C PARDMP( 2)  : Y CORDINATE OF CENTER OF DUMPING REGION 
+C PARDMP( 3)  : Z CORDINATE OF CENTER OF DUMPING REGION 
+C PARDMP( 4)  : RX    OF DOUMPING REGION
+C PARDMP( 5)  : RY    OF DOUMPING REGION
+C PARDMP( 6)  : RZ    OF DOUMPING REGION
+C PARDMP( 7)  : RATIO OF DOUMPING REGION
+C PARDMP( 8)  : COEFICIENT OF DUMPING TERM (=ALPHA)
+C PARDMP( 9)  : TARGET DENSITY  
+C PARDMP(10)  : TARGET VELOCITY-U
+C PARDMP(11)  : TARGET VELOCITY-V 
+C PARDMP(12)  : TARGET VELOCITY-W
+C
+C CDUMP(:,:,:): WORK REFION FOR COEF. OF DUMPING TERM 
+C
+      INTEGER*4 I,J,K,IP
+      REAL*8    XC,YC,ZC,R1,R2,ALPHA,RHO,U0,V0,W0
+      REAL*8    CU,UU,DCUBE,DD,X0,Y0,Z0,X1,Y1,Z1,DX,DY,DZ,RR
+      REAL*8    RX,RY,RZ,RATIO
+C
+      IF(JDUMP.GE.1 .AND. JDUMP.LE.4) THEN
+          XC   =PARDMP(1)
+          YC   =PARDMP(2)
+          ZC   =PARDMP(3)
+          R1   =PARDMP(4)
+          R2   =PARDMP(5)
+          ALPHA=PARDMP(6)
+      ELSE IF(JDUMP.EQ.11) THEN 
+          XC   =PARDMP(1)
+          YC   =PARDMP(2)
+          ZC   =PARDMP(3)
+          RX   =PARDMP(4)
+          RY   =PARDMP(5)
+          RZ   =PARDMP(6)
+          RATIO=PARDMP(7)
+          ALPHA=PARDMP(8)
+      ENDIF
+C
+C
+      DCUBE=DSCALE*2.0**(LEVEL-1)   
+      DD   =DCUBE/DBLE(NG)
+      X0   =DSCALE*FLOAT(LPOSI(1))-DD
+      Y0   =DSCALE*FLOAT(LPOSI(2))-DD
+      Z0   =DSCALE*FLOAT(LPOSI(3))-DD
+      DO 2000 K=0,NG+2
+      DO 2100 J=0,NG+2
+      DO 2200 I=0,NG+2
+          X1=X0+DD*DBLE(I)
+          Y1=Y0+DD*DBLE(J)
+          Z1=Z0+DD*DBLE(K)
+          DX=X1-XC 
+          DY=Y1-YC 
+          DZ=Z1-ZC 
+C
+          IF(JDUMP.GE.1 .AND. JDUMP.LE.4) THEN
+              IF(JDUMP.EQ.1) THEN
+                  RR=DX*DX+DY*DY+DZ*DZ
+              ELSE IF(JDUMP.EQ.2) THEN
+                  RR=DY*DY+DZ*DZ
+              ELSE IF(JDUMP.EQ.3) THEN
+                  RR=DX*DX+DZ*DZ
+              ELSE IF(JDUMP.EQ.4) THEN
+                  RR=DX*DX+DY*DY
+              ENDIF
+C
+              IF(RR.GT.0.0D0) RR=SQRT(RR)
+C
+              IF(RR.LT.R1) THEN
+                  CDUMP(I,J,K)=0.0D0
+              ELSE IF(RR.LE.R2) THEN
+                  CDUMP(I,J,K)=(RR-R1)**2.0D0/((R2-R1)**2.0D0)
+              ELSE
+                  CDUMP(I,J,K)=1.0D0
+              ENDIF
+C
+          ELSE IF(JDUMP.EQ.11) THEN 
+              RR = (DX*DX)/(RX*RX)
+     *            +(DY*DY)/(RY*RY)
+     *            +(DZ*DZ)/(RZ*RZ)
+C
+              IF(RR.LT.1.0D0) THEN
+                  CDUMP(I,J,K)=0.0D0
+              ELSE IF(RR.GT.RATIO) THEN
+                  CDUMP(I,J,K)=1.0D0
+              ELSE
+                  CDUMP(I,J,K)=(RR-1.0D0)/(RATIO-1.0D0)
+              ENDIF
+          ENDIF      
+C
+          CDUMP(I,J,K)=ALPHA*CDUMP(I,J,K)
+C
+ 2200 CONTINUE   
+ 2100 CONTINUE   
+ 2000 CONTINUE   
+C
+C
+      RETURN
+      END

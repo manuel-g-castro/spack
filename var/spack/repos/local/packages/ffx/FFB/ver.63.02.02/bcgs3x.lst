@@ -1,0 +1,668 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:52:52 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : bcgs3x.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "BCGS3X"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE BCGS3X(IMODE,IPART,NMAX,EPS,ME,N2,NE,NEX,NP,
+          2                          *                  NPP,NCRS,IPCRS,AAAPC,NODE,B,S,NITR,RESR,
+          3                          *                  NDOM,MBPDOM,LDOM,NBPDOM,IPSLF,IPSND,NUMIP,
+          4                          *                  WEIGHT,R0,RK,PK,APK,ATK,TK,S0,RX,RY,MWRK,WRKN,
+          5                          *                  IUT0,IERR,AR,LPFIX3D,
+          6                          *                  JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS)
+          7                           IMPLICIT NONE
+          8                     C
+          9                           REAL*4    AR(NP)
+         10                           INTEGER*4 LPFIX3D(NP)
+         11                     C
+         12                     CCCC  [INPUT:CONTROL PARAMETERS]
+         13                           INTEGER*4 IMODE,IPART,NMAX,ME,N2,NE,NEX(8),NP,IUT0
+         14                           REAL*4    EPS
+         15                     C
+         16                     CCCC  [INPUT:MATRIX]
+         17                           INTEGER*4 NCRS,NPP(NP),IPCRS(NCRS),NODE(N2,NE)
+         18                           REAL*4    AAAPC(NCRS),B(NP)
+         19                     C
+         20                     CCCC  [INPUT:INTER CONNECT DATA]
+         21                           INTEGER*4 NDOM,MBPDOM,LDOM(NDOM),NBPDOM(NDOM),
+         22                          *          IPSLF(MBPDOM,NDOM),IPSND(MBPDOM,NDOM),NUMIP(NP)
+         23                     C
+         24                     CCC  [INPUT/OUTPUT]
+         25                           REAL*4    S(NP)
+         26                     C
+         27                     CCC  [OUTPUT]
+         28                           INTEGER*4 NITR,IERR
+         29                           REAL*4    RESR
+         30                     C
+         31                     CCC  [WORK]
+         32                           REAL*4    WRKSCT(NP),
+         33                          *          RX(0:N2,ME),RY(0:N2,ME),WEIGHT(NP),
+         34                          *          R0(NP),RK(NP),PK(NP),APK(NP),ATK(NP),TK(NP),S0(NP)
+         35                           INTEGER*4 MWRK
+         36                           REAL*4    WRKN(MWRK,4)
+         37                     C
+         38                     C     [FULL UNROOL]
+         39                           INTEGER*4 JUNROL
+         40                           INTEGER*4 NPPMAX,NCRS2,ITPCRS(NCRS2)
+         41                           REAL*4    TS(0:NP),TACRS(NCRS2)
+         42                     C
+         43                     CCC  [LOCAL VARIABLE]
+         44                           INTEGER*4 MAXBUF,IP,IBP
+         45                           REAL*4 RKDOT,RKDOTA,BDOT,BDOTA,APDOT,APDOTA,
+         46                          *       ATTDOT,ATTDTA,QK,AT2DOT,AT2DTA,RKDOTP,RSDOT,RSDOTA,
+         47                          *       EPS0,RES,RESMIN,ALFA,BETA
+         48                           DATA EPS0 / 1.E-30 /
+         49                     C
+         50                           CHARACTER*60 ERMSGC
+         51                          & /' ## SUBROUTINE BCGST3X: FATAL     ERROR REPORT   ; RETURNED' /
+         52                     C
+         53                     C      SOLVE MATRIX EQUATION BY BI-CGSTAB METHOS
+         54                     C         ( 3-D CALCULATION : SINGLE WORD & MULTI ELEMENT VERSION )
+         55                     C                                           CODED BASED ON 'BCGSTB'
+         56                     C      2011.01.14 MODIFIED TO SUPPORT MID NODE BY Y. YAMADE
+         57                     C
+         58                     C          OPERATION COUNTS:   77 FLOP /ELEMENT/ITERATION
+         59                     C          DATA LOADINGS   :  101 WORDS/ELEMENT/ITERATION
+         60                     C                           (  69 WORDS CONTIGUOUSLY,
+         61                     C                               8 WORDS BY 4-WORD STRIDE, AND
+         62                     C                              24 WORDS BY LIST )
+         63                     C
+         64                     C
+         65                     C     ARGUMENT LISTINGS
+         66                     C
+         67                     C (1)INPUT
+         68                     C
+         69                     C (1.1) CONTROL PARAMETERS
+         70                     C INT *4 IMODE        ; BEST SOLUTION STORING FUNCTION (1:ON,0:OFF)
+         71                     C INT *4 IPART        ; SUB-DOMAIN NUMBER THAT THIS TASK SHOULD TAKE/IS
+         72                     C                       TAKING CARE OF. IPART BEING SET ZERO MEANS THAT
+         73                     C                       THE PROGRAM SHOULD RUN/IS RUNNING IN SERIAL
+         74                     C                       MODE.
+         75                     C INT *4 NMAX         ; MAXIMUM NUMBER OF ITERATIONS
+         76                     C INT *4 ME           ; MAX. NUMBER OF TOTAL ELEMENTS
+         77                     C INT *4 N            ; =8
+         78                     C INT *4 N2           ; =8
+         79                     C INT *4 NE           ; NUMBER OF TOTAL ELEMENTS
+         80                     C INT *4 NEX       (I); INCLUDES NUMBER OF ELEMENTS AND NUMBER OF
+         81                     C                       LOCAL NODES AS FOLOOWS
+         82                     C    NEX(1)           ; NUMBER OF TET.    ELEMENTS
+         83                     C    NEX(2)           ; NUMBER OF PYRAMID ELEMENTS
+         84                     C    NEX(3)           ; NUMBER OF WEGDE   ELEMENTS
+         85                     C    NEX(4)           ; NUMBER OF HEX.    ELEMENTS
+         86                     C    NEX(5)           ; NUMBER OF LOCAL NODES IN A TET.    ELEMENT (=4)
+         87                     C    NEX(6)           ; NUMBER OF LOCAL NODES IN A PYRAMID ELEMENT (=5)
+         88                     C    NEX(7)           ; NUMBER OF LOCAL NODES IN A WEGDE   ELEMENT (=6)
+         89                     C    NEX(8)           ; NUMBER OF LOCAL NODES IN A HEX.    ELEMENT (=8)
+         90                     C INT *4 NP           ; NUMBER OF TOTAL    NODES
+         91                     C INT *4 IUT0         ; FILE NUMBER TO REPORT ERROR OCCURRENCE
+         92                     C REAL*4 EPS          ; CONVERGENCE CRITERIA (L2-NORM RESIDUAL)
+         93                     C
+         94                     C (1.2) MATRIX
+         95                     C INT *4 NCRS         ; NUMBER OF NONZERO ELEMENTS IN MATRIX OF CRS FORMAT
+         96                     C INT *4 NPP     (IP) ; NUMBER OF ADJACENT NODES    TO NODE    IP
+         97                     C INT *4 IPCRS (ICRS) ; NODE NO. TABLE BASED ON CRS FORMAT
+         98                     C INT *4 NODE  (I,IE) ; NODE TABLE
+         99                     C INT *4 AAAPC (ICRS) ; MATRIX COEEFICIENTS
+        100                     C REAL*4 B       (IP) ; GLOBAL FORCE VECTOR
+        101                     C
+        102                     C   NOTES ; FOR PARALLEL COMPUTATIONS, CONTRIBUTIONS FROM THE
+        103                     C          NEIGHBORING DOMAINS MUST HAVE BEEN SUPERIMPOSED
+        104                     C          TO THE GLOBAL FORCE VECTOR BEFORE THIS SUBROUTINE IS
+        105                     C          CALLED.
+        106                     C
+        107                     C (1.3) INTER CONNECT DATA
+        108                     C INT *4 NDOM         ; NUMBER OF THE NERIBERING SUB-DOMAINS
+        109                     C INT *4 MBPDOM       ; THE MAXIMUM NUMBER OF THE INTER-CONNECT
+        110                     C                       BOUNDARY NODES FOR ONE NEIBERING SUB-DOMAIN
+        111                     C INT *4 LDOM   (IDOM); NEIBERING SUB-DOMAIN NUMBER
+        112                     C INT *4 NBPDOM (IDOM); NUMBER OF INTER-CONNECT BOUNDARY NODES
+        113                     C                       SHARING WITH THE IDOM'TH NEIBERING SUB-DOMAIN,
+        114                     C                       LDOM(IDOM)
+        115                     C INT *4 IPSLF(I,IDOM); INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+        116                     C                       CALLING TASK'S SUB-DOMAIN, FOR THE IDOM'TH
+        117                     C                       NEIBERING SUB-DOMAIN, LDOM(IDOM)
+        118                     C INT *4 IPSND(I,IDOM); INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+        119                     C                       SUB-DOMAIN THAT IS RECEIVING THE CALLING
+        120                     C                       TASK'S RESIDUALS.
+        121                     C INT *4 NUMIP    (IP);
+        122                     C
+        123                     C (2) INPUT-OUTPUT
+        124                     C REAL*4 S         (IP); GLOBAL SOLUTION VECTOR (PROVIDE INITIAL GUESS)
+        125                     C
+        126                     C (3) OUTPUT
+        127                     C REAL*4 RES           ; L2-NORM RESIDUAL OF THE FINAL SOLUTION VECTOR
+        128                     C INT *4 NITR          ; NUMBER OF ITERATIONS DONE
+        129                     C INT* 4 IERR          ; RETURN CODE TO REPORT ERROR OCCURRENCE
+        130                     C                   0 --- NORMAL TERMINATION
+        131                     C                   1 --- A FATAL ERROR HAS OCCURRED
+        132                     C
+        133                     #ifdef USE_TIMER
+        134                           real*8 ts0, te0
+        135                     
+        136                           include 'timer.h'
+        137                           include 'mpif.h'
+        138                     
+        139                           nbcgs3x = nbcgs3x + 1
+        140                           tstart = MPI_WTIME()
+        141                     #endif
+        142     1                     IF(NMAX.EQ.0) then
+        143     1               #ifdef USE_TIMER
+        144     1                        tend = MPI_WTIME()
+        145     1                        tbcgs3x = tbcgs3x + (tend - tstart)
+        146     1               #endif
+        147     1                        RETURN
+        148     1                     ENDIF
+        149                     C
+        150                           NITR=0
+        151                           MAXBUF=8*NE
+        152                     C
+        153                     C
+        154                     CCC   1. SET WEIGHTING FUNCTION FOR COMPUTING AN INNER PRODUCT
+        155                     C
+        156                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 552
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.50, ITR: 352, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NUMIP, WEIGHT
+                              <<< Loop-information  End >>>
+        157     1  pp   2v            DO 100 IP = 1 , NP
+        158     1   p   2v                WEIGHT(IP) = 1.E0/(FLOAT(NUMIP(IP))+1.E0)
+        159     1   p   2v        100 CONTINUE
+        160                     C
+        161                     C
+        162                     CCC   2. SET INITIAL RESIDUAL VECTOR AND SEARCH-DIRECTION VECTOR
+        163                     C
+        164                     C
+        165                     C          OPERATION COUNTS:   36 FLOP /ELEMENT
+        166                     C          DATA LOADINGS   :   48 WORDS/ELEMENT
+        167                     C                           (  32 WORDS CONTIGUOUSLY,
+        168                     C                               4 WORDS BY 4-WORD STRIDE, AND
+        169                     C                              12 WORDS BY LIST )
+        170                     #ifdef USE_TIMER
+        171                           tend = MPI_WTIME()
+        172                           tbcgs3x = tbcgs3x + (tend - tstart)
+        173                     #endif
+        174                           CALL USTSTA(13)
+        175                           CALL CALAX3(AAAPC, S, RK, NP, NE, NCRS, IPCRS, NPP,
+        176                          *            N2,ME,IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        177                          *            RX,RY,IUT0,IERR,
+        178                          *            N2,NEX,NODE,
+        179                          *            MWRK,WRKN,AR,LPFIX3D,
+        180                          *            JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS)
+        181                           CALL USTEND(13)
+        182                     #ifdef USE_TIMER
+        183                           tstart = MPI_WTIME()
+        184                     #endif
+        185                     C
+        186     1                     IF(IERR.EQ.1) THEN
+        187     1                         WRITE(IUT0,*) ERMSGC
+        188     1               #ifdef USE_TIMER
+        189     1                         tend = MPI_WTIME()
+        190     1                         tbcgs3x = tbcgs3x + (tend - tstart)
+        191     1               #endif
+        192     1                         RETURN
+        193     1                     ENDIF
+        194                     C
+        195                           RKDOT = 0.E0
+        196                           BDOT = 0.E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 411
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        197     1  pp    v            DO 400 IP = 1 , NP
+        198     1   p    v                RK (IP) = B (IP)-RK (IP)
+        199     1   p    v                R0 (IP) = RK(IP)
+        200     1   p    v                PK (IP) = RK(IP)
+        201     1   p    v                TK (IP) = 0.E0
+        202     1   p    v                S0 (IP) = S(IP)
+        203     1   p    v                RKDOT = RKDOT+WEIGHT(IP)*R0(IP)*RK(IP)
+        204     1   p    v                BDOT = BDOT+WEIGHT(IP)*B(IP)*B(IP)
+        205     1   p    v        400 CONTINUE
+        206                     C
+        207     1                     IF(IPART.GE.1) THEN
+        208     1               #ifdef USE_TIMER
+        209     1                         tend = MPI_WTIME()
+        210     1                         tbcgs3x = tbcgs3x + (tend - tstart)
+        211     1               #endif
+        212     1                         CALL DDCOM2(RKDOT,RKDOTA)
+        213     1                         CALL DDCOM2(BDOT,BDOTA)
+        214     1               #ifdef USE_TIMER
+        215     1                         tstart = MPI_WTIME()
+        216     1               #endif
+        217     1                         RKDOT = RKDOTA
+        218     1                         BDOT = BDOTA
+        219     1                     ENDIF
+        220                     C
+        221                           IF(ABS(BDOT).LE.EPS0) BDOT = 1.0E0
+        222                     C
+        223                           RES  = SQRT(RKDOT)
+        224                           RESR = RES/SQRT(BDOT)
+        225                           RESMIN = RES
+        226                     C
+        227                     C     IF(RES.LE.EPS.OR.RESR.LE.EPS) RETURN
+        228                     C     USE RELATIVE RESIDUAL
+        229     1                     IF(RESR.LE.EPS) then
+        230     1               #ifdef USE_TIMER
+        231     1                        tend = MPI_WTIME()
+        232     1                        tbcgs3x = tbcgs3x + (tend - tstart)
+        233     1               #endif
+        234     1                        RETURN
+        235     1                     ENDIF
+        236                     C
+        237                     C
+        238                     CCC   3. COMPUTE PRODUCT OF COEFFICIENT MATRIX AND SEARCH-DIRECTION VECTOR
+        239                     CCC      AND INNER PRODUCT OF COMPUTED PRODUCT AND SEARCH-DIRECTION VECTOR
+        240                     C
+        241                     C
+        242                      10   CONTINUE
+        243                     C
+        244                           NITR=NITR+1
+        245                     C
+        246                     C
+        247                     CCC   3.1 COMPUTE APK,ALFA
+        248                     C
+        249                     C
+        250                     C          OPERATION COUNTS:   36 FLOP /ELEMENT
+        251                     C          DATA LOADINGS   :   48 WORDS/ELEMENT
+        252                     C                           (  32 WORDS CONTIGUOUSLY,
+        253                     C                               4 WORDS BY 4-WORD STRIDE, AND
+        254                     C                              12 WORDS BY LIST )
+        255                     #ifdef USE_TIMER
+        256                           tend = MPI_WTIME()
+        257                           tbcgs3x = tbcgs3x + (tend - tstart)
+        258                     #endif
+        259                           CALL USTSTA(13)
+        260                           CALL CALAX3(AAAPC, PK, APK, NP, NE, NCRS, IPCRS, NPP,
+        261                          *            N2,ME,IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        262                          *            RX,RY,IUT0,IERR,
+        263                          *            N2,NEX,NODE,
+        264                          *            MWRK,WRKN,AR,LPFIX3D,
+        265                          *            JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS)
+        266                           CALL USTEND(13)
+        267                     #ifdef USE_TIMER
+        268                           tstart = MPI_WTIME()
+        269                     #endif
+        270                     C
+        271     1                     IF(IERR.EQ.1) THEN
+        272     1                         WRITE(IUT0,*) ERMSGC
+        273     1               #ifdef USE_TIMER
+        274     1                         tend = MPI_WTIME()
+        275     1                         tbcgs3x = tbcgs3x + (tend - tstart)
+        276     1               #endif
+        277     1                         RETURN
+        278     1                     ENDIF
+        279                     C
+        280                           APDOT = 0.E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 942
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        281     1  pp    v            DO 700 IP = 1 , NP
+        282     1   p    v                APDOT = APDOT+WEIGHT(IP)*R0(IP)*APK(IP)
+        283     1   p    v        700 CONTINUE
+        284                     C
+        285     1                     IF(IPART.GE.1) THEN
+        286     1               #ifdef USE_TIMER
+        287     1                         tend = MPI_WTIME()
+        288     1                         tbcgs3x = tbcgs3x + (tend - tstart)
+        289     1               #endif
+        290     1                         CALL DDCOM2(APDOT,APDOTA)
+        291     1               #ifdef USE_TIMER
+        292     1                         tstart = MPI_WTIME()
+        293     1               #endif
+        294     1                         APDOT = APDOTA
+        295     1                     ENDIF
+        296                     C
+        297     1                     IF(APDOT .EQ. 0.0E0) then
+        298     1               #ifdef USE_TIMER
+        299     1                        tend = MPI_WTIME()
+        300     1                        tbcgs3x = tbcgs3x + (tend - tstart)
+        301     1               #endif
+        302     1                        RETURN
+        303     1                     endif
+        304                           ALFA = RKDOT/APDOT
+        305                     C
+        306                     C
+        307                     CCC   3.2 COMPUTE TK=RK-ALFA*APK
+        308                     C
+        309                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.25, ITR: 288, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      APK, RK, TK
+                              <<< Loop-information  End >>>
+        310     1  pp   2v            DO 800 IP = 1 , NP
+        311     1   p   2v                TK (IP) = RK(IP)-ALFA*APK(IP)
+        312     1   p   2v        800 CONTINUE
+        313                     C
+        314                     C
+        315                     CCC   3.3 COMPUTE ATK
+        316                     C
+        317                     C
+        318                     C          OPERATION COUNTS:   36 FLOP /ELEMENT
+        319                     C          DATA LOADINGS   :   48 WORDS/ELEMENT
+        320                     C                           (  32 WORDS CONTIGUOUSLY,
+        321                     C                               4 WORDS BY 4-WORD STRIDE, AND
+        322                     C                              12 WORDS BY LIST )
+        323                     #ifdef USE_TIMER
+        324                           tend = MPI_WTIME()
+        325                           tbcgs3x = tbcgs3x + (tend - tstart)
+        326                     #endif
+        327                           CALL USTSTA(13)
+        328                           CALL CALAX3(AAAPC, TK, ATK, NP, NE, NCRS, IPCRS, NPP,
+        329                          *            N2,ME,IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        330                          *            RX,RY,IUT0,IERR,
+        331                          *            N2,NEX,NODE,
+        332                          *            MWRK,WRKN,AR,LPFIX3D,
+        333                          *            JUNROL,NPPMAX,NCRS2,TS,TACRS,ITPCRS)
+        334                           CALL USTEND(13)
+        335                     #ifdef USE_TIMER
+        336                           tstart = MPI_WTIME()
+        337                     #endif
+        338                     C
+        339     1                     IF(IERR.EQ.1) THEN
+        340     1                         WRITE(IUT0,*) ERMSGC
+        341     1               #ifdef USE_TIMER
+        342     1                         tend = MPI_WTIME()
+        343     1                         tbcgs3x = tbcgs3x + (tend - tstart)
+        344     1               #endif
+        345     1                         RETURN
+        346     1                     ENDIF
+        347                     C
+        348                     C
+        349                     CCC   3.4 COMPUTE QK
+        350                     C
+        351                     C
+        352                           ATTDOT  = 0.E0
+        353                           AT2DOT  = 0.E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 843
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        354     1  pp    v            DO 1100 IP = 1 , NP
+        355     1   p    v                ATTDOT = ATTDOT+WEIGHT(IP)*ATK(IP)* TK(IP)
+        356     1   p    v                AT2DOT = AT2DOT+WEIGHT(IP)*ATK(IP)*ATK(IP)
+        357     1   p    v       1100 CONTINUE
+        358                     C
+        359     1                     IF(IPART.GE.1) THEN
+        360     1               #ifdef USE_TIMER
+        361     1                         tend = MPI_WTIME()
+        362     1                         tbcgs3x = tbcgs3x + (tend - tstart)
+        363     1               #endif
+        364     1                         CALL DDCOM2(ATTDOT,ATTDTA)
+        365     1                         CALL DDCOM2(AT2DOT,AT2DTA)
+        366     1               #ifdef USE_TIMER
+        367     1                         tstart = MPI_WTIME()
+        368     1               #endif
+        369     1                         ATTDOT = ATTDTA
+        370     1                         AT2DOT = AT2DTA
+        371     1                     ENDIF
+        372                     C
+        373     1                     IF(AT2DOT .EQ. 0.E0) then
+        374     1               #ifdef USE_TIMER
+        375     1                        tend = MPI_WTIME()
+        376     1                        tbcgs3x = tbcgs3x + (tend - tstart)
+        377     1               #endif
+        378     1                        RETURN
+        379     1                     endif
+        380                           QK = ATTDOT/AT2DOT
+        381                     C
+        382                     C
+        383                     CCC   3.5 UPDATE SOLUTION VECTOR AND RESIDUAL VECTOR
+        384                     CCC   3.6 RETURN IF L2-NORM OF UPDATED SOLUTION VECTOR IS LESS THAN CRITERIA
+        385                     C
+        386                     C
+        387                           RKDOTP = RKDOT
+        388                           RKDOT  = 0.E0
+        389                           RSDOT  = 0.E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 391
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        390     1  pp    v            DO 1200 IP = 1 , NP
+        391     1   p    v                S  (IP) = S (IP)+ ALFA*PK(IP) + QK*TK (IP)
+        392     1   p    v                RK (IP) = TK(IP)              - QK*ATK(IP)
+        393     1   p    v                RKDOT = RKDOT+WEIGHT(IP)*R0(IP)*RK(IP)
+        394     1   p    v                RSDOT = RSDOT+WEIGHT(IP)*RK(IP)*RK(IP)
+        395     1   p    v       1200 CONTINUE
+        396                     C
+        397                     C
+        398     1                     IF(IPART.GE.1) THEN
+        399     1               #ifdef USE_TIMER
+        400     1                         tend = MPI_WTIME()
+        401     1                         tbcgs3x = tbcgs3x + (tend - tstart)
+        402     1               #endif
+        403     1                         CALL DDCOM2(RKDOT,RKDOTA)
+        404     1                         CALL DDCOM2(RSDOT,RSDOTA)
+        405     1               #ifdef USE_TIMER
+        406     1                         tstart = MPI_WTIME()
+        407     1               #endif
+        408     1                         RKDOT = RKDOTA
+        409     1                         RSDOT = RSDOTA
+        410     1                     ENDIF
+        411                     C
+        412                           RES  = SQRT(RSDOT)
+        413                           RESR = RES/SQRT(BDOT)
+        414                     C
+        415     1                     IF(RESR.LE.EPS) then
+        416     1               #ifdef USE_TIMER
+        417     1                        tend = MPI_WTIME()
+        418     1                        tbcgs3x = tbcgs3x + (tend - tstart)
+        419     1               #endif
+        420     1                        RETURN
+        421     1                     endif
+        422                     C
+        423                     C
+        424                     CCC   3.7 UPDATE SEARCH-DIRECTION VECTOR
+        425                     C
+        426                     C
+        427     1                     IF(QK     .EQ. 0.E0) then
+        428     1               #ifdef USE_TIMER
+        429     1                        tend = MPI_WTIME()
+        430     1                        tbcgs3x = tbcgs3x + (tend - tstart)
+        431     1               #endif
+        432     1                        RETURN
+        433     1                     endif
+        434     1                     IF(RKDOTP .EQ. 0.E0) then
+        435     1               #ifdef USE_TIMER
+        436     1                        tend = MPI_WTIME()
+        437     1                        tbcgs3x = tbcgs3x + (tend - tstart)
+        438     1               #endif
+        439     1                        RETURN
+        440     1                     endif
+        441                           BETA = (ALFA/QK)*(RKDOT/RKDOTP)
+        442                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 762
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.40, ITR: 416, MVE: 7)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      APK, PK, RK
+                              <<< Loop-information  End >>>
+        443     1  pp   2v            DO 1300 IP = 1 , NP
+        444     1   p   2v                PK (IP) = RK(IP)+BETA*(PK(IP)-QK*APK(IP))
+        445     1   p   2v       1300 CONTINUE
+        446                     C
+        447                     C
+        448                     CCC   3.7 RETURN IF ITERATION NUMBER HAS REACHED THE GIVEN MAXIMUM NUMBER,
+        449                     CCC       OTHERWISE CONTINUE ITERATIONS UNTIL SOLUTION IS CONVERGED
+        450                     C
+        451                     C
+        452     1                     IF(NITR.EQ.NMAX) THEN
+        453     1               C
+        454     2                         IF(IMODE.EQ.0) then
+        455     2               #ifdef USE_TIMER
+        456     2                            tend = MPI_WTIME()
+        457     2                            tbcgs3x = tbcgs3x + (tend - tstart)
+        458     2               #endif
+        459     2                            RETURN
+        460     2                         endif
+        461     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1455
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.00, ITR: 320, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      S0, S
+                              <<< Loop-information  End >>>
+        462     2  pp   4v                DO 1400 IP = 1 ,  NP
+        463     2   p   4v                    S(IP)=S0(IP)
+        464     2   p   4v       1400      CONTINUE
+        465     1                         RES=RESMIN
+        466     1               #ifdef USE_TIMER
+        467     1                         tend = MPI_WTIME()
+        468     1                         tbcgs3x = tbcgs3x + (tend - tstart)
+        469     1               #endif
+        470     1                         RETURN
+        471     1                     END IF
+        472                     C
+        473     1                     IF(RES.LT.RESMIN) THEN
+        474     1                         RESMIN=RES
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1455
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.00, ITR: 320, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      S, S0
+                              <<< Loop-information  End >>>
+        475     2  pp   4v                DO 1500 IP = 1 ,  NP
+        476     2   p   4v                    S0(IP)=S(IP)
+        477     2   p   4v       1500     CONTINUE
+        478     1                     ENDIF
+        479                           GO TO 10
+        480                     C
+        481                           END
+
+ Diagnostic messages: program name(BCGS3X)
+   jwd2003i-i  "/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include/timer.h", line 24: この名前'nclrcrs'は、INCLUDE内で宣言だけされていて引用されていません。
+   jwd2003i-i  "/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include/timer.h", line 25: この名前'tclrcrs'は、INCLUDE内で宣言だけされていて引用されていません。
+   jwd8220o-i  "bcgs3x.f", line 1: 副作用の可能性のある最適化を行いました。
+   jwd2006i-i  "bcgs3x.f", line 32: この名前'WRKSCT'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "bcgs3x.f", line 44: この名前'IBP'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "bcgs3x.f", line 134: この名前'te0'は、宣言だけされていて引用されていません。
+   jwd2006i-i  "bcgs3x.f", line 134: この名前'ts0'は、宣言だけされていて引用されていません。
+   jwd5001p-i  "bcgs3x.f", line 157: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "bcgs3x.f", line 157: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "bcgs3x.f", line 157: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "bcgs3x.f", line 157: ループの繰返し数が352回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5004p-i  "bcgs3x.f", line 197: リダクション演算を含むDOループを並列化しました。(名前:IP)
+   jwd6004s-i  "bcgs3x.f", line 197: リダクション演算を含むDOループをSIMD化しました。(名前:IP)
+   jwd8206o-i  "bcgs3x.f", line 224: 除算を逆数の乗算に変更しました。
+   jwd5132p-i  "bcgs3x.f", line 235: DO WHILE文、DO UNTIL文、およびIF/GO TO文によるループは並列化できません。
+   jwd5132p-i  "bcgs3x.f", line 242: DO WHILE文、DO UNTIL文、およびIF/GO TO文によるループは並列化できません。
+   jwd5004p-i  "bcgs3x.f", line 281: リダクション演算を含むDOループを並列化しました。(名前:IP)
+   jwd6004s-i  "bcgs3x.f", line 281: リダクション演算を含むDOループをSIMD化しました。(名前:IP)
+   jwd5001p-i  "bcgs3x.f", line 310: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "bcgs3x.f", line 310: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "bcgs3x.f", line 310: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "bcgs3x.f", line 310: ループの繰返し数が288回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5004p-i  "bcgs3x.f", line 354: リダクション演算を含むDOループを並列化しました。(名前:IP)
+   jwd6004s-i  "bcgs3x.f", line 354: リダクション演算を含むDOループをSIMD化しました。(名前:IP)
+   jwd5004p-i  "bcgs3x.f", line 390: リダクション演算を含むDOループを並列化しました。(名前:IP)
+   jwd6004s-i  "bcgs3x.f", line 390: リダクション演算を含むDOループをSIMD化しました。(名前:IP)
+   jwd8209o-i  "bcgs3x.f", line 391: 多項式の演算順序を変更しました。
+   jwd8206o-i  "bcgs3x.f", line 413: 除算を逆数の乗算に変更しました。
+   jwd8209o-i  "bcgs3x.f", line 441: 多項式の演算順序を変更しました。
+   jwd5001p-i  "bcgs3x.f", line 443: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "bcgs3x.f", line 443: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "bcgs3x.f", line 443: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "bcgs3x.f", line 443: ループの繰返し数が416回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "bcgs3x.f", line 462: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "bcgs3x.f", line 462: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "bcgs3x.f", line 462: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "bcgs3x.f", line 462: ループの繰返し数が320回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "bcgs3x.f", line 475: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "bcgs3x.f", line 475: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "bcgs3x.f", line 475: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "bcgs3x.f", line 475: ループの繰返し数が320回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+
+ Procedure information
+   Lines      : 4640
+   Statements : 3524
+   Stack(byte): 97584
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 4640
+   Total statements : 3524
+   Total stack(byte): 97584
+   Total prefetch num: 0
+

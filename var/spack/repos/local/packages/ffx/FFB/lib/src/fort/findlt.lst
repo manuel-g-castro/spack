@@ -1,0 +1,309 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:54:38 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : findlt.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "FINDLT"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    FINDLT                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE FINDLT(ELM,NE,IELIST,NEL,XP,YP,ZP,NITR,CONV,
+         14                          *                  IE,GP,EP,TP,ERR)
+         15                           IMPLICIT REAL*4(A-H,O-Z)
+         16                           DIMENSION ELM(24,NE),IELIST(NEL)
+         17                     C
+         18                     C
+         19                     C      COMPUTE LOCAL GZAI, ETA AND THETA COORDINATES OF A SPECIFIED
+         20                     C     POINT FOR ALL THE LISTED ELEMENTS, AND RETURN THE ELEMENT NUMBER
+         21                     C     WHICH INCLUDES, OR IS THE NEAREST TO, THE SPECIFIED POINT AND
+         22                     C     THEIR LOCAL GZAI, EATA, AND THETA COORDINATES
+         23                     C
+         24                     C
+         25                     C     ARGUMENT LISTINGS
+         26                     C       (1) INPUT
+         27                     C          ELM   (K,IE); ELEMENT POSITION AND SHAPE DEPENDENT CONSTANTS
+         28                     C           (SEE ELEM3E FOR THE MEANING OF EACH COMPONENT IN ELM(K,IE))
+         29                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+         30                     C
+         31                     C          IELIST (IEL); ELEMENT LIST TO BE SEARCHED
+         32                     C          NEL         ; NUMBER OF ELEMENTS TO BE SEARCHED
+         33                     C
+         34                     C          XP          ; X-COORDINATE OF THE SPECIFIED POINT
+         35                     C          YP          ; Y-COORDINATE OF THE SPECIFIED POINT
+         36                     C          ZP          ; Z-COORDINATE OF THE SPECIFIED POINT
+         37                     C          NITR        ; MAXIMUM NUMBER OF NEWTON-RAPHSON ITERATIONS
+         38                     C          CONV        ; CONVERGENCE CRITERIA IN L2-NORM OF THE LOCAL
+         39                     C                       COORDINATES FOR THE NEWTON-RAPHSON ITERATION
+         40                     C
+         41                     C           NOTES ; IF 'NITR' IS SET TO ZERO, NO NEWTON-RAPHSON
+         42                     C                  ITERATION WILL BE DONE AND THIS ARGUMENT WILL BE
+         43                     C                  IGNORED.
+         44                     C
+         45                     C       (2) OUTPUT
+         46                     C          IE          ; ELEMENT INCLUDING OR NEAREST TO SPECIFIED POINT
+         47                     C
+         48                     C           NOTES ; IF RETURNED WITH THIS ARGUMENT SET TO ZERO, IT
+         49                     C                  INDICATES THAT COMPUTATION OF THE LOCAL COORDINATES
+         50                     C                  CONVERGED, WITHIN THE GIVEN MAXIMUM ITERATIONS, FOR
+         51                     C                  NO ELEMENTS GIVEN IN THE INPUT ELEMENT LIST.
+         52                     C
+         53                     C          GP          ; LOCAL GZAI -COORDINATE OF THE SPECIFIED POINT
+         54                     C          EP          ; LOCAL EATA -COORDINATE OF THE SPECIFIED POINT
+         55                     C          TP          ; LOCAL THETA-COORDINATE OF THE SPECIFIED POINT
+         56                     C          ERR         ; IF RETURNED AS ZERO, INDICATES THAT THE
+         57                     C                       SPECIFIED POINT IS IN THE RETURNED ELEMENT.
+         58                     C                        IF RETURNED WITH A POSITIVE VALUE, INDICATES
+         59                     C                       THE DISTANCE (IN LOCAL COORDINATE) BETWEEN THE
+         60                     C                       SPECIFIED POINT TO THE NEAREST SURFACE OF THE
+         61                     C                       RETURNED ELEMENT.
+         62                     C
+         63                     C
+         64                     C
+         65                     C COMPUTE LOCAL COORDINATES FOR THE LISTED ELEMENTS
+         66                     C
+         67                     C
+         68                     C
+         69                           IEF  = 0
+         70                     CCYYAD.2010.02.10---
+         71                           ERRF = 1.0E0
+         72                     CCYYAD.2010.02.10---
+         73                     C
+         74     1                     DO 130 IEL = 1 , NEL
+         75     1                         IE = IELIST(IEL)
+         76     1               C
+         77     1                         DFG=ELM( 4,IE)
+         78     1                         DGG=ELM( 5,IE)
+         79     1                         DHG=ELM( 6,IE)
+         80     1                         DFE=ELM( 7,IE)
+         81     1                         DGE=ELM( 8,IE)
+         82     1                         DHE=ELM( 9,IE)
+         83     1                         DFT=ELM(10,IE)
+         84     1                         DGT=ELM(11,IE)
+         85     1                         DHT=ELM(12,IE)
+         86     1               C
+         87     1                         FV =ELM( 1,IE)-XP
+         88     1                         GV =ELM( 2,IE)-YP
+         89     1                         HV =ELM( 3,IE)-ZP
+         90     1               C
+         91     1                         DET = DFG*(DGE*DHT-DGT*DHE)
+         92     1                    &         +DFE*(DGT*DHG-DGG*DHT)
+         93     1                    &         +DFT*(DGG*DHE-DGE*DHG)
+         94     1               C
+         95     1                         A11 = (DGE*DHT-DGT*DHE)/DET
+         96     1                         A21 = (DGT*DHG-DGG*DHT)/DET
+         97     1                         A31 = (DGG*DHE-DGE*DHG)/DET
+         98     1                         A12 = (DHE*DFT-DHT*DFE)/DET
+         99     1                         A22 = (DHT*DFG-DHG*DFT)/DET
+        100     1                         A32 = (DHG*DFE-DHE*DFG)/DET
+        101     1                         A13 = (DFE*DGT-DFT*DGE)/DET
+        102     1                         A23 = (DFT*DGG-DFG*DGT)/DET
+        103     1                         A33 = (DFG*DGE-DFE*DGG)/DET
+        104     1               C
+        105     1                         GP = -A11*FV-A12*GV-A13*HV
+        106     1                         EP = -A21*FV-A22*GV-A23*HV
+        107     1                         TP = -A31*FV-A32*GV-A33*HV
+        108     1               C
+        109     1                         IF(NITR.EQ.0) GO TO 120
+        110     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 0
+                              <<<      SIMD&FP   : SPILL 8  FILL 34
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        111     2                         DO 110 IITR = 1 , NITR
+        112     2                            DFG=ELM( 4,IE)+ELM(13,IE)*EP+ELM(19,IE)*TP+ELM(22,IE)*EP*TP
+        113     2                            DGG=ELM( 5,IE)+ELM(14,IE)*EP+ELM(20,IE)*TP+ELM(23,IE)*EP*TP
+        114     2                            DHG=ELM( 6,IE)+ELM(15,IE)*EP+ELM(21,IE)*TP+ELM(24,IE)*EP*TP
+        115     2                            DFE=ELM( 7,IE)+ELM(16,IE)*TP+ELM(13,IE)*GP+ELM(22,IE)*TP*GP
+        116     2                            DGE=ELM( 8,IE)+ELM(17,IE)*TP+ELM(14,IE)*GP+ELM(23,IE)*TP*GP
+        117     2                            DHE=ELM( 9,IE)+ELM(18,IE)*TP+ELM(15,IE)*GP+ELM(24,IE)*TP*GP
+        118     2                            DFT=ELM(10,IE)+ELM(19,IE)*GP+ELM(16,IE)*EP+ELM(22,IE)*GP*EP
+        119     2                            DGT=ELM(11,IE)+ELM(20,IE)*GP+ELM(17,IE)*EP+ELM(23,IE)*GP*EP
+        120     2                            DHT=ELM(12,IE)+ELM(21,IE)*GP+ELM(18,IE)*EP+ELM(24,IE)*GP*EP
+        121     2               C
+        122     2                            FV =ELM( 1,IE)-XP+ELM( 4,IE)*GP+ELM( 7,IE)*EP+ELM(10,IE)*TP
+        123     2                    &          +ELM(13,IE)*GP*EP+ELM(16,IE)*EP*TP+ELM(19,IE)*TP*GP
+        124     2                    &          +ELM(22,IE)*GP*EP*TP
+        125     2                            GV =ELM( 2,IE)-YP+ELM( 5,IE)*GP+ELM( 8,IE)*EP+ELM(11,IE)*TP
+        126     2                    &          +ELM(14,IE)*GP*EP+ELM(17,IE)*EP*TP+ELM(20,IE)*TP*GP
+        127     2                    &          +ELM(23,IE)*GP*EP*TP
+        128     2                            HV =ELM( 3,IE)-ZP+ELM( 6,IE)*GP+ELM( 9,IE)*EP+ELM(12,IE)*TP
+        129     2                    &          +ELM(15,IE)*GP*EP+ELM(18,IE)*EP*TP+ELM(21,IE)*TP*GP
+        130     2                    &          +ELM(24,IE)*GP*EP*TP
+        131     2               C
+        132     2                            DET = DFG*(DGE*DHT-DGT*DHE)
+        133     2                    &            +DFE*(DGT*DHG-DGG*DHT)
+        134     2                    &            +DFT*(DGG*DHE-DGE*DHG)
+        135     2               C
+        136     2                            A11 = (DGE*DHT-DGT*DHE)/DET
+        137     2                            A21 = (DGT*DHG-DGG*DHT)/DET
+        138     2                            A31 = (DGG*DHE-DGE*DHG)/DET
+        139     2                            A12 = (DHE*DFT-DHT*DFE)/DET
+        140     2                            A22 = (DHT*DFG-DHG*DFT)/DET
+        141     2                            A32 = (DHG*DFE-DHE*DFG)/DET
+        142     2                            A13 = (DFE*DGT-DFT*DGE)/DET
+        143     2                            A23 = (DFT*DGG-DFG*DGT)/DET
+        144     2                            A33 = (DFG*DGE-DFE*DGG)/DET
+        145     2               C
+        146     2                            GPOLD = GP
+        147     2                            EPOLD = EP
+        148     2                            TPOLD = TP
+        149     2               C
+        150     2                            GP = GP-A11*FV-A12*GV-A13*HV
+        151     2                            EP = EP-A21*FV-A22*GV-A23*HV
+        152     2                            TP = TP-A31*FV-A32*GV-A33*HV
+        153     2               C
+        154     2                            IF((GP-GPOLD)**2+(EP-EPOLD)**2+(TP-TPOLD)**2.LE.CONV)
+        155     2                    &       GO TO 120
+        156     2                 110     CONTINUE
+        157     1                         GO TO 130
+        158     1               C
+        159     1                 120     CONTINUE
+        160     1               C
+        161     1                         ERR = AMAX1(ABS(GP)-1.E0, ABS(EP)-1.E0, ABS(TP)-1.E0, 0.E0)
+        162     2                         IF(IEF.EQ.0 .OR. ERR.LE.ERRF) THEN
+        163     2                             IEF  = IE
+        164     2                             GPF  = GP
+        165     2                             EPF  = EP
+        166     2                             TPF  = TP
+        167     2                             ERRF = ERR
+        168     2                         ENDIF
+        169     1                 130 CONTINUE
+        170                     C
+        171                           IE  = IEF
+        172                           GP  = GPF
+        173                           EP  = EPF
+        174                           TP  = TPF
+        175                           ERR = ERRF
+        176                     C
+        177                     C
+        178                           RETURN
+        179                           END
+
+ Diagnostic messages: program name(FINDLT)
+   jwd8220o-i  "findlt.f", line 13: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd5202p-i  "findlt.f", line 74: DO loop is not parallelized: data dependency of variable 'TPF' may cause different results from serial execution for loop.
+   jwd5202p-i  "findlt.f", line 74: DO loop is not parallelized: data dependency of variable 'EPF' may cause different results from serial execution for loop.
+   jwd5202p-i  "findlt.f", line 74: DO loop is not parallelized: data dependency of variable 'GPF' may cause different results from serial execution for loop.
+   jwd5202p-i  "findlt.f", line 74: DO loop is not parallelized: data dependency of variable 'ERRF' may cause different results from serial execution for loop.
+   jwd5202p-i  "findlt.f", line 74: DO loop is not parallelized: data dependency of variable 'IEF' may cause different results from serial execution for loop.
+   jwd8206o-i  "findlt.f", line 96: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "findlt.f", line 97: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "findlt.f", line 99: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "findlt.f", line 100: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "findlt.f", line 102: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "findlt.f", line 103: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "findlt.f", line 105: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "findlt.f", line 105: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "findlt.f", line 106: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "findlt.f", line 107: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5131p-i  "findlt.f", line 111: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "findlt.f", line 111: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "findlt.f", line 111: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+   jwd8209o-i  "findlt.f", line 112: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "findlt.f", line 113: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "findlt.f", line 114: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "findlt.f", line 115: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "findlt.f", line 116: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "findlt.f", line 117: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "findlt.f", line 118: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "findlt.f", line 119: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "findlt.f", line 120: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "findlt.f", line 122: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "findlt.f", line 125: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "findlt.f", line 128: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "findlt.f", line 132: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "findlt.f", line 137: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "findlt.f", line 138: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "findlt.f", line 140: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "findlt.f", line 141: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "findlt.f", line 143: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "findlt.f", line 144: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "findlt.f", line 150: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "findlt.f", line 150: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "findlt.f", line 151: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "findlt.f", line 152: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "findlt.f", line 154: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "findlt.f", line 161: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+
+ Procedure information
+   Lines      : 179
+   Statements : 82
+   Stack(byte): 480
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 179
+   Total statements : 82
+   Total stack(byte): 480
+   Total prefetch num: 0
+

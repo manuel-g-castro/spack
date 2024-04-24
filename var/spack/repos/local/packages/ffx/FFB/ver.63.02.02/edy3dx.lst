@@ -1,0 +1,573 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:52:59 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : edy3dx.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "EDY3DX"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.8.1                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE : EDY3DX                                                C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY Y.YAMADE            C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C CONTACT ADDRESS : IIS, THE UNIVERSITY OF TOKYO, CISS                 C
+         11                     C                                                                      C
+         12                     C THERMO-FLUID ANALYSIS SOLVERS FOR LARGE-SCALE-ASSEMBLY               C
+         13                     C                                                                      C
+         14                     C======================================================================C
+         15                           SUBROUTINE EDY3DX(CS,FILTER,U,V,W,NODE,ME,NE,NP,N1,N2,NEX,
+         16                          *                  IPRDWL,DAMPWL,LEWALL,NEWALL,NEAR,DSNEAR,UTAU,AP,
+         17                          *                  VISC,VISCAV,UPPER,DT,
+         18                          *                  DNXI,DNYI,DNZI,VISC2,
+         19                          *                  DUX,DUY,DUZ,DVX,DVY,DVZ,DWX,DWY,DWZ,
+         20                          *                  IVOF,NEFLD2,LEFLD2,LEFIX)
+         21                           IMPLICIT NONE
+         22                     C
+         23                           INTEGER*4 NODE,ME,NE,NP,N1,N2,NEX,
+         24                          *          IPRDWL,LEWALL,NEWALL,NEAR
+         25                     C
+         26                           REAL*4    CS,FILTER,U,V,W,DAMPWL,DSNEAR,UTAU,AP,
+         27                          *          VISC,VISCAV,UPPER,DT,DNXI,DNYI,DNZI,VISC2,
+         28                          *          DUX,DUY,DUZ,DVX,DVY,DVZ,DWX,DWY,DWZ
+         29                     C
+         30                           INTEGER*4 NETET,NEPRD,NEWED,NEHEX,NTET,NPRD,NWED,NHEX,
+         31                          *          IES1,IEE1,IES2,IEE2,IES3,IEE3,IES4,IEE4,IE,I,
+         32                          *          IEWALL,IBP,NUM
+         33                     C
+         34                           REAL*4    YP
+         35                     C
+         36                           DIMENSION CS(NE),FILTER(NE),U(NP),V(NP),W(NP),LEWALL(2,NEWALL),
+         37                          *          NEAR(NE),DSNEAR(NE),UTAU(NEWALL),VISC(NE),
+         38                          *          NODE(N2,NE),NEX(8),
+         39                          *          DNXI(N1,ME),DNYI(N1,ME),DNZI(N1,ME),
+         40                          *          VISC2(NE),DUX(NE),DUY(NE),DUZ(NE),DVX(NE),
+         41                          *                   DVY(NE),DVZ(NE),DWX(NE),DWY(NE),DWZ(NE)
+         42                     C     [INPUT:VOF]
+         43                           INTEGER*4 IVOF,NEFLD2
+         44                           INTEGER*4 LEFLD2(NEFLD2),LEFIX(NE)
+         45                     C
+         46                     C
+         47                     C      CALCULATE SUBGRID-SCALE EDDY VISCOSITY BY SMAGORINSKY MODEL
+         48                     C     WITH VAN-DRIEST DAMPING FUNCTION
+         49                     C         ( 3-D CALCULATION : SINGLE WORD & MULTI ELEMENT VERSION )
+         50                     C                                           CODED BASED ON 'EDDY3D'
+         51                     C
+         52                     C     NOTE ; SET ARGUMENT 'NEWALL' TO ZERO TO AVOID THE VAN-DRIEST
+         53                     C           DAMPING FUNCTION BEING APPLIED. OTHERWISE, SUBGRID-SCALE
+         54                     C           EDDY VISCOSITY WILL BE DAMPED FOR ALL THE ELEMENTS BASED ON
+         55                     C           THIS FUNCTION.
+         56                     C
+         57                     C
+         58                     C     ARGUMENT LISTINGS
+         59                     C       (1) INPUT
+         60                     C          CS      (IE); ELEMENT SMAGORINSKY CONSTANT
+         61                     C          FILTER  (IE); ELEMENT GRID FILTER WIDTH
+         62                     C          U       (IP); X-DIR. VELOCITY COMPONENT
+         63                     C          V       (IP); Y-DIR. VELOCITY COMPONENT
+         64                     C          W       (IP); Z-DIR. VELOCITY COMPONENT
+         65                     C          DNXI  (I,IE); ELEMENT CENTER VALUE OF NX
+         66                     C          DNYI  (I,IE); ELEMENT CENTER VALUE OF NY
+         67                     C          DNZI  (I,IE); ELEMENT CENTER VALUE OF NZ
+         68                     C          NODE  (I,IE); NODE NO. TABLE BASED ON ELEMENT
+         69                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+         70                     C          NP          ; NUMBER OF TOTAL    NODES
+         71                     C          N           ; NUMBER OF NODE ASSIGNED TO ONE ELEMENT
+         72                     C
+         73                     C          IPRDWL      ; CONTROLS PRODUCTION IN WALL-ADJACENT ELEMENTS
+         74                     C                   0 --- CLEAR     PRODUCTION
+         75                     C                   1 --- CALCULATE PRODUCTION AS IT IS
+         76                     C                   2 --- DAMP PRODUCTION BY PRI-ORI PARAMETER 'DAMPWL'
+         77                     C          DAMPWL      ; DAMP PARAMETER FOR WALL PRODUCTION (IPRDWL=2)
+         78                     C          LEWALL(I,IBE); WALL BOUNDARY ELEMENT AND ITS SURFACE
+         79                     C          NEWALL      ; NUMBER OF WALL BOUNDARY SURFACES
+         80                     C          NEAR    (IE); NEAREST WALL SURFACE
+         81                     C          DSNEAR  (IE); DISTANCE TO THE NEAREST WALL SURFACE
+         82                     C          UTAU   (IBE); FRICTION VELOCITY AT WALL SURFACES
+         83                     C          AP          ; VAN-DRIEST DAMPING CONSTANT
+         84                     C
+         85                     C          UPPER       ; IF SET TO A POSITIVE VALUE, ELEMENT SUBGRID-
+         86                     C                       SCALE EDDY VISCOSITY WILL BE UPPER-BOUND SUCH
+         87                     C                       THAT THE DIFFUSION NUMBER VIOLATION BE AVOIDED
+         88                     C                       FOR EACH ELEMENT WITH A MARGIN '1.0-UPPER'.
+         89                     C          DT          ; TIME INCREMENT
+         90                     C
+         91                     C       (2) OUTPUT
+         92                     C          VISC    (IE); ELEMENT VISCOSITY ( MOLECULAR+TURBULENT )
+         93                     C          VISCAV      ; SPATIALLY AVERAGED EDDY VISCOSITY
+         94                     C
+         95                     C       (3) WORK
+         96                     C           NOTES ; PREPARE THE FOLLOWING ARRAYS FOR MAX(IE) = NE.
+         97                     C          DUX     (IE); DU/DX
+         98                     C          DUX     (IE); DU/DY
+         99                     C          DUX     (IE); DU/DZ
+        100                     C          DVX     (IE); DV/DX
+        101                     C          DVY     (IE); DV/DY
+        102                     C          DVZ     (IE); DV/DZ
+        103                     C          DWX     (IE); DW/DX
+        104                     C          DWY     (IE); DW/DY
+        105                     C          DWZ     (IE); DW/DZ
+        106                     C          VISC2   (IE); TURBULENT VISCOSITY
+        107                     C
+        108                     C
+        109                           NETET=NEX(1)
+        110                           NEPRD=NEX(2)
+        111                           NEWED=NEX(3)
+        112                           NEHEX=NEX(4)
+        113                           NE   =NETET+NEPRD+NEWED+NEHEX
+        114                     C
+        115                           NTET =NEX(5)
+        116                           NPRD =NEX(6)
+        117                           NWED =NEX(7)
+        118                           NHEX =NEX(8)
+        119                     C
+        120                     C     * TET *
+        121                           IES1=1
+        122                           IEE1=NETET
+        123                     C
+        124                     C     * PYRAMID *
+        125                           IES2=NETET+1
+        126                           IEE2=NETET+NEPRD
+        127                     C
+        128                     C     * WEDGE *
+        129                           IES3=NETET+NEPRD+1
+        130                           IEE3=NETET+NEPRD+NEWED
+        131                     C
+        132                     C     * HEX *
+        133                           IES4=NETET+NEPRD+NEWED+1
+        134                           IEE4=NETET+NEPRD+NEWED+NEHEX
+        135                     C
+        136                     C
+        137                     C COMPUTE ELEMENT SUBGRID-SCALE EDDY VISCOSITY
+        138                     C
+        139                     C
+        140                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 500
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      DWZ, DWY, DWX, DVZ, DVY, DVX, DUZ, DUY
+                              <<<      DUX
+                              <<< Loop-information  End >>>
+        141     1  pp    v            DO 100 IE = 1 , NE
+        142     1   p    v                DUX(IE) = 0.E0
+        143     1   p    v                DUY(IE) = 0.E0
+        144     1   p    v                DUZ(IE) = 0.E0
+        145     1               C
+        146     1   p    v                DVX(IE) = 0.E0
+        147     1   p    v                DVY(IE) = 0.E0
+        148     1   p    v                DVZ(IE) = 0.E0
+        149     1               C
+        150     1   p    v                DWX(IE) = 0.E0
+        151     1   p    v                DWY(IE) = 0.E0
+        152     1   p    v                DWZ(IE) = 0.E0
+        153     1   p    v        100 CONTINUE
+        154                     C
+        155                     C     * TET *
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE, DNXI, DNZI, DNYI
+                              <<< Loop-information  End >>>
+        156     1  pp                 DO 200 IE = IES1,IEE1
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.33, ITR: 96, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE, DNXI, DNZI, DNYI
+                              <<< Loop-information  End >>>
+        157     2   p    v                DO 210 I = 1 , NTET
+        158     2   p    v                    DUX(IE) = DUX(IE)+DNXI(I,IE)*U(NODE(I,IE))
+        159     2   p    v                    DUY(IE) = DUY(IE)+DNYI(I,IE)*U(NODE(I,IE))
+        160     2   p    v                    DUZ(IE) = DUZ(IE)+DNZI(I,IE)*U(NODE(I,IE))
+        161     2               C
+        162     2   p    v                    DVX(IE) = DVX(IE)+DNXI(I,IE)*V(NODE(I,IE))
+        163     2   p    v                    DVY(IE) = DVY(IE)+DNYI(I,IE)*V(NODE(I,IE))
+        164     2   p    v                    DVZ(IE) = DVZ(IE)+DNZI(I,IE)*V(NODE(I,IE))
+        165     2               C
+        166     2   p    v                    DWX(IE) = DWX(IE)+DNXI(I,IE)*W(NODE(I,IE))
+        167     2   p    v                    DWY(IE) = DWY(IE)+DNYI(I,IE)*W(NODE(I,IE))
+        168     2   p    v                    DWZ(IE) = DWZ(IE)+DNZI(I,IE)*W(NODE(I,IE))
+        169     2   p    v        210     CONTINUE
+        170     1   p             200 CONTINUE
+        171                     C
+        172                     C     * PYRAMID *
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE, DNXI, DNZI, DNYI
+                              <<< Loop-information  End >>>
+        173     1  pp                 DO 220 IE = IES2,IEE2
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.33, ITR: 96, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE, DNXI, DNZI, DNYI
+                              <<< Loop-information  End >>>
+        174     2   p    v                DO 230 I = 1 , NPRD
+        175     2   p    v                    DUX(IE) = DUX(IE)+DNXI(I,IE)*U(NODE(I,IE))
+        176     2   p    v                    DUY(IE) = DUY(IE)+DNYI(I,IE)*U(NODE(I,IE))
+        177     2   p    v                    DUZ(IE) = DUZ(IE)+DNZI(I,IE)*U(NODE(I,IE))
+        178     2               C
+        179     2   p    v                    DVX(IE) = DVX(IE)+DNXI(I,IE)*V(NODE(I,IE))
+        180     2   p    v                    DVY(IE) = DVY(IE)+DNYI(I,IE)*V(NODE(I,IE))
+        181     2   p    v                    DVZ(IE) = DVZ(IE)+DNZI(I,IE)*V(NODE(I,IE))
+        182     2               C
+        183     2   p    v                    DWX(IE) = DWX(IE)+DNXI(I,IE)*W(NODE(I,IE))
+        184     2   p    v                    DWY(IE) = DWY(IE)+DNYI(I,IE)*W(NODE(I,IE))
+        185     2   p    v                    DWZ(IE) = DWZ(IE)+DNZI(I,IE)*W(NODE(I,IE))
+        186     2   p    v        230     CONTINUE
+        187     1   p             220 CONTINUE
+        188                     C
+        189                     C     * WEDGE *
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE, DNXI, DNZI, DNYI
+                              <<< Loop-information  End >>>
+        190     1  pp                 DO 240 IE = IES3,IEE3
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.33, ITR: 96, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE, DNXI, DNZI, DNYI
+                              <<< Loop-information  End >>>
+        191     2   p    v                DO 250 I = 1 , NWED
+        192     2   p    v                    DUX(IE) = DUX(IE)+DNXI(I,IE)*U(NODE(I,IE))
+        193     2   p    v                    DUY(IE) = DUY(IE)+DNYI(I,IE)*U(NODE(I,IE))
+        194     2   p    v                    DUZ(IE) = DUZ(IE)+DNZI(I,IE)*U(NODE(I,IE))
+        195     2               C
+        196     2   p    v                    DVX(IE) = DVX(IE)+DNXI(I,IE)*V(NODE(I,IE))
+        197     2   p    v                    DVY(IE) = DVY(IE)+DNYI(I,IE)*V(NODE(I,IE))
+        198     2   p    v                    DVZ(IE) = DVZ(IE)+DNZI(I,IE)*V(NODE(I,IE))
+        199     2               C
+        200     2   p    v                    DWX(IE) = DWX(IE)+DNXI(I,IE)*W(NODE(I,IE))
+        201     2   p    v                    DWY(IE) = DWY(IE)+DNYI(I,IE)*W(NODE(I,IE))
+        202     2   p    v                    DWZ(IE) = DWZ(IE)+DNZI(I,IE)*W(NODE(I,IE))
+        203     2   p    v        250     CONTINUE
+        204     1   p             240 CONTINUE
+        205                     C
+        206                     C     * HEX *
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE, DNXI, DNZI, DNYI
+                              <<< Loop-information  End >>>
+        207     1  pp                 DO 260 IE = IES4,IEE4
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.33, ITR: 96, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      NODE, DNXI, DNZI, DNYI
+                              <<< Loop-information  End >>>
+        208     2   p    v                DO 270 I = 1 , NHEX
+        209     2   p    v                    DUX(IE) = DUX(IE)+DNXI(I,IE)*U(NODE(I,IE))
+        210     2   p    v                    DUY(IE) = DUY(IE)+DNYI(I,IE)*U(NODE(I,IE))
+        211     2   p    v                    DUZ(IE) = DUZ(IE)+DNZI(I,IE)*U(NODE(I,IE))
+        212     2               C
+        213     2   p    v                    DVX(IE) = DVX(IE)+DNXI(I,IE)*V(NODE(I,IE))
+        214     2   p    v                    DVY(IE) = DVY(IE)+DNYI(I,IE)*V(NODE(I,IE))
+        215     2   p    v                    DVZ(IE) = DVZ(IE)+DNZI(I,IE)*V(NODE(I,IE))
+        216     2               C
+        217     2   p    v                    DWX(IE) = DWX(IE)+DNXI(I,IE)*W(NODE(I,IE))
+        218     2   p    v                    DWY(IE) = DWY(IE)+DNYI(I,IE)*W(NODE(I,IE))
+        219     2   p    v                    DWZ(IE) = DWZ(IE)+DNZI(I,IE)*W(NODE(I,IE))
+        220     2   p    v        270     CONTINUE
+        221     1   p             260 CONTINUE
+        222                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 178
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED(lines: 223,231)
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.77, ITR: 128, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      DWX, DWZ, DUZ, DVY, VISC2, DVX, DWY, DVZ
+                              <<<      CS, FILTER, DUY, DUX
+                              <<< Loop-information  End >>>
+        223     1  pp    v            DO 300 IE = 1 , NE
+        224     1   p    v                VISC2(IE) =
+        225     1                    &        2.E0*(DUX(IE)*DUX(IE)+DVY(IE)*DVY(IE)+DWZ(IE)*DWZ(IE))
+        226     1                    &       +2.E0*(DWY(IE)*DVZ(IE)+DUZ(IE)*DWX(IE)+DVX(IE)*DUY(IE))
+        227     1                    &             +DWY(IE)*DWY(IE)+DVZ(IE)*DVZ(IE)+DUZ(IE)*DUZ(IE)
+        228     1                    &             +DWX(IE)*DWX(IE)+DVX(IE)*DVX(IE)+DUY(IE)*DUY(IE)
+        229     1   p    v        300 CONTINUE
+        230                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FUSED
+                              <<< Loop-information  End >>>
+        231     1                     DO 400 IE = 1 , NE
+        232     1                         IF(VISC2(IE) .LT. 0.E0) VISC2(IE) = 0.E0
+        233     1                         VISC2(IE)=CS(IE)*CS(IE)*FILTER(IE)*FILTER(IE)*SQRT(VISC2(IE))
+        234     1                 400 CONTINUE
+        235                     C
+        236                     C
+        237                     C
+        238                     C DAMP NEAR-WALL SUBGRID-SCALE EDDY VISCOSITY
+        239                     C
+        240                     C
+        241                     C
+        242     1                     IF(NEWALL.GE.1) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 41
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.28, ITR: 160, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      VISC2, DSNEAR, NEAR, VISC
+                              <<< Loop-information  End >>>
+        243     2  pp    v                DO 500 IE = 1 , NE
+        244     2   p    v                    YP = UTAU(NEAR(IE))*DSNEAR(IE)/VISC(IE)
+        245     2   p    v                    VISC2(IE) = VISC2(IE)*(1.E0-EXP(-YP/AP))**2
+        246     2   p    v        500     CONTINUE
+        247     1                     ENDIF
+        248                     C
+        249                     C
+        250     1                     IF(IPRDWL.EQ.0) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.25, ITR: 512, MVE: 4)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LEWALL
+                              <<< Loop-information  End >>>
+        251     2   s   4v                DO 600 IEWALL = 1 , NEWALL
+        252     2   m   4v                    VISC2(LEWALL(1,IEWALL)) = 0.E0
+        253     2   p   4v        600     CONTINUE
+        254     1                     ENDIF
+        255                     C
+        256     1                     IF(IPRDWL.EQ.2) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SOFTWARE PIPELINING(IPC: 0.28, ITR: 6, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LEWALL
+                              <<< Loop-information  End >>>
+        257     2   s   2s                DO 700 IEWALL = 1 , NEWALL
+        258     2   m   2m                    VISC2(LEWALL(1,IEWALL)) = DAMPWL*VISC2(LEWALL(1,IEWALL))
+        259     2   p   2v        700     CONTINUE
+        260     1                     ENDIF
+        261                     C
+        262                     C
+        263                     C
+        264                     C UPPER-BOUND SUBGRID-SCALE EDDY VISCOSITY SUCH THAT THE
+        265                     C DIFFUSION NUMBER CRITERIA BE MET
+        266                     C
+        267                     C
+        268                     C
+        269     1                     IF(UPPER.GT.0.E0) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 667
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 4.00, ITR: 512, MVE: 7)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FILTER, VISC2
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 0
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 2  FILL 11
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        270     2  pp   2v                DO 800 IE = 1 , NE
+        271     2   p   2v                    VISC2(IE) = AMIN1(VISC2(IE),
+        272     2                    &                          0.5E0*UPPER*FILTER(IE)*FILTER(IE)/DT)
+        273     2   p   2v        800     CONTINUE
+        274     1                     ENDIF
+        275                     C
+        276                     C
+        277                     C
+        278                     C CALCULATE EFFECTIVE (TOTAL) ELEMENT VISCOSITY
+        279                     C
+        280                     C
+        281                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LEFIX
+                              <<< Loop-information  End >>>
+        282     1  pp   4v            DO 900 IE=1,NE
+        283     1   p   4v               LEFIX(IE)=0
+        284     1   p   4v       900  CONTINUE
+        285                     C
+        286     1                     IF (IVOF.EQ.1) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.83, ITR: 320, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LEFLD2
+                              <<< Loop-information  End >>>
+        287     2   s   4v               DO 950 IBP=1,NEFLD2
+        288     2   m   4v                  LEFIX(LEFLD2(IBP))=1
+        289     2   p   4v       950     CONTINUE
+        290     1                     ENDIF
+        291                     C
+        292                           VISCAV = 0.E0
+        293                           NUM=0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 500
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        294     1  pp    v            DO 1000 IE = 1 , NE
+        295     1   p    v                IF (LEFIX(IE).EQ.1) GOTO 1000
+        296     1   p    v                NUM=NUM+1
+        297     1   p    v                VISCAV   = VISCAV  +VISC2(IE)
+        298     1   p    v                VISC(IE) = VISC(IE)+VISC2(IE)
+        299     1   p    v       1000 CONTINUE
+        300                           VISCAV=VISCAV/FLOAT(NUM)
+        301                     C
+        302                     C
+        303                           RETURN
+        304                           END
+
+ Diagnostic messages: program name(EDY3DX)
+   jwd8220o-i  "edy3dx.f", line 15: 副作用の可能性のある最適化を行いました。
+   jwd5001p-i  "edy3dx.f", line 141: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "edy3dx.f", line 141: このDOループをSIMD化しました。(名前:IE)
+   jwd8663o-i  "edy3dx.f", line 141: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd5001p-i  "edy3dx.f", line 156: このDOループを並列化しました。(名前:IE)
+   jwd6004s-i  "edy3dx.f", line 157: リダクション演算を含むDOループをSIMD化しました。(名前:I)
+   jwd8204o-i  "edy3dx.f", line 157: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "edy3dx.f", line 157: ループの繰返し数が96回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "edy3dx.f", line 173: このDOループを並列化しました。(名前:IE)
+   jwd6004s-i  "edy3dx.f", line 174: リダクション演算を含むDOループをSIMD化しました。(名前:I)
+   jwd8204o-i  "edy3dx.f", line 174: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "edy3dx.f", line 174: ループの繰返し数が96回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "edy3dx.f", line 190: このDOループを並列化しました。(名前:IE)
+   jwd6004s-i  "edy3dx.f", line 191: リダクション演算を含むDOループをSIMD化しました。(名前:I)
+   jwd8204o-i  "edy3dx.f", line 191: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "edy3dx.f", line 191: ループの繰返し数が96回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "edy3dx.f", line 207: このDOループを並列化しました。(名前:IE)
+   jwd6004s-i  "edy3dx.f", line 208: リダクション演算を含むDOループをSIMD化しました。(名前:I)
+   jwd8204o-i  "edy3dx.f", line 208: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "edy3dx.f", line 208: ループの繰返し数が96回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8210o-i  "edy3dx.f", line 223: ループを融合しました。(行:231)
+   jwd5001p-i  "edy3dx.f", line 223: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "edy3dx.f", line 223: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "edy3dx.f", line 223: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "edy3dx.f", line 223: ループの繰返し数が128回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "edy3dx.f", line 224: 多項式の演算順序を変更しました。
+   jwd8209o-i  "edy3dx.f", line 233: 多項式の演算順序を変更しました。
+   jwd5001p-i  "edy3dx.f", line 243: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "edy3dx.f", line 243: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "edy3dx.f", line 243: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "edy3dx.f", line 243: ループの繰返し数が160回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "edy3dx.f", line 245: 多項式の演算順序を変更しました。
+   jwd6001s-i  "edy3dx.f", line 251: このDOループをSIMD化しました。(名前:IEWALL)
+   jwd8204o-i  "edy3dx.f", line 251: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "edy3dx.f", line 251: ループの繰返し数が512回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5228p-i  "edy3dx.f", line 252: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd8204o-i  "edy3dx.f", line 257: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "edy3dx.f", line 257: ループの繰返し数が6回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5228p-i  "edy3dx.f", line 258: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd6228s-i  "edy3dx.f", line 258: データの定義引用の順序が逐次実行と異なる可能性があるため、このDOループはSIMD化できません。
+   jwd5001p-i  "edy3dx.f", line 270: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "edy3dx.f", line 270: このDOループをSIMD化しました。(名前:IE)
+   jwd8204o-i  "edy3dx.f", line 270: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "edy3dx.f", line 270: ループの繰返し数が512回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8209o-i  "edy3dx.f", line 271: 多項式の演算順序を変更しました。
+   jwd5001p-i  "edy3dx.f", line 282: このDOループを並列化しました。(名前:IE)
+   jwd6001s-i  "edy3dx.f", line 282: このDOループをSIMD化しました。(名前:IE)
+   jwd8663o-i  "edy3dx.f", line 282: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "edy3dx.f", line 282: ループを展開数4回でアンローリングしました。
+   jwd6001s-i  "edy3dx.f", line 287: このDOループをSIMD化しました。(名前:IBP)
+   jwd8204o-i  "edy3dx.f", line 287: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "edy3dx.f", line 287: ループの繰返し数が320回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5228p-i  "edy3dx.f", line 288: データの定義引用の順序が逐次実行と異なるため、このDOループは並列化できません。
+   jwd5004p-i  "edy3dx.f", line 294: リダクション演算を含むDOループを並列化しました。(名前:IE)
+   jwd6004s-i  "edy3dx.f", line 294: リダクション演算を含むDOループをSIMD化しました。(名前:IE)
+
+ Procedure information
+   Lines      : 304
+   Statements : 136
+   Stack(byte): 29408
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 304
+   Total statements : 136
+   Total stack(byte): 29408
+   Total prefetch num: 0
+

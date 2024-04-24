@@ -1,0 +1,32 @@
+      SUBROUTINE CLTIME(AAA,IUT6)
+C
+      IMPLICIT NONE
+C
+      INTEGER*4 TCNT0
+      REAL*4    TSYS0
+      COMMON/TINIT/TCNT0,TSYS0
+      INTEGER*4 TCNT,TRATE,TMAX,DTCNT,IUT6
+      REAL*4    TELP,TSYS,TUSR
+      CHARACTER*16 AAA
+#ifdef cputime
+C
+      include 'mpif.h'
+C
+      CALL SYSTEM_CLOCK(TCNT,TRATE,TMAX)
+      IF (TCNT.GE.TCNT0) THEN
+         DTCNT=TCNT-TCNT0
+      ELSE
+         DTCNT=TCNT+TMAX-TCNT0
+      ENDIF
+      TELP=(DTCNT)/FLOAT(TRATE)
+C
+      TSYS=MPI_WTIME()
+      TSYS=TSYS-TSYS0
+      TUSR=TELP-TSYS
+C
+      WRITE(IUT6,'(A15,A16,3(A6,F11.3))')'** CLTIME ** : ',AAA,
+     *                        ' TELP:',TELP,' TCPU:',TSYS,' TUSR:',TUSR
+#endif
+C
+      RETURN
+      END

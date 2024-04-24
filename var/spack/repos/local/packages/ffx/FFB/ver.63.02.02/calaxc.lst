@@ -1,0 +1,416 @@
+
+ Fujitsu Fortran Version 4.1.0  Tue Apr 28 18:52:54 2020
+
+ Compilation information
+   Current directory : /vol0001/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/ver.63.02.02
+   Source file       : calaxc.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Knointentopt
+   Cpp options          : -I/home/g9300001/u93021/09.FFB/2020.04.28a_v630202_from_Yamade/FFB.63.02.02/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI014/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI014/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=1 -D__FRT_patchlevel__=0 -D__FRT_version__="4.1.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Kassume=noshortloop
+                          -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knofenv_access
+                          -Kfp_contract -Kfp_relaxed -Kfsimple -Kfz -Khpctag
+                          -Kilfunc=procedure -Knointentopt -Klargepage
+                          -Kloop_blocking -Kloop_fission
+                          -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping -Kswp
+                          -Kswp_freg_rate=100 -Kswp_ireg_rate=100
+                          -Kswp_preg_rate=100 -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nnoalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "CALAXC"
+  (line-no.)(nest)(optimize)
+          1                     C=======================================================================
+          2                           SUBROUTINE CALAXC(A, S, AS, NP, NE, NCRS, IPCRS, NPP,
+          3                          *                  N,ME,IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+          4                          *                  RX,RY,IUT0,IERR,
+          5                          *                  N2,NEX,NODE,
+          6                          *                  MWRK,WRKN,
+          7                          *                  JUNROL,NPPMAX,NCRS2,TS,TA,ITPCRS)
+          8                     C=======================================================================
+          9                           IMPLICIT NONE
+         10                           INTEGER NP, NE, NCRS
+         11                           REAL*4 A(NCRS), S(NP), AS(NP)
+         12                           INTEGER IPCRS(NCRS), NPP(NP)
+         13                           INTEGER IP, IP_TMP, K, ICRS, IP2, IBP
+         14                           REAL*4  BUF
+         15                     C
+         16                           INTEGER MAXBUF,IDUM
+         17                           INTEGER N,ME,IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,IUT0,IERR
+         18                           REAL*4  RX,RY
+         19                     C
+         20                           DIMENSION LDOM(NDOM),NBPDOM(NDOM)
+         21                           DIMENSION IPSLF(MBPDOM,NDOM),IPSND(MBPDOM,NDOM)
+         22                           DIMENSION RX(0:N,ME),RY(0:N,ME)
+         23                     C
+         24                     CCCC  [INPUT:MID NODE DATA]
+         25                           INTEGER*4 N2,NEX(8),NODE(N2,NE)
+         26                           INTEGER*4 MWRK
+         27                           REAL*4    WRKN(MWRK,2)
+         28                     C
+         29                     C     [FULL UNROOL]
+         30                           INTEGER*4 JUNROL
+         31                           INTEGER*4 NPPMAX,NCRS2,ITPCRS(NCRS2),ITCRS
+         32                           REAL*4    TS(0:NP),TA(NCRS2)
+         33                     C
+         34                           CHARACTER*60 ERMSGC
+         35                          & /' ## SUBROUTINE CALAXC: FATAL      ERROR REPORT   ; RETURNED'/
+         36                     C
+         37                     #ifdef cputime
+         38                           include 'mpif.h'
+         39                     C
+         40                           INTEGER*4 NUMCRS
+         41                           REAL*4 DTCRSA,DTCRSR,DTCRS2
+         42                           COMMON /CPUCRS/ NUMCRS,DTCRSA,DTCRSR,DTCRS2
+         43                           REAL*4 DTCPU,TBUF1,TBUF2,TBUF3
+         44                     #endif
+         45                     C
+         46                     C     CALCULATE THE PRODUCT OF MATRIX A AND VECTOR X IN PRESSURE EQUATION
+         47                     C         ( 3-D CALCULATION : SINGLE WORD & MULTI ELEMENT VERSION )
+         48                     C                                              2009.12.01 RIST
+         49                     C
+         50                     C          OPERATION COUNTS:   FLOP /ELEMENT
+         51                     C          DATA LOADINGS   :   WORDS/ELEMENT
+         52                     C                           (  WORDS CONTIGUOUSLY,
+         53                     C                              WORDS BY 4-WORD STRIDE, AND
+         54                     C                              WORDS BY LIST )
+         55                     C
+         56                     C     ARGUMENT LISTINGS
+         57                     C
+         58                     C       (1) INPUT
+         59                     C          ME          ; MAX. NUMBER OF TOTAL ELEMENTS
+         60                     C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT
+         61                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+         62                     C          NP          ; NUMBER OF TOTAL    NODES
+         63                     C
+         64                     C          NCRS        ; NUMBER OF NONZERO ELEMENTS IN MATRIX
+         65                     C                        OF CRS FORMAT
+         66                     C          A     (ICRS); NODE-WISE COEFFICIENT MATRIX IN CRS FORMAT
+         67                     C          S       (IP); GLOBAL FORCE VECTOR
+         68                     C          IPCRS (ICRS); NODE NO. TABLE BASED ON CRS FORMAT
+         69                     C          NPP     (IP); NUMBER OF ADJACENT NODES    TO NODE    IP
+         70                     C
+         71                     C          IPART       ; SUB-DOMAIN NUMBER THAT THIS TASK SHOULD TAKE/IS
+         72                     C                       TAKING CARE OF. IPART BEING SET ZERO MEANS THAT
+         73                     C                       THE PROGRAM SHOULD RUN/IS RUNNING IN SERIAL
+         74                     C                       MODE.
+         75                     C          LDOM  (IDOM); NEIBERING SUB-DOMAIN NUMBER
+         76                     C          NBPDOM(IDOM); NUMBER OF INTER-CONNECT BOUNDARY NODES
+         77                     C                       SHARING WITH THE IDOM'TH NEIBERING SUB-DOMAIN,
+         78                     C                       LDOM(IDOM)
+         79                     C          NDOM        ; NUMBER OF THE NERIBERING SUB-DOMAINS
+         80                     C          IPSLF (IBP,IDOM); INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+         81                     C                           CALLING TASK'S SUB-DOMAIN, FOR THE IDOM'TH
+         82                     C                           NEIBERING SUB-DOMAIN, LDOM(IDOM)
+         83                     C          IPSND (IBP,IDOM); INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+         84                     C                           SUB-DOMAIN THAT IS RECEIVING THE CALLING
+         85                     C                           TASK'S RESIDUALS.
+         86                     C          MBPDOM      ; THE MAXIMUM NUMBER OF THE INTER-CONNECT
+         87                     C                       BOUNDARY NODES FOR ONE NEIBERING SUB-DOMAIN
+         88                     C
+         89                     C          IUT0        ; FILE NUMBER TO REPORT ERROR OCCURRENCE
+         90                     C
+         91                     C       (2) OUTPUT
+         92                     C          AS      (IP); GLOBAL SOLUTION VECTOR (PROVIDE INITIAL GUESS)
+         93                     C          IERR        ; RETURN CODE TO REPORT ERROR OCCURENCE
+         94                     C
+         95                     C       (3) WORK
+         96                     C          RX    (I,IE); USED IN DDCOMX
+         97                     C          RY    (I,IE); USED IN DDCOMX
+         98                     C
+         99                     C
+        100                     #ifdef cputime
+        101                           NUMCRS=NUMCRS+1
+        102                     C     CALL CPU_TIME( TBUF1 )
+        103                           TBUF1 = MPI_WTIME()
+        104                     #endif
+        105                           IERR=0
+        106                     C
+        107                           MAXBUF = NE*(N2+1)
+        108                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      AS
+                              <<< Loop-information  End >>>
+        109     1  pp   4v            DO 10 IP=1,NP
+        110     1   p   4v               AS(IP)=0.0E0
+        111     1   p   4v       10   CONTINUE
+        112                     C
+        113                           IF (JUNROL.EQ.0) GOTO 500
+        114                     C
+        115                     CC
+        116                     CC    FULL UNROL
+        117                     CC
+        118                           TS(0)=0.0E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1455
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.00, ITR: 320, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      S, TS
+                              <<< Loop-information  End >>>
+        119     1  pp   4v            DO 100 IP=1,NP
+        120     1   p   4v               TS (IP)=S(IP)
+        121     1   p   4v       100  CONTINUE
+        122                     C
+        123                           IF (NPPMAX.EQ.27) GOTO 200
+        124                           IF (NPPMAX.EQ.40) GOTO 300
+        125                           IF (NPPMAX.EQ.50) GOTO 400
+        126                     C
+        127                     CC
+        128                     CC    FULL UNROL : NPPMAX <= 30
+        129                     CC
+        130                     #ifndef __AIX__
+        131                     !ocl CACHE_SECTOR_SIZE(1,11)
+        132                     !ocl CACHE_SUBSECTOR_ASSIGN(TS)
+        133                     !!ocl UNROLL(0)
+        134                     #endif
+        135                      200  CONTINUE
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 27
+                              <<<  [OPTIMIZATION]
+                              <<<    SOFTWARE PIPELINING(IPC: 2.88, ITR: 272, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      AS
+                              <<< Loop-information  End >>>
+        136     1  pp                 DO 210 IP=1,NP
+        137     1   p                    BUF=0.0E0
+        138     1   p                    ICRS=(IP-1)*27
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        139     2   p    v               DO 220 IP_TMP=1,27
+        140     2   p    v                  BUF=BUF+TA(ICRS+IP_TMP)*TS(ITPCRS(ICRS+IP_TMP))
+        141     2   p    v       220     CONTINUE
+        142     1   p                    AS(IP)=AS(IP)+BUF
+        143     1   p            210  CONTINUE
+        144                     #ifndef __AIX__
+        145                     !ocl END_CACHE_SUBSECTOR
+        146                     !ocl END_CACHE_SECTOR_SIZE
+        147                     #endif
+        148                     C
+        149                           GOTO 900
+        150                     C
+        151                     CC
+        152                     CC    FULL UNROL : 27 < NPPMAX <= 40
+        153                     CC
+        154                     #ifndef __AIX__
+        155                     !ocl CACHE_SECTOR_SIZE(1,11)
+        156                     !ocl CACHE_SUBSECTOR_ASSIGN(TS)
+        157                     !!ocl UNROLL(0)
+        158                     #endif
+        159                      300  CONTINUE
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 18
+                              <<<  [OPTIMIZATION]
+                              <<<    SOFTWARE PIPELINING(IPC: 2.30, ITR: 192, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      ITPCRS, TA, AS
+                              <<< Loop-information  End >>>
+        160     1  pp                 DO 310 IP=1,NP
+        161     1   p                    BUF=0.0E0
+        162     1   p                    ICRS=(IP-1)*40
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    FULL UNROLLING
+                              <<< Loop-information  End >>>
+        163     2   p   fv               DO 320 IP_TMP=1,40
+        164     2   p   fv                  BUF=BUF+TA(ICRS+IP_TMP)*TS(ITPCRS(ICRS+IP_TMP))
+        165     2   p   fv       320     CONTINUE
+        166     1   p                    AS(IP)=AS(IP)+BUF
+        167     1   p            310  CONTINUE
+        168                     #ifndef __AIX__
+        169                     !ocl END_CACHE_SUBSECTOR
+        170                     !ocl END_CACHE_SECTOR_SIZE
+        171                     #endif
+        172                     C
+        173                           GOTO 900
+        174                     C
+        175                     CC
+        176                     CC    FULL UNROL : 40 < NPPMAX <= 50
+        177                     CC
+        178                     #ifndef __AIX__
+        179                     !ocl CACHE_SECTOR_SIZE(1,11)
+        180                     !ocl CACHE_SUBSECTOR_ASSIGN(TS)
+        181                     !!ocl UNROLL(0)
+        182                     #endif
+        183                      400  CONTINUE
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 15
+                              <<<  [OPTIMIZATION]
+                              <<<    SOFTWARE PIPELINING(IPC: 2.26, ITR: 192, MVE: 3)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      TA, AS, ITPCRS
+                              <<< Loop-information  End >>>
+        184     1  pp                 DO 410 IP=1,NP
+        185     1   p                    BUF=0.0E0
+        186     1   p                    ICRS=(IP-1)*50
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    FULL UNROLLING
+                              <<< Loop-information  End >>>
+        187     2   p   fv               DO 420 IP_TMP=1,50
+        188     2   p   fv                  BUF=BUF+TA(ICRS+IP_TMP)*TS(ITPCRS(ICRS+IP_TMP))
+        189     2   p   fv       420     CONTINUE
+        190     1   p                    AS(IP)=AS(IP)+BUF
+        191     1   p            410  CONTINUE
+        192                     #ifndef __AIX__
+        193                     !ocl END_CACHE_SUBSECTOR
+        194                     !ocl END_CACHE_SECTOR_SIZE
+        195                     #endif
+        196                     C
+        197                           GOTO 900
+        198                     C
+        199                     CC
+        200                     CC    ORIGINAL
+        201                     CC
+        202                      500  CONTINUE
+        203                           ICRS=0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IPCRS, A
+                              <<< Loop-information  End >>>
+        204     1   s                 DO 510 IP=1,NP
+        205     1   p                    BUF=0.0E0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.34, ITR: 384, MVE: 2)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IPCRS, A
+                              <<< Loop-information  End >>>
+        206     2   s   8v               DO 520 K=1,NPP(IP)
+        207     2   p   8v                  ICRS=ICRS+1
+        208     2   p   8v                  IP2=IPCRS(ICRS)
+        209     2   p   8v                  BUF=BUF+A(ICRS)*S(IP2)
+        210     2   p   8v       520     CONTINUE
+        211     1   p                    AS(IP)=AS(IP)+BUF
+        212     1   p            510  CONTINUE
+        213                     C
+        214                      900  CONTINUE
+        215                     #ifdef cputime
+        216                     C     CALL CPU_TIME( TBUF2 )
+        217                           TBUF2 = MPI_WTIME()
+        218                           DTCPU=TBUF2-TBUF1
+        219                           DTCRSA=DTCRSA+DTCPU
+        220                           DTCRSR=DTCRSR+DTCPU*DTCPU
+        221                     CC    WRITE(*,*) 'DRCRS',DTCPU
+        222                     #endif
+        223                     C
+        224                           IDUM = 1
+        225                           CALL DDCOMX(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+        226                          *            AS,AS,AS,NP,IUT0,IERR,RX,RY,MAXBUF)
+        227     1                     IF(IERR.NE.0) THEN
+        228     1                         WRITE(IUT0,*)
+        229     1                         WRITE(IUT0,*) ERMSGC
+        230     1                         RETURN
+        231     1                     ENDIF
+        232                     C
+        233                     #ifdef cputime
+        234                     C     CALL CPU_TIME( TBUF3 )
+        235                           TBUF3 = MPI_WTIME()
+        236                           DTCPU=TBUF3-TBUF1
+        237                           DTCRS2=DTCRS2+DTCPU
+        238                     #endif
+        239                     C
+        240                           RETURN
+        241                           END
+
+ Diagnostic messages: program name(CALAXC)
+   jwd8220o-i  "calaxc.f", line 2: 副作用の可能性のある最適化を行いました。
+   jwd2006i-i  "calaxc.f", line 13: この名前'IBP'は、宣言だけされていて引用されていません。
+   jwd2008i-i  "calaxc.f", line 25: この仮引数'NODE'は、副プログラム中で使用されていません。
+   jwd2008i-i  "calaxc.f", line 25: この仮引数'NEX'は、副プログラム中で使用されていません。
+   jwd2008i-i  "calaxc.f", line 27: この仮引数'WRKN'は、副プログラム中で使用されていません。
+   jwd2006i-i  "calaxc.f", line 31: この名前'ITCRS'は、宣言だけされていて引用されていません。
+   jwd5001p-i  "calaxc.f", line 109: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "calaxc.f", line 109: このDOループをSIMD化しました。(名前:IP)
+   jwd8663o-i  "calaxc.f", line 109: ソフトウェアパイプライニングの効果がないループと判断したため、ソフトウェアパイプライニングを抑止しました。
+   jwd8202o-i  "calaxc.f", line 109: ループを展開数4回でアンローリングしました。
+   jwd5001p-i  "calaxc.f", line 119: このDOループを並列化しました。(名前:IP)
+   jwd6001s-i  "calaxc.f", line 119: このDOループをSIMD化しました。(名前:IP)
+   jwd8204o-i  "calaxc.f", line 119: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "calaxc.f", line 119: ループの繰返し数が320回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd5001p-i  "calaxc.f", line 136: このDOループを並列化しました。(名前:IP)
+   jwd8204o-i  "calaxc.f", line 136: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "calaxc.f", line 136: ループの繰返し数が272回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd6004s-i  "calaxc.f", line 139: リダクション演算を含むDOループをSIMD化しました。(名前:IP_TMP)
+   jwd5001p-i  "calaxc.f", line 160: このDOループを並列化しました。(名前:IP)
+   jwd8204o-i  "calaxc.f", line 160: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "calaxc.f", line 160: ループの繰返し数が192回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd6004s-i  "calaxc.f", line 163: リダクション演算を含むDOループをSIMD化しました。(名前:IP_TMP)
+   jwd5001p-i  "calaxc.f", line 184: このDOループを並列化しました。(名前:IP)
+   jwd8204o-i  "calaxc.f", line 184: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "calaxc.f", line 184: ループの繰返し数が192回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd6004s-i  "calaxc.f", line 187: リダクション演算を含むDOループをSIMD化しました。(名前:IP_TMP)
+   jwd5133p-i  "calaxc.f", line 204: このDOループは構造が複雑なため、並列化できません。
+   jwd6004s-i  "calaxc.f", line 206: リダクション演算を含むDOループをSIMD化しました。(名前:K)
+   jwd8204o-i  "calaxc.f", line 206: ループにソフトウェアパイプライニングを適用しました。
+   jwd8205o-i  "calaxc.f", line 206: ループの繰返し数が384回以上の時、ソフトウェアパイプライニングを適用したループが実行時に選択されます。
+   jwd8208o-i  "calaxc.f", line 209: ループ内の総和または乗積演算の計算方法を変更しました。
+
+ Procedure information
+   Lines      : 4270
+   Statements : 3354
+   Stack(byte): 2896
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 4270
+   Total statements : 3354
+   Total stack(byte): 2896
+   Total prefetch num: 0
+

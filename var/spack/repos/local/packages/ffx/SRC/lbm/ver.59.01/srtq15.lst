@@ -1,0 +1,652 @@
+
+ Fujitsu Fortran Version 4.8.1  Thu Nov 24 16:45:57 2022
+
+ Compilation information
+   Current directory : /vol0005/mdt2/home/u10588/SRC/lbm/ver.59.01
+   Source file       : srtq15.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -Nlst=t -Cpp -Cfpp -c -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Knointentopt
+   Cpp options          : -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Dcputime -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=8 -D__FRT_patchlevel__=1 -D__FRT_version__="4.8.1" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Knoarray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nlibomp -Nline -Nlst -Nlst=p -Nlst=t
+                          -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "SRTQ15"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE SRTQ15(NG,NG3,NP,LVEL,WF,CVEL,LREV,LEVEL,
+          2                          *                  F,TAU,FWRK,
+          3                          *                  MPBOUN,NPBOUN,LPBOUN,QBOUN,
+          4                          *                  UINLT,VINLT,WINLT,UWALL,VWALL,WWALL,
+          5                          *                  V1,V2,V3,V4,MASK,FX,FY,FZ,FXB,FYB,FZB,
+          6                          *                  JDUMP,FDUMP,CDUMP)
+          7                           IMPLICIT NONE
+          8                           INTEGER*4 NG,NG3,NP,LVEL(3,NP),LREV(NP),LEVEL
+          9                     C
+         10                           REAL*8 WF(NP),CVEL(3,NP),
+         11                          *       F(NG3,NP),TAU(NG3),FWRK(NG3,NP),
+         12                          *       V1(NG3),V2(NG3),V3(NG3),V4(NG3)
+         13                           INTEGER*4 MPBOUN,NPBOUN,LPBOUN(5,NPBOUN)
+         14                           REAL*4    QBOUN(MPBOUN)
+         15                           REAL*8    UINLT,VINLT,WINLT,UWALL,VWALL,WWALL
+         16                           REAL*8    FX,FY,FZ
+         17                           REAL*8    FXB(MPBOUN),FYB(MPBOUN),FZB(MPBOUN)
+         18                           INTEGER*4 JDUMP
+         19                           REAL*8    FDUMP(NP),CDUMP(NG3)
+         20                           INTEGER*4 MASK(NG3)
+         21                     C
+         22                           INTEGER*4 LSHIFT(3,26)
+         23                           DATA LSHIFT/ -1, 0, 0,
+         24                          *              1, 0, 0,
+         25                          *              0,-1, 0,
+         26                          *              0, 1, 0,
+         27                          *              0, 0,-1,
+         28                          *              0, 0, 1,
+         29                          *              0,-1,-1, 0, 1,-1, 0, 1, 1, 0,-1, 1,
+         30                          *             -1, 0,-1, 1, 0,-1, 1, 0, 1,-1, 0, 1,
+         31                          *             -1,-1, 0, 1,-1, 0, 1, 1, 0,-1, 1, 0,
+         32                          *             -1,-1,-1, 1,-1,-1, 1, 1,-1,-1, 1,-1,
+         33                          *             -1,-1, 1, 1,-1, 1, 1, 1, 1,-1, 1, 1 /
+         34                     C
+         35                           INTEGER*4 I,J,K,IP,IP1,IP2,IB,ITYPE,IPR,
+         36                          *          I1,I2,I3,J1,J2,J3,K1,K2,K3,ID,IG,NG1,NG2,
+         37                          *          IG01,IG02,IG03,IG04,IG05,IG06,IG07,IG08,IG09,IG10,
+         38                          *          IG11,IG12,IG13,IG14,IG15
+         39                           REAL*8    RHO,U0,V0,W0,UU,CU,JX,JY,JZ,
+         40                          *          F1,F1R,F2R,FBUF,Q,Q1,Q2,COEF1,COEF2
+         41                     C
+         42                     CCCC
+         43                     CCCC[1] MACRO VARIABLES
+         44                     CCCC
+         45                     CCCC (48-FLOP/GRID, 15-WORDS LOAD, 4-WORDS STORE)
+         46                           CALL USTSTA(02)
+         47                     C
+         48                           CALL USTSTA(03)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 149
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 0.77, ITR: 24, MVE: 2, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      F, V4
+                              <<<    PREFETCH(SOFT) : 12
+                              <<<     SEQUENTIAL : 12
+                              <<<      V3: 4, V2: 4, V1: 4
+                              <<< Loop-information  End >>>
+         49     1  pp    v            DO 1000 IG=1,NG3
+         50     1   p    v                RHO= F(IG, 1)+F(IG, 2)+F(IG, 3)+F(IG, 4)
+         51     1                    *        +F(IG, 5)+F(IG, 6)+F(IG, 7)+F(IG, 8)
+         52     1                    *        +F(IG, 9)+F(IG,10)+F(IG,11)+F(IG,12)
+         53     1                    *        +F(IG,13)+F(IG,14)+F(IG,15)
+         54     1   p    v                JX = F(IG, 2)-F(IG, 4)
+         55     1                    *        +F(IG, 8)-F(IG, 9)-F(IG,10)+F(IG,11)
+         56     1                    *        +F(IG,12)-F(IG,13)-F(IG,14)+F(IG,15)
+         57     1   p    v                JY = F(IG, 3)-F(IG, 5)
+         58     1                    *        +F(IG, 8)+F(IG, 9)-F(IG,10)-F(IG,11)
+         59     1                    *        +F(IG,12)+F(IG,13)-F(IG,14)-F(IG,15)
+         60     1   p    v                JZ = F(IG, 6)-F(IG, 7)
+         61     1                    *        +F(IG, 8)+F(IG, 9)+F(IG,10)+F(IG,11)
+         62     1                    *        -F(IG,12)-F(IG,13)-F(IG,14)-F(IG,15)
+         63     1   p    v               V1(IG)=RHO
+         64     1   p    v               V2(IG)=JX/RHO
+         65     1   p    v               V3(IG)=JY/RHO
+         66     1   p    v               V4(IG)=JZ/RHO
+         67     1   p    v       1000 CONTINUE
+         68                           CALL USTEND(03)
+         69                     CCCC
+         70                     CCCC[2] EQUILIBRIAM FUNCTION
+         71                     CCCC
+         72                     CCCC (151-FLOP/GRID, 4-WORDS LOAD, 15-WORDS STORE)
+         73                           CALL USTSTA(04)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 88
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      V1, V2, V4, V3, FWRK
+                              <<<    PREFETCH(SOFT) : 6
+                              <<<     SEQUENTIAL : 6
+                              <<<      FWRK: 6
+                              <<< Loop-information  End >>>
+         74     1  pp    v            DO 1100 IG=1,NG3
+         75     1   p    v               RHO=V1(IG)
+         76     1   p    v               U0 =V2(IG)
+         77     1   p    v               V0 =V3(IG)
+         78     1   p    v               W0 =V4(IG)
+         79     1   p    v               UU =U0*U0+V0*V0+W0*W0
+         80     1               
+         81     1   p    v               FWRK(IG,1)= WF(1)*RHO*(1.0D0-1.5D0*UU)
+         82     1               
+         83     1   p    v               FBUF=WF(2)*RHO*(1.0D0+3.0D0*U0+4.5D0*U0*U0-1.5D0*UU)
+         84     1   p    v               FWRK(IG,2)= FBUF
+         85     1               
+         86     1   p    v               FBUF=WF(3)*RHO*(1.0D0+3.0D0*V0+4.5D0*V0*V0-1.5D0*UU)
+         87     1   p    v               FWRK(IG,3)= FBUF
+         88     1               
+         89     1   p    v               FBUF=WF(4)*RHO*(1.0D0-3.0D0*U0+4.5D0*U0*U0-1.5D0*UU)
+         90     1   p    v               FWRK(IG,4)= FBUF
+         91     1               
+         92     1   p    v               FBUF=WF(5)*RHO*(1.0D0-3.0D0*V0+4.5D0*V0*V0-1.5D0*UU)
+         93     1   p    v               FWRK(IG,5)= FBUF
+         94     1               
+         95     1   p    v               FBUF=WF(6)*RHO*(1.0D0+3.0D0*W0+4.5D0*W0*W0-1.5D0*UU)
+         96     1   p    v               FWRK(IG,6)= FBUF
+         97     1               
+         98     1   p    v               FBUF=WF(7)*RHO*(1.0D0-3.0D0*W0+4.5D0*W0*W0-1.5D0*UU)
+         99     1   p    v               FWRK(IG,7)= FBUF
+        100     1               
+        101     1   p    v               CU =U0+V0+W0
+        102     1   p    v               FBUF=WF(8)*RHO*(1.0D0+3.0D0*CU+4.5D0*CU*CU-1.5D0*UU)
+        103     1   p    v               FWRK(IG,8)= FBUF
+        104     1               
+        105     1   p    v               CU =-U0+V0+W0
+        106     1   p    v               FBUF=WF(9)*RHO*(1.0D0+3.0D0*CU+4.5D0*CU*CU-1.5D0*UU)
+        107     1   p    v               FWRK(IG,9)= FBUF
+        108     1               
+        109     1   p    v               CU =-U0-V0+W0
+        110     1   p    v               FBUF=WF(10)*RHO*(1.0D0+3.0D0*CU+4.5D0*CU*CU-1.5D0*UU)
+        111     1   p    v               FWRK(IG,10)= FBUF
+        112     1               
+        113     1   p    v               CU =U0-V0+W0
+        114     1   p    v               FBUF=WF(11)*RHO*(1.0D0+3.0D0*CU+4.5D0*CU*CU-1.5D0*UU)
+        115     1   p    v               FWRK(IG,11)= FBUF
+        116     1               
+        117     1   p    v               CU =U0+V0-W0
+        118     1   p    v               FBUF=WF(12)*RHO*(1.0D0+3.0D0*CU+4.5D0*CU*CU-1.5D0*UU)
+        119     1   p    v               FWRK(IG,12)= FBUF
+        120     1               
+        121     1   p    v               CU =-U0+V0-W0
+        122     1   p    v               FBUF=WF(13)*RHO*(1.0D0+3.0D0*CU+4.5D0*CU*CU-1.5D0*UU)
+        123     1   p    v               FWRK(IG,13)= FBUF
+        124     1               
+        125     1   p    v               CU =-U0-V0-W0
+        126     1   p    v               FBUF=WF(14)*RHO*(1.0D0+3.0D0*CU+4.5D0*CU*CU-1.5D0*UU)
+        127     1   p    v               FWRK(IG,14)= FBUF
+        128     1               
+        129     1   p    v               CU =U0-V0-W0
+        130     1   p    v               FBUF=WF(15)*RHO*(1.0D0+3.0D0*CU+4.5D0*CU*CU-1.5D0*UU)
+        131     1   p    v               FWRK(IG,15)= FBUF
+        132     1               
+        133     1   p    v       1100 CONTINUE
+        134                           CALL USTEND(04)
+        135                     CCCC
+        136                     CCCC[3] B.C. FOR EQUILIBRIAM FUNCTION
+        137                     CCCC
+        138                           CALL USTSTA(05)
+        139                     !ocl norecurrence
+        140                     !NEC$ ivdep
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      CVEL, WF
+                              <<< Loop-information  End >>>
+        141     1  pp                 DO 2000 IB=1,NPBOUN
+        142     1   p                     I     = LPBOUN(1,IB)
+        143     1   p                     J     = LPBOUN(2,IB)
+        144     1   p                     K     = LPBOUN(3,IB)
+        145     1   p                     IG=I+1+(NG+3)*J+(NG+3)*(NG+3)*K
+        146     1   p                     IP    = LPBOUN(4,IB)
+        147     1   p                     ITYPE = LPBOUN(5,IB)
+        148     1   p                     Q     = DBLE(QBOUN(IB))
+        149     2   p                     IF(ITYPE.EQ.1 .OR. ITYPE.EQ.11) THEN
+        150     2               C---------[WALL]------------C
+        151     2   p                         RHO=V1(IG)
+        152     2   p                         U0 = 0.0D0
+        153     2   p                         V0 = 0.0D0
+        154     2   p                         W0 = 0.0D0
+        155     2   p                         CU= U0*CVEL(1,IP)+V0*CVEL(2,IP)+W0*CVEL(3,IP)
+        156     2   p                         UU =U0*U0+V0*V0+W0*W0
+        157     2   p                         FBUF=WF(IP)*RHO*(1.0D0+3.0D0*CU+4.5D0*CU*CU-1.5D0*UU)
+        158     3   p                         IF(Q.LE.0.25D0) THEN
+        159     3   p                             Q1=0.0D0
+        160     3   p                         ELSE IF(Q.LE.0.75D0) THEN
+        161     3   p                             Q1=2.0D0*Q-0.5D0
+        162     3   p                         ELSE
+        163     3   p                             Q1=1.0D0
+        164     3   p                         ENDIF
+        165     2   p                         Q2=1.0D0-Q1
+        166     2   p                         FWRK(IG,IP)=Q1*FWRK(IG,IP)+Q2*FBUF
+        167     2   p                     ELSE IF(ITYPE.EQ.2) THEN
+        168     2               C---------[INLET]-----------C
+        169     2               C
+        170     2   p                     ELSE IF(ITYPE.EQ.3) THEN
+        171     2               C---------[MOVING-WALL]-----C
+        172     2   p                         ID=LPBOUN(4,IB)
+        173     2   p                         I2=I-LSHIFT(1,ID)
+        174     2   p                         J2=J-LSHIFT(2,ID)
+        175     2   p                         K2=K-LSHIFT(3,ID)
+        176     2   p                         IG02=I2+1+(NG+3)*J2+(NG+3)*(NG+3)*K2
+        177     2   p                         RHO=V1(IG02)
+        178     2   p                         U0 =UWALL
+        179     2   p                         V0 =VWALL
+        180     2   p                         W0 =WWALL
+        181     2   p                         UU =U0*U0+V0*V0+W0*W0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.25, ITR: 72, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      WF, CVEL
+                              <<< Loop-information  End >>>
+        182     3   p    v                    DO 2200 IP2=1,NP
+        183     3   p    v                        CU= U0*CVEL(1,IP2)+V0*CVEL(2,IP2)+W0*CVEL(3,IP2)
+        184     3   p    v                        FBUF=WF(IP2)*RHO*(1.0D0+3.0D0*CU+4.5D0*CU*CU-1.5D0*UU)
+        185     3   p    v                        FWRK(IG,IP2)=FBUF
+        186     3   p    v       2200         CONTINUE
+        187     2   p                         ELSE IF(ITYPE.EQ.4) THEN
+        188     2               C---------[FREE]-----------C
+        189     2               C
+        190     2   p                     ENDIF
+        191     1               C
+        192     1   p            2000 CONTINUE
+        193                           CALL USTEND(05)
+        194                     CCCC
+        195                     CCCC[4] COLLISION
+        196                     CCCC
+        197                     CCCC (45-FLOP/GRID, 31-WORDS LOAD, 15-WORD STORE)
+        198                           CALL USTSTA(06)
+        199     1                     IF(JDUMP.EQ.0) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      F, FWRK, TAU
+                              <<< Loop-information  End >>>
+        200     2  pp                     DO 3000 IP=1,NP
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.12, ITR: 112, MVE: 4, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      TAU, F, FWRK
+                              <<< Loop-information  End >>>
+        201     3   p   2v                    DO 3100 IG = 1, NG3
+        202     3   p   2v                        FWRK(IG,IP)= F(IG,IP)-(F(IG,IP)-FWRK(IG,IP))/TAU(IG)
+        203     3   p   2v       3100         CONTINUE
+        204     2   p            3000     CONTINUE
+        205     1                     ELSE
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      TAU, F, FWRK, CDUMP
+                              <<< Loop-information  End >>>
+        206     2  pp                     DO 3200 IP=1,NP
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.78, ITR: 112, MVE: 4, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      CDUMP, FWRK, F, TAU
+                              <<< Loop-information  End >>>
+        207     3   p   2v                    DO 3300 IG = 1, NG3
+        208     3   p   2v                        FWRK(IG,IP)= F(IG,IP)-(F(IG,IP)-FWRK(IG,IP))/TAU(IG)
+        209     3                    *                         -CDUMP(IG)*(FWRK(IG,IP)-FDUMP(IP))
+        210     3   p   2v       3300         CONTINUE
+        211     2   p            3200     CONTINUE
+        212     1                     ENDIF
+        213                           CALL USTEND(06)
+        214                     CCCC
+        215                     CCCC[5] TRANSLATION
+        216                     CCCC
+        217                     CCCC (0 FLOP/GRID,  15-WORD LOAD, 15-WORD STORE)
+        218                           CALL USTSTA(07)
+        219                           NG1=NG+3
+        220                           NG2=NG1*NG1
+        221                     !ocl loop_fission_target
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 122
+                              <<<  [OPTIMIZATION]
+                              <<<    FISSION(num: 2)
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.22, ITR: 64, MVE: 4, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      MASK, FWRK, F, (unknown)
+                              <<<    PREFETCH(SOFT) : 12
+                              <<<     SEQUENTIAL : 12
+                              <<<      FWRK: 6, F: 6
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 10
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        222     1  pp    v            DO 4000 IG=1,NG3
+        223     1   p    v                IF(MASK(IG).EQ.0) CYCLE
+        224     1   p    v                IG01= IG
+        225     1   p    v                IG02= IG - 1
+        226     1   p    v                IG03= IG     - NG1
+        227     1   p    v                IG04= IG + 1
+        228     1   p    v                IG05= IG     + NG1
+        229     1   p    v                IG06= IG           - NG2
+        230     1   p    v                IG07= IG           + NG2
+        231     1   p    v                IG08= IG - 1 - NG1 - NG2
+        232     1   p    v                IG09= IG + 1 - NG1 - NG2
+        233     1   p    v                IG10= IG + 1 + NG1 - NG2
+        234     1   p    v                IG11= IG - 1 + NG1 - NG2
+        235     1   p    v                IG12= IG - 1 - NG1 + NG2
+        236     1   p    v                IG13= IG + 1 - NG1 + NG2
+        237     1   p    v                IG14= IG + 1 + NG1 + NG2
+        238     1   p    v                IG15= IG - 1 + NG1 + NG2
+        239     1               C
+        240     1   p    v                F(IG, 1) = FWRK(IG01, 1)
+        241     1   p    v                F(IG, 2) = FWRK(IG02, 2)
+        242     1   p    v                F(IG, 3) = FWRK(IG03, 3)
+        243     1   p    v                F(IG, 4) = FWRK(IG04, 4)
+        244     1   p    v                F(IG, 5) = FWRK(IG05, 5)
+        245     1   p    v                F(IG, 6) = FWRK(IG06, 6)
+        246     1   p    v                F(IG, 7) = FWRK(IG07, 7)
+        247     1   p    v                F(IG, 8) = FWRK(IG08, 8)
+        248     1   p    v                F(IG, 9) = FWRK(IG09, 9)
+        249     1   p    v                F(IG,10) = FWRK(IG10,10)
+        250     1   p    v                F(IG,11) = FWRK(IG11,11)
+        251     1   p    v                F(IG,12) = FWRK(IG12,12)
+        252     1   p    v                F(IG,13) = FWRK(IG13,13)
+        253     1   p    v                F(IG,14) = FWRK(IG14,14)
+        254     1   p    v                F(IG,15) = FWRK(IG15,15)
+        255     1   p    v       4000 CONTINUE
+        256                           CALL USTEND(07)
+        257                     C
+        258                     CCCC
+        259                     CCCC[5]  B.C. FOR DISRIBUTION FUNCTION
+        260                     CCCC
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1231
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      FZB, FYB, FXB
+                              <<< Loop-information  End >>>
+        261        pp   2v            FXB=0.0D0
+        262         p   2v            FYB=0.0D0
+        263         p   2v            FZB=0.0D0
+        264                           CALL USTSTA(08)
+        265                     !ocl norecurrence
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 12
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LPBOUN, QBOUN
+                              <<< Loop-information  End >>>
+        266     1  pp                 DO 5000 IB=1,NPBOUN
+        267     1               C
+        268     1   p                     I     = LPBOUN(1,IB)
+        269     1   p                     J     = LPBOUN(2,IB)
+        270     1   p                     K     = LPBOUN(3,IB)
+        271     1   p                     IG=I+1+(NG+3)*J+(NG+3)*(NG+3)*K
+        272     1   p                     IP    = LPBOUN(4,IB)
+        273     1   p                     ITYPE = LPBOUN(5,IB)
+        274     1   p                     IPR   = LREV (IP)
+        275     1   p                     Q     = DBLE(QBOUN(IB))
+        276     1   p                     I1=I
+        277     1   p                     J1=J
+        278     1   p                     K1=K
+        279     1   p                     IG01=I+1+(NG+3)*J+(NG+3)*(NG+3)*K
+        280     1   p                     I2=I1 + LVEL(1,IP)
+        281     1   p                     J2=J1 + LVEL(2,IP)
+        282     1   p                     K2=K1 + LVEL(3,IP)
+        283     1   p                     IG02=I2+1+(NG+3)*J2+(NG+3)*(NG+3)*K2
+        284     1               C
+        285     1   p                     I3=I1 + LVEL(1,IPR)
+        286     1   p                     J3=J1 + LVEL(2,IPR)
+        287     1   p                     K3=K1 + LVEL(3,IPR)
+        288     1   p                     IG03=I3+1+(NG+3)*J3+(NG+3)*(NG+3)*K3
+        289     1               C
+        290     2   p                     IF(ITYPE.EQ.1 .OR. ITYPE.EQ.11) THEN
+        291     2   p                         F1 =FWRK(IG01,IP )
+        292     2   p                         F1R=FWRK(IG01,IPR)
+        293     2   p                         F2R=FWRK(IG02,IPR)
+        294     2               C---------[WALL]------------C
+        295     3   p                         IF(Q.LT.0.5D0) THEN
+        296     3   p                             COEF1= 2.0D0*Q
+        297     3   p                             COEF2= 1.0D0-COEF1
+        298     3   p                             FBUF =COEF1*F1R+COEF2*F2R
+        299     3   p                         ELSE
+        300     3   p                             COEF1= 0.5D0/Q
+        301     3   p                             COEF2= 1.0D0-COEF1
+        302     3   p                             FBUF =COEF1*F1R+COEF2*F1
+        303     3   p                         ENDIF
+        304     2               C CAL. FLUID FORCE
+        305     3   p                         IF(ITYPE.EQ.11.AND.MASK(IG03).EQ.1) THEN
+        306     3   p                             FXB(IB)=CVEL(1,IPR)*F1R-CVEL(1,IP)*FBUF
+        307     3   p                             FYB(IB)=CVEL(2,IPR)*F1R-CVEL(2,IP)*FBUF
+        308     3   p                             FZB(IB)=CVEL(3,IPR)*F1R-CVEL(3,IP)*FBUF
+        309     3   p                         ENDIF
+        310     2   p                         F(IG01,IP)=FBUF
+        311     2   p                     ELSE IF(ITYPE.EQ.2) THEN
+        312     2               C---------[INLET]-----------C
+        313     2   p                         F1R=FWRK(IG01,IPR)
+        314     2   p                         FBUF=F1R
+        315     2   p                         RHO=1.0D0
+        316     2   p                         U0=UINLT
+        317     2   p                         V0=VINLT
+        318     2   p                         W0=WINLT
+        319     2   p                         UU =U0*U0+V0*V0+W0*W0
+        320     2   p                         CU= U0*CVEL(1,IP)+V0*CVEL(2,IP)+W0*CVEL(3,IP)
+        321     2   p                         F(IG01,IP)=FBUF+6.0D0*WF(IP)*CU
+        322     2   p                     ELSE IF(ITYPE.EQ.3) THEN
+        323     2               C---------[MOVING-WALL]-----C
+        324     2   p                         ID=LPBOUN(4,IB)
+        325     2   p                         I2=I-LSHIFT(1,ID)
+        326     2   p                         J2=J-LSHIFT(2,ID)
+        327     2   p                         K2=K-LSHIFT(3,ID)
+        328     2   p                         IG02=I2+1+(NG+3)*J2+(NG+3)*(NG+3)*K2
+        329     2   p                         RHO=V1(IG02)
+        330     2   p                         U0=UWALL
+        331     2   p                         V0=VWALL
+        332     2   p                         W0=WWALL
+        333     2   p                         UU =U0*U0+V0*V0+W0*W0
+        334     2               !NEC$ unroll_completely
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 458
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<< Loop-information  End >>>
+        335     3   p    v                    DO 5200 IP=1,15
+        336     3   p    v                        CU= U0*CVEL(1,IP)+V0*CVEL(2,IP)+W0*CVEL(3,IP)
+        337     3   p    v                        FBUF=WF(IP)*RHO*(1.0D0+3.0D0*CU+4.5D0*CU*CU-1.5D0*UU)
+        338     3   p    v                        F(IG01,IP)= FBUF
+        339     3   p    v       5200         CONTINUE
+        340     2   p                     ELSE IF(ITYPE.EQ.4) THEN
+        341     2               C---------[FREE]-----------C
+        342     2   p                         RHO=0.0D0
+        343     2   p                         U0 =0.0D0
+        344     2   p                         V0 =0.0D0
+        345     2   p                         W0 =0.0D0
+        346     2               !NEC$ unroll_completely
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<< Loop-information  End >>>
+        347     3   p    v                    DO 5300 IP2=1,15
+        348     3   p    v                        FBUF=FWRK(IG01,IP2)
+        349     3   p    v                        RHO=RHO+FBUF
+        350     3   p    v                        U0 =U0 +FBUF*CVEL(1,IP2)
+        351     3   p    v                        V0 =V0 +FBUF*CVEL(2,IP2)
+        352     3   p    v                        W0 =W0 +FBUF*CVEL(3,IP2)
+        353     3   p    v       5300         CONTINUE
+        354     2   p                         U0=U0/RHO
+        355     2   p                         V0=V0/RHO
+        356     2   p                         W0=W0/RHO
+        357     2   p                         UU =U0*U0+V0*V0+W0*W0
+        358     2   p                         CU= U0*CVEL(1,IP)+V0*CVEL(2,IP)+W0*CVEL(3,IP)
+        359     2   p                         FBUF=WF(IP)*RHO*(1.0D0+3.0D0*CU+4.5D0*CU*CU-1.5D0*UU)
+        360     2   p                         F(IG01,IP)=FBUF
+        361     2   p                     ENDIF
+        362     1               C
+        363     1   p            5000 CONTINUE
+        364                     C
+        365                           FX=0.0D0
+        366                           FY=0.0D0
+        367                           FZ=0.0D0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 458
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<< Loop-information  End >>>
+        368     1  pp    v            DO 6000 IB=1,NPBOUN
+        369     1   p    v                FX=FX+FXB(IB)
+        370     1   p    v                FY=FY+FYB(IB)
+        371     1   p    v                FZ=FZ+FZB(IB)
+        372     1   p    v       6000 CONTINUE
+        373                     C
+        374                           CALL USTEND(08)
+        375                     C
+        376                           CALL USTEND(02)
+        377                     C
+        378                           RETURN
+        379                           END
+
+ Diagnostic messages: program name(SRTQ15)
+   jwd2008i-i  "srtq15.f", line 1: Dummy argument 'LEVEL' not used in this subprogram.
+   jwd8220o-i  "srtq15.f", line 1: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd2006i-i  "srtq15.f", line 35: 'IP1' is declared but never referenced.
+   jwd5001p-i  "srtq15.f", line 49: DO loop with DO variable 'IG' is parallelized.
+   jwd6001s-i  "srtq15.f", line 49: SIMD conversion is applied to DO loop with DO variable 'IG'.
+   jwd8222o-i  "srtq15.f", line 49: The prefetch instruction was output due to the number of prefetch required in this loop is greater than the allowable number of hardware-prefetch.
+   jwd8204o-i  "srtq15.f", line 49: This loop is software pipelined.
+   jwd8205o-i  "srtq15.f", line 49: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 24.
+   jwd8209o-i  "srtq15.f", line 50: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "srtq15.f", line 54: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "srtq15.f", line 57: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "srtq15.f", line 60: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "srtq15.f", line 64: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "srtq15.f", line 65: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "srtq15.f", line 66: Division is changed to multiplication by reciprocal.
+   jwd5001p-i  "srtq15.f", line 74: DO loop with DO variable 'IG' is parallelized.
+   jwd6001s-i  "srtq15.f", line 74: SIMD conversion is applied to DO loop with DO variable 'IG'.
+   jwd8222o-i  "srtq15.f", line 74: The prefetch instruction was output due to the number of prefetch required in this loop is greater than the allowable number of hardware-prefetch.
+   jwd8666o-i  "srtq15.f", line 74: This loop cannot be software pipelined because of shortage of floating-point registers.
+   jwd8209o-i  "srtq15.f", line 79: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "srtq15.f", line 83: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "srtq15.f", line 86: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "srtq15.f", line 89: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "srtq15.f", line 92: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "srtq15.f", line 95: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "srtq15.f", line 98: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "srtq15.f", line 102: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "srtq15.f", line 106: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "srtq15.f", line 109: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "srtq15.f", line 110: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "srtq15.f", line 114: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "srtq15.f", line 118: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "srtq15.f", line 122: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "srtq15.f", line 125: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "srtq15.f", line 126: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "srtq15.f", line 130: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5001p-i  "srtq15.f", line 141: DO loop with DO variable 'IB' is parallelized.
+   jwd8209o-i  "srtq15.f", line 141: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "srtq15.f", line 181: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd6001s-i  "srtq15.f", line 182: SIMD conversion is applied to DO loop with DO variable 'IP2'.
+   jwd8204o-i  "srtq15.f", line 182: This loop is software pipelined.
+   jwd8205o-i  "srtq15.f", line 182: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 72.
+   jwd8209o-i  "srtq15.f", line 183: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "srtq15.f", line 184: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5001p-i  "srtq15.f", line 200: DO loop with DO variable 'IP' is parallelized.
+   jwd6001s-i  "srtq15.f", line 201: SIMD conversion is applied to DO loop with DO variable 'IG'.
+   jwd8204o-i  "srtq15.f", line 201: This loop is software pipelined.
+   jwd8205o-i  "srtq15.f", line 201: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 112.
+   jwd5001p-i  "srtq15.f", line 206: DO loop with DO variable 'IP' is parallelized.
+   jwd6001s-i  "srtq15.f", line 207: SIMD conversion is applied to DO loop with DO variable 'IG'.
+   jwd8204o-i  "srtq15.f", line 207: This loop is software pipelined.
+   jwd8205o-i  "srtq15.f", line 207: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 112.
+   jwd8209o-i  "srtq15.f", line 208: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5001p-i  "srtq15.f", line 222: DO loop with DO variable 'IG' is parallelized.
+   jwd8217o-i  "srtq15.f", line 222: Temporary arrays for loop fission are generated. (The number of arrays: 1)
+   jwd8212o-i  "srtq15.f", line 222: Loop fissioned into 2 loops.
+   jwd6001s-i  "srtq15.f", line 222: SIMD conversion is applied to DO loop with DO variable 'IG'.
+   jwd8222o-i  "srtq15.f", line 222: The prefetch instruction was output due to the number of prefetch required in this loop is greater than the allowable number of hardware-prefetch.
+   jwd8218o-i  "srtq15.f", line 222, loop-id 1: Store the data referenced by the subsequent loops in the temporary arrays with loop fission. (The number of used arrays: 1)
+   jwd8219o-i  "srtq15.f", line 222, loop-id 1: The ratio of the number of instructions in the fissioned loop to the original loop is 68 %.
+   jwd8665o-i  "srtq15.f", line 222, loop-id 1: This loop cannot be software pipelined because of shortage of integer registers.
+   jwd8219o-i  "srtq15.f", line 222, loop-id 2: The ratio of the number of instructions in the fissioned loop to the original loop is 31 %.
+   jwd8204o-i  "srtq15.f", line 222, loop-id 2: This loop is software pipelined.
+   jwd8205o-i  "srtq15.f", line 222, loop-id 2: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 64.
+   jwd5003p-i  "srtq15.f", line 261: Array description is parallelized.
+   jwd6003s-i  "srtq15.f", line 261: SIMD conversion is applied to array description.
+   jwd8663o-i  "srtq15.f", line 261: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "srtq15.f", line 261: Loop unrolled 2 times.
+   jwd5001p-i  "srtq15.f", line 266: DO loop with DO variable 'IB' is parallelized.
+   jwd8670o-i  "srtq15.f", line 266: This loop cannot be software pipelined because the loop contains a branch instruction.
+   jwd8209o-i  "srtq15.f", line 320: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "srtq15.f", line 333: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd6001s-i  "srtq15.f", line 335: SIMD conversion is applied to DO loop with DO variable 'IP'.
+   jwd8209o-i  "srtq15.f", line 336: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "srtq15.f", line 337: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd6004s-i  "srtq15.f", line 347: SIMD conversion is applied to DO loop with DO variable 'IP2'. The DO loop contains a reduction operation.
+   jwd8209o-i  "srtq15.f", line 357: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "srtq15.f", line 358: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "srtq15.f", line 360: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5004p-i  "srtq15.f", line 368: DO loop with DO variable 'IB' is parallelized. The DO loop contains the reduction operation.
+   jwd6004s-i  "srtq15.f", line 368: SIMD conversion is applied to DO loop with DO variable 'IB'. The DO loop contains a reduction operation.
+
+ Procedure information
+   Lines      : 379
+   Statements : 277
+   Stack(byte): 45328
+   Prefetch num: 42
+
+ Total information
+   Procedures       : 1
+   Total lines      : 379
+   Total statements : 277
+   Total stack(byte): 45328
+   Total prefetch num: 42
+

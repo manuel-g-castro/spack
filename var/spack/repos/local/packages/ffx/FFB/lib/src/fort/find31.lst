@@ -1,0 +1,469 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:53:59 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : find31.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "FIND31"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    FIND31                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE FIND31(IMODE,ELM,NE,XP,YP,ZP,NITER,
+         14                          *                  XMINE,YMINE,ZMINE,XMAXE,YMAXE,ZMAXE,
+         15                          *                  IFOUND,GP,EP,TP,JCHECK,DELTA,ERR,G,E,T,IWRK)
+         16                           IMPLICIT REAL*4(A-H,O-Z)
+         17                           DIMENSION ELM(24,NE),DELTA(NE),G(NE),E(NE),T(NE),IWRK(NE),
+         18                          1          XMINE(NE),YMINE(NE),ZMINE(NE),
+         19                          2          XMAXE(NE),YMAXE(NE),ZMAXE(NE)
+         20                     C
+         21                           DATA EPS    / 1.E-3  /
+         22                           DATA FINITE / 1.E-20 /
+         23                     C
+         24                     C
+         25                     C      FIND AN ELEMENT INCLUDING A SPECIFIED POINT. RETURN THE
+         26                     C     ELEMENT NUMBER AND LOCAL COORDINATES OF THE POINT. IF NO ELEMENT
+         27                     C     IS FOUND, ELEMENT NUMBER OF ZERO WILL BE RETURNED.
+         28                     C         ( 3-D CALCULATION )
+         29                     C
+         30                     C
+         31                     C     NOTE ; 1. INCLUSION IN AN ELEMENT OF A POINT WILL BE JUDGED
+         32                     C              BASED ON ITS LOCAL GZAI, EATA, AND THETA COORDINATES,
+         33                     C              CALCULATED BY THE NEWTON LAPSON METHODS.
+         34                     C
+         35                     C     NOTE ; 2. TOTAL OF 'NITER' ITERATIONS WILL BE DONE WITH THE
+         36                     C              NEWTON LAPSON METHOD, REGARDLESS TO ITS CONVERGENCE.
+         37                     C              BUT, TWO OR THREE ITERATIONS ARE, IN GENERAL, FOUND
+         38                     C              ENOUGH TO OBTAIN THE LOCAL COORDINATES WITH REASONABLE
+         39                     C              ACCURACY UNLESS THE ELEMENT IS STRONGLY SKEWED.
+         40                     C
+         41                     C     ARGUMENT LISTINGS
+         42                     C       (1) INPUT
+         43                     C          IMODE       ; PASS ARGUMENTS 'XMINE'-'ZMAXE' WITH THIS FLAG
+         44                     C                       BEING SET TO ONE, TO ACTIVATE FAST ELEMENT
+         45                     C                       SEARCH MODE
+         46                     C
+         47                     C           NOTES; 'FIND31' RESTRICTS THOSE ELEMENTS TO BE SEARCHED
+         48                     C                 BASED ON THE PASSED ELEMENT'S MINIMUM & MAXIMUM
+         49                     C                 COORDINATES IF 'IMODE' FLAG IS BEING SET TO ONE.
+         50                     C                 NOTE THAT VECTOR OPERATIONS WILL BE SUBSTANTIALLY
+         51                     C                 SUPPRESSED IF 'IMODE' FLAG IS BEING SET TO ONE,
+         52                     C                 BECAUSE THE NUMBER OF ELEMENTS TO BE SEARCHED WILL BE
+         53                     C                 SMALL DUE TO THE RESTRICTION.
+         54                     C
+         55                     C          ELM( 1,IE)  ; 0.125*SUM OF X(NODE(I,IE))
+         56                     C          ELM( 2,IE)  ; 0.125*SUM OF Y(NODE(I,IE))
+         57                     C          ELM( 3,IE)  ; 0.125*SUM OF Z(NODE(I,IE))
+         58                     C
+         59                     C          ELM( 4,IE)  ; 0.125*SUM OF X(NODE(I,IE))*GI(I)
+         60                     C          ELM( 5,IE)  ; 0.125*SUM OF Y(NODE(I,IE))*GI(I)
+         61                     C          ELM( 6,IE)  ; 0.125*SUM OF Z(NODE(I,IE))*GI(I)
+         62                     C          ELM( 7,IE)  ; 0.125*SUM OF X(NODE(I,IE))*EI(I)
+         63                     C          ELM( 8,IE)  ; 0.125*SUM OF Y(NODE(I,IE))*EI(I)
+         64                     C          ELM( 9,IE)  ; 0.125*SUM OF Z(NODE(I,IE))*EI(I)
+         65                     C          ELM(10,IE)  ; 0.125*SUM OF X(NODE(I,IE))*TI(I)
+         66                     C          ELM(11,IE)  ; 0.125*SUM OF Y(NODE(I,IE))*TI(I)
+         67                     C          ELM(12,IE)  ; 0.125*SUM OF Z(NODE(I,IE))*TI(I)
+         68                     C
+         69                     C          ELM(13,IE)  ; 0.125*SUM OF X(NODE(I,IE))*GI(I)*EI(I)
+         70                     C          ELM(14,IE)  ; 0.125*SUM OF Y(NODE(I,IE))*GI(I)*EI(I)
+         71                     C          ELM(15,IE)  ; 0.125*SUM OF Z(NODE(I,IE))*GI(I)*EI(*)
+         72                     C          ELM(16,IE)  ; 0.125*SUM OF X(NODE(I,IE))*EI(I)*TI(I)
+         73                     C          ELM(17,IE)  ; 0.125*SUM OF Y(NODE(I,IE))*EI(I)*TI(I)
+         74                     C          ELM(18,IE)  ; 0.125*SUM OF Z(NODE(I,IE))*EI(I)*TI(*)
+         75                     C          ELM(19,IE)  ; 0.125*SUM OF X(NODE(I,IE))*TI(I)*GI(I)
+         76                     C          ELM(20,IE)  ; 0.125*SUM OF Y(NODE(I,IE))*TI(I)*GI(I)
+         77                     C          ELM(21,IE)  ; 0.125*SUM OF Z(NODE(I,IE))*TI(I)*GI(*)
+         78                     C
+         79                     C          ELM(22,IE)  ; 0.125*SUM OF X(NODE(I,IE))*GI(I)*EI(I)*TI(I)
+         80                     C          ELM(23,IE)  ; 0.125*SUM OF Y(NODE(I,IE))*GI(I)*EI(I)*TI(I)
+         81                     C          ELM(24,IE)  ; 0.125*SUM OF Z(NODE(I,IE))*GI(I)*EI(I)*TI(I)
+         82                     C
+         83                     C          NE          ; NUMBER OF TOTAL NODES
+         84                     C          XP          ; X-DIR. COORDINATE OF THE POINT
+         85                     C          YP          ; Y-DIR. COORDINATE OF THE POINT
+         86                     C          ZP          ; Z-DIR. COORDINATE OF THE POINT
+         87                     C          NITER       ; NUMBER OF ITERATIVE CALCULATI NS TO BE DONE
+         88                     C
+         89                     C           NOTES; THE FOLLOWING MIN & MAX VALUES WILL BE USED TO
+         90                     C                 ACTIVATE FAST ELEMENT SEARCH MODE AND ARE NEEDED ONLY
+         91                     C                 WHEN IMODE = 1 IS SPECIFIED.
+         92                     C          XMINE   (IE); MINIMUM X-DIR. COORDINATE OF ELEMENT
+         93                     C          YMINE   (IE); MINIMUM Y-DIR. COORDINATE OF ELEMENT
+         94                     C          ZMINE   (IE); MINIMUM Z-DIR. COORDINATE OF ELEMENT
+         95                     C          XMAXE   (IE); MAXIMUM X-DIR. COORDINATE OF ELEMENT
+         96                     C          YMAXE   (IE); MAXIMUM Y-DIR. COORDINATE OF ELEMENT
+         97                     C          ZMAXE   (IE); MAXIMUM Z-DIR. COORDINATE OF ELEMENT
+         98                     C
+         99                     C          JCHECK      ; RESIDUAL ERROR CHECK WILL BE DONE IF THIS IS
+        100                     C                        SET TO ONE
+        101                     C          DELTA (IE)  ; CHARACATERISTIC ELEMENT DIMENSION USED FOR
+        102                     C                        THE RESIDUAL ERROR CHECK
+        103                     C                        DUMMY ARGUMENT FOR JCHECK = 0
+        104                     C
+        105                     C       (2) OUTPUT
+        106                     C          IFOUND      ; ELEMENT NUMBER INCLUDING THE POINT
+        107                     C          GP          ; GZAI  COORDINATE OF THE POINT FOR ELEMENT FOUND
+        108                     C          EP          ; EATA  COORDINATE OF THE POINT FOR ELEMENT FOUND
+        109                     C          TP          ; THETA COORDINATE OF THE POINT FOR ELEMENT FOUND
+        110                     C          ERR         ; RELATIVE RESIDUAL ERROR IN GP,EP,ZP CALCULATION
+        111                     C
+        112                     C       (4) WORK
+        113                     C          G     (IE)  ; PREPARE FOR ALL ELEMENTS
+        114                     C          E     (IE)  ; PREPARE FOR ALL ELEMENTS
+        115                     C          T     (IE)  ; PREPARE FOR ALL ELEMENTS
+        116                     C          IWRK  (IE)  ; PREPARE FOR ALL ELEMENTS
+        117                     C
+        118                     C
+        119     1                     IF(IMODE.EQ.0) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 2.75, ITR: 192, MVE: 3, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IWRK
+                              <<< Loop-information  End >>>
+        120     2  pp   2v                DO 50 IE = 1 , NE
+        121     2   p   2v                    IWRK(IE) = IE
+        122     2   p   2v        50      CONTINUE
+        123     1                         NES = NE
+        124     1                     ELSE
+        125     1                         NES = 0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      XMINE
+                              <<< Loop-information  End >>>
+        126     2        s                DO 60 IE = 1 , NE
+        127     2        v                    IF(XMINE(IE).GT.XP) GO TO 60
+        128     2        v                    IF(YMINE(IE).GT.YP) GO TO 60
+        129     2        v                    IF(ZMINE(IE).GT.ZP) GO TO 60
+        130     2        v                    IF(XMAXE(IE).LT.XP) GO TO 60
+        131     2        v                    IF(YMAXE(IE).LT.YP) GO TO 60
+        132     2        v                    IF(ZMAXE(IE).LT.ZP) GO TO 60
+        133     2        m                    NES = NES+1
+        134     2        s                    IWRK(NES) = IE
+        135     2        v        60      CONTINUE
+        136     1                     ENDIF
+        137                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IWRK, (unknown)
+                              <<< Loop-information  End >>>
+        138     1                     DO 210 ITER = 1 , NITER
+        139     2                         IF(ITER.EQ.1) THEN
+        140     2               *VOPTION VEC
+        141     2               C*$*ASSERT PERMUTATION ( IWRK )
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 117
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 8)
+                              <<<    SOFTWARE PIPELINING(IPC: 0.84, ITR: 32, MVE: 2, POL: L)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IWRK, (unknown)
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 0
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 6
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        142     3   m    v                DO 100 IES = 1 , NES
+        143     3   p    v                  IE = IWRK(IES)
+        144     3   p    v                  DFG=ELM( 4,IE)
+        145     3   p    v                  DGG=ELM( 5,IE)
+        146     3   p    v                  DHG=ELM( 6,IE)
+        147     3   p    v                  DFE=ELM( 7,IE)
+        148     3   p    v                  DGE=ELM( 8,IE)
+        149     3   p    v                  DHE=ELM( 9,IE)
+        150     3   p    v                  DFT=ELM(10,IE)
+        151     3   p    v                  DGT=ELM(11,IE)
+        152     3   p    v                  DHT=ELM(12,IE)
+        153     3               C
+        154     3   p    v                  FV =ELM( 1,IE)-XP
+        155     3   p    v                  GV =ELM( 2,IE)-YP
+        156     3   p    v                  HV =ELM( 3,IE)-ZP
+        157     3               C
+        158     3   p    v                  DET = DFG*(DGE*DHT-DGT*DHE)
+        159     3                    &           +DFE*(DGT*DHG-DGG*DHT)
+        160     3                    &           +DFT*(DGG*DHE-DGE*DHG)
+        161     3               C
+        162     3   p    v                  DET = DET+SIGN(FINITE,DET)
+        163     3               C
+        164     3   p    v                  A11 = (DGE*DHT-DGT*DHE)/DET
+        165     3   p    v                  A21 = (DGT*DHG-DGG*DHT)/DET
+        166     3   p    v                  A31 = (DGG*DHE-DGE*DHG)/DET
+        167     3   p    v                  A12 = (DHE*DFT-DHT*DFE)/DET
+        168     3   p    v                  A22 = (DHT*DFG-DHG*DFT)/DET
+        169     3   p    v                  A32 = (DHG*DFE-DHE*DFG)/DET
+        170     3   p    v                  A13 = (DFE*DGT-DFT*DGE)/DET
+        171     3   p    v                  A23 = (DFT*DGG-DFG*DGT)/DET
+        172     3   p    v                  A33 = (DFG*DGE-DFE*DGG)/DET
+        173     3               C
+        174     3   m    v                  G(IE) =      -A11*FV-A12*GV-A13*HV
+        175     3   m    v                  E(IE) =      -A21*FV-A22*GV-A23*HV
+        176     3   m    v                  T(IE) =      -A31*FV-A32*GV-A33*HV
+        177     3   p    v        100     CONTINUE
+        178     2               C
+        179     2                         ELSE
+        180     2               *VOPTION VEC
+        181     2               C*$*ASSERT PERMUTATION ( IWRK )
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IWRK
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 0
+                              <<<      SIMD&FP   : SPILL 5  FILL 8
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        182     3   s    s                DO 200 IES = 1 , NES
+        183     3   p    v                  IE = IWRK(IES)
+        184     3   m    m                  DFG=ELM( 4,IE)
+        185     3                    &         +ELM(13,IE)*E(IE)+ELM(19,IE)*T(IE)+ELM(22,IE)*E(IE)*T(IE)
+        186     3   s    s                  DGG=ELM( 5,IE)
+        187     3                    &         +ELM(14,IE)*E(IE)+ELM(20,IE)*T(IE)+ELM(23,IE)*E(IE)*T(IE)
+        188     3   s    s                  DHG=ELM( 6,IE)
+        189     3                    &         +ELM(15,IE)*E(IE)+ELM(21,IE)*T(IE)+ELM(24,IE)*E(IE)*T(IE)
+        190     3   s    s                  DFE=ELM( 7,IE)
+        191     3                    &         +ELM(16,IE)*T(IE)+ELM(13,IE)*G(IE)+ELM(22,IE)*T(IE)*G(IE)
+        192     3   s    s                  DGE=ELM( 8,IE)
+        193     3                    &         +ELM(17,IE)*T(IE)+ELM(14,IE)*G(IE)+ELM(23,IE)*T(IE)*G(IE)
+        194     3   s    s                  DHE=ELM( 9,IE)
+        195     3                    &         +ELM(18,IE)*T(IE)+ELM(15,IE)*G(IE)+ELM(24,IE)*T(IE)*G(IE)
+        196     3   s    s                  DFT=ELM(10,IE)
+        197     3                    &         +ELM(19,IE)*G(IE)+ELM(16,IE)*E(IE)+ELM(22,IE)*G(IE)*E(IE)
+        198     3   s    s                  DGT=ELM(11,IE)
+        199     3                    &         +ELM(20,IE)*G(IE)+ELM(17,IE)*E(IE)+ELM(23,IE)*G(IE)*E(IE)
+        200     3   s    s                  DHT=ELM(12,IE)
+        201     3                    &         +ELM(21,IE)*G(IE)+ELM(18,IE)*E(IE)+ELM(24,IE)*G(IE)*E(IE)
+        202     3               C
+        203     3   m    m                  FV =ELM( 1,IE)-XP
+        204     3                    &         +ELM( 4,IE)*G(IE)+ELM( 7,IE)*E(IE)+ELM(10,IE)*T(IE)
+        205     3                    &         +ELM(13,IE)*G(IE)*E(IE)
+        206     3                    &         +ELM(16,IE)*E(IE)*T(IE)
+        207     3                    &         +ELM(19,IE)*T(IE)*G(IE)+ELM(22,IE)*G(IE)*E(IE)*T(IE)
+        208     3   m    m                  GV =ELM( 2,IE)-YP
+        209     3                    &         +ELM( 5,IE)*G(IE)+ELM( 8,IE)*E(IE)+ELM(11,IE)*T(IE)
+        210     3                    &         +ELM(14,IE)*G(IE)*E(IE)
+        211     3                    &         +ELM(17,IE)*E(IE)*T(IE)
+        212     3                    &         +ELM(20,IE)*T(IE)*G(IE)+ELM(23,IE)*G(IE)*E(IE)*T(IE)
+        213     3   m    m                  HV =ELM( 3,IE)-ZP
+        214     3                    &         +ELM( 6,IE)*G(IE)+ELM( 9,IE)*E(IE)+ELM(12,IE)*T(IE)
+        215     3                    &         +ELM(15,IE)*G(IE)*E(IE)
+        216     3                    &         +ELM(18,IE)*E(IE)*T(IE)
+        217     3                    &         +ELM(21,IE)*T(IE)*G(IE)+ELM(24,IE)*G(IE)*E(IE)*T(IE)
+        218     3               C
+        219     3   s    s                  DET = DFG*(DGE*DHT-DGT*DHE)
+        220     3                    &           +DFE*(DGT*DHG-DGG*DHT)
+        221     3                    &           +DFT*(DGG*DHE-DGE*DHG)
+        222     3               C
+        223     3   s    s                  DET = DET+SIGN(FINITE,DET)
+        224     3               C
+        225     3   s    s                  A11 = (DGE*DHT-DGT*DHE)/DET
+        226     3   s    s                  A21 = (DGT*DHG-DGG*DHT)/DET
+        227     3   s    s                  A31 = (DGG*DHE-DGE*DHG)/DET
+        228     3   s    s                  A12 = (DHE*DFT-DHT*DFE)/DET
+        229     3   s    s                  A22 = (DHT*DFG-DHG*DFT)/DET
+        230     3   s    s                  A32 = (DHG*DFE-DHE*DFG)/DET
+        231     3   s    s                  A13 = (DFE*DGT-DFT*DGE)/DET
+        232     3   s    s                  A23 = (DFT*DGG-DFG*DGT)/DET
+        233     3   s    s                  A33 = (DFG*DGE-DFE*DGG)/DET
+        234     3               C
+        235     3   s    s                  G(IE) = G(IE)-A11*FV-A12*GV-A13*HV
+        236     3   s    s                  E(IE) = E(IE)-A21*FV-A22*GV-A23*HV
+        237     3   s    s                  T(IE) = T(IE)-A31*FV-A32*GV-A33*HV
+        238     3   p    v        200     CONTINUE
+        239     2                         ENDIF
+        240     1                 210 CONTINUE
+        241                     C
+        242                           IFOUND = 0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 348
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        243     1  pp    v            DO 300 IES = 1 , NES
+        244     1   p    v                IE = IWRK(IES)
+        245     1   p    v                IF(ABS(G(IE)) .GT. 1.0+EPS .OR.
+        246     1                    &       ABS(E(IE)) .GT. 1.0+EPS .OR.
+        247     1                    &       ABS(T(IE)) .GT. 1.0+EPS) GO TO 300
+        248     1   p    v                IFOUND = IE
+        249     1   p    v        300 CONTINUE
+        250                     C
+        251     1                     IF(IFOUND.GT.0) THEN
+        252     1                         GP = G(IFOUND)
+        253     1                         EP = E(IFOUND)
+        254     1                         TP = T(IFOUND)
+        255     2                         IF(JCHECK.EQ.1) THEN
+        256     2                             IE = IFOUND
+        257     2                             FV =ELM( 1,IE)-XP
+        258     2                    &           +ELM( 4,IE)*GP+ELM( 7,IE)*EP+ELM(10,IE)*TP
+        259     2                    &           +ELM(13,IE)*GP*EP
+        260     2                    &           +ELM(16,IE)*EP*TP
+        261     2                    &           +ELM(19,IE)*TP*GP+ELM(22,IE)*GP*EP*TP
+        262     2                             GV =ELM( 2,IE)-YP
+        263     2                    &           +ELM( 5,IE)*GP+ELM( 8,IE)*EP+ELM(11,IE)*TP
+        264     2                    &           +ELM(14,IE)*GP*EP
+        265     2                    &           +ELM(17,IE)*EP*TP
+        266     2                    &           +ELM(20,IE)*TP*GP+ELM(23,IE)*GP*EP*TP
+        267     2                             HV =ELM( 3,IE)-ZP
+        268     2                    &           +ELM( 6,IE)*GP+ELM( 9,IE)*EP+ELM(12,IE)*TP
+        269     2                    &           +ELM(15,IE)*GP*EP
+        270     2                    &           +ELM(18,IE)*EP*TP
+        271     2                    &           +ELM(21,IE)*TP*GP+ELM(24,IE)*GP*EP*TP
+        272     2               C
+        273     2                             ERR = SQRT(FV*FV+GV*GV+HV*HV+FINITE)/(DELTA(IE)+FINITE)
+        274     2                         ENDIF
+        275     1                     ENDIF
+        276                     C
+        277                     C
+        278                           RETURN
+        279                           END
+
+ Diagnostic messages: program name(FIND31)
+   jwd8220o-i  "find31.f", line 13: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd5001p-i  "find31.f", line 120: DO loop with DO variable 'IE' is parallelized.
+   jwd6001s-i  "find31.f", line 120: SIMD conversion is applied to DO loop with DO variable 'IE'.
+   jwd8204o-i  "find31.f", line 120: This loop is software pipelined.
+   jwd8205o-i  "find31.f", line 120: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 192.
+   jwd5228p-i  "find31.f", line 126: DO loop is not parallelized: data dependency of variable may cause different results from serial execution for loop.
+   jwd6229s-i  "find31.f", line 126: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8670o-i  "find31.f", line 126: This loop cannot be software pipelined because the loop contains a branch instruction.
+   jwd5005p-i  "find31.f", line 142: DO loop with DO variable 'IES' is partially parallelized.
+   jwd6001s-i  "find31.f", line 142: SIMD conversion is applied to DO loop with DO variable 'IES'.
+   jwd8204o-i  "find31.f", line 142: This loop is software pipelined.
+   jwd8205o-i  "find31.f", line 142: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 32.
+   jwd8209o-i  "find31.f", line 150: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find31.f", line 158: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "find31.f", line 164: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "find31.f", line 165: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "find31.f", line 166: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "find31.f", line 167: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "find31.f", line 168: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "find31.f", line 169: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "find31.f", line 170: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "find31.f", line 171: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "find31.f", line 172: Division is changed to multiplication by reciprocal.
+   jwd5209p-i  "find31.f", line 174: DO loop is not parallelized: the variable 'IE' referenced in the subscript expression of array 'G' is assigned to in DO loop.
+   jwd5209p-i  "find31.f", line 175: DO loop is not parallelized: the variable 'IE' referenced in the subscript expression of array 'E' is assigned to in DO loop.
+   jwd5209p-i  "find31.f", line 176: DO loop is not parallelized: the variable 'IE' referenced in the subscript expression of array 'T' is assigned to in DO loop.
+   jwd6302s-i  "find31.f", line 182: SIMD conversion is not applied to DO loop: the performance of a partial SIMD execution may not be improved.
+   jwd8662o-i  "find31.f", line 182: This loop is not software pipelined because no schedule is obtained.
+   jwd8209o-i  "find31.f", line 184: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5209p-i  "find31.f", line 184: DO loop is not parallelized: the variable 'IE' referenced in the subscript expression of array 'E' is assigned to in DO loop.
+   jwd5209p-i  "find31.f", line 184: DO loop is not parallelized: the variable 'IE' referenced in the subscript expression of array 'T' is assigned to in DO loop.
+   jwd6209s-i  "find31.f", line 184: SIMD conversion cannot be applied to DO loop: the variable 'IE' referenced in the subscript expression of array 'E' is assigned to in DO loop.
+   jwd6209s-i  "find31.f", line 184: SIMD conversion cannot be applied to DO loop: the variable 'IE' referenced in the subscript expression of array 'T' is assigned to in DO loop.
+   jwd8209o-i  "find31.f", line 186: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find31.f", line 188: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find31.f", line 190: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5209p-i  "find31.f", line 190: DO loop is not parallelized: the variable 'IE' referenced in the subscript expression of array 'G' is assigned to in DO loop.
+   jwd6209s-i  "find31.f", line 190: SIMD conversion cannot be applied to DO loop: the variable 'IE' referenced in the subscript expression of array 'G' is assigned to in DO loop.
+   jwd8209o-i  "find31.f", line 192: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find31.f", line 194: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find31.f", line 196: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find31.f", line 198: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find31.f", line 200: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find31.f", line 203: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find31.f", line 208: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find31.f", line 213: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find31.f", line 219: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "find31.f", line 226: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "find31.f", line 227: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "find31.f", line 229: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "find31.f", line 230: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "find31.f", line 232: Division is changed to multiplication by reciprocal.
+   jwd8206o-i  "find31.f", line 233: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "find31.f", line 235: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8206o-i  "find31.f", line 235: Division is changed to multiplication by reciprocal.
+   jwd8209o-i  "find31.f", line 236: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find31.f", line 237: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5001p-i  "find31.f", line 243: DO loop with DO variable 'IES' is parallelized.
+   jwd6001s-i  "find31.f", line 243: SIMD conversion is applied to DO loop with DO variable 'IES'.
+   jwd8209o-i  "find31.f", line 257: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find31.f", line 262: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find31.f", line 267: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find31.f", line 273: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+
+ Procedure information
+   Lines      : 279
+   Statements : 106
+   Stack(byte): 28592
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 279
+   Total statements : 106
+   Total stack(byte): 28592
+   Total prefetch num: 0
+

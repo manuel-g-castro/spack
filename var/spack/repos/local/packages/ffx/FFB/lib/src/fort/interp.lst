@@ -1,0 +1,273 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:54:05 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : interp.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "INTERP"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    INTERP                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE INTERP(S,X,Y,NODE,NE,NP,N,IE,XP,YP,
+         14                          *                  SP,G,E,NMAX,EPS,IUT0,IWRN,IRN)
+         15                           IMPLICIT REAL*4 (A-H,O-Z)
+         16                           DIMENSION S(NP),X(NP),Y(NP),NODE(N,NE)
+         17                     C
+         18                           CHARACTER*60 WRMSG
+         19                           CHARACTER*60 WREXP1
+         20                           CHARACTER*60 WREXP2
+         21                     C
+         22                           DIMENSION GI(4),EI(4),XE(4),YE(4),SE(4)
+         23                           DATA GI / -1.E0 ,  1.E0 ,  1.E0 ,  -1.E0 /
+         24                           DATA EI / -1.E0 , -1.E0 ,  1.E0 ,   1.E0 /
+         25                     C
+         26                           WRMSG  = ' *** SUBROUTINE INTERP ISSUES WARNING '
+         27                           WREXP1 = ' INTERPOLATION WAS NOT CONVERGED '
+         28                           WREXP2 = ' SPECIFIED POINT IS NOT INCLUDED IN THE ELEMENT '
+         29                     C
+         30                           GINIT = 0.E0
+         31                           EINIT = 0.E0
+         32                     C
+         33                     C
+         34                     C      INTERPOLATE SCALAR VALUE AT A SPECIFIED POINT
+         35                     C         ( 2-D GRAPHICS )
+         36                     C
+         37                     C
+         38                     C     ARGUMENT LISTINGS
+         39                     C       (1) INPUT
+         40                     C          S     (IP)  ; SCALAR VALUES DEFINED     AT NODES
+         41                     C          X     (IP)  ; X-DIR. COORDINATE         AT NODES
+         42                     C          Y     (IP)  ; Y-DIR. COORDINATE         AT NODES
+         43                     C          NODE(I,IE)  ; NODE NUMBER TABLE
+         44                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+         45                     C          NP          ; NUMBER OF TOTAL NODES
+         46                     C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT
+         47                     C          IE          ; ELEMENT NO. WHERE GIVEN TEH POINT INCLUDED
+         48                     C          XP          ; X-DIR. COORDINATE OF GIVEN POINT
+         49                     C          YP          ; Y-DIR. COORDINATE OF GIVEN POINT
+         50                     C          NMAX        ; MAX. ITERATION NUMBER FOR NEWTON LAPSON METHOD
+         51                     C          EPS         ; CONVERGENCE CRITERIA
+         52                     C          IUT0       ; DEVICE NUMBER TO ISSUE WARNING (IF THIS IS SET
+         53                     C                       ZERO, WARNING WILL BE, IF ANY, SURPRESSED.
+         54                     C
+         55                     C       (2) OUTPUT
+         56                     C          SP          ; INTERPOLATED SCALAR VALUE
+         57                     C          G           ; GZI COORDINATES OF THE POINT
+         58                     C          E           ; ETA COORDINATES OF THE POINT
+         59                     C          IWRN        ; RETURN CODE TO ISSUE WARNING
+         60                     C                   0 --- NORMAL TERMINATION
+         61                     C                   1 --- WARNING ISSUED
+         62                     C          IRN         ; CALCULATION ITERATED NUMBER (IF CALCULATION
+         63                     C                       IS NOT CONVERGED WITHIN THE MAXIMUM ITERATION
+         64                     C                       NUMBER SPECIFIED, THIS CODE WILL BE SET TO ZERO)
+         65                     C
+         66                     C
+         67                           IWRN = 0
+         68                           IRN  = 0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 517
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+         69     1   s    v            DO 10 I = 1 , N
+         70     1   p    v                XE(I) = X(NODE(I,IE))
+         71     1   p    v                YE(I) = Y(NODE(I,IE))
+         72     1   p    v                SE(I) = S(NODE(I,IE))
+         73     1   p    v         10 CONTINUE
+         74                     C
+         75                           ESIZE = 0.5E0*(SQRT((XE(3)-XE(1))**2+(YE(3)-YE(1))**2)
+         76                          &              +SQRT((XE(4)-XE(2))**2+(YE(4)-YE(2))**2))
+         77                     C
+         78                           GEX = 0.E0
+         79                           GEY = 0.E0
+         80                           GX  = 0.E0
+         81                           GY  = 0.E0
+         82                           EX  = 0.E0
+         83                           EY  = 0.E0
+         84                           CX  = 0.E0
+         85                           CY  = 0.E0
+         86                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 422
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+         87     1  pp    v            DO 20 I = 1 , N
+         88     1   p    v                GEX = GEX+0.25E0*GI(I)*EI(I)*XE(I)
+         89     1   p    v                GEY = GEY+0.25E0*GI(I)*EI(I)*YE(I)
+         90     1   p    v                GX  = GX +0.25E0*GI(I)*XE(I)
+         91     1   p    v                GY  = GY +0.25E0*GI(I)*YE(I)
+         92     1   p    v                EX  = EX +0.25E0*EI(I)*XE(I)
+         93     1   p    v                EY  = EY +0.25E0*EI(I)*YE(I)
+         94     1   p    v                CX  = CX +0.25E0*XE(I)
+         95     1   p    v                CY  = CY +0.25E0*YE(I)
+         96     1   p    v         20 CONTINUE
+         97                     C
+         98                           G = GINIT
+         99                           E = EINIT
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 2  FILL 6
+                              <<<      SIMD&FP   : SPILL 3  FILL 3
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        100     1                     DO 100 ITER = 1 , NMAX
+        101     1                         DFG = GEX*E+GX
+        102     1                         DFE = GEX*G+EX
+        103     1                         DHG = GEY*E+GY
+        104     1                         DHE = GEY*G+EY
+        105     1               C
+        106     1                         DET = DFG*DHE-DFE*DHG
+        107     1                         F = GEX*G*E+GX*G+EX*E+CX-XP
+        108     1                         H = GEY*G*E+GY*G+EY*E+CY-YP
+        109     1               C
+        110     1                         DG = 1.E0/DET*(-DHE*F+DFE*H)
+        111     1                         DE = 1.E0/DET*( DHG*F-DFG*H)
+        112     1                         G = G+DG
+        113     1                         E = E+DE
+        114     1               C
+        115     1                         XPC = 0.E0
+        116     1                         YPC = 0.E0
+        117     1                         SP  = 0.E0
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 422
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<< Loop-information  End >>>
+        118     2  pp    v                DO 30 I = 1 , N
+        119     2   p    v                    SHAPE = 0.25E0*(1.E0+GI(I)*G)*(1.E0+EI(I)*E)
+        120     2   p    v                    XPC   = XPC+SHAPE*XE(I)
+        121     2   p    v                    YPC   = YPC+SHAPE*YE(I)
+        122     2   p    v                    SP    = SP +SHAPE*SE(I)
+        123     2   p    v         30     CONTINUE
+        124     1                         DIFF = SQRT((XPC-XP)**2+(YPC-YP)**2)/ESIZE
+        125     2                         IF(DIFF.LE.EPS) THEN
+        126     2                             IRN = ITER
+        127     3                             IF((G+1.E0)*(G-1.E0).GT.0 .OR.
+        128     3                    &           (E+1.E0)*(E-1.E0).GT.0) THEN
+        129     4                                 IF(IUT0.NE.0) THEN
+        130     4                                     WRITE(IUT0,*) WRMSG
+        131     4                                     WRITE(IUT0,*) WREXP2
+        132     4                                 ENDIF
+        133     3                                 IWRN = 1
+        134     3                             ENDIF
+        135     2                             RETURN
+        136     2                         ENDIF
+        137     1                 100 CONTINUE
+        138                     C
+        139     1                     IF(IUT0.NE.0) THEN
+        140     1                         WRITE(IUT0,*) WRMSG
+        141     1                         WRITE(IUT0,*) WREXP1
+        142     1                         WRITE(IUT0,*) '  RELATIVE ERROR = ' , DIFF
+        143     1                     ENDIF
+        144                     C
+        145                     C
+        146                           RETURN
+        147                           END
+
+ Diagnostic messages: program name(INTERP)
+   jwd8220o-i  "interp.f", line 13: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd5143p-i  "interp.f", line 69: DO loop is not parallelized: the value of its iteration count is insufficient to make parallelization worthwhile.
+   jwd8325o-i  "interp.f", line 69: Assume that the maximum number of iterations for this loop is 4 from the array declaration.
+   jwd6001s-i  "interp.f", line 69: SIMD conversion is applied to DO loop with DO variable 'I'.
+   jwd5004p-i  "interp.f", line 87: DO loop with DO variable 'I' is parallelized. The DO loop contains the reduction operation.
+   jwd8325o-i  "interp.f", line 87: Assume that the maximum number of iterations for this loop is 4 from the array declaration.
+   jwd6004s-i  "interp.f", line 87: SIMD conversion is applied to DO loop with DO variable 'I'. The DO loop contains a reduction operation.
+   jwd8209o-i  "interp.f", line 88: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "interp.f", line 89: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "interp.f", line 90: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "interp.f", line 91: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "interp.f", line 92: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "interp.f", line 93: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5131p-i  "interp.f", line 100: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd8664o-i  "interp.f", line 100: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd8209o-i  "interp.f", line 107: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "interp.f", line 108: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "interp.f", line 110: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5004p-i  "interp.f", line 118: DO loop with DO variable 'I' is parallelized. The DO loop contains the reduction operation.
+   jwd8325o-i  "interp.f", line 118: Assume that the maximum number of iterations for this loop is 4 from the array declaration.
+   jwd6004s-i  "interp.f", line 118: SIMD conversion is applied to DO loop with DO variable 'I'. The DO loop contains a reduction operation.
+   jwd8206o-i  "interp.f", line 124: Division is changed to multiplication by reciprocal.
+
+ Procedure information
+   Lines      : 147
+   Statements : 83
+   Stack(byte): 148384
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 147
+   Total statements : 83
+   Total stack(byte): 148384
+   Total prefetch num: 0
+

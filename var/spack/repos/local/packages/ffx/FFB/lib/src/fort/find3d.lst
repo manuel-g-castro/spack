@@ -1,0 +1,392 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:54:00 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : find3d.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "FIND3D"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    FIND3D                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE FIND3D(MCNTYP,X,Y,Z,NODE,NE,NP,N,LAPEX,NPOLY,
+         14                          *                  E,XM,YM,ZM,IEM,NM,IUT0,IWRN)
+         15                           IMPLICIT REAL*4(A-H,O-Z)
+         16                           DIMENSION X(NP),Y(NP),Z(NP),NODE(N,NE),
+         17                          1          LAPEX(4,NPOLY),E(3,3,NPOLY,NE),
+         18                          2          XM(NM),YM(NM),ZM(NM),IEM(NM)
+         19                     C
+         20                           CHARACTER*60 WRMSGA
+         21                          & /' ## SUBROUTINE FIND3D: WARNING          ISSUING  ; CONTINUE' /
+         22                           CHARACTER*60 WREXP1
+         23                          & /' SPECIFIED POINT IS OUT OF THE COMPUTAION DOMAIN           ' /
+         24                     C
+         25                           D = 1.E-1
+         26                     C
+         27                     C
+         28                     C      FIND ELEMENTS WHICH INCLUDE SPECIFIED POINTS
+         29                     C         ( 3-D CALCULATION )
+         30                     C
+         31                     C
+         32                     C     NOTE 1 ;  IF A SPECIFIED POINT DOES NOT BELONG TO ANY ELEMENT,
+         33                     C              SUBROUTINE FIND3D WILL ISSUE A WARNING AND CONTINUE
+         34                     C              THE NORMAL PROCESS.
+         35                     C
+         36                     C     NOTE 2 ;  X, Y, AND Z COORDINATES OF EACH POINT ARE TRANSFORMED,
+         37                     C              BY LINEAR TRANSFORMATION, TO LOCAL COORDINATES IN A
+         38                     C              TETRAHEDRON CONSTITUTING AN ELEMENT. BASED ON THESE LOCAL
+         39                     C              COORDINATES OF THE POINT FOR FIVE TETRAHEDRA (OR ONE
+         40                     C              TETRAHEDRON FOR A TETRAHEDRAL ELEMENT) CONSTITUTING
+         41                     C              AN ELEMENT, THE POINT WILL BE JUDGED WHETER OR NOT TO
+         42                     C              RESIDE IN THE ELEMENT. THE SEARCHING ALGORITHM USED IN
+         43                     C              THIS SUBROUTINE IS ROUGHLY TWICE AS FAST AS USED IN
+         44                     C              ANOTHER SUBROUTINE 'FIND3E', FOR WHICH RESIDING ELEMENT
+         45                     C              SEARCH WILL BE DONE BASED ON THE SHAPE FUNCTIONS.
+         46                     C
+         47                     C     BUGS   ; THERE IS A SLIGHT CHANCE OF FAILURE IN FINDING A
+         48                     C             RESIDING ELEMENT FOR A POINT EVEN IF THE POINT IS
+         49                     C             IN THE COMPUTATIONAL DOMAIN. THE BASIC SEARCHING REGION
+         50                     C             OF THIS SUBROUTINE DOES NOT EXACTLY COVER THE ENTIRE
+         51                     C             COMPUTATIONAL DOMAIN. A SMALL REGION CAN EXIST, DEPENDING
+         52                     C             ON THE SHAPES OF ELEMENTS AND THE ORDER OF ELEMENT-WISE
+         53                     C             NODE NUMBERING, BETWEEN ELEMENT BOUNDARIES, WHERE THE
+         54                     C             CURRENT SEARCHING ALGORITHM DOES NOT CHECK. IN ORDER TO
+         55                     C             KIND OF FIX THIS BUG, THIS SUBROUTINE EXPANDS EACH
+         56                     C             ELEMENT BOUNDARIES BY A SMALL FRACTION OF 1.0. BUT, THIS
+         57                     C             FIXING IS NOT PERFECT. IF SUCH REGION STILL EXISTS AND A
+         58                     C             POINT HAPPENS TO RESIDE IN THAT REGION, THE ELEMENT
+         59                     C             SEARCH FOR THAT POINT WILL FAIL. THIS BUG IS FIXED IN
+         60                     C             THE SEARCHING ALGORITHM IMPLEMENTED IN THE NEXT VERSION
+         61                     C             OF ELEMENT SEARCHING SUBROUTINE 'FIND3E'.
+         62                     C
+         63                     C
+         64                     C     ARGUMENT LISTINGS
+         65                     C       (1) INPUT
+         66                     C          MCNTYP      ; SPECIFY MACHINE TYPE TO EXECUTE THE OBJECT CODE
+         67                     C                   1 --- VECTOR   ARCHITECTURE MACHINE
+         68                     C                   2 --- PARALLEL ARCHITECTURE MACHINE
+         69                     C                 NOTE 1 ; ACCORDING TO THE VALUE OF THIS ARGUMENT, THE
+         70                     C                         DO LOOP TO BE EXECUTED WILL BE ALTERED BASED
+         71                     C                         ON AN ASSUMPTION THAT NUMBER OF TOTAL ELEMENTS
+         72                     C                         IS, IN GENERAL, VERY LARGE, WHILE NUMBER OF
+         73                     C                         TOTAL POINTS IS NOT ALWAYS LARGE.
+         74                     C                          IF THE MACHINE DOES NOT ADOPT VECTOR, NOR
+         75                     C                         PARALLEL ARCHITECTUE, SPECIFY THIS ARGUMENT
+         76                     C                         TO 2 ( PARALLEL ).
+         77                     C
+         78                     C          X       (IP); X-DIR. COORDINATE OF NODE
+         79                     C          Y       (IP); Y-DIR. COORDINATE OF NODE
+         80                     C          Z       (IP); Z-DIR. COORDINATE OF NODE
+         81                     C          NODE  (I,IE); NODE NO. TABLE BASED ON ELEMENT
+         82                     C          NE          ; NUMBER OF TOTAL ELEMENTS
+         83                     C          NP          ; NUMBER OF TOTAL    NODES
+         84                     C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT(4 OR 8)
+         85                     C          LAPEX(IA,IG); APEX NO. OF TETRAHEDRA CONSTITUTING AN ELEMENT
+         86                     C          NPOLY       ; NUMBER OF TETRAHEDRA CONSTITUTING AN ELEMENT
+         87                     C          E(J,I,IG,IE); INVERSE MATRICES OF ELEMENT BASE VECTOR
+         88                     C          XM      (IM); X-COORDINATES OF THE SPECIFIED POINTS
+         89                     C          YM      (IM); Y-COORDINATES OF THE SPECIFIED POINTS
+         90                     C          ZM      (IM); Z-COORDINATES OF THE SPECIFIED POINTS
+         91                     C          NM          ; NUMBER OF THE SPECIFIED POINTS
+         92                     C          IUT0        ; DEVICE NUMBER TO ISSUE A WARNING
+         93                     C
+         94                     C       (2) OUTPUT
+         95                     C          IEM     (IM); ELEMENT NO.'S FOUND
+         96                     C                       IF NO ELEMENT IS FOUND FOR POINT 'IM', 'IEM(IM)'
+         97                     C                      WILL BE SET TO ZERO FOR THAT POINT.
+         98                     C          IWRN        ; RETURN CODE TO REPORT A WARNING
+         99                     C                   0 --- NORMAL TERMINATION
+        100                     C                   1 --- A WARNING ISSUED
+        101                     C
+        102                     C
+        103                     
+        104                           IWRN = 0
+        105                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2000
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IEM
+                              <<< Loop-information  End >>>
+        106     1  pp   4v            DO 100 IM = 1 , NM
+        107     1   p   4v                IEM   (IM) = 0
+        108     1   p   4v        100 CONTINUE
+        109                     C
+        110                     C FOR A VECTOR MACHINE
+        111                     C
+        112     1                     IF(MCNTYP.EQ.1) THEN
+        113     2                     DO 220 IM = 1 , NM
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      (unknown)
+                              <<< Loop-information  End >>>
+        114     3                         DO 210 IG = 1 , NPOLY
+        115     3                             IF(IEM(IM).GE.1) GO TO 210
+        116     3               C
+        117     3               C NOTE ; THE ABOVE IF STATEMENT COULD BE PUT IN THE NEXT DO LOOP (IE)
+        118     3               C       TO REDUCE THE AMOUNT OF OPERATIONS TO BE EXECUTED. BUT, THAT
+        119     3               C       WOULD PRODUCE RECURRENCE RELATION DUE TO THE VARIABLE 'IEM(IM)',
+        120     3               C       WHICH WOULD PREVENT THE NEXT DO LOOP FROM RUNNING IN VECTOR
+        121     3               C       MODE.
+        122     3               C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 165
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 1.69, ITR: 80, MVE: 2, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      (unknown)
+                              <<< Loop-information  End >>>
+        123     4   m    v                    DO 200 IE = 1 , NE
+        124     4   p    v                        XF=XM(IM)-X(NODE(LAPEX(1,IG),IE))
+        125     4   p    v                        YF=YM(IM)-Y(NODE(LAPEX(1,IG),IE))
+        126     4   p    v                        ZF=ZM(IM)-Z(NODE(LAPEX(1,IG),IE))
+        127     4   p    v                        A = E(1,1,IG,IE)*XF+E(2,1,IG,IE)*YF+E(3,1,IG,IE)*ZF
+        128     4   p    v                        B = E(1,2,IG,IE)*XF+E(2,2,IG,IE)*YF+E(3,2,IG,IE)*ZF
+        129     4   p    v                        C = E(1,3,IG,IE)*XF+E(2,3,IG,IE)*YF+E(3,3,IG,IE)*ZF
+        130     4               C
+        131     5   p    v                        IF(A.GE.-D .AND. B.GE.-D .AND. C.GE.-D .AND.
+        132     5                    &               A+B+C.LE.1.E0+D) THEN
+        133     5   s    v                            IEM   (IM) = IE
+        134     5   p    v                        ENDIF
+        135     4   p    v        200         CONTINUE
+        136     3                 210     CONTINUE
+        137     3                         IF(IEM(IM).EQ.0) THEN
+        138     3                             WRITE(IUT0,6300) WRMSGA
+        139     3                             WRITE(IUT0,6300) WREXP1
+        140     3                             IWRN = 1
+        141     3                             WRITE(IUT0,6000) IM
+        142     3                         ENDIF
+        143     2                 220 CONTINUE
+        144     1               C
+        145     1               C FOR A PARALLEL MACHINE AND NORMAL SCALAR MACHINE
+        146     1               C
+        147     1                     ELSE
+        148     2                     DO 350 IE = 1 , NE
+        149     2                         XMIN = X(NODE(1,IE))
+        150     2                         YMIN = Y(NODE(1,IE))
+        151     2                         ZMIN = Z(NODE(1,IE))
+        152     2               C
+        153     2                         XMAX = X(NODE(1,IE))
+        154     2                         YMAX = Y(NODE(1,IE))
+        155     2                         ZMAX = Z(NODE(1,IE))
+        156     2               C
+        157     2               C*$*ASSERT DO PREFER(CONCURRENT)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 259
+                              <<< Loop-information  End >>>
+        158     3  pp    s                DO 310 I = 1 , N
+        159     3   p    m                    IF(X(NODE(I,IE)).LT.XMIN) XMIN = X(NODE(I,IE))
+        160     3   p    m                    IF(Y(NODE(I,IE)).LT.YMIN) YMIN = Y(NODE(I,IE))
+        161     3   p    v                    IF(Z(NODE(I,IE)).LT.ZMIN) ZMIN = Z(NODE(I,IE))
+        162     3               C
+        163     3   p    s                    IF(X(NODE(I,IE)).GT.XMAX) XMAX = X(NODE(I,IE))
+        164     3   p    s                    IF(Y(NODE(I,IE)).GT.YMAX) YMAX = Y(NODE(I,IE))
+        165     3   p    s                    IF(Z(NODE(I,IE)).GT.ZMAX) ZMAX = Z(NODE(I,IE))
+        166     3   p    v        310     CONTINUE
+        167     2               C
+        168     2               C*$*ASSERT DO PREFER(CONCURRENT)
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 2
+                              <<< Loop-information  End >>>
+        169     3  pp                     DO 330 IM = 1 , NM
+        170     3   p                         IF(IEM(IM).GE.1)   GO TO 330
+        171     3               C
+        172     3   p                         IF(XM(IM).LT.XMIN) GO TO 330
+        173     3   p                         IF(YM(IM).LT.YMIN) GO TO 330
+        174     3   p                         IF(ZM(IM).LT.ZMIN) GO TO 330
+        175     3               C
+        176     3   p                         IF(XM(IM).GT.XMAX) GO TO 330
+        177     3   p                         IF(YM(IM).GT.YMAX) GO TO 330
+        178     3   p                         IF(ZM(IM).GT.ZMAX) GO TO 330
+        179     3               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LAPEX, E
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 1
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        180     4   p    v                    DO 320 IG = 1 , NPOLY
+        181     4   p    v                        XF=XM(IM)-X(NODE(LAPEX(1,IG),IE))
+        182     4   p    v                        YF=YM(IM)-Y(NODE(LAPEX(1,IG),IE))
+        183     4   p    v                        ZF=ZM(IM)-Z(NODE(LAPEX(1,IG),IE))
+        184     4   p    v                        A = E(1,1,IG,IE)*XF+E(2,1,IG,IE)*YF+E(3,1,IG,IE)*ZF
+        185     4   p    v                        B = E(1,2,IG,IE)*XF+E(2,2,IG,IE)*YF+E(3,2,IG,IE)*ZF
+        186     4   p    v                        C = E(1,3,IG,IE)*XF+E(2,3,IG,IE)*YF+E(3,3,IG,IE)*ZF
+        187     4               C
+        188     5   p    v                        IF(A.GE.-D .AND. B.GE.-D .AND. C.GE.-D .AND.
+        189     5                    &               A+B+C.LE.1.E0+D) THEN
+        190     5   p    v                            IEM   (IM) = IE
+        191     5   p    v                        ENDIF
+        192     4   p    v        320         CONTINUE
+        193     3   p             330     CONTINUE
+        194     2               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IEM
+                              <<< Loop-information  End >>>
+        195     3                         DO 340 IM = 1 , NM
+        196     3                             IF(IEM(IM).EQ.0) GO TO 350
+        197     3                 340     CONTINUE
+        198     2                         GO TO 360
+        199     2               C
+        200     2                 350 CONTINUE
+        201     1               C
+        202     1                 360 CONTINUE
+        203     1               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      IEM
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 0  FILL 6
+                              <<<      SIMD&FP   : SPILL 0  FILL 0
+                              <<<      SCALABLE  : SPILL 0  FILL 0
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+        204     2   s    s            DO 370 IM = 1 , NM
+        205     3   p    v                IF(IEM(IM).EQ.0) THEN
+        206     3   m    s                    WRITE(IUT0,6300) WRMSGA
+        207     3   m    s                    WRITE(IUT0,6300) WREXP1
+        208     3   p    v                    IWRN = 1
+        209     3   m    m                    WRITE(IUT0,6000) IM
+        210     3   p    v                ENDIF
+        211     2   p    v        370 CONTINUE
+        212     1                     ENDIF
+        213                     C
+        214                     C
+        215                           RETURN
+        216                      6000 FORMAT(20H   *** POINT NO. ***, I7/)
+        217                      6300 FORMAT(A60)
+        218                           END
+
+ Diagnostic messages: program name(FIND3D)
+   jwd8220o-i  "find3d.f", line 13: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd5001p-i  "find3d.f", line 106: DO loop with DO variable 'IM' is parallelized.
+   jwd6001s-i  "find3d.f", line 106: SIMD conversion is applied to DO loop with DO variable 'IM'.
+   jwd8663o-i  "find3d.f", line 106: This loop is not software pipelined because the software pipelining does not improve the performance.
+   jwd8202o-i  "find3d.f", line 106: Loop unrolled 4 times.
+   jwd5005p-i  "find3d.f", line 123: DO loop with DO variable 'IE' is partially parallelized.
+   jwd6001s-i  "find3d.f", line 123: SIMD conversion is applied to DO loop with DO variable 'IE'.
+   jwd8204o-i  "find3d.f", line 123: This loop is software pipelined.
+   jwd8205o-i  "find3d.f", line 123: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 80.
+   jwd8209o-i  "find3d.f", line 127: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find3d.f", line 128: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find3d.f", line 129: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5208p-i  "find3d.f", line 133: DO loop is not parallelized: the assign-refer order of 'IEM' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5131p-i  "find3d.f", line 148: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5004p-i  "find3d.f", line 158: DO loop with DO variable 'I' is parallelized. The DO loop contains the reduction operation.
+   jwd6302s-i  "find3d.f", line 158: SIMD conversion is not applied to DO loop: the performance of a partial SIMD execution may not be improved.
+   jwd6229s-i  "find3d.f", line 158: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd6202s-i  "find3d.f", line 159: SIMD conversion cannot be applied to DO loop: data dependency of variable 'XMIN' may cause different results from serial execution for loop.
+   jwd6202s-i  "find3d.f", line 159: SIMD conversion cannot be applied to DO loop: data dependency of variable 'ZMIN' may cause different results from serial execution for loop.
+   jwd6202s-i  "find3d.f", line 160: SIMD conversion cannot be applied to DO loop: data dependency of variable 'YMIN' may cause different results from serial execution for loop.
+   jwd6202s-i  "find3d.f", line 163: SIMD conversion cannot be applied to DO loop: data dependency of variable 'XMAX' may cause different results from serial execution for loop.
+   jwd6202s-i  "find3d.f", line 164: SIMD conversion cannot be applied to DO loop: data dependency of variable 'YMAX' may cause different results from serial execution for loop.
+   jwd6202s-i  "find3d.f", line 165: SIMD conversion cannot be applied to DO loop: data dependency of variable 'ZMAX' may cause different results from serial execution for loop.
+   jwd5001p-i  "find3d.f", line 169: DO loop with DO variable 'IM' is parallelized.
+   jwd6001s-i  "find3d.f", line 180: SIMD conversion is applied to DO loop with DO variable 'IG'.
+   jwd8670o-i  "find3d.f", line 180: This loop cannot be software pipelined because the loop contains a branch instruction.
+   jwd8209o-i  "find3d.f", line 184: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find3d.f", line 185: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd8209o-i  "find3d.f", line 186: Evaluation order of polynomial expression is changed according to commutative law of addition and multiplication.
+   jwd5131p-i  "find3d.f", line 195: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "find3d.f", line 195: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "find3d.f", line 195: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+   jwd6229s-i  "find3d.f", line 204: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8664o-i  "find3d.f", line 204: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5121p-i  "find3d.f", line 206: DO loop is not parallelized: an input/output statement was found in the loop.
+   jwd6121s-i  "find3d.f", line 206: SIMD conversion cannot be applied to DO loop: an input/output statement was found in the loop.
+   jwd5121p-i  "find3d.f", line 207: DO loop is not parallelized: an input/output statement was found in the loop.
+   jwd6121s-i  "find3d.f", line 207: SIMD conversion cannot be applied to DO loop: an input/output statement was found in the loop.
+   jwd5121p-i  "find3d.f", line 209: DO loop is not parallelized: an input/output statement was found in the loop.
+   jwd6121s-i  "find3d.f", line 209: SIMD conversion cannot be applied to DO loop: an input/output statement was found in the loop.
+
+ Procedure information
+   Lines      : 218
+   Statements : 88
+   Stack(byte): 82528
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 218
+   Total statements : 88
+   Total stack(byte): 82528
+   Total prefetch num: 0
+

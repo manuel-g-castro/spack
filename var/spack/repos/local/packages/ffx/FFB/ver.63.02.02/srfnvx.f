@@ -1,0 +1,105 @@
+      SUBROUTINE SRFNVX(IPART,NE,NP,N2,NEX,NS,NSP,N2D,
+     *                  LOCAL,NODE,X,Y,Z,
+     *                  MEBOUN,NPBOUN,LPBOUN,LEBOUN,
+     *                  MDOM,NDOM,LDOM,NBPDOM,MBPDOM,IPSLF,IPSND,
+     *                  XPBOUN,YPBOUN,ZPBOUN,
+     *                  IWRK,WRK01,WRK02,WRK03,WRK04,WRK05,WRK06,
+     *                  RX,RY,IUT6,IUT0,IERR)
+      IMPLICIT NONE
+      INTEGER*4 IPART,NE,NP,N2,NEX(8),NS,NSP,N2D
+      INTEGER*4 LOCAL(NSP,NS,4),NODE(N2,NE)
+      REAL*8    X(NP),Y(NP),Z(NP)
+      INTEGER*4 MEBOUN,NEBOUN,NPBOUN,
+     *          LPBOUN(NPBOUN),LEBOUN(2,MEBOUN)
+      INTEGER*4 MDOM,NDOM,MBPDOM
+      INTEGER*4 LDOM(MDOM),NBPDOM(MDOM),
+     *          IPSLF(MBPDOM,MDOM),IPSND(MBPDOM,MDOM)
+      REAL*4    XPBOUN(NPBOUN),YPBOUN(NPBOUN),ZPBOUN(NPBOUN)
+      INTEGER*4 IWRK(NP)
+      REAL*4    WRK01(NP),WRK02(NP),WRK03(NP),
+     *          WRK04(NP),WRK05(NP),WRK06(NP),
+     *          RX(0:N2,NE),RY(0:N2,NE)
+      INTEGER*4 IUT6,IUT0,IERR
+C
+      INTEGER*4 MLST,IERRA,IP,IBE,IBP,
+     *          IETYPE,IE,IS,NNPS,I,IDIM,MAXBUF
+      REAL*4    ABSNOR,EPSA
+C
+      MAXBUF = NE*(N2+1)
+      EPSA=1.0E-10
+C
+C
+C EXTRACT COUPLING BOUNDARY SURFACES, CALCULATE THEIR NORMAL VECTORS
+C AND ASSIGN SURFACE NORMAL VECTORS TO COUPLING NODES
+C
+C
+      WRITE(IUT6,*)
+      WRITE(IUT6,*) ' SRFNVX: EXTRACTING B.C. SURFACES,'
+      WRITE(IUT6,*) '        CALCULATING B.C. SURFACE NORMALS AND'
+      WRITE(IUT6,*) '        ASSIGNING SURFACE NORMAL TO B.C. NODE'
+C
+      MLST   = 2
+      CALL SRFEXX(MEBOUN,MLST,NE,NP,N2,NEX,NS,NSP,N2D,
+     *            LPBOUN,NPBOUN,LOCAL,NODE,
+     *            LEBOUN,NEBOUN,NP,IWRK,IUT0,IERR)
+      CALL ERRCHK(IUT6,IPART,1,IERR,IERRA)
+      IF(IERRA.NE.0) THEN
+          IERR=IERRA
+          RETURN
+      ENDIF
+C
+      CALL CSIN3X(LOCAL,X,Y,Z,NODE,NE,NP,N2,NEX,NS,NSP,
+     *            LEBOUN,NEBOUN,WRK01,WRK02,WRK03,WRK04)
+C
+      DO 1000 IP=1,NP
+          WRK04(IP) = 0.E0
+          WRK05(IP) = 0.E0
+          WRK06(IP) = 0.E0
+ 1000 CONTINUE
+C
+      DO 1100 IBE = 1 , NEBOUN
+          IE = LEBOUN(1,IBE)
+          IS = LEBOUN(2,IBE)
+          IF(     NODE(8,IE).GE.1) THEN ! HEX
+             IETYPE = 4
+          ELSE IF(NODE(6,IE).GE.1) THEN ! PRS  
+             IETYPE = 3
+          ELSE IF(NODE(5,IE).GE.1) THEN ! PYR
+             IETYPE = 2
+          ELSE                          ! TET
+             IETYPE = 1
+          END IF   
+          IF(LOCAL(4,IS,IETYPE).GE.1) THEN ! QUADRILATERAL
+             NNPS = 4
+          ELSE                             ! TRIANGLE
+             NNPS = 3
+          ENDIF   
+          DO 1200 I = 1 , NNPS
+              IP = NODE(LOCAL(I,IS,IETYPE),IE)
+              WRK04(IP) = WRK04(IP)+WRK01(IBE)
+              WRK05(IP) = WRK05(IP)+WRK02(IBE)
+              WRK06(IP) = WRK06(IP)+WRK03(IBE)
+ 1200     CONTINUE
+ 1100 CONTINUE
+C
+      IDIM = 3
+      CALL DDCOMX(IPART,IDIM,LDOM,NBPDOM,NDOM,
+     *            IPSLF,IPSND,MBPDOM,WRK04,WRK05,WRK06,NP,
+     *            IUT0,IERR,RX,RY,MAXBUF)
+      CALL ERRCHK(IUT6,IPART,1,IERR,IERRA)
+      IF(IERRA.NE.0) THEN
+          IERR=IERRA
+          RETURN
+      ENDIF
+C
+C
+      DO IBP = 1 , NPBOUN
+          IP = LPBOUN(IBP)
+          ABSNOR = SQRT(WRK04(IP)**2+WRK05(IP)**2+WRK06(IP)**2+EPSA)
+          XPBOUN(IBP) = WRK04(IP)/ABSNOR
+          YPBOUN(IBP) = WRK05(IP)/ABSNOR
+          ZPBOUN(IBP) = WRK06(IP)/ABSNOR
+      ENDDO
+C
+      RETURN
+      END

@@ -1,0 +1,76 @@
+      SUBROUTINE MKLEOS(MB,ME,N1,N2,NP,NE,NODE,
+     *                  NPSET,NESET,LPSET1,LPSET4,LESET1,LESET4,
+     *                  IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+     *                  MAXBUF,WORK,LEWORK,LPWORK,RX,RY,IUT0,IERR)
+      IMPLICIT NONE 
+C
+CC[IN]
+      INTEGER*4 MB,ME,N1,N2,NP,NE,NODE(N2,NE),
+     *          NPSET,LPSET1(NPSET),LPSET4(NPSET),
+     *          NDOM,MBPDOM,           
+     *          IPART,LDOM(NDOM),NBPDOM(NDOM),
+     *          IPSLF(MBPDOM,NDOM),IPSND(MBPDOM,NDOM)
+      INTEGER*4 MAXBUF,IUT0
+C
+CC[OUT]
+      INTEGER*4 NESET,LESET1(MB),LESET4(MB)
+      INTEGER*4 IERR
+C
+CC[WORK]
+      INTEGER*4 LEWORK(NE),LPWORK(NP)
+      REAL*4    WORK(NP),RX(N1,ME),RY(N1,ME)
+C
+CC[LOCAL]
+      INTEGER*4 IP,IPB,IE,I,IDUM
+C
+      DATA IDUM /1/
+C
+C
+      DO 1000 IP=1,NP
+          WORK  (IP)=0.0E0
+          LPWORK(IP)=0
+ 1000 CONTINUE   
+C
+      DO 1100 IPB=1,NPSET
+          IP=LPSET1(IPB)
+          WORK(IP)=1.0E0
+          LPWORK(IP)=LPSET4(IPB)
+ 1100 CONTINUE   
+C
+      CALL DDCOMX(IPART,IDUM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+     *            WORK,WORK,WORK,NP,IUT0,IERR,RX,RY,MAXBUF)
+C
+      DO 1200 IE=1,NE
+          LEWORK(IE)=0
+ 1200 CONTINUE   
+C
+      DO 1300 IE=1,NE 
+          DO 1310 I=1,8
+              IP=NODE(I,IE)
+              IF(IP.EQ.0) GOTO 1300
+              IF(WORK(IP).GE.1.0) LEWORK(IE)=1
+ 1310     CONTINUE
+ 1300 CONTINUE
+C
+      NESET=0
+      DO 1400 IE=1,NE
+          IF(LEWORK(IE).EQ.0) GOTO 1400
+          NESET=NESET+1
+          IF(NESET.GT.MB) THEN
+              WRITE(IUT0,*) 'MKLEOS:INSUFFICIENT MEMORY FOR LESTE1' 
+              IERR=1
+              NESET=MB
+          ENDIF
+          LESET1(NESET)=IE
+C
+          DO 1410 I=1,8
+              IP=NODE(I,IE)
+              IF(LPWORK(IP).EQ.0) GOTO 1410
+              LESET4(NESET)=LPWORK(IP)
+              GOTO 1400
+ 1410     CONTINUE
+C
+ 1400 CONTINUE
+C
+      RETURN
+      END

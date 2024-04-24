@@ -1,0 +1,248 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:54:14 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : plot2d.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "PLOT2D"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    PLOT2D                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE PLOT2D(JPSOUT,IUTPS,IAXIS,IMODE,INTPLT,
+         14                          *                  SMINX,SMAXX,SMINY,SMAXY,XL,YL,NL,
+         15                          *                  SCLX,SCLY,ORGX,ORGY,ICLPLT,ICDPLT,CSZPLT)
+         16                           IMPLICIT REAL*4(A-H,O-Z)
+         17                           DIMENSION XL(NL),YL(NL)
+         18                     C
+         19                     #ifdef VOS
+         20                           INCLUDE (GN)
+         21                     #else
+         22                           INCLUDE 'gn.h'
+         23                     #endif
+         24                     C
+         25                           DIMENSION XBUF (1),YBUF (1)
+         26                           DIMENSION XBUF2(2),YBUF2(2)
+         27                     C
+         28                     C
+         29                     C      PLOT X-Y PAIRS
+         30                     C         ( 2-D GRAPHICS )
+         31                     C
+         32                     C
+         33                     C     NOTE 1 ; CALLING GENERIC GRAPHIC AND POSTSCRIPT INTERFACES.
+         34                     C     NOTE 2 ; IF A GIVEN POINT IS OUT OF THE SCALE RANGE SPECIFIED,
+         35                     C             THE POINT WILL NOT BE PLOTTED.
+         36                     C
+         37                     C
+         38                     C     ARGUMENT LISTINGS
+         39                     C       (1) INPUT
+         40                     C          JPSOUT      ; POSTSCRIPT FILE WILL BE OUTPUT IF SET TO 1 OR 2
+         41                     C          IUTPS       ; FILE NUMBER TO ACCESS POSTSCRIPT FILE
+         42                     C          IAXIS       ; SPECIFIES THE AXIS AS FOLLOWS
+         43                     C                   1 ---     X -    Y
+         44                     C                   2 --- LOG(X)-    Y
+         45                     C                   3 ---     X -LOG(Y)
+         46                     C                   4 --- LOG(X)-LOG(Y)
+         47                     C          IMODE       ; SPECIFIES THE PLOTTING MODE AS FOLLOWS
+         48                     C                   1 --- PLOT THE PAIRS BY MARKS
+         49                     C                   2 --- PLOT THE PAIRS BY MARKS AND LINK THEM BY LINES
+         50                     C                        IN THE ORDER THAT THEY ARE STORED IN THE ARRAYS
+         51                     C                   3 --- ONLY LINK THEM BY LINES
+         52                     C                        IN THE ORDER THAT THEY ARE STORED IN THE ARRAYS
+         53                     C          INTPLT      ; PLOTTING INTERVAL
+         54                     C
+         55                     C          SMINX       ; X-DIR. MIN. SCALE
+         56                     C          SMAXX       ; X-DIR. MAX. SCALE
+         57                     C          SMINY       ; Y-DIR. MIN. SCALE
+         58                     C          SMAXY       ; Y-DIR. MAX. SCALE
+         59                     C
+         60                     C          XL      (IL); X-DIR. COORDINATES OF THE PAIRS
+         61                     C          YL      (IL); Y-DIR. COORDINATES OF THE PAIRS
+         62                     C          NL          ; THE NUMBER         OF THE PAIRS
+         63                     C
+         64                     C          SCLX        ; X-DIR. SCALING FACTOR
+         65                     C          SCLY        ; Y-DIR. SCALING FACTOR
+         66                     C
+         67                     C          ORGX        ; X-DIR. GRAPHIC ORIGIN
+         68                     C          ORGY        ; Y-DIR. GRAPHIC ORIGIN
+         69                     C          ICLPLT      ; COLOR INDEX TO BE USED IN THIS SUBROUTINE
+         70                     C          ICDPLT      ; CODE NUMBER    FOR THE MARK
+         71                     C          CSZPLT      ; CHARACTER SIZE FOR THE MARK
+         72                     C
+         73                     C       (2) OUTPUT
+         74                     C          NONE
+         75                     C
+         76                     C
+         77                           CALL GNCSET(ICLPLT)
+         78                           IF(JPSOUT.EQ.1) CALL PSGRAY(IUTPS,ICLPLT)
+         79                           IF(JPSOUT.EQ.2) CALL PSCSET(IUTPS,ICLPLT)
+         80                     C
+         81                           LNTYPE = GLSOLD
+         82                           PLTYPE = GLSOLD
+         83                     C
+         84                           LNWDTH = GLBOLD
+         85                           PLWDTH = GLBOLD
+         86                     C
+         87                           MKTYPE = ICDPLT
+         88                           PMTYPE = ICDPLT
+         89                     C
+         90                           MKSIZE = CSZPLT
+         91                           PKSIZE = CSZPLT
+         92                     C
+         93                           JONCE = 0
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    UNSWITCHING
+                              <<<    SPILLS :
+                              <<<      GENERAL   : SPILL 3  FILL 9
+                              <<<      SIMD&FP   : SPILL 0  FILL 4
+                              <<<      SCALABLE  : SPILL 0  FILL 2
+                              <<<      PREDICATE : SPILL 0  FILL 0
+                              <<< Loop-information  End >>>
+         94     1   s    s            DO 10 IL = 1 , NL
+         95     1   p    m                IF(MOD(IL,INTPLT).NE.0) GO TO 10
+         96     2   p    s                IF(XL(IL).GE.SMINX .AND. XL(IL).LE.SMAXX .AND.
+         97     2                    &       YL(IL).GE.SMINY .AND. YL(IL).LE.SMAXY) THEN
+         98     2               C
+         99     3   p    s                    IF(IAXIS.EQ.1 .OR. IAXIS.EQ.3) THEN
+        100     3                                 GX = ORGX+SCLX*(       XL(IL) -       SMINX )
+        101     3   p    s                    ELSE
+        102     3   p    s                        GX = ORGX+SCLX*(ALOG10(XL(IL))-ALOG10(SMINX))
+        103     3   p    s                    ENDIF
+        104     2               C
+        105     3   p    s                    IF(IAXIS.EQ.1 .OR. IAXIS.EQ.2) THEN
+        106     3   p    m                        GY = ORGY+SCLY*(       YL(IL) -       SMINY )
+        107     3   p    s                    ELSE
+        108     3   p    s                        GY = ORGY+SCLY*(ALOG10(YL(IL))-ALOG10(SMINY))
+        109     3   p    s                    ENDIF
+        110     2               C
+        111     3   p    s                    IF(IMODE.EQ.1 .OR. IMODE.EQ.2) THEN
+        112     3   m    s                        XBUF (1) = GX
+        113     3   s    s                        YBUF (1) = GY
+        114     3   s    s                        CALL GNMARK(XBUF,YBUF,1)
+        115     3   p    s                        IF(JPSOUT.GE.1) CALL PSMARK(IUTPS,XBUF,YBUF,1)
+        116     3   p    s                    ENDIF
+        117     3   p    s                    IF(IMODE.EQ.2 .OR. IMODE.EQ.3) THEN
+        118     3   m    s                        XBUF2(2) = GX
+        119     3   s    s                        YBUF2(2) = GY
+        120     3   m    s                        IF(JONCE.EQ.1) CALL GNLINE(XBUF2,YBUF2,2)
+        121     3   m    s                        IF(JPSOUT.GE.1 .AND. JONCE.EQ.1)
+        122     3                    &                CALL PSLINE(IUTPS,XBUF2,YBUF2,2)
+        123     3   m    s                        XBUF2(1) = GX
+        124     3   s    s                        YBUF2(1) = GY
+        125     3   s    s                        JONCE = 1
+        126     3   p    s                    ENDIF
+        127     2   p    s                ENDIF
+        128     1   p    v         10 CONTINUE
+        129                           LNWDTH = GLNORM
+        130                           PLWDTH = GLNORM
+        131                     C
+        132                     C
+        133                           RETURN
+        134                           END
+
+ Diagnostic messages: program name(PLOT2D)
+   jwd8321o-i  "plot2d.f", line 94: Loop unswitched.
+   jwd6229s-i  "plot2d.f", line 94: SIMD conversion is not applied to DO loop: there are IF statements in the loop.
+   jwd8664o-i  "plot2d.f", line 94: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5208p-i  "plot2d.f", line 112: DO loop is not parallelized: the assign-refer order of 'XBUF' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "plot2d.f", line 112: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'XBUF' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "plot2d.f", line 113: DO loop is not parallelized: the assign-refer order of 'YBUF' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "plot2d.f", line 113: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'YBUF' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "plot2d.f", line 114: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6122s-i  "plot2d.f", line 114: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "plot2d.f", line 115: DO loop is not parallelized: the assign-refer order of 'IUTPS' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "plot2d.f", line 115: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "plot2d.f", line 115: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'IUTPS' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "plot2d.f", line 115: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "plot2d.f", line 118: DO loop is not parallelized: the assign-refer order of 'XBUF2' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "plot2d.f", line 118: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'XBUF2' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "plot2d.f", line 119: DO loop is not parallelized: the assign-refer order of 'YBUF2' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd6208s-i  "plot2d.f", line 119: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'YBUF2' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd5202p-i  "plot2d.f", line 120: DO loop is not parallelized: data dependency of variable 'JONCE' may cause different results from serial execution for loop.
+   jwd5122p-i  "plot2d.f", line 120: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6202s-i  "plot2d.f", line 120: SIMD conversion cannot be applied to DO loop: data dependency of variable 'JONCE' may cause different results from serial execution for loop.
+   jwd6122s-i  "plot2d.f", line 120: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "plot2d.f", line 121: DO loop is not parallelized: the assign-refer order of 'IUTPS' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5122p-i  "plot2d.f", line 121: DO loop is not parallelized: a procedure reference was found in the loop.
+   jwd6208s-i  "plot2d.f", line 121: SIMD conversion cannot be applied to DO loop: the assign-refer order of 'IUTPS' in a SIMD execution may differ from the assign-refer order in the serial execution.
+   jwd6122s-i  "plot2d.f", line 121: SIMD conversion cannot be applied to DO loop: a procedure reference was found in the loop.
+   jwd5208p-i  "plot2d.f", line 123: DO loop is not parallelized: the assign-refer order of 'XBUF2' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5208p-i  "plot2d.f", line 124: DO loop is not parallelized: the assign-refer order of 'YBUF2' in a parallel execution may differ from the assign-refer order in the serial execution.
+
+ Procedure information
+   Lines      : 322
+   Statements : 121
+   Stack(byte): 640
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 322
+   Total statements : 121
+   Total stack(byte): 640
+   Total prefetch num: 0
+

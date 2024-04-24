@@ -1,0 +1,725 @@
+      SUBROUTINE  VEL3D2(MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+     *                   JSET,DIVMAX,DIVAV,XDIVMX,YDIVMX,ZDIVMX,
+     *                   TIMER,ISTEP,DT3D,
+     *                   DT,U,V,W,P,NODE,X,Y,Z,CM,JPRESS,
+     *                   DNXYZP,DNXI,DNYI,DNZI,
+     *                   OMEGA,IEATTR,IPATTR,
+     *                   ME,NE,NP,N1,N2,NEX,
+     *                   NFRAME,UFRAME,VFRAME,WFRAME,
+     *                   ITIME,DEVLP1,ITIMEI,
+     *                   NPINLT,LPINLT,UINLT,VINLT,WINLT,
+     *                   NPWALL,LPWALL,UWALL,VWALL,WWALL,
+     *                   NPSYMT,NPSYM2,LPSYMT,XPSYMT,YPSYMT,ZPSYMT,
+     *                   NPSLD1,LPSLD1, 
+     *                   LPSET1,LPSET2,LPSET3,LPSET4,
+     *                   COVER1,COVER2,COVER3,NPSET,
+     *                   NPSND ,LPSND ,NPTSND,IPSET,IPSRC,
+     *                   NPRCV ,LPRCV ,NPTRCV,
+     *                   IPART ,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+     *                   ADIAG,
+     *                   NMRF,IFATTR,OMGMRF,AMRF,
+     *                   IVOF,IMASS,RHO3D,LEFIX,NSP,NS,LOCAL,
+     *                   NFACE,LFACE,AVEC,FFA,NFINLT,LFINLT,
+     *                   NFFREE,LFFREE,NPFLD2,LPFLD2,NEFLD2,LEFLD2,
+     *                   NPFREE,LPFREE,XPFREE,YPFREE,ZPFREE,
+     *                   NESET,NESND,NERCV,NBESET,LBESET,
+     *                   LESET1,LESET2,LESET3,
+     *                   EOVER1,EOVER2,EOVER3,
+     *                   LESND,NETSND,LERCV,NETRCV,IESET,IESRC,
+     *                   SN,SNESET,OSBCOE,XNESET,YNESET,ZNESET,
+     *                   RX,RY,MWRK,WRKN,FXYZ,UG,VG,WG,
+     *                   WRK01,WRK02,WRK03,POS3D,POS3E,WRKOS1,WRKOS2,
+     *                   ICAVI,IUT0,IERR,
+     *                   MEP,MP,NEP,IENP,NUMVALID,LSTVALID)
+      IMPLICIT NONE
+C
+      INTEGER*4 ITIMEI,ISTEP,JPRESS,ICAVI
+      REAL*4    WRK01(*),WRK02(*),WRK03(*)
+      INTEGER*4 MWRK
+      REAL*4    WRKN(MWRK,9)
+C
+      INTEGER*4 MCOLOR,MCPART
+      INTEGER*4 NCOLOR(4),NCPART(MCOLOR,4),LLOOP(MCPART,MCOLOR,4)
+C
+      INTEGER*4 JSET,NODE,
+     *          IEATTR,IPATTR,ME,NE,NP,N1,N2,NEX,
+     *          NFRAME,ITIME,
+     *          NPINLT,LPINLT,NPWALL,LPWALL,NPSYMT,NPSYM2,LPSYMT,
+     *          NPSLD1,LPSLD1,NPSET,LPSET1,LPSET2,LPSET3,LPSET4,
+     *          NPSND ,LPSND ,NPTSND,IPSET,IPSRC,
+     *          NPRCV ,LPRCV ,NPTRCV,
+     *          IPART ,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+     *          IUT0,IERR
+      INTEGER*4 MEP,MP,NEP(NP),IENP(MEP,NP),NUMVALID,LSTVALID(MP)
+C
+      REAL*4    DIVMAX,DIVAV,XDIVMX,YDIVMX,ZDIVMX,
+     *          TIMER,DT,U,V,W,P,X,Y,Z,CM,
+     *          DNXYZP,DNXI,DNYI,DNZI,OMEGA,
+     *          UFRAME,VFRAME,WFRAME,DEVLP1,
+     *          UINLT,VINLT,WINLT,UWALL,VWALL,WWALL,
+     *          XPSYMT,YPSYMT,ZPSYMT,COVER1,COVER2,COVER3,
+     *          RX,RY,FXYZ,UG,VG,WG,DT3D
+C      
+      DIMENSION NEX(8)
+      DIMENSION IEATTR(NE),IPATTR(NP),
+     1          UFRAME(2,NFRAME),VFRAME(2,NFRAME),WFRAME(2,NFRAME),
+     2          U(NP),V(NP),W(NP),P(NE),X(NP),Y(NP),Z(NP),
+     3          NODE(N2,NE),CM(NP),
+     4          DNXYZP(MEP,3,NP),
+     5          DNXI(N1,ME),DNYI(N1,ME),DNZI(N1,ME),DT3D(NE)
+C
+      DIMENSION LPINLT(NPINLT),
+     1          UINLT (NPINLT),VINLT (NPINLT),WINLT (NPINLT),
+     2          LPWALL(NPWALL),
+     3           UWALL(NPWALL), VWALL(NPWALL), WWALL(NPWALL),
+     4          LPSYMT(NPSYM2),
+     5          XPSYMT(NPSYM2),YPSYMT(NPSYM2),ZPSYMT(NPSYM2),
+     6          LPSLD1(NPSLD1)
+C
+C     [INPUT:VOF]
+      INTEGER*4 IVOF,IMASS,NFACE,NSP,NS,NFINLT,NFFREE,NPFLD2,
+     *          NEFLD2,NPFREE
+      INTEGER*4 LEFIX(NE),LOCAL,LFACE,LFINLT,LFFREE,
+     *          LPFLD2(NPFLD2),LEFLD2(NEFLD2),LPFREE(NPFREE)
+      REAL*4    RHO3D(NE),AVEC,FFA,
+     *          XPFREE(NPFREE),YPFREE(NPFREE),ZPFREE(NPFREE)
+C
+C     [INPUT:MRF]
+      INTEGER*4 NMRF
+      INTEGER*4 IFATTR(*)
+      REAL*4    OMGMRF(NMRF),AMRF(3,NMRF)
+C
+      DIMENSION LDOM(NDOM),NBPDOM(NDOM),
+     1          IPSLF(MBPDOM,NDOM),IPSND(MBPDOM,NDOM)
+C
+CCCC  [INPUT:OVERSET NODE DATA]
+      DIMENSION LPSET1(NPSET),LPSET2(NPSET),
+     *          LPSET3(NPSET),LPSET4(NPSET),
+     1          COVER1(NPSET),COVER2(NPSET),COVER3(NPSET),
+     2          LPSND (NDOM),NPTSND(NDOM) ,LPRCV (NDOM) ,NPTRCV(NDOM),
+     3          IPSET (MBPDOM,NDOM),IPSRC (MBPDOM,NDOM)
+C
+CCCC  [INPUT:OVERSET ELEMENT DATA]
+      INTEGER*4 NESET,NESND,NERCV,NBESET,LBESET(2,NBESET),
+     *          LESET1(NESET),LESET2(NESET),LESET3(NESET),
+     *          LESND(NDOM),NETSND(NDOM),LERCV(NDOM),NETRCV(NDOM),
+     *          IESET(MBPDOM,NDOM),IESRC(MBPDOM,NDOM)
+      REAL*4    EOVER1(NESET),EOVER2(NESET),EOVER3(NESET),
+     *          SN(N1,NE),SNESET(N1,NBESET),OSBCOE(NP),
+     *          XNESET(NBESET),YNESET(NBESET),ZNESET(NBESET),
+     *          POS3D(NP),POS3E(NE),WRKOS1(NE),WRKOS2(NE)
+C
+      DIMENSION RX(0:N2,ME),RY(0:N2,ME),
+     1          FXYZ(3,NP),UG(*),VG(*),WG(*)
+C
+CCC      DIMENSION RHO(NE),LPSLID(NPSLID)
+C
+      CHARACTER*60 ERMSGC
+     & /' ## SUBROUTINE FRCT2T: FATAL      ERROR REPORT   ; RETURNED' /
+C
+      INTEGER*4 IMODE,IDIM,IMODEO
+      DATA IMODE   / 1       /
+      DATA IMODEO  / 1       /
+      DATA IDIM    / 3       /
+C
+      INTEGER*4 NETET,NEPRD,NEWED,NEHEX,
+     *          NTET,NPRD,NWED,NHEX,
+     *          ICOLOR,ICPART,IES,IEE,
+     *          IP1,IP2,IP3,IP4,IP5,IP6,IP7,IP8,IBP,
+     *          MAXBUF,IP,IE,ISEND,IFRAME,NB,IEMAX,NUM
+      REAL*4    COF,PWRK,GP,TP,EP,T1,T2,T3,T4,T5,T6,T7,T8,
+     *          TH,COSTH,SINTH,UR,VR,ABSDIV,DU,FXBUF,FYBUF,FZBUF
+C
+CCTT 110317
+      REAL*4 ADIAG(NP)
+CCTT 110317
+C
+      INTEGER*4 IBE,IS,IETYPE,I,IPL,J
+      REAL*4    DPX,DPY,DPZ,COEF1,COEF2
+C
+C
+      INTEGER*4 LOCALT(4,6,4)
+      DATA LOCALT /
+     *     1,2,4,0,  2,3,4,0,  3,1,4,0,  1,3,2,0,  0,0,0,0,  0,0,0,0, ! TET
+     *     1,2,5,0,  2,3,5,0,  3,4,5,0,  4,1,5,0,  1,4,3,2,  0,0,0,0, ! PYR
+     *     1,3,2,0,  4,5,6,0,  1,2,5,4,  2,3,6,5,  3,1,4,6,  0,0,0,0, ! PRS
+     *     1,5,8,4,  2,3,7,6,  1,2,6,5,  3,4,8,7,  1,4,3,2,  5,6,7,8  ! HEX
+     *           /
+C
+C      COMPUTE NEXT TIME STEP VELOCITY BY FINITE ELEMENT METHODS
+C         ( 3-D CALCULATION : SINGLE WORD & MULTI ELEMENT VERSION )
+C                                              2009.01.13 Y.YAMADE
+C
+C ************ COMPUTATIONAL COST EXCEPT FOR MATRIX SOLVER *******
+C =============================TET======================================
+C          OPERATION COUNTS:     24 FLOP /ELEMENT
+C          DATA LOADINGS   :     29 WORDS/ELEMENT
+C                           (     1 WORDS CONTIGUOUSLY,
+C                                16 WORDS BY STRIDE, AND
+C                                12 WORDS BY LIST )
+C
+C =============================WED======================================
+C          OPERATION COUNTS:     36 FLOP /ELEMENT
+C          DATA LOADINGS   :     43 WORDS/ELEMENT
+C                           (     1 WORDS CONTIGUOUSLY,
+C                                24 WORDS BY STRIDE, AND
+C                                18 WORDS BY LIST )
+C
+C =============================HEX======================================
+C          OPERATION COUNTS:     36 FLOP /ELEMENT
+C          DATA LOADINGS   :     57 WORDS/ELEMENT
+C                           (     1 WORDS CONTIGUOUSLY,
+C                                32 WORDS BY STRIDE, AND
+C                                24 WORDS BY LIST )
+C
+C     ARGUMENT LISTINGS
+C       (1) INPUT
+C          NLOOP       ;NUMBER OF LOOPS
+C          LLOOP       ;POINTER FOR SPLITTED ELEMENT LIST
+C
+C          JSET        ; OVERSET WILL BE DONE WHEN SET GREATER THAN ZERO
+C
+C          IEATTR  (IE); ELEMENT FRAME ATTRIBUES (IE. FRAME NUMBER)
+C          IPATTR  (IP); NODE    FRAME ATTRIBUES (IE. FRAME NUMBER)
+C
+C          OMEGA       ; ANGULAR VELOCITY OF REFERENCE FRAME -1
+C
+C          UFRAME(1,IF); X-DIR. VELOCITY    OF TRANSLATING FRAME 'IF'
+C          VFRAME(1,IF); Y-DIR. VELOCITY    OF TRANSLATING FRAME 'IF'
+C          WFRAME(1,IF); Z-DIR. VELOCITY    OF TRANSLATING FRAME 'IF'
+C          UFRAME(2,IF); X-DIR. ACCELERAION OF TRANSLATING FRAME 'IF'
+C          VFRAME(2,IF); Y-DIR. ACCELERAION OF TRANSLATING FRAME 'IF'
+C          WFRAME(2,IF); Z-DIR. ACCELERAION OF TRANSLATING FRAME 'IF'
+C
+C          TIMER       ; PRESENT TIME OF OVERSET CONDITIONS DATA
+C           NOTES ; 'TIMER' WILL BE REFERED TO FOR INTER-FLAME OVERSET.
+C
+C          DT          ; TIME INCTREMENT
+C          P       (IE); ELEMENT PRESSURE
+C          NODE  (I,IE); NODE NO. TABLE BASED ON ELEMENT
+C          X       (IP); X-COORDINATES OF NODES
+C          Y       (IP); Y-COORDINATES OF NODES
+C          Z       (IP); Z-COORDINATES OF NODES
+C
+C          IBUSNQ      ; FLAG FOR BOUSSINESQ ASSUMPTION
+C                        0  -- CAL. DENSITY CHANGE FOR ONLY GRAVITY TERM
+C                        1  -- CAL. DENSITY CHANGE FOR ALL THE TERM
+C          RHO     (IE); DENSITY
+C
+C          CM      (IP); LUMPED MASS MATRIX
+C
+C          VOL     (IE); ELEMENT VOLUME
+C
+C          NEX(I)      ; INCLUDES NUMBER OF ELEMENTS AND NUMBER OF LOCAL NODES
+C                        AS FOLOOWS
+C          NEX(1)      ; NUMBER OF TET.    ELEMENTS
+C          NEX(2)      ; NUMBER OF PYRAMID ELEMENTS
+C          NEX(3)      ; NUMBER OF WEGDE   ELEMENTS
+C          NEX(4)      ; NUMBER OF HEX.    ELEMENTS
+C          NEX(5)      ; NUMBER OF LOCAL NODES IN A TET.    ELEMENT (=4)
+C          NEX(6)      ; NUMBER OF LOCAL NODES IN A PYRAMID ELEMENT (=5)
+C          NEX(7)      ; NUMBER OF LOCAL NODES IN A WEGDE   ELEMENT (=6)
+C          NEX(8)      ; NUMBER OF LOCAL NODES IN A HEX.    ELEMENT (=8)
+C
+C          NP          ; NUMBER OF TOTAL    NODES
+C          N           ; NUMBER OF NODES ASSIGNED TO ONE ELEMENT ( = 8 )
+C
+C          ITIME       ; CUREENT TIME STEP
+C          DEVLP1      ; DEVELOPMENT FUNCTION FOR INLET VELOCITIES
+C          DEVLP2      ; DEVELOPMENT FUNCTION FOR ALL THE OTHER VALUES
+C
+C          NPSLID      ; NUMBER OF SOLID MEDIA NODES
+C          LPSLID (IBP); SOLID MEDIA NODES
+C
+C        A. INLET BOUNDARY
+C          NPINLT      ; NUMBER OF INLET BOUNDARY NODES
+C          LPINLT (IBP); INLET BOUNDARY NODES
+C          UINLT  (IBP); INLET BOUNDARY U-VELOCITIES
+C          VINLT  (IBP); INLET BOUNDARY V-VELOCITIES
+C          WINLT  (IBP); INLET BOUNDARY W-VELOCITIES
+C
+C        B. WALL BOUNDARY
+C          NPWALL      ; NUMBER OF WALL BOUNDARY NODES
+C          LPWALL (IBP); WALL BOUNDARY NODES
+C          UWALL  (IBP); WALL BOUNDARY U-VELOCITIES
+C          VWALL  (IBP); WALL BOUNDARY V-VELOCITIES
+C          WWALL  (IBP); WALL BOUNDARY W-VELOCITIES
+C          XPWALL (IBP); X NORMAL OF WALL BOUNDARY NODES
+C          YPWALL (IBP); Y NORMAL OF WALL BOUNDARY NODES
+C          ZPWALL (IBP); Z NORMAL OF WALL BOUNDARY NODES
+C          NPCON       ; NUMBER OF CORNER WALL NODES
+C          LPCON  (IPC); CORNER WALL NODES
+C
+C        C. SYMMETRIC BOUNDARY
+C          NPSYMT      ; NUMBER OF SYMMETRIC BOUNDARY NODES
+C          LPSYMT (IBP); SYMMETRIC BOUNDARY NODES
+C          XPSYMT (IBP); X-DIR COMPONENT OF SYMMETRIC NODE NORMAL VECTOR
+C          YPSYMT (IBP); Y-DIR COMPONENT OF SYMMETRIC NODE NORMAL VECTOR
+C          ZPSYMT (IBP); Z-DIR COMPONENT OF SYMMETRIC NODE NORMAL VECTOR
+C
+C        D. CYCLIC BOUNDARY
+C          NPCCL       ; NUMBER OF CYCLIC BOUNDARY NODES
+C          LPCCL1 (IBP); CYCLIC BOUNDARY NODES-1
+C          LPCCL2 (IBP); CYCLIC BOUNDARY NODES-2
+C
+C        E. INTER-CONNECT BOUNDARY
+C          IPART       ; SUB-DOMAIN NUMBER THAT THIS TASK SHOULD TAKE/IS
+C                       TAKING CARE OF. IPART BEING SET ZERO MEANS THAT
+C                       THE PROGRAM SHOULD RUN/IS RUNNING IN SERIAL 
+C                       MODE.
+C
+C          LDOM  (IDOM); NEIBERING SUB-DOMAIN NUMBER
+C          NBPDOM(IDOM); NUMBER OF INTER-CONNECT BOUNDARY NODES
+C                       SHARING WITH THE IDOM'TH NEIBERING SUB-DOMAIN,
+C                       LDOM(IDOM)
+C          NDOM        ; NUMBER OF THE NERIBERING SUB-DOMAINS
+C          IPSLF (IBP,IDOM); INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+C                           CALLING TASK'S SUB-DOMAIN, FOR THE IDOM'TH
+C                           NEIBERING SUB-DOMAIN, LDOM(IDOM)
+C          IPSND (IBP,IDOM); INTER-CONNECT BOUNDARY NODE NUMBER IN THE
+C                           SUB-DOMAIN THAT IS RECEIVING THE CALLING
+C                           TASK'S RESIDUALS.
+C          MBPDOM      ; THE MAXIMUM NUMBER OF THE INTER-CONNECT 
+C                       BOUNDARY NODES FOR ONE NEIBERING SUB-DOMAIN
+C
+C        F. OVERSET BOUNDARY NODES
+C          NPSET       ; NUMBER OF OVERSET BOUNDARY NODES
+C          LPSET1 (IBP); OVERSET BOUNDARY NODES
+C          LPSET2 (IBP); ELEMENT NUMBER TO CALCULATE OVERSET VALUES
+C          LPSET3 (IBP); DOMAIN NUMBER TO SEND/RECEIVE OVERSET VALUES
+C                   0 --- CALCULATE AND SET OVERSET VALUE WITHIN THE
+C                         SELF-DOMAIN
+C          (POS. INT.)--- SEND    OVERSET VALUE TO   DOMAIN  LPSET3(IB)
+C                         AFTER CALCULATING IT WITHIN THE SELF-DOMAIN
+C          (NEG. INT.)--- RECEIVE OVERSET VALUE FROM DOMAIN -LPSET3(IB)
+C
+C          COVER1 (IBP); LOCAL COORDINATE IN INTERPOLATING ELEMENT
+C          COVER2 (IBP); LOCAL COORDINATE IN INTERPOLATING ELEMENT
+C          COVER3 (IBP); LOCAL COORDINATE IN INTERPOLATING ELEMENT
+C
+C          NPSND       ; NUMBER OF DOMAINS TO SEND OVERSET NODE VALUE
+C          LPSND (IDOM); DOMAIN NUMBER     TO SEND OVERSET NODE VALUE
+C          NPTSND(IDOM); NUMBER OF OVERSET NODE POINTS TO SEND TO
+C                        DOMAIN 'LPSND(IDOM)'
+C          IPSET(IPT,IDOM); OVERSET NODE NUMBER IN THE DOMAIN RECEIVING
+C                           THE OVERSET VALUES.
+C          IPSRC(IPT,IDOM); INDICATES POSITION IN THE OVERSET-VALUES
+C                           PASSING ARRAYS WHEN OVERSET NODE DATA
+C                           ARE COMPILED SEQUENTIALLY
+C
+C          NPRCV       ; NUMBER OF DOMAINS TO RECEIVE OVERSET NODE VALUE
+C          LPRCV (IDOM); DOMAIN NUMBER     TO RECEIVE OVERSET NODE VALUE
+C          NPTRCV(IDOM); NUMBER OF OVERSET POINTS TO RECEIVE FROM
+C                       DOMAIN 'LPRCV(IDOM)'
+C
+C          IUT0        ; FILE NUMBER TO REPORT ERROR OCCURENCE
+C
+C       (2) OUTPUT
+C          IERR        ; RETURN CODE TO REPORT ERROR OCCURENCE
+C                   0 --- NORMAL TERMINATION
+C                   1 --- A FATAL ERROR HAS OCCURED
+C          DIVMAX      ; MAXIMUM ABSOLUTE DIVERGENT
+C          DIVAV       ; SPATIALLY AVERAGED ABSOLUTE DIVERGENT
+C
+C       (3) INPUT-OUTPUT
+C          U       (IP); X-DIR. VELOCITY COMPONENT
+C          V       (IP); Y-DIR. VELOCITY COMPONENT
+C          W       (IP); Z-DIR. VELOCITY COMPONENT
+C
+C       (4) WORK
+C          RX    (I,IE); HOLDS X-DIR. ELEMENT MOMENTUM RESIDUAL
+C          RY    (I,IE); HOLDS Y-DIR. ELEMENT MOMENTUM RESIDUAL
+C          FX      (IP); HOLDS X-DIR. NODE    MOMENTUM RESIDUAL
+C          FY      (IP); HOLDS Y-DIR. NODE    MOMENTUM RESIDUAL
+C          FZ      (IP); HOLDS Z-DIR. NODE    MOMENTUM RESIDUAL
+C          UG      (IE); HOLDS ELEMENT CENTER U-VELOCITY
+C          VG      (IE); HOLDS ELEMENT CENTER V-VELOCITY
+C          WG      (IE); HOLDS ELEMENT CENTER W-VELOCITY
+C
+C
+      MAXBUF = NE*(N2+1)
+C
+C
+      NETET=NEX(1)
+      NEPRD=NEX(2)
+      NEWED=NEX(3)
+      NEHEX=NEX(4)
+      NE   =NETET+NEPRD+NEWED+NEHEX
+C
+      NTET=NEX(5)
+      NPRD=NEX(6)
+      NWED=NEX(7)
+      NHEX=NEX(8)
+C
+      IF(ITIME.EQ.0) GO TO 400
+C
+      DO  1000 IE=1,NE
+         LEFIX(IE)=0
+ 1000 CONTINUE
+C
+      IF (IVOF.EQ.1) THEN
+!ocl norecurrence(LEFIX)
+         DO 1100 IBP=1,NEFLD2
+            LEFIX(LEFLD2(IBP))=1
+ 1100    CONTINUE
+      ENDIF
+C
+C      CAL. PRESSURE (TO ALL FRAMES)
+C
+C
+      DO 110 IE=1, NE
+          WRK02(IE) = P(IE)
+ 110  CONTINUE
+C
+C          OPERATION COUNTS:   24 FLOP /ELEMENT
+C          DATA LOADINGS   :   29 WORDS/ELEMENT
+C                           (   1 WORDS CONTIGUOUSLY,
+C                              16 WORDS BY STRIDE, AND
+C                              12 WORDS BY LIST )
+C
+      DO 1200 IP = 1 , NP
+          FXBUF=0.0E0
+          FYBUF=0.0E0
+          FZBUF=0.0E0
+          DO 1300 I = 1 , 8
+              IE=IENP(I,IP)
+              IF (IVOF.GE.1 .OR. ICAVI.GE.1) THEN
+                  PWRK = WRK02(IE)/RHO3D(IE)
+              ELSE
+                  PWRK = WRK02(IE)
+              ENDIF
+              FXBUF=FXBUF+PWRK*DNXYZP(I,1,IP)
+              FYBUF=FYBUF+PWRK*DNXYZP(I,2,IP)
+              FZBUF=FZBUF+PWRK*DNXYZP(I,3,IP)
+ 1300     CONTINUE
+          FXYZ(1,IP)=FXBUF
+          FXYZ(2,IP)=FYBUF
+          FXYZ(3,IP)=FZBUF
+ 1200 CONTINUE
+C
+c!ocl norecurrence(FXYZ)
+      DO 1400 J=1,NUMVALID
+          IP = LSTVALID(J)
+          FXBUF=0.0E0
+          FYBUF=0.0E0
+          FZBUF=0.0E0
+          DO 1500 I=9,NEP(IP)
+              IE=IENP(I,IP)
+              IF (IVOF.GE.1 .OR. ICAVI.GE.1) THEN
+                  PWRK = WRK02(IE)/RHO3D(IE)
+              ELSE
+                  PWRK = WRK02(IE)
+              ENDIF
+              FXBUF=FXBUF+PWRK*DNXYZP(I,1,IP)
+              FYBUF=FYBUF+PWRK*DNXYZP(I,2,IP)
+              FZBUF=FZBUF+PWRK*DNXYZP(I,3,IP)
+ 1500     CONTINUE
+          FXYZ(1,IP)=FXYZ(1,IP)+FXBUF
+          FXYZ(2,IP)=FXYZ(2,IP)+FYBUF
+          FXYZ(3,IP)=FXYZ(3,IP)+FZBUF
+ 1400 CONTINUE
+C
+      IF (IVOF.GE.1) THEN
+!ocl norecurrence(FXYZ)
+         DO 3000 IBP = 1 , NPSYM2
+            COF= XPSYMT(IBP)*FXYZ(1,LPSYMT(IBP))
+     *          +YPSYMT(IBP)*FXYZ(2,LPSYMT(IBP))
+     *          +ZPSYMT(IBP)*FXYZ(3,LPSYMT(IBP))
+            FXYZ(1,LPSYMT(IBP)) = FXYZ(1,LPSYMT(IBP))-COF*XPSYMT(IBP)
+            FXYZ(2,LPSYMT(IBP)) = FXYZ(2,LPSYMT(IBP))-COF*YPSYMT(IBP)
+            FXYZ(3,LPSYMT(IBP)) = FXYZ(3,LPSYMT(IBP))-COF*ZPSYMT(IBP)
+ 3000    CONTINUE
+C
+!ocl norecurrence(FXYZ)
+         DO 3100 IBP = 1, NPFREE
+            COF= XPFREE(IBP)*FXYZ(1,LPFREE(IBP))
+     *          +YPFREE(IBP)*FXYZ(2,LPFREE(IBP))
+     *          +ZPFREE(IBP)*FXYZ(3,LPFREE(IBP))
+            FXYZ(1,LPFREE(IBP)) = FXYZ(1,LPFREE(IBP))-COF*XPFREE(IBP)
+            FXYZ(2,LPFREE(IBP)) = FXYZ(2,LPFREE(IBP))-COF*YPFREE(IBP)
+            FXYZ(3,LPFREE(IBP)) = FXYZ(3,LPFREE(IBP))-COF*ZPFREE(IBP)            
+ 3100    CONTINUE
+      ENDIF
+C
+C
+      DO 260 IP=1,NP
+         WRKN(IP,1)=FXYZ(1,IP)
+         WRKN(IP,2)=FXYZ(2,IP)
+         WRKN(IP,3)=FXYZ(3,IP)
+ 260  CONTINUE
+C
+C OVERSET ELEMENT PRESSURE 
+C
+      IF(JSET.GE.1) THEN
+          DO 4000 IE=1,NE
+             IF (IVOF.GE.1 .OR. ICAVI.GE.1) THEN
+                POS3E(IE) = WRK02(IE)/RHO3D(IE)
+             ELSE
+                POS3E(IE) = WRK02(IE)
+             ENDIF
+ 4000     CONTINUE
+C
+          CALL NDLEX2 (MCOLOR,MCPART,NCOLOR,NCPART,LLOOP,
+     *                NODE,ME,NP,NE,NP,N1,N2,NEX,SN,
+     *                IPART,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+     *                POS3E,POS3D,CM,IUT0,IERR,RX,RY,MAXBUF,LEFIX)
+C
+          CALL OVRSTE(IPART,NESET,N1,N2,ME,NE,NP,NEX,NODE,POS3E,POS3D,
+     *                LESET1,LESET2,LESET3,
+     *                EOVER1,EOVER2,EOVER3,
+     *                NDOM,MBPDOM,NESND,NERCV,
+     *                LESND,NETSND,LERCV,NETRCV,IESET,IESRC,
+     *                WRKOS1,WRKOS2,RX,RY,IUT0,IERR)
+C
+           DO 4100 IBE=1,NBESET
+               IE=LBESET(1,IBE)
+               IS=LBESET(2,IBE)
+C
+               IF(     NODE(8,IE).GE.1) THEN ! HEX
+                   IETYPE = 4
+               ELSE IF(NODE(6,IE).GE.1) THEN ! PRS
+                   IETYPE = 3
+               ELSE IF(NODE(5,IE).GE.1) THEN ! PYR
+                   IETYPE = 2
+               ELSE                          ! TET
+                   IETYPE = 1
+               ENDIF   
+C
+               DO 4200 I=1,4
+                   IPL= LOCALT(I,IS,IETYPE)
+                   IF(IPL.EQ.0) GOTO 4200
+                   IP = NODE(IPL,IE)
+                   IF(IP.EQ.0) GOTO 4200
+                   DPX=POS3E(IE)*XNESET(IBE)*SNESET(IPL,IBE) 
+                   DPY=POS3E(IE)*YNESET(IBE)*SNESET(IPL,IBE) 
+                   DPZ=POS3E(IE)*ZNESET(IBE)*SNESET(IPL,IBE) 
+                   WRKN(IP,1)=WRKN(IP,1)+DPX
+                   WRKN(IP,2)=WRKN(IP,2)+DPY
+                   WRKN(IP,3)=WRKN(IP,3)+DPZ
+ 4200          CONTINUE
+ 4100      CONTINUE   
+C
+      ENDIF
+C
+C
+C SUPERIMPOSE NEIBERING ELEMENT CONTRIBUTIONS
+C
+C
+      IDIM=3
+      CALL DDCOMX(IPART,IDIM,LDOM,NBPDOM,NDOM,IPSLF,IPSND,MBPDOM,
+     *            WRKN(1,1),WRKN(1,2),WRKN(1,3),NP,IUT0,IERR,
+     *            RX,RY,MAXBUF)
+      IF(IERR.NE.0) THEN
+          WRITE(IUT0,*)
+          WRITE(IUT0,*) ERMSGC
+          RETURN
+      ENDIF
+C
+      DO 270 IP=1,NP
+         FXYZ(1,IP)=WRKN(IP,1)
+         FXYZ(2,IP)=WRKN(IP,2)
+         FXYZ(3,IP)=WRKN(IP,3)
+ 270  CONTINUE
+C
+C UPDATE VELOCITY COMPONENTS
+C
+      DO 300 IP = 1 , NP
+          U(IP) = U(IP)+DT*CM(IP)*FXYZ(1,IP)
+          V(IP) = V(IP)+DT*CM(IP)*FXYZ(2,IP)
+          W(IP) = W(IP)+DT*CM(IP)*FXYZ(3,IP)
+ 300  CONTINUE
+C
+  400 CONTINUE
+C
+C
+C SET AND PRESCRIBE BOUNDARY CONDITIONS
+C
+C
+C
+C      NON-FLUID NODES
+C
+*POPTION INDEP(U,V,W)
+C*$*ASSERT PERMUTATION ( LPFLD21 )
+!ocl norecurrence(U,V,W)
+      IF (IVOF.EQ.1) THEN
+         DO 750 IBP = 1 , NPFLD2
+            U(LPFLD2(IBP)) = 0.0E0
+            V(LPFLD2(IBP)) = 0.0E0
+            W(LPFLD2(IBP)) = 0.0E0
+ 750     CONTINUE
+      ENDIF
+C
+C      A. INLET BOUNDARY CONDITIONS
+C
+*POPTION INDEP(U,V,W)
+C*$*ASSERT PERMUTATION ( LPINLT )
+!ocl norecurrence(U,V,W)
+      DO 500 IBP = 1 , NPINLT
+          U(LPINLT(IBP)) = DEVLP1*UINLT(IBP)
+          V(LPINLT(IBP)) = DEVLP1*VINLT(IBP)
+          W(LPINLT(IBP)) = DEVLP1*WINLT(IBP)
+  500 CONTINUE
+C
+C      B. WALL BOUNDARY CONDITIONS
+C
+*POPTION INDEP(U,V,W)
+C*$*ASSERT PERMUTATION ( LPWALL )
+!ocl norecurrence(U,V,W)
+      DO 600 IBP = 1 , NPWALL
+          U(LPWALL(IBP)) = DEVLP1*UWALL(IBP)
+          V(LPWALL(IBP)) = DEVLP1*VWALL(IBP)
+          W(LPWALL(IBP)) = DEVLP1*WWALL(IBP)
+  600 CONTINUE
+C
+C      B'. SOLID NODES
+C
+*POPTION INDEP(U,V,W)
+C*$*ASSERT PERMUTATION ( LPSLD1 )
+!ocl norecurrence(U,V,W)
+      DO 650 IBP = 1 , NPSLD1
+          U(LPSLD1(IBP)) = 0.0E0
+          V(LPSLD1(IBP)) = 0.0E0
+          W(LPSLD1(IBP)) = 0.0E0
+  650 CONTINUE
+C
+C      C. SYMMETRIC BOUNDARY CONDITIONS
+C
+*POPTION INDEP(U,V,W)
+C*$*ASSERT PERMUTATION ( LPSYMT )
+!ocl norecurrence(U,V,W)
+      DO 700 IBP = 1 , NPSYMT
+          COF = XPSYMT(IBP)*U(LPSYMT(IBP))
+     &         +YPSYMT(IBP)*V(LPSYMT(IBP))
+     &         +ZPSYMT(IBP)*W(LPSYMT(IBP))
+          U(LPSYMT(IBP)) = U(LPSYMT(IBP))-COF*XPSYMT(IBP)
+          V(LPSYMT(IBP)) = V(LPSYMT(IBP))-COF*YPSYMT(IBP)
+          W(LPSYMT(IBP)) = W(LPSYMT(IBP))-COF*ZPSYMT(IBP)
+  700 CONTINUE
+C
+C
+C     
+CCYY   D. OVERSET NODAL VELOCITIES
+C
+C
+      IF(JSET.GE.1) THEN
+C
+          DO 710 IP=1,NP
+              WRKN(IP,1)=U(IP)
+              WRKN(IP,2)=V(IP)
+              WRKN(IP,3)=W(IP)
+ 710      CONTINUE   
+C
+          CALL OVRST3(IMODEO,IPART,NPSET,N1,N2,ME,NE,NP,NEX,NODE,
+     *                X,Y,Z,OMEGA,TIMER,
+     *                NFRAME,IEATTR,IPATTR,UFRAME,VFRAME,WFRAME,
+     *                WRKN(1,1),WRKN(1,2),WRKN(1,3),
+     *                LPSET1,LPSET2,LPSET3,LPSET4,
+     *                COVER1,COVER2,COVER3,
+     *                NDOM,MBPDOM,NPSND,NPRCV,
+     *                LPSND,NPTSND,LPRCV,NPTRCV,IPSET,IPSRC,
+     *                WRK01,WRK02,WRK03,UG,VG,WG,RX,RY,
+     *                NMRF,IFATTR,OMGMRF,AMRF,IUT0,IERR)
+          DO 720 IP=1,NP
+              COEF1=OSBCOE(IP)
+              COEF2=1.0E0-COEF1
+              U(IP)=COEF1*WRKN(IP,1)+COEF2*U(IP)
+              V(IP)=COEF1*WRKN(IP,2)+COEF2*V(IP)
+              W(IP)=COEF1*WRKN(IP,3)+COEF2*W(IP)
+ 720      CONTINUE   
+C
+      ENDIF
+C
+C
+CCHY  MODIFY THE FLOW RATE AT OVERSET BOUNDARY
+C     MODIFY THE VELOCITY AT THE FLOW-RATE CHECKING SURFACE.
+C
+
+      IF (ITIME.NE.0.AND.IVOF.GE.1.AND.IMASS.EQ.1) THEN
+         CALL CALDLU(IPART,NE,NP,NFACE,N2,NSP,NS,NODE,
+     *               LOCAL,LFACE,NFINLT,NFFREE,LFINLT,LFFREE,
+     *               U,V,W,AVEC,FFA,DU,IERR)
+C
+         DO 800 IBP=1,NPFREE
+            IP=LPFREE(IBP)
+            U(IP)=U(IP)+DU*XPFREE(IBP)
+            V(IP)=V(IP)+DU*YPFREE(IBP)
+            W(IP)=W(IP)+DU*ZPFREE(IBP)
+ 800     CONTINUE
+      ENDIF
+C
+C
+C    COMPUTE DIV(U) AT ELEMENTS   
+C
+C          OPERATION COUNTS:   26 FLOP /ELEMENT
+C          DATA LOADINGS   :   40 WORDS/ELEMENT
+C                           (  16  WORDS CONTIGUOUSLY,
+C                              12 WORDS BY STRIDE, AND
+C                              12 WORDS BY LIST )
+C
+C
+      CALL FILD3X(IMODE,ME,NE,NP,NEX,N1,N2,
+     &            U,V,W,UG,NODE,DNXI,DNYI,DNZI,IUT0,IERR)
+C
+      DIVMAX = 0.E0
+      DIVAV  = 0.E0
+      IEMAX  = 1
+C
+CCYYTMP--- 
+      RETURN
+CCYYTMP--- 
+C
+      NUM=0
+      DO 2000 IE = 1 , NE
+          IF (LEFIX(IE).EQ.1) GOTO 2000
+          NUM=NUM+1
+          ABSDIV = ABS(UG(IE))
+          DIVAV  = DIVAV+ABSDIV
+          IF(DIVMAX.LE.ABSDIV) IEMAX=IE
+          DIVMAX = AMAX1(ABSDIV,DIVMAX)
+ 2000 CONTINUE
+      DIVAV=DIVAV/FLOAT(NUM)
+C
+      IF(NODE(8,IEMAX).NE.0) THEN
+          XDIVMX=( X(NODE(1,IEMAX))+X(NODE(2,IEMAX))
+     *            +X(NODE(3,IEMAX))+X(NODE(4,IEMAX))
+     *            +X(NODE(5,IEMAX))+X(NODE(6,IEMAX))
+     *            +X(NODE(7,IEMAX))+X(NODE(8,IEMAX)) )/8.0E0
+          YDIVMX=( Y(NODE(1,IEMAX))+Y(NODE(2,IEMAX))
+     *            +Y(NODE(3,IEMAX))+Y(NODE(4,IEMAX))
+     *            +Y(NODE(5,IEMAX))+Y(NODE(6,IEMAX))
+     *            +Y(NODE(7,IEMAX))+Y(NODE(8,IEMAX)) )/8.0E0
+          ZDIVMX=( Z(NODE(1,IEMAX))+Z(NODE(2,IEMAX))
+     *            +Z(NODE(3,IEMAX))+Z(NODE(4,IEMAX))
+     *            +Z(NODE(5,IEMAX))+Z(NODE(6,IEMAX))
+     *            +Z(NODE(7,IEMAX))+Z(NODE(8,IEMAX)) )/8.0E0
+      ELSE IF(NODE(6,IEMAX).NE.0) THEN
+          XDIVMX=( X(NODE(1,IEMAX))+X(NODE(2,IEMAX))
+     *            +X(NODE(3,IEMAX))+X(NODE(4,IEMAX))
+     *            +X(NODE(5,IEMAX))+X(NODE(6,IEMAX)) )/6.0E0
+          YDIVMX=( Y(NODE(1,IEMAX))+Y(NODE(2,IEMAX))
+     *            +Y(NODE(3,IEMAX))+Y(NODE(4,IEMAX))
+     *            +Y(NODE(5,IEMAX))+Y(NODE(6,IEMAX)) )/6.0E0
+          ZDIVMX=( Z(NODE(1,IEMAX))+Z(NODE(2,IEMAX))
+     *            +Z(NODE(3,IEMAX))+Z(NODE(4,IEMAX))
+     *            +Z(NODE(5,IEMAX))+Z(NODE(6,IEMAX)) )/6.0E0
+      ELSE IF(NODE(5,IEMAX).NE.0) THEN
+          XDIVMX=( X(NODE(1,IEMAX))+X(NODE(2,IEMAX))
+     *            +X(NODE(3,IEMAX))+X(NODE(4,IEMAX))
+     *            +X(NODE(5,IEMAX))                  )/5.0E0
+          YDIVMX=( Y(NODE(1,IEMAX))+Y(NODE(2,IEMAX))
+     *            +Y(NODE(3,IEMAX))+Y(NODE(4,IEMAX))
+     *            +Y(NODE(5,IEMAX))                  )/5.0E0
+          ZDIVMX=( Z(NODE(1,IEMAX))+Z(NODE(2,IEMAX))
+     *            +Z(NODE(3,IEMAX))+Z(NODE(4,IEMAX))
+     *            +Z(NODE(5,IEMAX))                  )/5.0E0
+      ELSE
+          XDIVMX=( X(NODE(1,IEMAX))+X(NODE(2,IEMAX))
+     *            +X(NODE(3,IEMAX))+X(NODE(4,IEMAX)) )/4.0E0
+          YDIVMX=( Y(NODE(1,IEMAX))+Y(NODE(2,IEMAX))
+     *            +Y(NODE(3,IEMAX))+Y(NODE(4,IEMAX)) )/4.0E0
+          ZDIVMX=( Z(NODE(1,IEMAX))+Z(NODE(2,IEMAX))
+     *            +Z(NODE(3,IEMAX))+Z(NODE(4,IEMAX)) )/4.0E0
+      ENDIF
+C
+      RETURN
+      END

@@ -1,0 +1,211 @@
+
+ Fujitsu Fortran Version 4.8.1  Thu Nov 24 16:46:08 2022
+
+ Compilation information
+   Current directory : /vol0005/mdt2/home/u10588/SRC/lbm/ver.59.01
+   Source file       : cnvqcl.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -Nlst=t -Cpp -Cfpp -c -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Knointentopt
+   Cpp options          : -I/vol0005/mdt2/home/u10588/FFB/include -I/include/mpi/fujitsu/ -Dcputime -I/opt/FJSVxtclanga/.common/MELI028/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI028/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=8 -D__FRT_patchlevel__=1 -D__FRT_version__="4.8.1" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Knoarray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nlibomp -Nline -Nlst -Nlst=p -Nlst=t
+                          -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "CNVQCL"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE CNVQCL(NG,MPBOUN,M1,QCELL,
+          2                          *                  NPBOUN,LPBOUN,QBOUN,IMODQ,IUT6,IERR)
+          3                           IMPLICIT NONE
+          4                           INTEGER*4 NG,MPBOUN,M1
+          5                           REAL*4    QCELL(M1,0:NG+1,0:NG+1,0:NG+1)
+          6                           INTEGER*4 NPBOUN,LPBOUN(5,MPBOUN),IMODQ
+          7                           REAL*4    QBOUN(MPBOUN)
+          8                           INTEGER*4 IUT6,IERR
+          9                     C
+         10                           INTEGER*4 LISTP(2,13)
+         11                           DATA LISTP /  4,  2,
+         12                          *              5,  3,
+         13                          *              7,  6,
+         14                          *             14,  8,
+         15                          *             15,  9,
+         16                          *             12, 10,
+         17                          *             13, 11,
+         18                          *             26, 24,
+         19                          *             25, 27,
+         20                          *             22, 20,
+         21                          *             21, 23,
+         22                          *             18, 16,
+         23                          *             17, 19/
+         24                     C
+         25                           INTEGER*4 LCELL(3,2,13)
+         26                           DATA LCELL / 0,0,0, 1,0,0,
+         27                          *             0,0,0, 0,1,0,
+         28                          *             0,0,0, 0,0,1,
+         29                          *             0,0,0, 1,1,1,
+         30                          *             1,0,0, 0,1,1,
+         31                          *             1,1,0, 0,0,1,
+         32                          *             0,1,0, 1,0,1,
+         33                          *             0,0,0, 0,1,1,
+         34                          *             0,0,1, 0,1,0,
+         35                          *             0,0,0, 1,0,1,
+         36                          *             0,0,1, 1,0,0,
+         37                          *             0,0,0, 1,1,0,
+         38                          *             0,1,0, 1,0,0/
+         39                     C
+         40                     C[INPUT]
+         41                     C     NG                : CUBE SIZE (=2^N)
+         42                     C     MPBOUN            :
+         43                     C    QCELL(II,I,J,K,IC) : DISTANCE BETWEEN HOST-GRID AND INTERSECT-POINT
+         44                     C
+         45                     C[OUTPUT]
+         46                     C    NPBOUN(IC)       NUMBER OF BOUNDARY GRID
+         47                     C    LPBOUN(I,IPB,IC) BOUNDARY GRID LIST
+         48                     C                     1: POSITION OF BOUNDRY GRID IN I-DIRECTION
+         49                     C                     2: POSITION OF BOUNDRY GRID IN J-DIRECTION
+         50                     C                     3: POSITION OF BOUNDRY GRID IN K-DIRECTION
+         51                     C                     4: DIRECTION TO INNER GRID (2-15)
+         52                     C                     5: BOUNDARY TYPE (ITYPE)
+         53                     C                        ITYPE=1: WALL
+         54                     C                        ITYPE=2: INLET
+         55                     C                        ITYPE=3: MOVING-WALL
+         56                     C                        ITYPE=4: FREE
+         57                     C                        ITYPE=5: SYMMETRIC
+         58                     C    QBOUN(IPB,IC) NON-DIMENSIONAL DISTANCE TO INNER GRIDS
+         59                     C
+         60                     C[LOCAL]
+         61                     C   LISTP :PARTICL VELOCITY ID
+         62                     C   LCELL :STARTING AND ENDING POSITION OF LINES BETWEEN GRIDS IN A CEll
+         63                     C
+         64                           INTEGER*4 ITYPE
+         65                           DATA ITYPE /11/
+         66                     C
+         67                           INTEGER*4 IC,I,J,K,II,NBC1,NBC2,I1,J1,K1,I2,J2,K2
+         68                     C
+         69     1                     DO 1100 K =0,NG+1
+         70     2                     DO 1200 J =0,NG+1
+         71     3                     DO 1300 I =0,NG+1
+         72     3               C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      QCELL
+                              <<< Loop-information  End >>>
+         73     4                         DO 1400 II=1,M1
+         74     4                             IF(QCELL(II,I,J,K).GE.1.0E1) GOTO 1400
+         75     5                             IF(NPBOUN+2.GT.MPBOUN) THEN
+         76     5                                 WRITE(IUT6,*) ' INSIFFICIENT MEMORY: STOP',MPBOUN
+         77     5                                 IERR=1
+         78     5                                 RETURN
+         79     5                             ENDIF
+         80     4                             NBC1=NPBOUN-1
+         81     4                             NBC2=NPBOUN
+         82     4               C
+         83     4                             I1=I+LCELL(1,1,II)
+         84     4                             J1=J+LCELL(2,1,II)
+         85     4                             K1=K+LCELL(3,1,II)
+         86     5                             IF( I1.GE.1 .AND. I1.LE.NG+1 .AND.
+         87     5                    *            J1.GE.1 .AND. J1.LE.NG+1 .AND.
+         88     5                    *            K1.GE.1 .AND. K1.LE.NG+1) THEN
+         89     5                                 NPBOUN=NPBOUN+1
+         90     5                                 LPBOUN(1,NPBOUN)=I1
+         91     5                                 LPBOUN(2,NPBOUN)=J1
+         92     5                                 LPBOUN(3,NPBOUN)=K1
+         93     5                                 LPBOUN(4,NPBOUN)=LISTP(1,II)
+         94     5                                 LPBOUN(5,NPBOUN)=ITYPE
+         95     5                                  QBOUN(  NPBOUN)=QCELL(II,I,J,K)
+         96     5                                 IF(IMODQ.EQ.1) QBOUN(NPBOUN) = 1.0
+         97     5                             ENDIF
+         98     4               C
+         99     4                             I2=I+LCELL(1,2,II)
+        100     4                             J2=J+LCELL(2,2,II)
+        101     4                             K2=K+LCELL(3,2,II)
+        102     5                             IF( I2.GE.1 .AND. I2.LE.NG+1 .AND.
+        103     5                    *            J2.GE.1 .AND. J2.LE.NG+1 .AND.
+        104     5                    *            K2.GE.1 .AND. K2.LE.NG+1) THEN
+        105     5                                 NPBOUN=NPBOUN+1
+        106     5                                 LPBOUN(1,NPBOUN)=I2
+        107     5                                 LPBOUN(2,NPBOUN)=J2
+        108     5                                 LPBOUN(3,NPBOUN)=K2
+        109     5                                 LPBOUN(4,NPBOUN)=LISTP(2,II)
+        110     5                                 LPBOUN(5,NPBOUN)=ITYPE
+        111     5                                  QBOUN(  NPBOUN)=1.0E0-QCELL(II,I,J,K)
+        112     5                                 IF(IMODQ.EQ.1) QBOUN(NPBOUN) = 1.0
+        113     5                             ENDIF
+        114     4                1400     CONTINUE
+        115     3               C
+        116     3                1300 CONTINUE
+        117     2                1200 CONTINUE
+        118     1                1100 CONTINUE
+        119                     C
+        120                           RETURN
+        121                           END
+
+ Diagnostic messages: program name(CNVQCL)
+   jwd2006i-i  "cnvqcl.f", line 67: 'IC' is declared but never referenced.
+   jwd5131p-i  "cnvqcl.f", line 69: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "cnvqcl.f", line 70: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "cnvqcl.f", line 71: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd5131p-i  "cnvqcl.f", line 73: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "cnvqcl.f", line 73: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "cnvqcl.f", line 73: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+
+ Procedure information
+   Lines      : 121
+   Statements : 58
+   Stack(byte): 528
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 121
+   Total statements : 58
+   Total stack(byte): 528
+   Total prefetch num: 0
+

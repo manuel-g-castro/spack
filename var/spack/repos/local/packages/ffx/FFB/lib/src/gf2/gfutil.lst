@@ -1,0 +1,1438 @@
+
+ Fujitsu Fortran Version 4.4.0a  Thu Feb 18 12:40:07 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/gf2
+   Source file       : gfutil.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI023/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI023/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI023/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI023/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=4 -D__FRT_patchlevel__=0 -D__FRT_version__="4.4.0a" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "OPEN_F"
+  (line-no.)(nest)(optimize)
+          1                           SUBROUTINE OPEN_F(IUNIT,IMODE,FNAME,IERROR)
+          2                     C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+          3                     C    BASIC INPUT-OUTPUT  UTILITY FOR  GENERAL FILE VERSION 2.1
+          4                     C
+          5                     C    THIS PROGRAM OPEN THE SPECIFIED FILE BY FORTRAN UNFORMATTED MODE
+          6                     C
+          7                     C    [IN]
+          8                     C    INT*4   IUNIT :FILE BUFFER NUMBER
+          9                     C    INT*4   IMODE :TYPE OF INPUT OR OUTPUT MODE (ASCII OR UNFMT)
+         10                     C    CHAR+60 FNAME :FILE NAME
+         11                     C
+         12                     C    [OUT]
+         13                     C    INT*4   IERROR:ERROR CODE
+         14                     C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+         15                           INCLUDE 'gf.h'
+         16                     C
+         17                           INTEGER IUNIT
+         18                           INTEGER IMODE
+         19                           CHARACTER*60 FNAME
+         20                           INTEGER IERROR
+         21                     C
+         22                     !
+         23     1                     IF(IMODE.NE.ASCII.AND.IMODE.NE.UNFMT)THEN
+         24     1                       IERROR=1
+         25     1                       RETURN
+         26     1                     ENDIF
+         27                     !
+         28     1                     IF(IMODE.EQ.ASCII)THEN
+         29     1                       OPEN(IUNIT,FILE=FNAME,FORM='FORMATTED'
+         30     1                    &        ,ERR=100)
+         31     1                     ENDIF
+         32     1                     IF(IMODE.EQ.UNFMT)THEN
+         33     1                       OPEN(IUNIT,FILE=FNAME,FORM='UNFORMATTED'
+         34     1                    &       ,ERR=100)
+         35     1                     ENDIF
+         36                     C
+         37                           RETURN
+         38                     C
+         39                      100  CONTINUE
+         40                           IERROR=1
+         41                           RETURN
+         42                           END
+
+ Procedure information
+   Lines      : 107
+   Statements : 70
+   Stack(byte): 1200
+   Prefetch num: 0
+
+ External subroutine subprogram "CLOSE_F"
+  (line-no.)(nest)(optimize)
+         43                     C
+         44                     C
+         45                     C
+         46                           SUBROUTINE CLOSE_F(IUNIT,IERROR)
+         47                     C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+         48                     C    BASIC INPUT-OUTPUT  UTILITY FOR  GENERAL FILE VERSION 2.1
+         49                     C
+         50                     C    THIS PROGRAM CLOSE THE SPECIFIED FILE BY FORTRAN UNFORMATTED MODE
+         51                     C
+         52                     C    [IN]
+         53                     C    INT*4   IUNIT :FILE BUFFER NUMBER
+         54                     C
+         55                     C    [OUT]
+         56                     C    INT*4   IERROR:ERROR CODE
+         57                     C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+         58                           INCLUDE 'gf.h'
+         59                     C
+         60                           INTEGER INUM
+         61                           INTEGER IERROR
+         62                     C
+         63                           CLOSE(IUNIT,ERR=100)
+         64                           RETURN
+         65                     C
+         66                      100  CONTINUE
+         67                           IERROR=1
+         68                           RETURN
+         69                           END
+
+ Diagnostic messages: program name(CLOSE_F)
+   jwd2006i-i  "gfutil.f", line 60: 'INUM' is declared but never referenced.
+
+ Procedure information
+   Lines      : 92
+   Statements : 59
+   Stack(byte): 448
+   Prefetch num: 0
+
+ External subroutine subprogram "RW_C1_08"
+  (line-no.)(nest)(optimize)
+         70                     C
+         71                     C
+         72                     C
+         73                           SUBROUTINE RW_C1_08(IRW,IMODE,IUNIT,VAR,IERROR)
+         74                     C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+         75                     C    BASIC INPUT-OUTPUT  UTILITY FOR  GENERAL FILE VERSION 2.1
+         76                     C
+         77                     C    THIS PROGRAM READ OR WRITE CHARCTER*8 ARGUMENT BY FORTARN
+         78                     C    UNFORMATTED  MODE.
+         79                     C
+         80                     C    [IN]
+         81                     C    INT*4   IRW   :FLAR FOR ACTION(1:READ,2:WRITE)
+         82                     C    INT*4   IMODE :TYPE OF INPUT OR OUTPUT MODE (ASCII OR UNFMT)
+         83                     C    INT*4   IUNIT :FILE BUFFER NUMBER
+         84                     C    INT*4   MAX2  :SIZE OF ARRAY
+         85                     C    INT*4   NUM2  :NUMBER OF ARRAY TO READ-IN OR WRITTEN
+         86                     C
+         87                     C    [INOUT]
+         88                     C    CHAR*8  VAR   :ARRAY TO READ-IN OR WRITTEN
+         89                     C
+         90                     C    [OUT]
+         91                     C    INT*4   IERROR:ERROR CODE
+         92                     C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+         93                           INCLUDE 'gf.h'
+         94                     !
+         95                           INTEGER     IRW
+         96                           INTEGER     IMODE
+         97                           INTEGER     IUNIT
+         98                           CHARACTER*8 VAR
+         99                           INTEGER     IERROR
+        100                     !
+        101                           INTEGER I
+        102                     !
+        103                           IERROR=0
+        104                     !
+        105     1                     IF(IRW.NE.1.AND.IRW.NE.2)THEN
+        106     1                       IERROR=1
+        107     1                       RETURN
+        108     1                     ENDIF
+        109                     !
+        110     1                     IF(IMODE.NE.ASCII.AND.IMODE.NE.UNFMT)THEN
+        111     1                       IERROR=1
+        112     1                       RETURN
+        113     1                     ENDIF
+        114                     !
+        115     1                     IF(IRW.EQ.1)THEN
+        116     1                         IF(IMODE.EQ.ASCII)READ(IUNIT,FMTAS,IOSTAT=IS,ERR=110)  VAR
+        117     1                         IF(IMODE.EQ.UNFMT)READ(IUNIT,      IOSTAT=IS,ERR=110)  VAR
+        118     1                110  CONTINUE
+        119     1                     ENDIF
+        120     1                     IF(IRW.EQ.2)THEN
+        121     1                         IF(IMODE.EQ.ASCII)WRITE(IUNIT,FMTAS)  VAR
+        122     1                         IF(IMODE.EQ.UNFMT)WRITE(IUNIT      )  VAR
+        123     1                     ENDIF
+        124                     !
+        125                           RETURN
+        126                           END
+
+ Diagnostic messages: program name(RW_C1_08)
+   jwd2006i-i  "gfutil.f", line 101: 'I' is declared but never referenced.
+
+ Procedure information
+   Lines      : 122
+   Statements : 77
+   Stack(byte): 816
+   Prefetch num: 0
+
+ External subroutine subprogram "RW_C1_30"
+  (line-no.)(nest)(optimize)
+        127                     C
+        128                     C
+        129                     C
+        130                           SUBROUTINE RW_C1_30(IRW,IMODE,IUNIT,VAR,IERROR)
+        131                     C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        132                     C    BASIC INPUT-OUTPUT  UTILITY FOR  GENERAL FILE VERSION 2.1
+        133                     C
+        134                     C    THIS PROGRAM READ OR WRITE CHARCTER*30 ARGUMENT BY FORTARN
+        135                     C    UNFORMATTED  MODE.
+        136                     C
+        137                     C    [IN]
+        138                     C    INT*4   IRW   :FLAR FOR ACTION(1:READ,2:WRITE)
+        139                     C    INT*4   IMODE :TYPE OF INPUT OR OUTPUT MODE (ASCII OR UNFMT)
+        140                     C    INT*4   IUNIT :FILE BUFFER NUMBER
+        141                     C    INT*4   MAX2  :SIZE OF ARRAY
+        142                     C    INT*4   NUM2  :NUMBER OF ARRAY TO READ-IN OR WRITTEN
+        143                     C
+        144                     C    [INOUT]
+        145                     C    CHAR*30 VAR   :ARRAY TO READ-IN OR WRITTEN
+        146                     C
+        147                     C    [OUT]
+        148                     C    INT*4   IERROR:ERROR CODE
+        149                     C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        150                           INCLUDE 'gf.h'
+        151                     !
+        152                           INTEGER     IRW
+        153                           INTEGER     IMODE
+        154                           INTEGER     IUNIT
+        155                           CHARACTER*30 VAR
+        156                           INTEGER     IERROR
+        157                     !
+        158                           INTEGER I
+        159                     !
+        160                           IERROR=0
+        161                     !
+        162     1                     IF(IRW.NE.1.AND.IRW.NE.2)THEN
+        163     1                       IERROR=1
+        164     1                       RETURN
+        165     1                     ENDIF
+        166                     !
+        167     1                     IF(IMODE.NE.ASCII.AND.IMODE.NE.UNFMT)THEN
+        168     1                       IERROR=1
+        169     1                       RETURN
+        170     1                     ENDIF
+        171                     !
+        172     1                     IF(IRW.EQ.1)THEN
+        173     1                        IF(IMODE.EQ.ASCII) READ(IUNIT,FMTAN) VAR
+        174     1                        IF(IMODE.EQ.UNFMT) READ(IUNIT      ) VAR
+        175     1                     ENDIF
+        176     1                     IF(IRW.EQ.2)THEN
+        177     1                        IF(IMODE.EQ.ASCII) WRITE(IUNIT,FMTAN) VAR
+        178     1                        IF(IMODE.EQ.UNFMT) WRITE(IUNIT      ) VAR
+        179     1                     ENDIF
+        180                     !
+        181                           RETURN
+        182                           END
+
+ Diagnostic messages: program name(RW_C1_30)
+   jwd2006i-i  "gfutil.f", line 158: 'I' is declared but never referenced.
+
+ Procedure information
+   Lines      : 121
+   Statements : 76
+   Stack(byte): 784
+   Prefetch num: 0
+
+ External subroutine subprogram "RW_C1_60"
+  (line-no.)(nest)(optimize)
+        183                     C
+        184                     C
+        185                     C
+        186                           SUBROUTINE RW_C1_60(IRW,IMODE,IUNIT,VAR,IERROR)
+        187                     C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        188                     C    BASIC INPUT-OUTPUT  UTILITY FOR  GENERAL FILE VERSION 2.1
+        189                     C
+        190                     C    THIS PROGRAM READ OR WRITE CHARCTER*60 ARGUMENT BY FORTARN
+        191                     C    UNFORMATTED  MODE.
+        192                     C
+        193                     C    [IN]
+        194                     C    INT*4   IRW   :FLAR FOR ACTION(1:READ,2:WRITE)
+        195                     C    INT*4   IMODE :TYPE OF INPUT OR OUTPUT MODE (ASCII OR UNFMT)
+        196                     C    INT*4   IUNIT :FILE BUFFER NUMBER
+        197                     C    INT*4   MAX2  :SIZE OF ARRAY
+        198                     C    INT*4   NUM2  :NUMBER OF ARRAY TO READ-IN OR WRITTEN
+        199                     C
+        200                     C    [INOUT]
+        201                     C    CHAR*60 VAR   :ARRAY TO READ-IN OR WRITTEN
+        202                     C
+        203                     C    [OUT]
+        204                     C    INT*4   IERROR:ERROR CODE
+        205                     C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        206                           INCLUDE 'gf.h'
+        207                     !
+        208                           INTEGER     IRW
+        209                           INTEGER     IMODE
+        210                           INTEGER     IUNIT
+        211                           CHARACTER*60 VAR
+        212                           INTEGER     IERROR
+        213                     !
+        214                           IERROR=0
+        215                     !
+        216     1                     IF(IRW.NE.1.AND.IRW.NE.2)THEN
+        217     1                       IERROR=1
+        218     1                       RETURN
+        219     1                     ENDIF
+        220                     !
+        221     1                     IF(IMODE.NE.ASCII.AND.IMODE.NE.UNFMT)THEN
+        222     1                       IERROR=1
+        223     1                       RETURN
+        224     1                     ENDIF
+        225                     !
+        226     1                     IF(IRW.EQ.1)THEN
+        227     1                        IF(IMODE.EQ.ASCII) READ(IUNIT,FMTAM) VAR
+        228     1                        IF(IMODE.EQ.UNFMT) READ(IUNIT      ) VAR
+        229     1                     ENDIF
+        230     1                     IF(IRW.EQ.2)THEN
+        231     1                        IF(IMODE.EQ.ASCII) WRITE(IUNIT,FMTAM) VAR
+        232     1                        IF(IMODE.EQ.UNFMT) WRITE(IUNIT      ) VAR
+        233     1                     ENDIF
+        234                     !
+        235                           RETURN
+        236                           END
+
+ Procedure information
+   Lines      : 119
+   Statements : 75
+   Stack(byte): 784
+   Prefetch num: 0
+
+ External subroutine subprogram "RW_I1"
+  (line-no.)(nest)(optimize)
+        237                     C
+        238                     C
+        239                     C
+        240                           SUBROUTINE RW_I1(IRW,IMODE,IUNIT,MAX,NUM,VAR,IERROR)
+        241                     C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        242                     C    BASIC INPUT-OUTPUT  UTILITY FOR  GENERAL FILE VERSION 2.1
+        243                     C
+        244                     C    THIS PROGRAM READ OR WRITE INTEGER*4 ARRAY BY FORTARN
+        245                     C    UNFORMATTED  MODE.
+        246                     C
+        247                     C    [IN]
+        248                     C    INT*4   IRW   :FLAR FOR ACTION(1:READ,2:WRITE)
+        249                     C    INT*4   IMODE :TYPE OF INPUT OR OUTPUT MODE (ASCII OR UNFMT)
+        250                     C    INT*4   IUNIT :FILE BUFFER NUMBER
+        251                     C    INT*4   MAX   :SIZE OF ARRAY
+        252                     C    INT*4   NUM   :NUMBER OF ARRAY TO READ-IN OR WRITTEN
+        253                     C
+        254                     C    [INOUT]
+        255                     C    INT*4   VAR   :ARRAY TO READ-IN OR WRITTEN
+        256                     C
+        257                     C    [OUT]
+        258                     C    INT*4   IERROR:ERROR CODE
+        259                     C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        260                           INCLUDE 'gf.h'
+        261                     !
+        262                           INTEGER     IRW
+        263                           INTEGER     IMODE
+        264                           INTEGER     IUNIT
+        265                           INTEGER     MAX2
+        266                           INTEGER     NUM2
+        267                           INTEGER     VAR(MAX)
+        268                           INTEGER     IERROR
+        269                     !
+        270                           INTEGER I
+        271                     !
+        272                           IERROR=0
+        273                     !
+        274     1                     IF(IRW.NE.1.AND.IRW.NE.2)THEN
+        275     1                       IERROR=1
+        276     1                       RETURN
+        277     1                     ENDIF
+        278                     !
+        279     1                     IF(NUM.GT.MAX)THEN
+        280     1                       IERROR=1
+        281     1                       RETURN
+        282     1                     ENDIF
+        283                     !
+        284     1                     IF(IMODE.NE.ASCII.AND.IMODE.NE.UNFMT)THEN
+        285     1                       IERROR=1
+        286     1                       RETURN
+        287     1                     ENDIF
+        288                     !
+        289     1                     IF(IRW.EQ.1)THEN
+        290     1                       IF(IMODE.EQ.ASCII) READ(IUNIT,FMTI) (VAR(I),I=1,NUM)
+        291     1                       IF(IMODE.EQ.UNFMT) READ(IUNIT     ) (VAR(I),I=1,NUM)
+        292     1                     ENDIF
+        293     1                     IF(IRW.EQ.2)THEN
+        294     1                       IF(IMODE.EQ.ASCII) WRITE(IUNIT,FMTI) (VAR(I),I=1,NUM)
+        295     1                       IF(IMODE.EQ.UNFMT) WRITE(IUNIT     ) (VAR(I),I=1,NUM)
+        296     1                     ENDIF
+        297                     !
+        298                           RETURN
+        299                           END
+
+ Diagnostic messages: program name(RW_I1)
+   jwd2006i-i  "gfutil.f", line 265: 'MAX2' is declared but never referenced.
+   jwd2006i-i  "gfutil.f", line 266: 'NUM2' is declared but never referenced.
+
+ Procedure information
+   Lines      : 128
+   Statements : 82
+   Stack(byte): 864
+   Prefetch num: 0
+
+ External subroutine subprogram "RW_I2"
+  (line-no.)(nest)(optimize)
+        300                     C
+        301                     C
+        302                     C
+        303                           SUBROUTINE RW_I2(IRW,IMODE,IUNIT,MAX,NUM,VAR1,VAR2,IERROR)
+        304                     C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        305                     C    BASIC INPUT-OUTPUT  UTILITY FOR  GENERAL FILE VERSION 2.1
+        306                     C
+        307                     C    THIS PROGRAM READ OR WRITE TWO INTEGER*4 ARRAYS BY FORTARN
+        308                     C    UNFORMATTED  MODE.
+        309                     C
+        310                     C    [IN]
+        311                     C    INT*4   IRW   :FLAR FOR ACTION(1:READ,2:WRITE)
+        312                     C    INT*4   IMODE :TYPE OF INPUT OR OUTPUT MODE (ASCII OR UNFMT)
+        313                     C    INT*4   IUNIT :FILE BUFFER NUMBER
+        314                     C    INT*4   MAX   :SIZE OF ARRAY
+        315                     C    INT*4   NUM   :NUMBER OF ARRAY TO READ-IN OR WRITTEN
+        316                     C
+        317                     C    [INOUT]
+        318                     C    INT*4   VAR1   :ARRAY(1) TO READ-IN OR WRITTEN
+        319                     C    INT*4   VAR2   :ARRAY(2) TO READ-IN OR WRITTEN
+        320                     C
+        321                     C    [OUT]
+        322                     C    INT*4   IERROR:ERROR CODE
+        323                     C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        324                           INCLUDE 'gf.h'
+        325                     !
+        326                           INTEGER     IRW
+        327                           INTEGER     IMODE
+        328                           INTEGER     IUNIT
+        329                           INTEGER     MAX2
+        330                           INTEGER     NUM2
+        331                           INTEGER     VAR1(MAX)
+        332                           INTEGER     VAR2(MAX)
+        333                           INTEGER     IERROR
+        334                     !
+        335                           INTEGER I
+        336                     !
+        337                           IERROR=0
+        338                     !
+        339     1                     IF(IRW.NE.1.AND.IRW.NE.2)THEN
+        340     1                       IERROR=1
+        341     1                       RETURN
+        342     1                     ENDIF
+        343                     !
+        344     1                     IF(NUM.GT.MAX)THEN
+        345     1                       IERROR=1
+        346     1                       RETURN
+        347     1                     ENDIF
+        348                     !
+        349     1                     IF(IMODE.NE.ASCII.AND.IMODE.NE.UNFMT)THEN
+        350     1                       IERROR=1
+        351     1                       RETURN
+        352     1                     ENDIF
+        353                     !
+        354     1                     IF(IRW.EQ.1)THEN
+        355     1                       IF(IMODE.EQ.ASCII)
+        356     1                    &  READ(IUNIT,FMTI)  (VAR1(I),VAR2(I),I=1,NUM)
+        357     1                       IF(IMODE.EQ.UNFMT)
+        358     1                    &  READ(IUNIT     )  (VAR1(I),VAR2(I),I=1,NUM)
+        359     1                     ENDIF
+        360     1                     IF(IRW.EQ.2)THEN
+        361     1                       IF(IMODE.EQ.ASCII)
+        362     1                    &  WRITE(IUNIT,FMTI)  (VAR1(I),VAR2(I),I=1,NUM)
+        363     1                       IF(IMODE.EQ.UNFMT)
+        364     1                    &  WRITE(IUNIT     )  (VAR1(I),VAR2(I),I=1,NUM)
+        365     1                     ENDIF
+        366                     !
+        367                           RETURN
+        368                           END
+
+ Diagnostic messages: program name(RW_I2)
+   jwd2006i-i  "gfutil.f", line 329: 'MAX2' is declared but never referenced.
+   jwd2006i-i  "gfutil.f", line 330: 'NUM2' is declared but never referenced.
+
+ Procedure information
+   Lines      : 134
+   Statements : 83
+   Stack(byte): 992
+   Prefetch num: 0
+
+ External subroutine subprogram "RW_I3"
+  (line-no.)(nest)(optimize)
+        369                     C
+        370                     C
+        371                     C
+        372                           SUBROUTINE RW_I3(IRW,IMODE,IUNIT,MAX,NUM,VAR1,VAR2,VAR3,IERROR)
+        373                     C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        374                     C    BASIC INPUT-OUTPUT  UTILITY FOR  GENERAL FILE VERSION 2.1
+        375                     C
+        376                     C    THIS PROGRAM READ OR WRITE THREE INTEGER*4 ARRAYS BY FORTARN
+        377                     C    UNFORMATTED  MODE.
+        378                     C
+        379                     C    [IN]
+        380                     C    INT*4   IRW   :FLAR FOR ACTION(1:READ,2:WRITE)
+        381                     C    INT*4   IMODE :TYPE OF INPUT OR OUTPUT MODE (ASCII OR UNFMT)
+        382                     C    INT*4   IUNIT :FILE BUFFER NUMBER
+        383                     C    INT*4   MAX   :SIZE OF ARRAY
+        384                     C    INT*4   NUM   :NUMBER OF ARRAY TO READ-IN OR WRITTEN
+        385                     C
+        386                     C    [INOUT]
+        387                     C    INT*4   VAR1   :ARRAY(1) TO READ-IN OR WRITTEN
+        388                     C    INT*4   VAR2   :ARRAY(2) TO READ-IN OR WRITTEN
+        389                     C    INT*4   VAR3   :ARRAY(3) TO READ-IN OR WRITTEN
+        390                     C
+        391                     C    [OUT]
+        392                     C    INT*4   IERROR:ERROR CODE
+        393                     C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        394                           INCLUDE 'gf.h'
+        395                     !
+        396                           INTEGER     IRW
+        397                           INTEGER     IMODE
+        398                           INTEGER     IUNIT
+        399                           INTEGER     MAX2
+        400                           INTEGER     NUM2
+        401                           INTEGER     VAR1(MAX)
+        402                           INTEGER     VAR2(MAX)
+        403                           INTEGER     VAR3(MAX)
+        404                           INTEGER     IERROR
+        405                     !
+        406                           INTEGER I
+        407                     !
+        408                           IERROR=0
+        409                     !
+        410     1                     IF(IRW.NE.1.AND.IRW.NE.2)THEN
+        411     1                       IERROR=1
+        412     1                       RETURN
+        413     1                     ENDIF
+        414                     !
+        415     1                     IF(NUM.GT.MAX)THEN
+        416     1                       IERROR=1
+        417     1                       RETURN
+        418     1                     ENDIF
+        419                     !
+        420     1                     IF(IMODE.NE.ASCII.AND.IMODE.NE.UNFMT)THEN
+        421     1                       IERROR=1
+        422     1                       RETURN
+        423     1                     ENDIF
+        424                     !
+        425     1                     IF(IRW.EQ.1)THEN
+        426     1                       IF(IMODE.EQ.ASCII)
+        427     1                    &  READ(IUNIT,FMTI) (VAR1(I),VAR2(I),VAR3(I),I=1,NUM)
+        428     1                       IF(IMODE.EQ.UNFMT)
+        429     1                    &  READ(IUNIT     ) (VAR1(I),VAR2(I),VAR3(I),I=1,NUM)
+        430     1                     ENDIF
+        431     1                     IF(IRW.EQ.2)THEN
+        432     1                       IF(IMODE.EQ.ASCII)
+        433     1                    &  WRITE(IUNIT,FMTI) (VAR1(I),VAR2(I),VAR3(I),I=1,NUM)
+        434     1                       IF(IMODE.EQ.UNFMT)
+        435     1                    &  WRITE(IUNIT     ) (VAR1(I),VAR2(I),VAR3(I),I=1,NUM)
+        436     1                     ENDIF
+        437                     !
+        438                           RETURN
+        439                           END
+
+ Diagnostic messages: program name(RW_I3)
+   jwd2006i-i  "gfutil.f", line 399: 'MAX2' is declared but never referenced.
+   jwd2006i-i  "gfutil.f", line 400: 'NUM2' is declared but never referenced.
+
+ Procedure information
+   Lines      : 136
+   Statements : 84
+   Stack(byte): 1120
+   Prefetch num: 0
+
+ External subroutine subprogram "RW_IN"
+  (line-no.)(nest)(optimize)
+        440                     C
+        441                     C
+        442                     C
+        443                           SUBROUTINE RW_IN(IRW,IMODE,IUNIT,MAX,MAX2,NUM,NUM2,VAR,IERROR)
+        444                     C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        445                     C    BASIC INPUT-OUTPUT  UTILITY FOR  GENERAL FILE VERSION 2.1
+        446                     C
+        447                     C    THIS PROGRAM READ OR WRITE INTEGER*4 2D-ARRAY BY FORTARN
+        448                     C    UNFORMATTED  MODE.
+        449                     C
+        450                     C    [IN]
+        451                     C    INT*4   IRW   :FLAR FOR ACTION(1:READ,2:WRITE)
+        452                     C    INT*4   IMODE :TYPE OF INPUT OR OUTPUT MODE (ASCII OR UNFMT)
+        453                     C    INT*4   IUNIT :FILE BUFFER NUMBER
+        454                     C    INT*4   MAX   :SIZE OF ARRAY
+        455                     C    INT*4   MAX2  :SIZE OF ARRAY
+        456                     C    INT*4   NUM   :NUMBER OF ARRAY TO READ-IN OR WRITTEN
+        457                     C    INT*4   NUM2  :NUMBER OF ARRAY TO READ-IN OR WRITTEN
+        458                     C
+        459                     C    [INOUT]
+        460                     C    INT*4   VAR   :ARRAY TO READ-IN OR WRITTEN
+        461                     C
+        462                     C    [OUT]
+        463                     C    INT*4   IERROR:ERROR CODE
+        464                     C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        465                           INCLUDE 'gf.h'
+        466                     !
+        467                           INTEGER     IRW
+        468                           INTEGER     IMODE
+        469                           INTEGER     IUNIT
+        470                           INTEGER     MAX,MAX2
+        471                           INTEGER     NUM,NUM2
+        472                           INTEGER     VAR(MAX2,MAX),BUF
+        473                           INTEGER     IERROR
+        474                     !
+        475                           INTEGER I,J
+        476                     !
+        477                           IERROR=0
+        478                     !
+        479     1                     IF(IRW.NE.0.AND.IRW.NE.1.AND.IRW.NE.2)THEN
+        480     1                       IERROR=1
+        481     1                       RETURN
+        482     1                     ENDIF
+        483                     !
+        484     1                     IF(IRW.NE.0.AND.NUM.GT.MAX)THEN
+        485     1                       IERROR=1
+        486     1                       RETURN
+        487     1                     ENDIF
+        488                     !
+        489     1                     IF(IRW.NE.0.AND.NUM2.GT.MAX2)THEN
+        490     1                       IERROR=1
+        491     1                       RETURN
+        492     1                     ENDIF
+        493                     !
+        494     1                     IF(IMODE.NE.ASCII.AND.IMODE.NE.UNFMT)THEN
+        495     1                       IERROR=1
+        496     1                       RETURN
+        497     1                     ENDIF
+        498                     !
+        499     1                     IF(IRW.EQ.0)THEN
+        500     1        s               IF(IMODE.EQ.ASCII)
+        501     1                    &   READ(IUNIT,FMTI) ((BUF,J=1,NUM2),I=1,NUM)
+        502     1        s               IF(IMODE.EQ.UNFMT)
+        503     1                    &   READ(IUNIT     ) ((BUF,J=1,NUM2),I=1,NUM)
+        504     1                     ENDIF
+        505     1                     IF(IRW.EQ.1)THEN
+        506     1                        IF(IMODE.EQ.ASCII)
+        507     1                    &   READ(IUNIT,FMTI) ((VAR(J,I),J=1,NUM2),I=1,NUM)
+        508     1                        IF(IMODE.EQ.UNFMT)
+        509     1                    &   READ(IUNIT     ) ((VAR(J,I),J=1,NUM2),I=1,NUM)
+        510     1                     ENDIF
+        511     1                     IF(IRW.EQ.2)THEN
+        512     1                        IF(IMODE.EQ.ASCII)
+        513     1                    &   WRITE(IUNIT,FMTI) ((VAR(J,I),J=1,NUM2),I=1,NUM)
+        514     1                        IF(IMODE.EQ.UNFMT)
+        515     1                    &   WRITE(IUNIT     ) ((VAR(J,I),J=1,NUM2),I=1,NUM)
+        516     1                     ENDIF
+        517                     !
+        518                           RETURN
+        519                           END
+
+ Diagnostic messages: program name(RW_IN)
+   jwd5121p-i  "gfutil.f", line 500: DO loop is not parallelized: an input/output statement was found in the loop.
+   jwd6121s-i  "gfutil.f", line 500: SIMD conversion cannot be applied to DO loop: an input/output statement was found in the loop.
+   jwd8664o-i  "gfutil.f", line 500: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5121p-i  "gfutil.f", line 502: DO loop is not parallelized: an input/output statement was found in the loop.
+   jwd6121s-i  "gfutil.f", line 502: SIMD conversion cannot be applied to DO loop: an input/output statement was found in the loop.
+   jwd8664o-i  "gfutil.f", line 502: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+
+ Procedure information
+   Lines      : 145
+   Statements : 90
+   Stack(byte): 1200
+   Prefetch num: 0
+
+ External subroutine subprogram "RW_F1"
+  (line-no.)(nest)(optimize)
+        520                     C
+        521                     C
+        522                     C
+        523                           SUBROUTINE RW_F1(IRW,IMODE,IUNIT,MAX,NUM,VAR,IERROR)
+        524                     C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        525                     C    BASIC INPUT-OUTPUT  UTILITY FOR  GENERAL FILE VERSION 2.1
+        526                     C
+        527                     C    THIS PROGRAM READ OR WRITE REAL*4 ARRAY BY FORTARN
+        528                     C    UNFORMATTED  MODE.
+        529                     C
+        530                     C    [IN]
+        531                     C    INT*4   IRW   :FLAR FOR ACTION(1:READ,2:WRITE)
+        532                     C    INT*4   IMODE :TYPE OF INPUT OR OUTPUT MODE (ASCII OR UNFMT)
+        533                     C    INT*4   IUNIT :FILE BUFFER NUMBER
+        534                     C    INT*4   MAX   :SIZE OF ARRAY
+        535                     C    INT*4   NUM   :NUMBER OF ARRAY TO READ-IN OR WRITTEN
+        536                     C
+        537                     C    [INOUT]
+        538                     C    REAL*4  VAR   :ARRAY TO READ-IN OR WRITTEN
+        539                     C
+        540                     C    [OUT]
+        541                     C    INT*4   IERROR:ERROR CODE
+        542                     C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        543                           INCLUDE 'gf.h'
+        544                     !
+        545                           INTEGER     IRW
+        546                           INTEGER     IMODE
+        547                           INTEGER     IUNIT
+        548                           INTEGER     MAX2
+        549                           INTEGER     NUM2
+        550                           REAL        VAR(MAX)
+        551                           INTEGER     IERROR
+        552                     !
+        553                           INTEGER I
+        554                     !
+        555                           IERROR=0
+        556                     !
+        557     1                     IF(IRW.NE.1.AND.IRW.NE.2)THEN
+        558     1                       IERROR=1
+        559     1                       RETURN
+        560     1                     ENDIF
+        561                     !
+        562     1                     IF(NUM.GT.MAX)THEN
+        563     1                       IERROR=1
+        564     1                       RETURN
+        565     1                     ENDIF
+        566                     !
+        567     1                     IF(IMODE.NE.ASCII.AND.IMODE.NE.UNFMT)THEN
+        568     1                       IERROR=1
+        569     1                       RETURN
+        570     1                     ENDIF
+        571                     !
+        572     1                     IF(IRW.EQ.1)THEN
+        573     1                       IF(IMODE.EQ.ASCII) READ(IUNIT,FMTF) (VAR(I),I=1,NUM)
+        574     1                       IF(IMODE.EQ.UNFMT) READ(IUNIT     ) (VAR(I),I=1,NUM)
+        575     1                     ENDIF
+        576     1                     IF(IRW.EQ.2)THEN
+        577     1                       IF(IMODE.EQ.ASCII) WRITE(IUNIT,FMTF) (VAR(I),I=1,NUM)
+        578     1                       IF(IMODE.EQ.UNFMT) WRITE(IUNIT     ) (VAR(I),I=1,NUM)
+        579     1                     ENDIF
+        580                     !
+        581                           RETURN
+        582                           END
+
+ Diagnostic messages: program name(RW_F1)
+   jwd2006i-i  "gfutil.f", line 548: 'MAX2' is declared but never referenced.
+   jwd2006i-i  "gfutil.f", line 549: 'NUM2' is declared but never referenced.
+
+ Procedure information
+   Lines      : 128
+   Statements : 82
+   Stack(byte): 864
+   Prefetch num: 0
+
+ External subroutine subprogram "RW_F2"
+  (line-no.)(nest)(optimize)
+        583                     C
+        584                     C
+        585                     C
+        586                           SUBROUTINE RW_F2(IRW,IMODE,IUNIT,MAX,NUM,VAR1,VAR2,IERROR)
+        587                     C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        588                     C    BASIC INPUT-OUTPUT  UTILITY FOR  GENERAL FILE VERSION 2.1
+        589                     C
+        590                     C    THIS PROGRAM READ OR WRITE TWO REAL*4 ARRAYS BY FORTARN
+        591                     C    UNFORMATTED  MODE.
+        592                     C
+        593                     C    [IN]
+        594                     C    INT*4   IRW   :FLAR FOR ACTION(1:READ,2:WRITE)
+        595                     C    INT*4   IMODE :TYPE OF INPUT OR OUTPUT MODE (ASCII OR UNFMT)
+        596                     C    INT*4   IUNIT :FILE BUFFER NUMBER
+        597                     C    INT*4   MAX   :SIZE OF ARRAY
+        598                     C    INT*4   NUM   :NUMBER OF ARRAY TO READ-IN OR WRITTEN
+        599                     C
+        600                     C    [INOUT]
+        601                     C    REAL*4  VAR1   :ARRAY(1) TO READ-IN OR WRITTEN
+        602                     C    REAL*4  VAR2   :ARRAY(2) TO READ-IN OR WRITTEN
+        603                     C
+        604                     C    [OUT]
+        605                     C    INT*4   IERROR:ERROR CODE
+        606                     C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        607                           INCLUDE 'gf.h'
+        608                     !
+        609                           INTEGER     IRW
+        610                           INTEGER     IMODE
+        611                           INTEGER     IUNIT
+        612                           INTEGER     MAX2
+        613                           INTEGER     NUM2
+        614                           REAL        VAR1(MAX)
+        615                           REAL        VAR2(MAX)
+        616                           INTEGER     IERROR
+        617                     !
+        618                           INTEGER I
+        619                     !
+        620                           IERROR=0
+        621                     !
+        622     1                     IF(IRW.NE.1.AND.IRW.NE.2)THEN
+        623     1                       IERROR=1
+        624     1                       RETURN
+        625     1                     ENDIF
+        626                     !
+        627     1                     IF(NUM.GT.MAX)THEN
+        628     1                       IERROR=1
+        629     1                       RETURN
+        630     1                     ENDIF
+        631                     !
+        632     1                     IF(IMODE.NE.ASCII.AND.IMODE.NE.UNFMT)THEN
+        633     1                       IERROR=1
+        634     1                       RETURN
+        635     1                     ENDIF
+        636                     !
+        637     1                     IF(IRW.EQ.1)THEN
+        638     1                       IF(IMODE.EQ.ASCII)
+        639     1                    &  READ(IUNIT,FMTF)  (VAR1(I),VAR2(I),I=1,NUM)
+        640     1                       IF(IMODE.EQ.UNFMT)
+        641     1                    &  READ(IUNIT     )  (VAR1(I),VAR2(I),I=1,NUM)
+        642     1                     ENDIF
+        643     1                     IF(IRW.EQ.2)THEN
+        644     1                       IF(IMODE.EQ.ASCII)
+        645     1                    &  WRITE(IUNIT,FMTF)  (VAR1(I),VAR2(I),I=1,NUM)
+        646     1                       IF(IMODE.EQ.UNFMT)
+        647     1                    &  WRITE(IUNIT     )  (VAR1(I),VAR2(I),I=1,NUM)
+        648     1                     ENDIF
+        649                     !
+        650                           RETURN
+        651                           END
+
+ Diagnostic messages: program name(RW_F2)
+   jwd2006i-i  "gfutil.f", line 612: 'MAX2' is declared but never referenced.
+   jwd2006i-i  "gfutil.f", line 613: 'NUM2' is declared but never referenced.
+
+ Procedure information
+   Lines      : 134
+   Statements : 83
+   Stack(byte): 992
+   Prefetch num: 0
+
+ External subroutine subprogram "RW_F3"
+  (line-no.)(nest)(optimize)
+        652                     C
+        653                     C
+        654                     C
+        655                           SUBROUTINE RW_F3(IRW,IMODE,IUNIT,MAX,NUM,VAR1,VAR2,VAR3,IERROR)
+        656                     C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        657                     C    BASIC INPUT-OUTPUT  UTILITY FOR  GENERAL FILE VERSION 2.1
+        658                     C
+        659                     C    THIS PROGRAM READ OR WRITE THREE REAL*4 ARRAYS BY FORTARN
+        660                     C    UNFORMATTED  MODE.
+        661                     C
+        662                     C    [IN]
+        663                     C    INT*4   IRW   :FLAR FOR ACTION(1:READ,2:WRITE)
+        664                     C    INT*4   IMODE :TYPE OF INPUT OR OUTPUT MODE (ASCII OR UNFMT)
+        665                     C    INT*4   IUNIT :FILE BUFFER NUMBER
+        666                     C    INT*4   MAX   :SIZE OF ARRAY
+        667                     C    INT*4   NUM   :NUMBER OF ARRAY TO READ-IN OR WRITTEN
+        668                     C
+        669                     C    [INOUT]
+        670                     C    REAL*4  VAR1   :ARRAY(1) TO READ-IN OR WRITTEN
+        671                     C    REAL*4  VAR2   :ARRAY(2) TO READ-IN OR WRITTEN
+        672                     C    REAL*4  VAR3   :ARRAY(3) TO READ-IN OR WRITTEN
+        673                     C
+        674                     C    [OUT]
+        675                     C    INT*4   IERROR:ERROR CODE
+        676                     C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        677                           INCLUDE 'gf.h'
+        678                     !
+        679                           INTEGER     IRW
+        680                           INTEGER     IMODE
+        681                           INTEGER     IUNIT
+        682                           INTEGER     MAX2
+        683                           INTEGER     NUM2
+        684                           REAL        VAR1(MAX)
+        685                           REAL        VAR2(MAX)
+        686                           REAL        VAR3(MAX)
+        687                           INTEGER     IERROR
+        688                     !
+        689                           INTEGER I
+        690                     !
+        691                           IERROR=0
+        692                     !
+        693     1                     IF(IRW.NE.1.AND.IRW.NE.2)THEN
+        694     1                       IERROR=1
+        695     1                       RETURN
+        696     1                     ENDIF
+        697                     !
+        698     1                     IF(IRW.NE.0.AND.NUM.GT.MAX)THEN
+        699     1                       IERROR=1
+        700     1                       RETURN
+        701     1                     ENDIF
+        702                     !
+        703     1                     IF(IMODE.NE.ASCII.AND.IMODE.NE.UNFMT)THEN
+        704     1                       IERROR=1
+        705     1                       RETURN
+        706     1                     ENDIF
+        707                     !
+        708     1                     IF(IRW.EQ.1)THEN
+        709     1                       IF(IMODE.EQ.ASCII)
+        710     1                    &  READ(IUNIT,FMTF) (VAR1(I),VAR2(I),VAR3(I),I=1,NUM)
+        711     1                       IF(IMODE.EQ.UNFMT)
+        712     1                    &  READ(IUNIT     ) (VAR1(I),VAR2(I),VAR3(I),I=1,NUM)
+        713     1                     ENDIF
+        714     1                     IF(IRW.EQ.2)THEN
+        715     1                       IF(IMODE.EQ.ASCII)
+        716     1                    &  WRITE(IUNIT,FMTF) (VAR1(I),VAR2(I),VAR3(I),I=1,NUM)
+        717     1                       IF(IMODE.EQ.UNFMT)
+        718     1                    &  WRITE(IUNIT     ) (VAR1(I),VAR2(I),VAR3(I),I=1,NUM)
+        719     1                     ENDIF
+        720                     !
+        721                           RETURN
+        722                           END
+
+ Diagnostic messages: program name(RW_F3)
+   jwd2006i-i  "gfutil.f", line 682: 'MAX2' is declared but never referenced.
+   jwd2006i-i  "gfutil.f", line 683: 'NUM2' is declared but never referenced.
+
+ Procedure information
+   Lines      : 136
+   Statements : 84
+   Stack(byte): 1120
+   Prefetch num: 0
+
+ External subroutine subprogram "RW_FN"
+  (line-no.)(nest)(optimize)
+        723                     C
+        724                     C
+        725                     C
+        726                           SUBROUTINE RW_FN(IRW,IMODE,IUNIT,MAX,MAX2,NUM,NUM2,VAR,IERROR)
+        727                     C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        728                     C    BASIC INPUT-OUTPUT  UTILITY FOR  GENERAL FILE VERSION 2.1
+        729                     C
+        730                     C    THIS PROGRAM READ OR WRITE REAL*4 2D-ARRAY BY FORTARN
+        731                     C    UNFORMATTED  MODE.
+        732                     C
+        733                     C    [IN]
+        734                     C    INT*4   IRW   :FLAR FOR ACTION(1:READ,2:WRITE)
+        735                     C    INT*4   IMODE :TYPE OF INPUT OR OUTPUT MODE (ASCII OR UNFMT)
+        736                     C    INT*4   IUNIT :FILE BUFFER NUMBER
+        737                     C    INT*4   MAX   :SIZE OF ARRAY
+        738                     C    INT*4   MAX2  :SIZE OF ARRAY
+        739                     C    INT*4   NUM   :NUMBER OF ARRAY TO READ-IN OR WRITTEN
+        740                     C    INT*4   NUM2  :NUMBER OF ARRAY TO READ-IN OR WRITTEN
+        741                     C
+        742                     C    [INOUT]
+        743                     C    REAL*4  VAR   :ARRAY TO READ-IN OR WRITTEN
+        744                     C
+        745                     C    [OUT]
+        746                     C    INT*4   IERROR:ERROR CODE
+        747                     C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        748                           INCLUDE 'gf.h'
+        749                     !
+        750                           INTEGER     IRW
+        751                           INTEGER     IMODE
+        752                           INTEGER     IUNIT
+        753                           INTEGER     MAX,MAX2
+        754                           INTEGER     NUM,NUM2
+        755                           REAL        VAR(MAX2,MAX),BUF
+        756                           INTEGER     IERROR
+        757                     !
+        758                           INTEGER I,J
+        759                     !
+        760                           IERROR=0
+        761                     !
+        762     1                     IF(IRW.NE.0.AND.IRW.NE.1.AND.IRW.NE.2)THEN
+        763     1                       IERROR=1
+        764     1                       RETURN
+        765     1                     ENDIF
+        766                     !
+        767     1                     IF(IRW.NE.0.AND.NUM.GT.MAX)THEN
+        768     1                       IERROR=1
+        769     1                       RETURN
+        770     1                     ENDIF
+        771                     !
+        772     1                     IF(IRW.NE.0.AND.NUM2.GT.MAX2)THEN
+        773     1                       IERROR=1
+        774     1                       RETURN
+        775     1                     ENDIF
+        776                     !
+        777     1                     IF(IMODE.NE.ASCII.AND.IMODE.NE.UNFMT)THEN
+        778     1                       IERROR=1
+        779     1                       RETURN
+        780     1                     ENDIF
+        781                     !
+        782     1                     IF(IRW.EQ.0)THEN
+        783     1        s               IF(IMODE.EQ.ASCII)
+        784     1                    &   READ(IUNIT,FMTF) ((BUF,J=1,NUM2),I=1,NUM)
+        785     1        s               IF(IMODE.EQ.UNFMT)
+        786     1                    &   READ(IUNIT     ) ((BUF,J=1,NUM2),I=1,NUM)
+        787     1                     ENDIF
+        788     1                     IF(IRW.EQ.1)THEN
+        789     1                        IF(IMODE.EQ.ASCII)
+        790     1                    &   READ(IUNIT,FMTF) ((VAR(J,I),J=1,NUM2),I=1,NUM)
+        791     1                        IF(IMODE.EQ.UNFMT)
+        792     1                    &   READ(IUNIT     ) ((VAR(J,I),J=1,NUM2),I=1,NUM)
+        793     1                     ENDIF
+        794     1                     IF(IRW.EQ.2)THEN
+        795     1                        IF(IMODE.EQ.ASCII)
+        796     1                    &   WRITE(IUNIT,FMTF) ((VAR(J,I),J=1,NUM2),I=1,NUM)
+        797     1                        IF(IMODE.EQ.UNFMT)
+        798     1                    &   WRITE(IUNIT     ) ((VAR(J,I),J=1,NUM2),I=1,NUM)
+        799     1                     ENDIF
+        800                     !
+        801                           RETURN
+        802                           END
+
+ Diagnostic messages: program name(RW_FN)
+   jwd5121p-i  "gfutil.f", line 783: DO loop is not parallelized: an input/output statement was found in the loop.
+   jwd6121s-i  "gfutil.f", line 783: SIMD conversion cannot be applied to DO loop: an input/output statement was found in the loop.
+   jwd8664o-i  "gfutil.f", line 783: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5121p-i  "gfutil.f", line 785: DO loop is not parallelized: an input/output statement was found in the loop.
+   jwd6121s-i  "gfutil.f", line 785: SIMD conversion cannot be applied to DO loop: an input/output statement was found in the loop.
+   jwd8664o-i  "gfutil.f", line 785: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+
+ Procedure information
+   Lines      : 145
+   Statements : 90
+   Stack(byte): 1200
+   Prefetch num: 0
+
+ External subroutine subprogram "RW_D1"
+  (line-no.)(nest)(optimize)
+        803                     C
+        804                     C
+        805                     C
+        806                           SUBROUTINE RW_D1(IRW,IMODE,IUNIT,MAX,NUM,VAR,IERROR)
+        807                     C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        808                     C    BASIC INPUT-OUTPUT  UTILITY FOR  GENERAL FILE VERSION 2.1
+        809                     C
+        810                     C    THIS PROGRAM READ OR WRITE REAL*8 ARRAY BY FORTARN
+        811                     C    UNFORMATTED  MODE.
+        812                     C
+        813                     C    [IN]
+        814                     C    INT*4   IRW   :FLAR FOR ACTION(1:READ,2:WRITE)
+        815                     C    INT*4   IMODE :TYPE OF INPUT OR OUTPUT MODE (ASCII OR UNFMT)
+        816                     C    INT*4   IUNIT :FILE BUFFER NUMBER
+        817                     C    INT*4   MAX   :SIZE OF ARRAY
+        818                     C    INT*4   NUM   :NUMBER OF ARRAY TO READ-IN OR WRITTEN
+        819                     C
+        820                     C    [INOUT]
+        821                     C    REAL*8  VAR   :ARRAY TO READ-IN OR WRITTEN
+        822                     C
+        823                     C    [OUT]
+        824                     C    INT*4   IERROR:ERROR CODE
+        825                     C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        826                           INCLUDE 'gf.h'
+        827                     !
+        828                           INTEGER     IRW
+        829                           INTEGER     IMODE
+        830                           INTEGER     IUNIT
+        831                           INTEGER     MAX2
+        832                           INTEGER     NUM2
+        833                           REAL*8      VAR(MAX)
+        834                           INTEGER     IERROR
+        835                     !
+        836                           INTEGER I
+        837                     !
+        838                           IERROR=0
+        839                     !
+        840     1                     IF(IRW.NE.1.AND.IRW.NE.2)THEN
+        841     1                       IERROR=1
+        842     1                       RETURN
+        843     1                     ENDIF
+        844                     !
+        845     1                     IF(NUM.GT.MAX)THEN
+        846     1                       IERROR=1
+        847     1                       RETURN
+        848     1                     ENDIF
+        849                     !
+        850     1                     IF(IMODE.NE.ASCII.AND.IMODE.NE.UNFMT)THEN
+        851     1                       IERROR=1
+        852     1                       RETURN
+        853     1                     ENDIF
+        854                     !
+        855     1                     IF(IRW.EQ.1)THEN
+        856     1                       IF(IMODE.EQ.ASCII) READ(IUNIT,FMTD) (VAR(I),I=1,NUM)
+        857     1                       IF(IMODE.EQ.UNFMT) READ(IUNIT     ) (VAR(I),I=1,NUM)
+        858     1                     ENDIF
+        859     1                     IF(IRW.EQ.2)THEN
+        860     1                       IF(IMODE.EQ.ASCII) WRITE(IUNIT,FMTD) (VAR(I),I=1,NUM)
+        861     1                       IF(IMODE.EQ.UNFMT) WRITE(IUNIT     ) (VAR(I),I=1,NUM)
+        862     1                     ENDIF
+        863                     !
+        864                           RETURN
+        865                           END
+
+ Diagnostic messages: program name(RW_D1)
+   jwd2006i-i  "gfutil.f", line 831: 'MAX2' is declared but never referenced.
+   jwd2006i-i  "gfutil.f", line 832: 'NUM2' is declared but never referenced.
+
+ Procedure information
+   Lines      : 128
+   Statements : 82
+   Stack(byte): 864
+   Prefetch num: 0
+
+ External subroutine subprogram "RW_D2"
+  (line-no.)(nest)(optimize)
+        866                     C
+        867                     C
+        868                     C
+        869                           SUBROUTINE RW_D2(IRW,IMODE,IUNIT,MAX,NUM,VAR1,VAR2,IERROR)
+        870                     C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        871                     C    BASIC INPUT-OUTPUT  UTILITY FOR  GENERAL FILE VERSION 2.1
+        872                     C
+        873                     C    THIS PROGRAM READ OR WRITE TWO REAL*8 ARRAYS BY FORTARN
+        874                     C    UNFORMATTED  MODE.
+        875                     C
+        876                     C    [IN]
+        877                     C    INT*4   IRW   :FLAR FOR ACTION(1:READ,2:WRITE)
+        878                     C    INT*4   IMODE :TYPE OF INPUT OR OUTPUT MODE (ASCII OR UNFMT)
+        879                     C    INT*4   IUNIT :FILE BUFFER NUMBER
+        880                     C    INT*4   MAX   :SIZE OF ARRAY
+        881                     C    INT*4   NUM   :NUMBER OF ARRAY TO READ-IN OR WRITTEN
+        882                     C
+        883                     C    [INOUT]
+        884                     C    REAL*8  VAR1   :ARRAY(1) TO READ-IN OR WRITTEN
+        885                     C    REAL*8  VAR2   :ARRAY(2) TO READ-IN OR WRITTEN
+        886                     C
+        887                     C    [OUT]
+        888                     C    INT*4   IERROR:ERROR CODE
+        889                     C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        890                           INCLUDE 'gf.h'
+        891                     !
+        892                           INTEGER     IRW
+        893                           INTEGER     IMODE
+        894                           INTEGER     IUNIT
+        895                           INTEGER     MAX2
+        896                           INTEGER     NUM2
+        897                           REAL*8      VAR1(MAX)
+        898                           REAL*8      VAR2(MAX)
+        899                           INTEGER     IERROR
+        900                     !
+        901                           INTEGER I
+        902                     !
+        903                           IERROR=0
+        904                     !
+        905     1                     IF(IRW.NE.1.AND.IRW.NE.2)THEN
+        906     1                       IERROR=1
+        907     1                       RETURN
+        908     1                     ENDIF
+        909                     !
+        910     1                     IF(IRW.NE.0.AND.NUM.GT.MAX)THEN
+        911     1                       IERROR=1
+        912     1                       RETURN
+        913     1                     ENDIF
+        914                     !
+        915     1                     IF(IMODE.NE.ASCII.AND.IMODE.NE.UNFMT)THEN
+        916     1                       IERROR=1
+        917     1                       RETURN
+        918     1                     ENDIF
+        919                     !
+        920     1                     IF(IRW.EQ.1)THEN
+        921     1                       IF(IMODE.EQ.ASCII)
+        922     1                    &  READ(IUNIT,FMTD)  (VAR1(I),VAR2(I),I=1,NUM)
+        923     1                       IF(IMODE.EQ.UNFMT)
+        924     1                    &  READ(IUNIT     )  (VAR1(I),VAR2(I),I=1,NUM)
+        925     1                     ENDIF
+        926     1                     IF(IRW.EQ.2)THEN
+        927     1                       IF(IMODE.EQ.ASCII)
+        928     1                    &  WRITE(IUNIT,FMTD)  (VAR1(I),VAR2(I),I=1,NUM)
+        929     1                       IF(IMODE.EQ.UNFMT)
+        930     1                    &  WRITE(IUNIT     )  (VAR1(I),VAR2(I),I=1,NUM)
+        931     1                     ENDIF
+        932                     !
+        933                           RETURN
+        934                           END
+
+ Diagnostic messages: program name(RW_D2)
+   jwd2006i-i  "gfutil.f", line 895: 'MAX2' is declared but never referenced.
+   jwd2006i-i  "gfutil.f", line 896: 'NUM2' is declared but never referenced.
+
+ Procedure information
+   Lines      : 134
+   Statements : 83
+   Stack(byte): 992
+   Prefetch num: 0
+
+ External subroutine subprogram "RW_D3"
+  (line-no.)(nest)(optimize)
+        935                     C
+        936                     C
+        937                     C
+        938                           SUBROUTINE RW_D3(IRW,IMODE,IUNIT,MAX,NUM,VAR1,VAR2,VAR3,IERROR)
+        939                     C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        940                     C    BASIC INPUT-OUTPUT  UTILITY FOR  GENERAL FILE VERSION 2.1
+        941                     C
+        942                     C    THIS PROGRAM READ OR WRITE THREE REAL*8 ARRAYS BY FORTARN
+        943                     C    UNFORMATTED  MODE.
+        944                     C
+        945                     C    [IN]
+        946                     C    INT*4   IRW   :FLAR FOR ACTION(1:READ,2:WRITE)
+        947                     C    INT*4   IMODE :TYPE OF INPUT OR OUTPUT MODE (ASCII OR UNFMT)
+        948                     C    INT*4   IUNIT :FILE BUFFER NUMBER
+        949                     C    INT*4   MAX   :SIZE OF ARRAY
+        950                     C    INT*4   NUM   :NUMBER OF ARRAY TO READ-IN OR WRITTEN
+        951                     C
+        952                     C    [INOUT]
+        953                     C    REAL*8  VAR1   :ARRAY(1) TO READ-IN OR WRITTEN
+        954                     C    REAL*8  VAR2   :ARRAY(2) TO READ-IN OR WRITTEN
+        955                     C    REAL*8  VAR3   :ARRAY(3) TO READ-IN OR WRITTEN
+        956                     C
+        957                     C    [OUT]
+        958                     C    INT*4   IERROR:ERROR CODE
+        959                     C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+        960                           INCLUDE 'gf.h'
+        961                     !
+        962                           INTEGER     IRW
+        963                           INTEGER     IMODE
+        964                           INTEGER     IUNIT
+        965                           INTEGER     MAX2
+        966                           INTEGER     NUM2
+        967                           REAL*8      VAR1(MAX)
+        968                           REAL*8      VAR2(MAX)
+        969                           REAL*8      VAR3(MAX)
+        970                           INTEGER     IERROR
+        971                     !
+        972                           INTEGER I
+        973                     !
+        974                           IERROR=0
+        975                     !
+        976     1                     IF(IRW.NE.1.AND.IRW.NE.2)THEN
+        977     1                       IERROR=1
+        978     1                       RETURN
+        979     1                     ENDIF
+        980                     !
+        981     1                     IF(NUM.GT.MAX)THEN
+        982     1                       IERROR=1
+        983     1                       RETURN
+        984     1                     ENDIF
+        985                     !
+        986     1                     IF(IMODE.NE.ASCII.AND.IMODE.NE.UNFMT)THEN
+        987     1                       IERROR=1
+        988     1                       RETURN
+        989     1                     ENDIF
+        990                     !
+        991     1                     IF(IRW.EQ.1)THEN
+        992     1                       IF(IMODE.EQ.ASCII)
+        993     1                    &  READ(IUNIT,FMTD) (VAR1(I),VAR2(I),VAR3(I),I=1,NUM)
+        994     1                       IF(IMODE.EQ.UNFMT)
+        995     1                    &  READ(IUNIT     ) (VAR1(I),VAR2(I),VAR3(I),I=1,NUM)
+        996     1                     ENDIF
+        997     1                     IF(IRW.EQ.2)THEN
+        998     1                       IF(IMODE.EQ.ASCII)
+        999     1                    &  WRITE(IUNIT,FMTD) (VAR1(I),VAR2(I),VAR3(I),I=1,NUM)
+       1000     1                       IF(IMODE.EQ.UNFMT)
+       1001     1                    &  WRITE(IUNIT     ) (VAR1(I),VAR2(I),VAR3(I),I=1,NUM)
+       1002     1                     ENDIF
+       1003                     !
+       1004                           RETURN
+       1005                           END
+
+ Diagnostic messages: program name(RW_D3)
+   jwd2006i-i  "gfutil.f", line 965: 'MAX2' is declared but never referenced.
+   jwd2006i-i  "gfutil.f", line 966: 'NUM2' is declared but never referenced.
+
+ Procedure information
+   Lines      : 136
+   Statements : 84
+   Stack(byte): 1120
+   Prefetch num: 0
+
+ External subroutine subprogram "RW_DN"
+  (line-no.)(nest)(optimize)
+       1006                     C
+       1007                     C
+       1008                     C
+       1009                           SUBROUTINE RW_DN(IRW,IMODE,IUNIT,MAX,MAX2,NUM,NUM2,VAR,IERROR)
+       1010                     C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+       1011                     C    BASIC INPUT-OUTPUT  UTILITY FOR  GENERAL FILE VERSION 2.1
+       1012                     C
+       1013                     C    THIS PROGRAM READ OR WRITE REAL*8 2D-ARRAY BY FORTARN
+       1014                     C    UNFORMATTED  MODE.
+       1015                     C
+       1016                     C    [IN]
+       1017                     C    INT*4   IRW   :FLAR FOR ACTION(1:READ,2:WRITE)
+       1018                     C    INT*4   IMODE :TYPE OF INPUT OR OUTPUT MODE (ASCII OR UNFMT)
+       1019                     C    INT*4   IUNIT :FILE BUFFER NUMBER
+       1020                     C    INT*4   MAX   :SIZE OF ARRAY
+       1021                     C    INT*4   MAX2  :SIZE OF ARRAY
+       1022                     C    INT*4   NUM   :NUMBER OF ARRAY TO READ-IN OR WRITTEN
+       1023                     C    INT*4   NUM2  :NUMBER OF ARRAY TO READ-IN OR WRITTEN
+       1024                     C
+       1025                     C    [INOUT]
+       1026                     C    REAL*8  VAR   :ARRAY TO READ-IN OR WRITTEN
+       1027                     C
+       1028                     C    [OUT]
+       1029                     C    INT*4   IERROR:ERROR CODE
+       1030                     C+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+       1031                           INCLUDE 'gf.h'
+       1032                     !
+       1033                           INTEGER     IRW
+       1034                           INTEGER     IMODE
+       1035                           INTEGER     IUNIT
+       1036                           INTEGER     MAX,MAX2
+       1037                           INTEGER     NUM,NUM2
+       1038                           REAL*8      VAR(MAX2,MAX),BUF
+       1039                           INTEGER     IERROR
+       1040                     !
+       1041                           INTEGER I,J
+       1042                     !
+       1043                           IERROR=0
+       1044                     !
+       1045     1                     IF(IRW.NE.0.AND.IRW.NE.1.AND.IRW.NE.2)THEN
+       1046     1                       IERROR=1
+       1047     1                       RETURN
+       1048     1                     ENDIF
+       1049                     !
+       1050     1                     IF(IRW.NE.0.AND.NUM.GT.MAX)THEN
+       1051     1                       IERROR=1
+       1052     1                       RETURN
+       1053     1                     ENDIF
+       1054                     !
+       1055     1                     IF(IRW.NE.0.AND.NUM2.GT.MAX2)THEN
+       1056     1                       IERROR=1
+       1057     1                       RETURN
+       1058     1                     ENDIF
+       1059                     !
+       1060     1                     IF(IMODE.NE.ASCII.AND.IMODE.NE.UNFMT)THEN
+       1061     1                       IERROR=1
+       1062     1                       RETURN
+       1063     1                     ENDIF
+       1064                     !
+       1065     1                     IF(IRW.EQ.0)THEN
+       1066     1        s               IF(IMODE.EQ.ASCII)
+       1067     1                    &   READ(IUNIT,FMTD) ((BUF,J=1,NUM2),I=1,NUM)
+       1068     1        s               IF(IMODE.EQ.UNFMT)
+       1069     1                    &   READ(IUNIT     ) ((BUF,J=1,NUM2),I=1,NUM)
+       1070     1                     ENDIF
+       1071     1                     IF(IRW.EQ.1)THEN
+       1072     1                        IF(IMODE.EQ.ASCII)
+       1073     1                    &   READ(IUNIT,FMTD) ((VAR(J,I),J=1,NUM2),I=1,NUM)
+       1074     1                        IF(IMODE.EQ.UNFMT)
+       1075     1                    &   READ(IUNIT     ) ((VAR(J,I),J=1,NUM2),I=1,NUM)
+       1076     1                     ENDIF
+       1077     1                     IF(IRW.EQ.2)THEN
+       1078     1                        IF(IMODE.EQ.ASCII)
+       1079     1                    &   WRITE(IUNIT,FMTD) ((VAR(J,I),J=1,NUM2),I=1,NUM)
+       1080     1                        IF(IMODE.EQ.UNFMT)
+       1081     1                    &   WRITE(IUNIT     ) ((VAR(J,I),J=1,NUM2),I=1,NUM)
+       1082     1                     ENDIF
+       1083                     !
+       1084                           RETURN
+       1085                           END
+
+ Diagnostic messages: program name(RW_DN)
+   jwd5121p-i  "gfutil.f", line 1066: DO loop is not parallelized: an input/output statement was found in the loop.
+   jwd6121s-i  "gfutil.f", line 1066: SIMD conversion cannot be applied to DO loop: an input/output statement was found in the loop.
+   jwd8664o-i  "gfutil.f", line 1066: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+   jwd5121p-i  "gfutil.f", line 1068: DO loop is not parallelized: an input/output statement was found in the loop.
+   jwd6121s-i  "gfutil.f", line 1068: SIMD conversion cannot be applied to DO loop: an input/output statement was found in the loop.
+   jwd8664o-i  "gfutil.f", line 1068: This loop cannot be software pipelined because the loop contains an instruction, such as function call, which is not supported by software pipelining.
+
+ Procedure information
+   Lines      : 145
+   Statements : 90
+   Stack(byte): 1200
+   Prefetch num: 0
+
+ External subroutine subprogram "PRTSTD"
+  (line-no.)(nest)(optimize)
+       1086                           SUBROUTINE PRTSTD(IOUT,MESSAGE)
+       1087                     
+       1088                           INTEGER IOUT
+       1089                           CHARACTER*90  MESSAGE
+       1090                     
+       1091                           WRITE(IOUT,'(A90)')MESSAGE
+       1092                           RETURN
+       1093                           END
+
+ Procedure information
+   Lines      : 8
+   Statements : 6
+   Stack(byte): 464
+   Prefetch num: 0
+
+ External subroutine subprogram "CHKALC"
+  (line-no.)(nest)(optimize)
+       1094                           SUBROUTINE CHKALC(NDATA,LERR,IUT6,IERR)
+       1095                           IMPLICIT NONE
+       1096                           INTEGER*4 NDATA,LERR(NDATA),IUT6,IERR
+       1097                           INTEGER*4 IDATA
+       1098                     C
+       1099                           IERR=0
+       1100                     C
+       1101                           WRITE(IUT6,*) ' CHKALC: CHECKING ALLOCATION ERRORS '
+       1102                           WRITE(IUT6,*) ' LERR '
+       1103                           WRITE(IUT6,'(5I8)') (LERR(IDATA),IDATA=1,NDATA)
+       1104                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      LERR
+                              <<< Loop-information  End >>>
+       1105     1                     DO 1000 IDATA=1,NDATA
+       1106     1                         IF(LERR(IDATA).EQ.0) GOTO 1000
+       1107     1                         WRITE(IUT6,*)  'ALLOCATION ERR OCCUERED :',IDATA
+       1108     1                         IERR=1
+       1109     1                         RETURN
+       1110     1                1000 CONTINUE
+       1111                     C
+       1112     1                     IF(NDATA.EQ.1) THEN
+       1113     1                         WRITE(IUT6,*)
+       1114     1                    *    ' CHKALC: ALLOCATION WAS DONE SUCCESSFULLY'
+       1115     1                     ELSE
+       1116     1                         WRITE(IUT6,*)
+       1117     1                    *    ' CHKALC: ALLOCATIONS WERE DONE SUCCESSFULLY'
+       1118     1                     ENDIF
+       1119                     C
+       1120                           RETURN
+       1121                           END
+
+ Diagnostic messages: program name(CHKALC)
+   jwd5131p-i  "gfutil.f", line 1105: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "gfutil.f", line 1105: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8671o-i  "gfutil.f", line 1105: This loop cannot be software pipelined because the shape of the loop is not covered by software pipelining.
+
+ Procedure information
+   Lines      : 28
+   Statements : 21
+   Stack(byte): 992
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 19
+   Total lines      : 2226
+   Total statements : 1401
+   Total stack(byte): 18016
+   Total prefetch num: 0
+

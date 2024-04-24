@@ -1,0 +1,277 @@
+
+ Fujitsu Fortran Version 4.5.0  Thu May  6 16:53:47 2021
+
+ Compilation information
+   Current directory : /vol0004/hp120295/u00324/FFBs/FFB.63.02.02/lib/src/fort
+   Source file       : curvep.f
+
+ Option information
+   Command line options : -Kident_mpi -f2004 -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Kvisimpact,ocl,optmsg=2,openmp -Dcputime -DUSE_TIMER -DUSE_BARRIER -Nlst=t -Cpp -Nfjomplib -c -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Knointentopt
+   Cpp options          : -I/vol0004/hp120295/u00324/FFB/include -I/include/mpi/fujitsu/ -Dcputime -DUSE_TIMER -DUSE_BARRIER -I/opt/FJSVxtclanga/.common/MELI024/include/mpi/fujitsu -I/opt/FJSVxtclanga/.common/MELI024/lib64 -Dunix -Dlinux -D__FUJITSU -D__FRT_major__=4 -D__FRT_minor__=5 -D__FRT_patchlevel__=0 -D__FRT_version__="4.5.0" -D__aarch64__ -D__unix -D_OPENMP=201511 -D__frt_version=800 -D__ARM_ARCH=8 -D__ARM_FEATURE_SVE -D__ELF__ -D__unix__ -D__linux__ -D__linux -Asystem(unix) -otmp
+   Effective options    : -fi -g0 -AE -Fixed -O3 -X08
+                          -x0 -xaccept=nomodule_allocatable
+                          -KA64FX -KARMV8_3_A -KSVE -Kalign_commons
+                          -Kalign_loops -Karray_declaration_opt
+                          -Kassume=noshortloop -Kassume=nomemory_bandwidth
+                          -Kassume=notime_saving_compilation -Kauto
+                          -Kautoobjstack -Knocalleralloc -Kcmodel=small
+                          -Keval -Keval_noconcurrent -Knoextract_stride_store
+                          -Knofenv_access -Kfp_contract -Kfp_relaxed
+                          -Kfsimple -Kfz -Khpctag -Kilfunc=procedure
+                          -Knointentopt -Klargepage -Kloop_blocking
+                          -Kloop_fission -Kloop_nofission_stripmining
+                          -Kloop_fission_threshold=50 -Kloop_fusion
+                          -Kloop_interchange -Kloop_part_parallel
+                          -Kloop_part_simd -Kloop_perfect_nest
+                          -Kloop_noversioning -Knolto -Kmfunc=1 -Kocl
+                          -Komitfp -Knooptlib_string -Koptmsg=2
+                          -Knopc_relative_literal_loads -Kplt -Knopreex
+                          -Kprefetch_noconditional -Kprefetch_noindirect
+                          -Kprefetch_sequential=auto -Kprefetch_nostride
+                          -Kprefetch_cache_level=all -Kprefetch_noinfer
+                          -Kprefetch_strong -Kprefetch_strong_L2 -Knopreload
+                          -Ksch_post_ra -Ksch_pre_ra -Ksibling_calls
+                          -Ksimd=auto -Ksimd_packed_promotion
+                          -Ksimd_reduction_product -Ksimd_reg_size=512
+                          -Ksimd_nouncounted_loop
+                          -Ksimd_use_multiple_structures -Knostriping
+                          -Knosubscript_opt -Kswp -Kswp_freg_rate=100
+                          -Kswp_ireg_rate=100 -Kswp_preg_rate=100
+                          -Kswp_policy=auto -Ktemparraystack -Kunroll
+                          -Knounroll_and_jam -Knozfill
+                          -Kopenmp -Kopenmp_noassume_norecurrence
+                          -Kopenmp_nocollapse_except_innermost
+                          -Kopenmp_noordered_reduction -Knoopenmp_simd
+                          -Kthreadsafe -Kparallel -Kparallel_nofp_precision
+                          -Knoarray_private -Knodynamic_iteration -Kreduction
+                          -Kregion_extension
+                          -Nallextput -Nalloc_assign
+                          -Ncancel_overtime_compilation -Nnocheck_global
+                          -Nnocoarray -Nnocompdisp -Nnocopyarg -Nnocoverage
+                          -Nfjprof -Nfreealloc -Nf90move -Nnohook_func
+                          -Nnohook_time -Nfjomplib -Nline -Nlst -Nlst=p
+                          -Nlst=t -Nnomallocfree -Nnoobsfun -Nnoprivatealloc
+                          -Nquickdbg=noargchk -Nquickdbg=nosubchk
+                          -Nquickdbg=noundef -NRnotrap -Nnorecursive
+                          -Nnoreordered_variable_stack -Nrt_notune -Nnosave
+                          -Nsetvalue=noheap -Nsetvalue=nostack
+                          -Nsetvalue=noscalar -Nsetvalue=noarray
+                          -Nsetvalue=nostruct -Nuse_rodata
+
+ External subroutine subprogram "CURVEP"
+  (line-no.)(nest)(optimize)
+          1                     C======================================================================C
+          2                     C                                                                      C
+          3                     C SOFTWARE NAME : FRONTFLOW_BLUE.1.0                                   C
+          4                     C                                                                      C
+          5                     C  SUB ROUTINE    CURVEP                                               C
+          6                     C                                                                      C
+          7                     C                                       WRITTEN BY C.KATO              C
+          8                     C                                                                      C
+          9                     C                                                                      C
+         10                     C Contact address: The University of Tokyo, FSIS project               C
+         11                     C                                                                      C
+         12                     C======================================================================C
+         13                           SUBROUTINE CURVEP(IMODE,NPOINT,XIN,XOUT,NTIME,IUT0,IERR)
+         14                           IMPLICIT REAL*4(A-H,O-Z)
+         15                           DIMENSION XIN(NTIME),XOUT(NTIME)
+         16                     C
+         17                           PARAMETER ( M = 11 , MPOINT = 12 )
+         18                           DIMENSION LPOINT(M),ISTAND(M,2),IWEIT(0:MPOINT,M,2)
+         19                     C
+         20                           DATA LPOINT /  5, 7,  9, 11, 13,  15, 17,  19,  21,  23,  25 /
+         21                           DATA ISTAND / 35,21,231,429,143,1105,323,2261,3059, 805,5175,
+         22                          &              10,28, 60,110,182, 280,408, 570, 770,1012,1300 /
+         23                     C
+         24                           DATA ((IWEIT(IPOINT,I,1), IPOINT = 0, MPOINT), I = 1, M)
+         25                          &/  17,  12,  -3,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         26                          &    7,   6,   3,  -2,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         27                          &   59,  54,  39,  14, -21,   0,   0,   0,   0,   0,   0,   0,   0,
+         28                          &   89,  84,  69,  44,   9, -36,   0,   0,   0,   0,   0,   0,   0,
+         29                          &   25,  24,  21,  16,   9,   0, -11,   0,   0,   0,   0,   0,   0,
+         30                          &  167, 162, 147, 122,  87,  42, -13, -78,   0,   0,   0,   0,   0,
+         31                          &   43,  42,  39,  34,  27,  18,   7,  -6, -21,   0,   0,   0,   0,
+         32                          &  269, 264, 249, 224, 189, 144,  89,  24, -51,-136,   0,   0,   0,
+         33                          &  329, 324, 309, 284, 249, 204, 149,  84,   9, -76,-171,   0,   0,
+         34                          &   79,  78,  75,  70,  63,  54,  43,  30,  15,  -2, -21, -42,   0,
+         35                          &  467, 462, 447, 422, 387, 342, 287, 222, 147,  62, -33,-138,-253/
+         36                     C
+         37                           DATA ((IWEIT(IPOINT,I,2), IPOINT = 0, MPOINT), I = 1, M)
+         38                          &/   0,   1,   2,   0,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         39                          &    0,   1,   2,   3,   0,   0,   0,   0,   0,   0,   0,   0,   0,
+         40                          &    0,   1,   2,   3,   4,   0,   0,   0,   0,   0,   0,   0,   0,
+         41                          &    0,   1,   2,   3,   4,   5,   0,   0,   0,   0,   0,   0,   0,
+         42                          &    0,   1,   2,   3,   4,   5,   6,   0,   0,   0,   0,   0,   0,
+         43                          &    0,   1,   2,   3,   4,   5,   6,   7,   0,   0,   0,   0,   0,
+         44                          &    0,   1,   2,   3,   4,   5,   6,   7,   8,   0,   0,   0,   0,
+         45                          &    0,   1,   2,   3,   4,   5,   6,   7,   8,   9,   0,   0,   0,
+         46                          &    0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,   0,   0,
+         47                          &    0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,   0,
+         48                          &    0,   1,   2,   3,   4,   5,   6,   7,   8,   9,  10,  11,  12/
+         49                     C
+         50                           CHARACTER*60 ERMSGB
+         51                          & /' ## SUBROUTINE CURVEP: FATAL      ERROR OCCURENCE; RETURNED' /
+         52                           CHARACTER*60 EREXP1
+         53                          & /' SPECIFIED OPERATION MODE IS NOT SUPPORTED                 ' /
+         54                     C
+         55                     C
+         56                     C      SMOOTH/DIFFERENTIATE GIVEN DATA BY POLYNOMIAL CURVE FITTING
+         57                     C
+         58                     C
+         59                     C      NOTES; OUTPUT DATA WILL BE UNDEFINED FOR NPOINT/2 POINTS
+         60                     C            FROM BOTH THE EDGES.
+         61                     C
+         62                     C      NOTES; PASSED ARGUMENT 'NPOINT' WILL BE MODIFIED IF IMPROPERLY
+         63                     C            SET.
+         64                     C
+         65                     C     ARGUMENT LISTINGS
+         66                     C       (1) INPUT
+         67                     C          IMODE       ; SPECIFIES TYPE OF OPERATIONS
+         68                     C                   1 --- SMOOTHING
+         69                     C                   2 --- DIFFERENTIATION
+         70                     C          NPOINT      ; NUMBER OF POINTS USED FOR CURVE FITTING
+         71                     C                       ( MUST BE ODD NUMBER IN THE RANGE 5 TO 25 )
+         72                     C          XIN  (ITIME); INPUT DATA
+         73                     C          NTIME       ; NUMBER OF TOTAL TIME STEPS
+         74                     C          IUT0        ; FILE NUMBER TO WRITE  ERROR MESSAGE
+         75                     C
+         76                     C       (2) OUTPUT
+         77                     C          XOUT (ITIME); OUTPUT DATA
+         78                     C          IERR        ; RETURN CODE WHOSE VALUE WILL BE EITHER
+         79                     C            0       --- INDICATING SUCCESSFUL TERMINATION
+         80                     C        OR  1       --- INDICATING OCCURENCE OF SOME ERROR CONDITIONS
+         81                     C
+         82                     C
+         83                           IERR = 0
+         84                     C
+         85                     C CHECK PASSED PARAMETERS
+         86                     C
+         87     1                     IF(IMODE.NE.1 .AND. IMODE.NE.2) THEN
+         88     1                         WRITE(IUT0,*) ERMSGB
+         89     1                         WRITE(IUT0,*) EREXP1
+         90     1                         IERR = 1
+         91     1                         RETURN
+         92     1                     ENDIF
+         93                     C
+         94                     C DETERMINE EXACT NUMBER OF POINTS USED FOR CURVE FITTING
+         95                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    FULL UNROLLING
+                              <<< Loop-information  End >>>
+         96     1       f             DO 10 I = 1 , M
+         97     2       f                 IF(LPOINT(I).GE.NPOINT) THEN
+         98     2       f                     NPOINT = LPOINT(I)
+         99     2       f                     N      = I
+        100     2       f                     GO TO 20
+        101     2       f                 ENDIF
+        102     1       f          10 CONTINUE
+        103                           NPOINT = LPOINT(M)
+        104                           N      = M
+        105                        20 CONTINUE
+        106                     C
+        107                     C DO POLYNOMIAL CURVE FITTING
+        108                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1334
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.33, ITR: 384, MVE: 5, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      XIN, XOUT
+                              <<< Loop-information  End >>>
+        109     1  pp   2v            DO 100 ITIME = NPOINT/2+1 , NTIME-NPOINT/2
+        110     1   p   2v                XOUT(ITIME) = IWEIT(0,N,IMODE)*XIN(ITIME)
+        111     1   p   2v        100 CONTINUE
+        112                     C
+                              <<< Loop-information Start >>>
+                              <<<  [OPTIMIZATION]
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      XIN, XOUT
+                              <<< Loop-information  End >>>
+        113     1                     DO 220 IPOINT = 1 , NPOINT/2
+        114     2                         IF(IMODE.EQ.1) THEN
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 667
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.80, ITR: 352, MVE: 5, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      XIN, XOUT
+                              <<< Loop-information  End >>>
+        115     3  pp   2v                DO 200 ITIME = NPOINT/2+1 , NTIME-NPOINT/2
+        116     3   p   2v                    XOUT(ITIME) = XOUT(ITIME)
+        117     3                    &      +IWEIT(IPOINT,N,IMODE)*(XIN(ITIME+IPOINT)+XIN(ITIME-IPOINT))
+        118     3   p   2v        200     CONTINUE
+        119     2                         ELSE
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 667
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.80, ITR: 352, MVE: 5, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      XIN, XOUT
+                              <<< Loop-information  End >>>
+        120     3  pp   2v                DO 210 ITIME = NPOINT/2+1 , NTIME-NPOINT/2
+        121     3   p   2v                    XOUT(ITIME) = XOUT(ITIME)
+        122     3                    &      +IWEIT(IPOINT,N,IMODE)*(XIN(ITIME+IPOINT)-XIN(ITIME-IPOINT))
+        123     3   p   2v        210     CONTINUE
+        124     2                         ENDIF
+        125     1                 220 CONTINUE
+        126                     C
+                              <<< Loop-information Start >>>
+                              <<<  [PARALLELIZATION]
+                              <<<    Standard iteration count: 1334
+                              <<<  [OPTIMIZATION]
+                              <<<    SIMD(VL: 16)
+                              <<<    SOFTWARE PIPELINING(IPC: 3.00, ITR: 512, MVE: 9, POL: S)
+                              <<<    PREFETCH(HARD) Expected by compiler :
+                              <<<      XOUT
+                              <<< Loop-information  End >>>
+        127     1  pp   2v            DO 300 ITIME = NPOINT/2+1 , NTIME-NPOINT/2
+        128     1   p   2v                XOUT(ITIME) = XOUT(ITIME)/FLOAT(ISTAND(N,IMODE))
+        129     1   p   2v        300 CONTINUE
+        130                     C
+        131                           RETURN
+        132                           END
+
+ Diagnostic messages: program name(CURVEP)
+   jwd8220o-i  "curvep.f", line 13: Optimizations is performed in this program unit with possibility of side effects. See informational messages below to determine which such optimizations have been performed.
+   jwd5131p-i  "curvep.f", line 96: DO loop is not parallelized: multiple exits were found in the loop.
+   jwd6131s-i  "curvep.f", line 96: SIMD conversion cannot be applied to DO loop: multiple exits are found in the loop.
+   jwd8203o-i  "curvep.f", line 96: Loop unrolled fully.
+   jwd5001p-i  "curvep.f", line 109: DO loop with DO variable 'ITIME' is parallelized.
+   jwd6001s-i  "curvep.f", line 109: SIMD conversion is applied to DO loop with DO variable 'ITIME'.
+   jwd8204o-i  "curvep.f", line 109: This loop is software pipelined.
+   jwd8205o-i  "curvep.f", line 109: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 384.
+   jwd5208p-i  "curvep.f", line 113: DO loop is not parallelized: the assign-refer order of 'XOUT' in a parallel execution may differ from the assign-refer order in the serial execution.
+   jwd5001p-i  "curvep.f", line 115: DO loop with DO variable 'ITIME' is parallelized.
+   jwd6001s-i  "curvep.f", line 115: SIMD conversion is applied to DO loop with DO variable 'ITIME'.
+   jwd8204o-i  "curvep.f", line 115: This loop is software pipelined.
+   jwd8205o-i  "curvep.f", line 115: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 352.
+   jwd5001p-i  "curvep.f", line 120: DO loop with DO variable 'ITIME' is parallelized.
+   jwd6001s-i  "curvep.f", line 120: SIMD conversion is applied to DO loop with DO variable 'ITIME'.
+   jwd8204o-i  "curvep.f", line 120: This loop is software pipelined.
+   jwd8205o-i  "curvep.f", line 120: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 352.
+   jwd5001p-i  "curvep.f", line 127: DO loop with DO variable 'ITIME' is parallelized.
+   jwd6001s-i  "curvep.f", line 127: SIMD conversion is applied to DO loop with DO variable 'ITIME'.
+   jwd8204o-i  "curvep.f", line 127: This loop is software pipelined.
+   jwd8205o-i  "curvep.f", line 127: The software-pipelined loop is chosen at run time when the iteration count is greater than or equal to 512.
+   jwd8206o-i  "curvep.f", line 128: Division is changed to multiplication by reciprocal.
+
+ Procedure information
+   Lines      : 132
+   Statements : 47
+   Stack(byte): 2112
+   Prefetch num: 0
+
+ Total information
+   Procedures       : 1
+   Total lines      : 132
+   Total statements : 47
+   Total stack(byte): 2112
+   Total prefetch num: 0
+
