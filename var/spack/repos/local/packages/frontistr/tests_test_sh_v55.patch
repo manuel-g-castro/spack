@@ -1,0 +1,58 @@
+--- spack-src/tests/test.sh.org	2023-12-14 10:29:25.000000000 +0900
++++ spack-src/tests/test.sh	2023-12-14 10:28:55.000000000 +0900
+@@ -31,12 +31,10 @@
+ }
+ 
+ run_hecmw_part1 () {
+-  rm -f hecmw_part1.log
++  rm -f hecmw_part1.log*
+   if [ $mpi_num_process -gt 1 ]; then
+-    $mpirun $mpirun_options -n 1 \
+-      $hecmw_part1 2>&1 \
+-      | tee hecmw_part1.log \
+-      | sed -e "s/^/    hecmw_part1 > /"
++    $mpirun $mpirun_options -n 1 -of-proc hecmw_part1.log $hecmw_part1
++    cat hecmw_part1.log.*.0 > hecmw_part1.log
+     if ! ( [ -e hecmw_part1.log ] && grep 'Domain decomposition done' hecmw_part1.log ); then
+       echo "    $(dirname $mesh_path): partitioning failure" >&2
+       : $((errors++))
+@@ -48,17 +46,13 @@
+ 
+ run_fistr1 () {
+   str_restart=$1
+-  rm -f fistr1.log
++  rm -f fistr1.log*
+   if [ $mpi_num_process -gt 1 ] || [ "$always_mpirun" = "true" ]; then
+-    mpirun $mpirun_options -n $mpi_num_process \
+-      $fistr1 -t $omp_num_threads 2>&1 \
+-      | tee fistr1.log \
+-      | sed -e "s/^/    fistr1 > /"
++    $mpirun $mpirun_options -n $mpi_num_process -of-proc fistr1.log $fistr1 -t $omp_num_threads
+   else
+-    $fistr1 -t $omp_num_threads 2>&1 \
+-      | tee fistr1.log \
+-      | sed -e "s/^/    fistr1 > /"
++    $mpirun $mpirun_options -n $mpi_num_process -of-proc fistr1.log $fistr1 -t $omp_num_threads
+   fi
++  cat fistr1.log.*.0 > fistr1.log
+ 
+   if ! grep 'FrontISTR Completed !!' fistr1.log; then
+     if grep '### Fail to Converge' fistr1.log; then
+@@ -81,7 +75,7 @@
+     | awk -F. '{print $NF}' \
+     | sort \
+     | uniq \
+-    | xargs -I{} $rmerge -n $mpi_num_process -s {} -e {} ${res} >/dev/null 2>&1
++    | xargs -I{} $mpirun -n 1 $rmerge -n $mpi_num_process -s {} -e {} ${res} >/dev/null 2>&1
+ 
+   #
+   # Compare result
+@@ -110,7 +104,7 @@
+   -e VALUE    hecmw_part1 binary path  (Default: hecmw_part1)
+   -r VALUE    rmerge binary path       (Default: rmerge)
+   -m VALUE    mpirun command path      (Default: mpirun)
+-  -o VALUE    mpirun options           (Default: --oversubscribe --allow-run-as-root)
++  -o VALUE    mpirun options           (Default: )
+   -a          always use mpirun
+ EOM
+ }

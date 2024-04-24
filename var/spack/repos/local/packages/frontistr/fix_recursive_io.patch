@@ -1,0 +1,15 @@
+--- spack-src/fistr1/src/lib/contact/fstr_contact_def.F90.org	2023-12-15 00:30:14.000000000 +0900
++++ spack-src/fistr1/src/lib/contact/fstr_contact_def.F90	2023-12-15 00:35:17.000000000 +0900
+@@ -429,10 +429,12 @@
+             call cal_node_normal( id, iSS, contact%master, currpos, contact%states(i)%lpos, &
+               contact%states(i)%direction(:) )
+           contact_surf(contact%slave(i)) = elemID(contact%master(id)%eid)
++        !$omp critical
+           write(*,'(A,i10,A,i10,A,f7.3,A,2f7.3,A,3f7.3,A,i6)') "Node",nodeID(slave)," contact with element", &
+             elemID(contact%master(id)%eid),       &
+             " with distance ", contact%states(i)%distance," at ",contact%states(i)%lpos(:), &
+             " along direction ", contact%states(i)%direction," rank=",hecmw_comm_get_rank()
++        !$omp end critical
+           exit
+         enddo
+         deallocate(indexMaster)
