@@ -31,45 +31,32 @@ class ModylasNew(CMakePackage):
     """
 
     homepage = "https://www.modylas.org"
-    url      = "file://{0}/MODYLAS_1.1.0.tar".format(os.getcwd())
+    url      = "file://{0}/MODYLAS.zip".format(os.getcwd())
 
     # FIXME: Add a list of GitHub accounts to
     # notify when the package is updated.
     # maintainers = ['github_user1', 'github_user2']
 
     # FIXME: Add proper versions here.
-    version('1.1.0', sha256="d7c1f87d35bc74e32780b3e58a0866a9cbcda14f0a6196a3cf82c8062ad4bc9a")
+#    version('1.1.0b', "dd870cf45a66156cb87061ce9a340a0d1bc0a9c1ca204c03bdd444dc48003e87")
+    version('1.1.0b', "ca3131b9d7024544abade489c3f7e0a2f535af731c35d10a45d5a0129c7ba250")
 
-    variant("ff", default="charmm", description="Force field", values=("charmm", "gaff", "oplsaa"), multi=False)
-    
     # FIXME: Add dependencies if required.
     depends_on('cmake@3:', type="build")
     depends_on("mpi")
 
     parallel = False
 
-    root_cmakelists_dir = "source"
+    root_cmakelists_dir = "MODYLAS/MODYLAS-Develop_master-b89923f1b8a18d382031e5dc9a5abb3f1d683b14/source"
     
     def cmake_args(self):
 #        args = [
 #            '-DCMAKE_Fortran_COMPILER=mpifrt',
-#            '-DCMAKE_Fortran_FLAGS=-DCOMM_CUBE -DMPIPARA -DFJMPIDIR -DSYNC-COMM -DHALFDIRE -DONEPROC_AXIS -Kfast,simd=2,openmp,parallel,ocl,optmsg=2 -X9 -Qp,s,t',
+#            '-DCMAKE_Fortran_FLAGS=-DCOMM_CUBE -DMPIPARA -Kfast,simd=2,openmp,parallel,ocl,optmsg=2 -X9 -Qp,s,t',
 #        ]
-        if "ff=charmm" in self.spec:
-            args = [
-                '-DCMAKE_Fortran_COMPILER=mpifrt',
-                '-DCMAKE_Fortran_FLAGS=-Kfast,simd=2,openmp,parallel,ocl,optmsg=2 -X9 -Cpp',
-            ]
-        elif "ff=gaff" in self.spec:
-            args = [
-                '-DCMAKE_Fortran_COMPILER=mpifrt',
-                '-DCMAKE_Fortran_FLAGS=-Kfast,simd=2,openmp,parallel,ocl,optmsg=2 -X9 -Cpp -DOPLSAMBER -DGAFF',
-            ]
-        else:
-            args = [
-                '-DCMAKE_Fortran_COMPILER=mpifrt',
-                '-DCMAKE_Fortran_FLAGS=-Kfast,simd=2,openmp,parallel,ocl,optmsg=2 -X9 -Cpp -DOPLSAMBER',
-            ]
-
+        args = [
+            '-DCMAKE_Fortran_COMPILER=mpifrt',
+            '-DCMAKE_Fortran_FLAGS=-DCOMM_CUBE -DMPIPARA -DFJMPIDIR -DSYNC-COMM -DHALFDIRE -DONEPROC_AXIS -Kfast,simd=2,openmp,parallel,ocl,optmsg=2 -X9 -Qp,s,t',
+        ]
         return args
 
