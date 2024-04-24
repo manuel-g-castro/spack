@@ -34,7 +34,6 @@ class SalmonTddft(CMakePackage):
     homepage = "https://salmon-tddft.jp/"
     url      = "http://salmon-tddft.jp/download/SALMON-v.2.0.2.tar.gz"
 
-    version('2.2.0', sha256='b0b6eabad48f4547ae2a97f53771047ccb759b8c126ab0f1653b0e0f0d02a28b')
     version('2.1.0', sha256='18267818cdfa82ea762441e2d751abeff7b553c8ce92cabf5fb010248d2cfcbe')
     version('2.0.2', sha256='742007d3684a478199ba959ce135ad0020b70676a49f52a5e1dc25438123d50e')
     version('2.0.0', sha256='8086a32bd3986b63adfe4798e4c8077c7586d1dd023a57f1e1f7fb45ca0120a9')
@@ -55,14 +54,8 @@ class SalmonTddft(CMakePackage):
             filter_file(r'-SCALAPACK -SSL2BLAMP', '-SSL2BLAMP', config_file)
             filter_file(r'mpifrtpx', 'mpifrt', config_file)
             filter_file(r'mpifccpx', 'mpifcc', config_file)
-
-            if spec.satisfies('%fj@:4.10.0'):
-               filter_file(r'-Kocl -Nlst=t -Koptmsg=2 -Ncheck_std=03s', '-Kocl -Knoomitfp -Nlst=t -Koptmsg=2 -Ncheck_std=03s -SCALAPACK', config_file)
-            else:
-               filter_file(r'-Kocl -Nlst=t -Koptmsg=2 -Ncheck_std=03s', '-Kocl -Nlst=t -Koptmsg=2 -Ncheck_std=03s -SCALAPACK', config_file)
-
+            filter_file(r'-Kocl -Nlst=t -Koptmsg=2 -Ncheck_std=03s', '-Kocl -Nlst=t -Koptmsg=2 -Ncheck_std=03s -SCALAPACK', config_file)
             filter_file(r'-Kocl -Nlst=t -Koptmsg=2 -Xg -std=gnu99', '-Nclang -Kocl -Nlst=t -Koptmsg=2 -Xg -std=gnu99', config_file)
-
             test_cmakelist = join_path(self.stage.source_path, "testsuites", "CMakeLists.txt")
             filter_file(r'\${TEST_MPI_NPROC} \${CMAKE_BINARY_DIR}/\${TARGET_NAME}', '${TEST_MPI_NPROC} -stdin ./inputfile -of outputfile ${CMAKE_BINARY_DIR}/${TARGET_NAME}', test_cmakelist)
             create_test_cmake = join_path(self.stage.source_path, "cmakefiles", "create_test.cmake")
@@ -75,7 +68,6 @@ class SalmonTddft(CMakePackage):
             args = [
                 "-DCMAKE_TOOLCHAIN_FILE:STRING=fujitsu-a64fx-ea",
                 self.define("CMAKE_VERBOSE_MAKEFILE", False),
-                self.define("CMAKE_C_STANDARD_COMPUTED_DEFAULT","Fujitsu"),
                 self.define("USE_MPI", True),
                 self.define("USE_SCALAPACK", True)
             ]
