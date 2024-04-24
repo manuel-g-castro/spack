@@ -32,8 +32,9 @@ class Smash(MakefilePackage):
     can be performed on 100,000 CPU cores of K Computer with high parallel efficiency."""
 
     homepage = "http://smash-qc.sourceforge.net/"
-    url = "https://sourceforge.net/projects/smash-qc/files/smash-3.0.0.tgz"
+#    url = "https://sourceforge.net/projects/smash-qc/files/smash-3.0.0.tgz"
 #    url = "file://{0}/smash-2.2.0.tgz".format(os.getcwd())
+    url = "file://{0}/smash-3.0.0.tgz".format(os.getcwd())
 
     # FIXME: Add a list of GitHub accounts to
     # notify when the package is updated.
