@@ -15,9 +15,9 @@ class Openmx(MakefilePackage):
     """
 
     homepage = "http://www.openmx-square.org/index.html"
-    url = "https://t-ozaki.issp.u-tokyo.ac.jp/openmx3.8.tar.gz"
+    url = "https://t-ozaki.issp.u-tokyo.ac.jp/openmx3.9.tar.gz"
 
-    version("3.9", sha256="27bb56bd4d1582d33ad32108fb239b546bdd1bdffd6f5b739b4423da1ab93ae2")
+    version("3.9.9", sha256="27bb56bd4d1582d33ad32108fb239b546bdd1bdffd6f5b739b4423da1ab93ae2")
     version("3.8", sha256="36ee10d8b1587b25a2ca1d57f110111be65c4fb4dc820e6d93e1ed2b562634a1")
 
     resource(
