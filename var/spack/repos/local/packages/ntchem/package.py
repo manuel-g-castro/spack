@@ -12,6 +12,7 @@ class Ntchem(Package):
     homepage = "https://molsc.riken.jp/ntchem_e.html"
     has_code = False
 
+    version('24.04')
     version('13.0.0')
     version('12.2.0')
 
