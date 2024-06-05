@@ -6,17 +6,19 @@ class Kiertaa(Package):
 
     version('1.0.0b')
 
-    # ### FIXME
-    # ### for "ct_f-rmr32.py"
-    # extends("python")
-    # depends_on('python@3:')
-    #depends_on('py-mpi4py@3.1.4:', type=('build', 'run'))
-
+    ### FIXME
+    ### for "ct_f-rmr32.py"
+    extends("python")
+    depends_on('python@3:')
+    depends_on('py-mpi4py@3.1.4:', type=('build', 'run'))
+    
     def setup_run_environment(self, env):
-        env.prepend_path('PATH', self.prefix)
-        env.prepend_path("PYTHONUSERBASE", "/vol0004/apps/opt/KIERTAA/python")
+        env.prepend_path('PATH', "/vol0004/apps/opt/KIERTAA/bin")
+        env.prepend_path('PATH', "/vol0004/apps/opt/KIERTAA/python/bin")
+        # env.prepend_path('PATH', self.prefix)
+        # env.prepend_path("PYTHONUSERBASE", "/vol0004/apps/opt/KIERTAA/python")
+        env.prepend_path("LD_LIBRARY_PATH", "/vol0004/apps/opt/KIERTAA/python/lib")
         env.prepend_path("PYTHONPATH", "/vol0004/apps/opt/KIERTAA/python/lib/python3.10/site-packages")
 
     def install(self, spec, prefix):
         pass
-
