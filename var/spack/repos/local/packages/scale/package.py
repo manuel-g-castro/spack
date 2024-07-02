@@ -44,7 +44,7 @@ class Scale(MakefilePackage):
     def build(self, spec, prefix):
         scale_sys_str = ""
         if self.spec.satisfies("platform=linux %gcc"):
-            if self.spec.satisfies("target=arm") or self.spec.satisfies("target=neoverse_n1"):
+            if self.spec.satisfies("target=arm") or self.spec.satisfies("target=neoverse_v1"):
                 scale_sys_str = "LinuxARM-gnu-ompi"
             else:
                 scale_sys_str = "Linux64-gnu-ompi"
