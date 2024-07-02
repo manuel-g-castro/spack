@@ -4,6 +4,7 @@
 # SPDX-License-Identifier: (Apache-2.0 OR MIT)
 
 
+import glob
 import os
 
 from spack.package import *
@@ -50,7 +51,6 @@ class Vtk(CMakePackage):
 
     # VTK7 defaults to OpenGL2 rendering backend
     variant("opengl2", default=True, description="Enable OpenGL2 backend")
-    variant("osmesa", default=False, description="Enable OSMesa support")
     variant("python", default=False, description="Enable Python support", when="@8:")
     variant("qt", default=False, description="Build with support for Qt")
     variant("xdmf", default=False, description="Build XDMF file support")
@@ -74,7 +74,7 @@ class Vtk(CMakePackage):
     patch("xdmf2-hdf51.13.2.patch", when="@9:9.2.2 +xdmf")
 
     # We cannot build with both osmesa and qt in spack
-    conflicts("+osmesa", when="+qt")
+    conflicts("^osmesa", when="+qt")
 
     conflicts("%gcc@13", when="@9.2")
 
@@ -97,8 +97,9 @@ class Vtk(CMakePackage):
     # Broken downstream FindMPI
     patch("vtkm-findmpi-downstream.patch", when="@9.0.0")
 
-    # use internal FindHDF5
-    patch("internal_findHDF5.patch", when="@:8")
+    for plat in ["linux", "darwin", "freebsd"]:
+        # use internal FindHDF5
+        patch("internal_findHDF5.patch", when=f"@:8 platform={plat}")
 
     # Fix IOADIOS2 module to work with kits
     # https://gitlab.kitware.com/vtk/vtk/-/merge_requests/8653
@@ -117,13 +118,16 @@ class Vtk(CMakePackage):
     depends_on("gl@3.2:", when="+opengl2")
     depends_on("gl@1.2:", when="~opengl2")
 
-    with when("~osmesa"):
-        depends_on("glx", when="platform=linux")
-        depends_on("glx", when="platform=cray")
-        depends_on("libxt", when="platform=linux")
-        depends_on("libxt", when="platform=cray")
-
-    depends_on("osmesa", when="+osmesa")
+    depends_on("xz")
+    patch("vtk_find_liblzma.patch", when="@8.2")
+    patch("vtk_movie_link_ogg.patch", when="@8.2")
+    patch("vtk_use_sqlite_name_vtk_expects.patch", when="@8.2")
+    patch("vtk_proj_include_no_strict.patch", when="@9: platform=windows")
+    # a patch with the same name is also applied to paraview
+    # the two patches are the same but for the path to the files they patch
+    patch("vtk_alias_hdf5.patch", when="@9: platform=windows")
+    patch("vtk_findproj_config.patch", when="platform=windows")
+    depends_on("libxt", when="^[virtuals=gl] glx platform=linux")
 
     # VTK will need Qt5OpenGL, and qt needs '-opengl' for that
     depends_on("qt+opengl", when="+qt")
@@ -161,14 +165,14 @@ class Vtk(CMakePackage):
     depends_on("eigen", when="@8.2.0:")
     depends_on("double-conversion", when="@8.2.0:")
     depends_on("sqlite", when="@8.2.0:")
-    depends_on("pugixml", when="@8.2.0:")
+    depends_on("pugixml", when="@8.3.0:")
     depends_on("libogg")
     depends_on("libtheora")
     depends_on("utf8cpp", when="@9:")
     depends_on("gl2ps", when="@8.1:")
     depends_on("gl2ps@1.4.1:", when="@9:")
     depends_on("proj@4", when="@8.2.0")
-    depends_on("proj@4:7", when="@9:")
+    depends_on("proj@4:", when="@9:")
     depends_on("cgns@4.1.1:+mpi", when="@9.1: +mpi")
     depends_on("cgns@4.1.1:~mpi", when="@9.1: ~mpi")
     with when("@9.1:"):
@@ -202,6 +206,14 @@ class Vtk(CMakePackage):
         "https://gitlab.kitware.com/vtk/vtk/-/commit/5a1c96e12e9b4a660d326be3bed115a2ceadb573.diff",
         sha256="c446a90459b108082db5b28d9aeda99d030e636325e01929beba062cafb16b76",
         when="@9.1",
+    )
+
+    # vtk@9 does not compile with gcc 13 or 14
+    # https://gitlab.kitware.com/vtk/vtk/-/issues/18782
+    patch(
+        "https://gitlab.kitware.com/vtk/vtk/-/merge_requests/9996.diff",
+        sha256="dab51ffd0d62b00c089c1245e6b105f740106b53893305c87193d4ba03a948e0",
+        when="@9.1:9.2 %gcc@13:",
     )
 
     @when("@9.2:")
@@ -310,8 +322,6 @@ class Vtk(CMakePackage):
         # Enable/Disable wrappers for Python.
         if "+python" in spec:
             cmake_args.append("-DVTK_WRAP_PYTHON=ON")
-            if spec.satisfies("@:8"):
-                cmake_args.append("-DPYTHON_EXECUTABLE={0}".format(spec["python"].command.path))
             if "+mpi" in spec and spec.satisfies("@:8"):
                 cmake_args.append("-DVTK_USE_SYSTEM_MPI4PY:BOOL=ON")
             if spec.satisfies("@9.0.0: ^python@3:"):
@@ -408,7 +418,7 @@ class Vtk(CMakePackage):
 
         cmake_args.append("-DVTK_RENDERING_BACKEND:STRING=" + opengl_ver)
 
-        if "+osmesa" in spec:
+        if spec.satisfies("^[virtuals=gl] osmesa"):
             cmake_args.extend(
                 [
                     "-DVTK_USE_X:BOOL=OFF",
@@ -474,7 +484,18 @@ class Vtk(CMakePackage):
                     "-DCMAKE_CXX_FLAGS={0}".format(compile_flags),
                 ]
             )
-
-        cmake_args.append(self.define_from_variant("VTK_BUILD_EXAMPLES", "examples"))
+        if spec.satisfies("@:8"):
+            vtk_example_arg = "BUILD_EXAMPLES"
+        else:
+            vtk_example_arg = "VTK_BUILD_EXAMPLES"
+        cmake_args.append(self.define_from_variant(f"{vtk_example_arg}", "examples"))
 
         return cmake_args
+
+    @when("+examples")
+    def install(self, spec, prefix):
+        super().install(spec, prefix)
+        with working_dir(self.build_directory):
+            examples = glob.glob("bin\\*.exe")
+            for example in examples:
+                install(example, prefix.bin)

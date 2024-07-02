@@ -11,6 +11,8 @@ from spack.package import *
 _versions = [
     # LAPACK++,     BLAS++
     ["master", "master"],
+    ["2024.05.31", "2024.05.31"],
+    ["2023.11.05", "2023.11.05"],
     ["2023.08.25", "2023.08.25"],
     ["2023.06.00", "2023.06.00"],
     ["2022.07.00", "2022.07.00"],
@@ -35,6 +37,12 @@ class Lapackpp(CMakePackage, CudaPackage, ROCmPackage):
     license("BSD-3-Clause")
 
     version("master", branch="master")
+    version(
+        "2024.05.31", sha256="093646d492a4c2c6b4d7001effb559c80da7fa31fd5ba517a6d686ca8c78cd99"
+    )
+    version(
+        "2023.11.05", sha256="9a505ef4e76504b6714cc19eb1b58939694f9ab51427a5bb915b016d615570ca"
+    )
     version(
         "2023.08.25", sha256="9effdd616a4a183a9b37c2ad33c85ddd3d6071b183e8c35e02243fbaa7333d4d"
     )
