@@ -36,8 +36,11 @@ class PyMpi4py(PythonPackage):
     conflicts("^py-cython@3:")
 
     def setup_build_environment(self, env):
-        #env.set("MPICC", f"{self.spec['mpi'].mpicc} -shared")
-        env.set("MPICFG", "fujitsu-mpi")
+        if self.spec.satisfies("%fj"):
+            env.set("MPICFG", "fujitsu-mpi")
+        else:
+            env.set("MPICC", f"{self.spec['mpi'].mpicc} -shared")
+        
 
     @run_before("install")
     def cythonize(self):
