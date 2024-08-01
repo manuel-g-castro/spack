@@ -62,7 +62,8 @@ class Fds(MakefilePackage):
     
     # Modifications for Fujitsu compilers that do not support Fortran2018 format
     patch("fixf18_6.7.7_fj.patch", when="@:6.7.7%fj")
-    patch("fixf18_6.7.9_fj.patch", when="@6.7.8:%fj")
+    patch("fixf18_6.7.9_fj.patch", when="@6.7.8:6.7.9%fj")
+    patch("fixf18_6.8.0_fj.patch", when="@6.8.0:%fj")
 
     # Modifications for gcc and fujitsu-mpi link error
     patch("fix_ompi_comm_op_eq_not_found_6.7.7.patch", when="@:6.7.7 %gcc ^fujitsu-mpi")
@@ -80,7 +81,7 @@ class Fds(MakefilePackage):
         makefile.filter(r"\.\.\\Scripts", ".\\Scripts")
         if spec.satisfies("target=aarch64: %gcc"):
             makefile.filter(r"LFLAGSMKL = ","LFLAGSMKL = {}"
-            .format(spec["blas"].libs))
+           .format(spec["blas"].libs))
 
     @property
     def build_targets(self):
