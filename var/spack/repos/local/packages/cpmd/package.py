@@ -25,9 +25,13 @@ class Cpmd(MakefilePackage):
     conflicts("^openblas threads=none", when="+omp")
     conflicts("^openblas threads=pthreads", when="+omp")
 
+# RIST add
+    patch("patch.FUGAKU-MPI", when="%fj", level=1)
+#
+
     def edit(self, spec, prefix):
         # patch configure file
-        cbase = "LINUX-GFORTRAN"
+        cbase = "FUGAKU-MPI"
         cp = FileFilter(join_path("configure", cbase))
         # Compilers
         if spec.satisfies("+mpi"):
