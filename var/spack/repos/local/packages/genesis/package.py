@@ -19,6 +19,9 @@ class Genesis(AutotoolsPackage, CudaPackage):
 
     version("master", branch="master")
     version(
+        "2.1.4",tag='v2.1.4',
+    )
+    version(
         "2.1.3",tag='v2.1.3',
     )
     version(
@@ -111,7 +114,8 @@ class Genesis(AutotoolsPackage, CudaPackage):
 
     patch("fj_compiler.patch", when="@master %fj")
     patch("fj_compiler_1.5.1.patch", when="@1.5.1 %fj")
-    patch("fj_compiler_2.0.0.patch", when="@2.0.0: %fj")
+    patch("fj_compiler_2.0.0.patch", when="@2.0.0:2.1.3 %fj")
+    patch("fj_compiler_2.1.4.patch", when="@2.1.4: %fj")
 
     parallel = False
 
