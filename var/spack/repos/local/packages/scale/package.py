@@ -22,6 +22,7 @@ class Scale(MakefilePackage):
 
     license("BSD-2-Clause")
 
+    version("5.5.2", sha256="5bb22042020f9ac5e7e73299f2def3d475c299a886420407dd7a2f4e36f9718e")
     version(
         "5.5.1",
         sha256="f35d8bdfe93efe1eed4776df3e43907186e517cbef1d63e285822d969fe46013",
