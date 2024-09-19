@@ -37,6 +37,7 @@ from spack.build_systems.cached_cmake import (
     cmake_cache_string,
 )
 from spack.build_systems.cmake import CMakePackage, generator
+from spack.build_systems.compiler import CompilerPackage
 from spack.build_systems.cuda import CudaPackage
 from spack.build_systems.generic import Package
 from spack.build_systems.gnu import GNUMirrorPackage
