@@ -396,3 +396,8 @@ fi
 # done: unset sentinel variable as we're no longer initializing
 unset _sp_initializing
 export _sp_initializing
+
+
+# do not share cache with other spack instance
+export SPACK_USER_CONFIG_PATH=${SPACK_ROOT}/tmp/user_config
+export SPACK_USER_CACHE_PATH=${SPACK_ROOT}/tmp/user_cache
