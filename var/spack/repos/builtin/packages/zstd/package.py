@@ -62,6 +62,8 @@ class Zstd(CMakePackage, MakefilePackage):
     depends_on("lz4", when="compression=lz4")
     depends_on("xz", when="compression=lzma")
 
+    patch("fcc.patch", when="@1.5.6") # TODO:add dependency on the fcc compiler!
+
     # +programs builds vendored xxhash, which uses unsupported builtins
     # (last tested: nvhpc@22.3)
     conflicts("+programs %nvhpc")
