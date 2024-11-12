@@ -17,25 +17,14 @@ class Cmor(AutotoolsPackage):
 
     license("BSD-3-Clause")
 
-    version("3.7.2", sha256="5e19a9be8e6a8bd18a2035772732c34b87b3448319bf0b8fa12ccd4a351b8e86")
-    version("3.6.1", sha256="991035a41424f72ea6f0f85653fc13730eb035e63c7dff6ca740aa7a70976fb4")
-    version("3.6.0", sha256="1608904a35106e83d365f27522209c325bd4bfc19d022b1a8abfb12cdf85fe20")
-    version("3.5.0", sha256="37ce11332f9adfd4fa7560dfb358d14b300315221614c4a44c7407297103c62a")
-    version("3.4.0", sha256="e700a6d50f435e6ffdedf23bf6832b7d37fe21dc78815e1372f218d1d52bd2cb")
-    version("3.3.0", sha256="b763707272c470fc6f7077d9c541591a60f9075b52f5f0298eaf2cb2f2fff4d2")
-    version("3.2.0", sha256="8d49899549dd4c08197739300d507e6fc2b4a5cfe2bfd3e6b44e8e3eaf79b132")
-    version("3.1.2", sha256="ee58b6d405f081e4e0633af931b7992f1a570953b71ece17c01ab9e15889211a")
+    version("3.7.1", sha256="d3808ad9a340201fc4ccd30e2700fa97fbf62299d36fbf276d138a665fd09acb")
 
     variant("fortran", default=True, description="Enable Fortran API")
-    variant("python", default=False, description="Enable PYTHON support", when="@3.4:")
+    variant("python", default=False, description="Enable PYTHON support")
 
-    # older releases require another implementation providing uuid_create()
-    # 3.6.1 requires libuuid(only the lib) or util-linux-uuid providing uuid_generate()
     depends_on("hdf5")
-    depends_on("hdf5@:1.8.19", when="@:3.4.0")
-    depends_on("ossp-uuid", when="@:3.4.0")
-    depends_on("util-linux-uuid", when="@3.5.0:")
-    depends_on("json-c", when="@3.5.0:")
+    depends_on("util-linux-uuid")
+    depends_on("json-c")
     depends_on("netcdf-c")
     depends_on("udunits")
 
