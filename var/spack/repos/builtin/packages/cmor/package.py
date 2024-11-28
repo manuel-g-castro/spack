@@ -19,6 +19,7 @@ class Cmor(AutotoolsPackage):
 
     version("3.8.0", sha256="5f5a44e660104916dd0a3d0d942234db375d2a4ffb4f4113ec88cfdd93f99ef4")
     version("3.7.2", sha256="5e19a9be8e6a8bd18a2035772732c34b87b3448319bf0b8fa12ccd4a351b8e86")
+    version("3.7.1", sha256="d3808ad9a340201fc4ccd30e2700fa97fbf62299d36fbf276d138a665fd09acb")
     version("3.6.1", sha256="991035a41424f72ea6f0f85653fc13730eb035e63c7dff6ca740aa7a70976fb4")
     version("3.6.0", sha256="1608904a35106e83d365f27522209c325bd4bfc19d022b1a8abfb12cdf85fe20")
     version("3.5.0", sha256="37ce11332f9adfd4fa7560dfb358d14b300315221614c4a44c7407297103c62a")
@@ -52,6 +53,8 @@ class Cmor(AutotoolsPackage):
             msg = "cannot build a fortran variant without a fortran compiler"
             raise RuntimeError(msg)
 
+    # this is because the installation of the other packages broke due to   
+    # the -nclang, but this package is the opposite.
     def flag_handler(self, name, flags):
         # switch fujitsu to clang version
         if self.spec.satisfies("%fj") and name == "cflags":
