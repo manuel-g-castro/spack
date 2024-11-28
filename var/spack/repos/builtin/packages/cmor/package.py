@@ -43,13 +43,21 @@ class Cmor(AutotoolsPackage):
     extends("python", when="+python")
     depends_on("py-pip", when="+python", type="build")
     depends_on("py-wheel", when="+python", type="build")
-    depends_on("py-numpy", type=("build", "run"), when="+python")
+    # this is to force the version available as an external package in fugaku
+    depends_on("py-numpy@:1.25", type=("build", "run"), when="+python")
 
     @run_before("configure")
     def validate(self):
         if self.spec.satisfies("+fortran") and not self.compiler.fc:
             msg = "cannot build a fortran variant without a fortran compiler"
             raise RuntimeError(msg)
+
+    def flag_handler(self, name, flags):
+        # switch fujitsu to clang version
+        if self.spec.satisfies("%fj") and name == "cflags":
+            flags.append("-Nclang")
+
+        return (flags, None, None)
 
     def configure_args(self):
         spec = self.spec
