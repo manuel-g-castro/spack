@@ -204,6 +204,12 @@ class PyNumpy(PythonPackage):
             if gcc_version <= Version("5.1"):
                 flags.append(self.compiler.c99_flag)
 
+        # manu: numpy requires from clang mode for the C compiler, but it
+        # you enable everywhere it breaks the installation of the other
+        # packages. 
+        if self.spec.satisfies("%fj") and name == "cflags":
+            flags.append("-Nclang")        
+
         return (flags, None, None)
 
     def blas_lapack_pkg_config(self) -> Tuple[str, str]:
