@@ -47,6 +47,13 @@ class Cmor(AutotoolsPackage):
     # this is to force the version available as an external package in fugaku
     depends_on("py-numpy@:1.25", type=("build", "run"), when="+python")
 
+    # add gnuconfig to configure the package when compiling with fujitsu
+    depends_on("gnuconfig", when="%fj")
+
+    @property
+    def patch_config_files(self):
+        return self.spec.satisfies("%fj")
+
     @run_before("configure")
     def validate(self):
         if self.spec.satisfies("+fortran") and not self.compiler.fc:
