@@ -48,7 +48,7 @@ class Cmor(AutotoolsPackage):
     depends_on("py-numpy@:1.25", type=("build", "run"), when="+python")
 
     # add gnuconfig to configure the package when compiling with fujitsu
-    depends_on("gnuconfig", when="%fj")
+    depends_on("gnuconfig", when="%fj", type="build")
 
     @property
     def patch_config_files(self):
