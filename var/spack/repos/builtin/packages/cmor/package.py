@@ -73,6 +73,13 @@ class Cmor(AutotoolsPackage):
 
         if spec.satisfies("+python"):
             args.append(f"--with-python={self.spec['python'].prefix}")
+            # include the python's dependency header files
+            args.append(f"CPPFLAGS=-I{self.spec['python'].prefix.include}")
+
+        # Fujitsu seems to require additional flags in the linker in order to
+        # work.
+        if spec.satisfies("+python") and spec.satisfies("%fj"):
+            args.append(f"LDFLAGS='-nostartfiles -shared'")
 
         return args
 
